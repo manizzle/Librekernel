@@ -532,7 +532,7 @@ nohup nodejs /opt/easyrtc/server.js &
 /etc/init.d/tor restart
 
 # Running uwsgi
-uwsgi --ini /etc/uwsgi/uwsgi.ini
+uwsgi --ini /etc/uwsgi/uwsgi.ini &
 
 # Running ecapguardian
 ecapguardian &
@@ -833,7 +833,7 @@ forward-zone:
 # Forward rest of zones to DjDNS
 forward-zone:
     name: "."
-    forward-addr: 127.0.0.1@9053
+    forward-addr: 8.8.8.8@53
 
 ' >> /etc/unbound/unbound.conf
 
