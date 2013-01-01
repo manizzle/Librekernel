@@ -1052,13 +1052,13 @@ openssl req -new -newkey rsa:2048 -days 365 -nodes -x509  \
 	-keyout /etc/squid/ssl_cert/squid.key \
         -out /etc/squid/ssl_cert/squid.crt -batch
 chown -R proxy:proxy /etc/squid/ssl_cert/*
-chmod -R 777 /etc/squid/ssl_cert/*
+chmod -R 777 /etc/squid/ssl_cert
 fi
 
 echo "Creating log directory for Squid..."
 mkdir /var/log/squid
 chown -R proxy:proxy /var/log/squid
-chmod -R 777 /var/log/squid/*
+chmod -R 777 /var/log/squid
 
 echo "Calling Squid to create swap directories and initialize cert cache dir..."
 squid -z
