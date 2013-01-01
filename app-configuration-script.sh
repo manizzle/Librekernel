@@ -535,7 +535,7 @@ nohup nodejs /opt/easyrtc/server.js &
 uwsgi --ini /etc/uwsgi/uwsgi.ini
 
 # Running ecapguardian
-ecapguardian
+ecapguardian &
 
 exit 0
 EOF
@@ -1790,7 +1790,7 @@ SERVER_YACY="$(cat /var/lib/tor/hidden_service/yacy/hostname 2>/dev/null)"
 echo "Generating keys and certificates for Yacy ..."
 if [ ! -e /etc/ssl/nginx/$SERVER_YACY.key -o ! -e /etc/ssl/nginx/$SERVER_YACY.csr -o ! -e  /etc/ssl/nginx/$SERVER_YACY.crt ]; then
     openssl genrsa -out /etc/ssl/nginx/$SERVER_YACY.key 2048 -batch
-    openssl req -new -key /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.csr -batch
+    openssl req -new -key /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.csr -subj '/CN=librerouter' -batch
     cp /etc/ssl/nginx/$SERVER_YACY.key /etc/ssl/nginx/$SERVER_YACY.key.org 
     openssl rsa -in /etc/ssl/nginx/$SERVER_YACY.key.org -out /etc/ssl/nginx/$SERVER_YACY.key 
     openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_YACY.csr -signkey /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.crt 
@@ -1862,7 +1862,7 @@ SERVER_FRIENDICA="$(cat /var/lib/tor/hidden_service/friendica/hostname 2>/dev/nu
 echo "Generating keys and certificates for Friendica ..."
 if [ ! -e /etc/ssl/nginx/$SERVER_FRIENDICA.key -o ! -e /etc/ssl/nginx/$SERVER_FRIENDICA.csr -o ! -e  /etc/ssl/nginx/$SERVER_FRIENDICA.crt ]; then
     openssl genrsa -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 2048 -batch
-    openssl req -new -key /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.csr -batch
+    openssl req -new -key /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.csr -subj '/CN=librerouter' -batch
     cp /etc/ssl/nginx/$SERVER_FRIENDICA.key /etc/ssl/nginx/$SERVER_FRIENDICA.key.org 
     openssl rsa -in /etc/ssl/nginx/$SERVER_FRIENDICA.key.org -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 
     openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_FRIENDICA.csr -signkey /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.crt 
@@ -2057,7 +2057,7 @@ rm -rf /etc/ssl/nginx/owncloud.csr
 rm -rf /etc/ssl/nginx/owncloud.crt
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 	-keyout /etc/ssl/nginx/owncloud.key \
-	-out /etc/ssl/nginx/owncloud.crt -batch
+	-out /etc/ssl/nginx/owncloud.crt -subj '/CN=librerouter' -batch
 
 # Creating Owncloud virtual host configuration
 echo "
@@ -2253,7 +2253,7 @@ SERVER_MAILPILE="$(cat /var/lib/tor/hidden_service/mailpile/hostname 2>/dev/null
 # Generating certificates for mailpile ssl connection
 echo "Generating keys and certificates for MailPile"
 if [ ! -e /etc/ssl/nginx/$SERVER_MAILPILE.key -o ! -e  /etc/ssl/nginx/$SERVER_MAILPILE.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/$SERVER_MAILPILE.key -out /etc/ssl/nginx/$SERVER_MAILPILE.crt -batch
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/$SERVER_MAILPILE.key -out /etc/ssl/nginx/$SERVER_MAILPILE.crt -subj '/CN=librerouter' -batch
 fi
 
 # Creating mailpile virtual host configuration
@@ -2321,7 +2321,7 @@ echo "Configuring Webmin virtual host ..."
 # Generating certificates for webmin ssl connection
 echo "Generating keys and certificates for webmin"
 if [ ! -e /etc/ssl/nginx/webmin.key -o ! -e  /etc/ssl/nginx/webmin.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/webmin.key -out /etc/ssl/nginx/webmin.crt -batch
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/webmin.key -out /etc/ssl/nginx/webmin.crt -subj '/CN=librerouter' -batch
 fi
 
 # Creating Webmin virtual host configuration
@@ -2361,7 +2361,7 @@ echo "Configuring Kibana virtual host ..."
 # Generating certificates for Kibana ssl connection
 echo "Generating keys and certificates for Kibana"
 if [ ! -e /etc/ssl/nginx/kibana.key -o ! -e  /etc/ssl/nginx/kibana.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/kibana.key -out /etc/ssl/nginx/kibana.crt -batch
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/kibana.key -out /etc/ssl/nginx/kibana.crt -subj '/CN=librerouter' -batch
 fi
 
 # Creating Kibana virtual host configuration
@@ -2402,10 +2402,10 @@ echo '
 server {
 	listen 10.0.0.12:80;
 	server_name snorby.librenet;
-	passenger_enabled on;
-	passenger_ruby /usr/bin/ruby2.1;
-	passenger_user  root;
-	passenger_group root;
+#	passenger_enabled on;
+#	passenger_ruby /usr/bin/ruby2.1;
+#	passenger_user  root;
+#	passenger_group root;
 
 	access_log /var/log/nginx/snorby.log;
 	root /var/www/snorby/public;
@@ -2475,7 +2475,7 @@ rm -rf /etc/ssl/nginx/easyrtc.csr
 rm -rf /etc/ssl/nginx/easyrtc.crt
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
         -keyout /etc/ssl/nginx/easyrtc.key \
-        -out /etc/ssl/nginx/easyrtc.crt -batch
+        -out /etc/ssl/nginx/easyrtc.crt -subj '/CN=librerouter' -batch
 
 # Creating EasyRTC virtual host configuration
 echo "
