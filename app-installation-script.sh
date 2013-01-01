@@ -76,11 +76,25 @@ check_root ()
 # ----------------------------------------------
 configure_repositories () 
 {
+	echo "Time sync ..."
+	
+	# Installing ntpdate package
+	apt-get update > /dev/null
+	apt-get -y --force-yes install ntpdate > /dev/null
+	
+	# Time synchronization 
+ 	ntpdate -s ntp.ubuntu.com
+	if [ $? -ne 0 ]; then
+        	echo "Error: unable to set time"
+                exit 3
+        fi	
+	
+	echo "Date and time have been set"
+	date	
+	
+	
 	echo "Configuring repositories ... "
 
-	# Updating date and time
-	# ntpdate time.nist.gov
-	
 	# echo "adding unauthenticated upgrade"
 	apt-get  -y --force-yes --allow-unauthenticated upgrade
 
