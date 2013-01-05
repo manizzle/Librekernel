@@ -429,7 +429,7 @@ if [ $PLATFORM = "D7" ]; then
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
 	i2p i2p-keyring yacy virtualenv pwgen \
-        killyourtv-keyring  i2p-tahoe-lafs \
+        killyourtv-keyring  i2p-tahoe-lafs squidguard \
 	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev libicapapi-dev \
 	deb.torproject.org-keyring u-boot-tools console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
@@ -457,7 +457,7 @@ elif [ $PLATFORM = "D8" ]; then
 	deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
 	libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
-        postfix mailutils \
+        postfix mailutils squidguard \
 	libssl-dev perl screen aptitude \
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
 	flex bison libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
@@ -486,7 +486,7 @@ elif [ $PLATFORM = "T7" ]; then
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
 	i2p i2p-keyring yacy virtualenv pwgen \
-	killyourtv-keyring i2p-tahoe-lafs \
+	killyourtv-keyring i2p-tahoe-lafs squidguard \
 	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev libicapapi-dev \
 	deb.torproject.org-keyring u-boot-tools console-setup \
         gnupg openssl python-virtualenv python-pip python-lxml git \
@@ -509,8 +509,8 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
 	i2p yacy tahoe-lafs \
-	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev libicapapi-dev \
-	u-boot-tools console-tools* \
+	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev \
+	libicapapi-dev u-boot-tools console-tools* squidguard \
         gnupg openssl python-virtualenv python-pip python-lxml git \
          zlib1g-dev python-dev webmin \
         postfix mailutils aptitude \
@@ -898,63 +898,26 @@ install_squidclamav()
 
 
 # ----------------------------------------------
-# Function to install squidguard
+# Function to install squidguard blacklists
 # ----------------------------------------------
-install_squidguard()
+install_squidguard_bl()
 {
-	echo "Installing squidguard ..."
+	echo "Installing squidguard blacklists ..."
 
-	# Berkeley DB 4.6
-	echo "Downloading Berkeley DB ..."
-	URL="http://download.oracle.com/berkeley-db"
-	PKG="db-4.6.21.NC.tar.gz"
-	wget -P /tmp/ $URL/$PKG
-	tar xvf /tmp/$PKG
-	rm -rf /tmp/$PKG
-
-	echo "Building Berkeley DB ..."
-	cd db-4.6.21.NC/build_unix
-	../dist/configure --prefix=/usr --enable-compat185 \
-		--enable-dbm --disable-static --enable-cxx
-	make && make docdir=/usr/share/doc/db-6.2.23 install
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to install Berkeley DB"
-		exit 3
-	fi
-	cd ../../
-
-	# squidguard
-	echo "Downloading squidguard ..."
-	URL="http://www.squidguard.org/Downloads"
-	PKG="squidGuard-1.4.tar.gz"
-	wget -P /tmp/ $URL/$PKG
-	tar xvf /tmp/$PKG
-	rm -rf /tmp/$PKG
-
-	echo "Building squidguard ..."
-	cd squidGuard-1.4
-	./configure --prefix=/usr --with-squiduser=root
-	make && make install
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to install squidguard"
-		exit 3
-	fi
-	cd ../
-
-	# squidguard-adblock
-	echo "Downloading squidguard-adblock ..."
-	git clone https://github.com/jamesmacwhite/squidguard-adblock.git
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to download squidguard-adblock"
-		exit 3
-	fi
-	cd squidguard-adblock
-	mkdir -p /etc/squid/squidguard-adblock
-	cp get-easylist.sh /etc/squid/squidguard-adblock/
-	cp patterns.sed /etc/squid/squidguard-adblock/
-	cp urls.txt /etc/squid/squidguard-adblock/
-	chmod +x /etc/squid/squidguard-adblock/get-easylist.sh
-	cd ..
+#	# squidguard-adblock
+#	echo "Downloading squidguard-adblock ..."
+#	git clone https://github.com/jamesmacwhite/squidguard-adblock.git
+#	if [ $? -ne 0 ]; then
+#		echo "Error: unable to download squidguard-adblock"
+#		exit 3
+#	fi
+#	cd squidguard-adblock
+#	mkdir -p /etc/squid/squidguard-adblock
+#	cp get-easylist.sh /etc/squid/squidguard-adblock/
+#	cp patterns.sed /etc/squid/squidguard-adblock/
+#	cp urls.txt /etc/squid/squidguard-adblock/
+#	chmod +x /etc/squid/squidguard-adblock/get-easylist.sh
+#	cd ..
 
 	# Getting MESD blacklists
 	if [ ! -e blacklists.tgz ]; then
@@ -970,10 +933,8 @@ install_squidguard()
                 -C /usr/local/squidGuard/db/
 
 	# Cleanup
-        rm -rf /usr/local/squidGuard//db/blacklists.tar
-	rm -rf db-4.6.21.NC
-	rm -rf squidGuard-1.4
-	rm -rf squidguard-adblock
+        rm -rf /usr/local/squidGuard/db/blacklists.tar
+#	rm -rf squidguard-adblock
 }
 
 
@@ -1575,7 +1536,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_easyrtc		# Install EasyRTC package
 	install_squid		# Install squid package
 	install_squidclamav	# Install SquidClamav package
-	install_squidguard	# Install Squidguard package
+	install_squidguard_bl	# Install Squidguard blacklists 
 	install_e2guardian	# Inatall e2guardian package
 	install_ecapguardian	# Inatall ecapguardian package
 	install_suricata	# Install Suricata package
