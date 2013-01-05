@@ -1451,6 +1451,7 @@ service clamav-daemon restart
 # ---------------------------------------------------------
 configure_squidguard()
 {
+mkdir -p /etc/squidguard
 cat << EOF > /etc/squidguard/squidGuard.conf
 #
 # CONFIG FILE FOR SQUIDGUARD
@@ -2465,31 +2466,31 @@ crontab /root/libre_scripts/cron_jobs
 
 check_root			# Checking user
 get_variables			# Getting variables
-configure_hosts			# Configurint hostname and /etc/hosts
-configure_interfaces		# Configuring external and internal interfaces
-configure_dhcp			# Configuring DHCP server 
+#configure_hosts			# Configurint hostname and /etc/hosts
+#configure_interfaces		# Configuring external and internal interfaces
+#configure_dhcp			# Configuring DHCP server 
 
 
 # Block 2: Configuring services
 
-configure_mysql			# Configuring mysql password
-configure_iptables		# Configuring iptables rules
-configure_tor			# Configuring TOR server
-configure_i2p			# Configuring i2p services
-configure_unbound		# Configuring Unbound DNS server
-configure_friendica		# Configuring Friendica local service
-configure_easyrtc		# Configuring EasyRTC local service
-configure_owncloud		# Configuring Owncloud local service
-configure_mailpile		# Configuring Mailpile local service
-configure_nginx                 # Configuring Nginx web server
-configure_privoxy		# Configuring Privoxy proxy server
+#configure_mysql			# Configuring mysql password
+#configure_iptables		# Configuring iptables rules
+#configure_tor			# Configuring TOR server
+#configure_i2p			# Configuring i2p services
+#configure_unbound		# Configuring Unbound DNS server
+#configure_friendica		# Configuring Friendica local service
+#configure_easyrtc		# Configuring EasyRTC local service
+#configure_owncloud		# Configuring Owncloud local service
+#configure_mailpile		# Configuring Mailpile local service
+#configure_nginx                 # Configuring Nginx web server
+#configure_privoxy		# Configuring Privoxy proxy server
 configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
 configure_squidguard		# Configuring squidguard
-configure_postfix		# Configuring postfix mail service
-check_interfaces		# Checking network interfaces
-check_services			# Checking services 
+#configure_postfix		# Configuring postfix mail service
+#check_interfaces		# Checking network interfaces
+#check_services			# Checking services 
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
 
