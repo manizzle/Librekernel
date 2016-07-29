@@ -437,6 +437,9 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --t
 # squid
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 80 -j DNAT --to 10.0.0.1:3130
 
+# https 
+iptables -t nat -I POSTROUTING -p tcp --dport 443 -o $EXT_INTERFACE -j MASQUERADE
+
 # Redirecting traffic to tor
 #iptables -t nat -A PREROUTING -i eth0 -p tcp -d 10.0.0.0/8 --dport 80 --syn -j REDIRECT --to-ports 9040
 #iptables -t nat -A PREROUTING -i eth0 -p udp --dport 53 -j REDIRECT --to-ports 53
@@ -777,7 +780,7 @@ find BL/redirector -name domains -exec cat {} \; >> block_domain.list
 find BL/tracker -name domains -exec cat {} \; >> block_domain.list
 
 # Deleting old files
-rm -rf shallalist.tar.gz shallalist 	
+rm -rf shallalist 	
 
 # Creating chat domains list configuration file
 cat chat_domain.list | \
@@ -1032,54 +1035,33 @@ rm -f /etc/rc?.d/*privoxy*
 
 #Privoxy I2P
 
-cat << EOF > /etc/privoxy/config-i2p
+cat << EOF > /etc/privoxy/config
 user-manual /usr/share/doc/privoxy/user-manual
 confdir /etc/privoxy
 logdir /var/log/privoxy
+actionsfile match-all.action # Actions that are applied to all sites and maybe overruled later on.
+actionsfile default.action   # Main actions file
+actionsfile user.action      # User customizations
 filterfile default.filter
-#logfile logfile #its said produces fails cause errors logging I2P ipv6 ips
+filterfile user.filter      # User customizations
+logfile logfile
 listen-address  127.0.0.1:8118
-#debug     1 # Log the destination for each request Privoxy let through. See also debug 1024.
-#debug     2 # show each connection status
-#debug     4 # show I/O status
-#debug     8 # show header parsing
-#debug    16 # log all data written to the network
-#debug    32 # debug force feature
-#debug    64 # debug regular expression filters
-#debug   128 # debug redirects
-#debug   256 # debug GIF de-animation
-#debug   512 # Common Log Format
-#debug  1024 # Log the destination for requests Privoxy didnt let through, and the reason why.
-#debug  2048 # CGI user interface
-#debug  4096 # Startup banner and warnings.
-#debug  8192 # Non-fatal errors
-#debug 32768 # log all data read from the network
-#debug 65536 # Log the applying actions
 toggle  1
 enable-remote-toggle  0
 enable-remote-http-toggle  0
 enable-edit-actions 0
 enforce-blocks 0
 buffer-limit 4096
+enable-proxy-authentication-forwarding 0
 forwarded-connect-retries  0
-accept-intercepted-requests 1
+accept-intercepted-requests 0
 allow-cgi-request-crunching 0
 split-large-forms 0
 keep-alive-timeout 5
+tolerate-pipelining 1
 socket-timeout 300
 forward .i2p 127.0.0.1:4444
 EOF
-
-cp /etc/init.d/privoxy /etc/init.d/privoxy-i2p
-
-sed "s~Provides:.*~Provides:          privoxy-i2p~g" -i  /etc/init.d/privoxy-i2p
-sed "s~PIDFILE=.*~PIDFILE=/var/run/\$NAME-i2p.pid~g" -i  /etc/init.d/privoxy-i2p
-sed "s~CONFIGFILE=.*~CONFIGFILE=/etc/privoxy/config-i2p~g" -i /etc/init.d/privoxy-i2p
-sed "s~SCRIPTNAME=.*~SCRIPTNAME=/etc/init.d/\$NAME-i2p~g" -i /etc/init.d/privoxy-i2p
-
-update-rc.d privoxy-i2p defaults
-echo "Restarting privoxy-i2p ..."
-service privoxy-i2p restart
 
 #Privoxy TOR
 
@@ -1107,8 +1089,13 @@ sed "s~CONFIGFILE=.*~CONFIGFILE=/etc/privoxy/config-tor~g" -i /etc/init.d/privox
 sed "s~SCRIPTNAME=.*~SCRIPTNAME=/etc/init.d/\$NAME-tor~g" -i /etc/init.d/privoxy-tor
 
 update-rc.d privoxy-tor defaults
+
 echo "Restarting privoxy-tor ..."
 service privoxy-tor restart
+
+echo "Restarting privoxy-i2p ..."
+service privoxy restart
+
 }
 
 
@@ -1204,8 +1191,6 @@ cache_peer 127.0.0.1 parent 8119 0 no-query no-digest default
 
 cache_peer_access 127.0.0.1 allow tor_url
 cache_peer_access 127.0.0.1 deny all
-
-cache_peer 127.0.0.1 parent 8119 7 no-query no-digest
 
 #acl manager proto cache_object
 acl localhost src 127.0.0.1/32 
