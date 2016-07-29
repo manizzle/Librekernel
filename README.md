@@ -415,13 +415,10 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ![networktraffic6](https://cloud.githubusercontent.com/assets/13025157/14437535/f40d21c4-0021-11e6-9e4a-1c73e06e965b.png)
 
+Squid SSL bumping 
+https://github.com/varnish/hitch
+https://github.com/dani87/sslbump
 
-
-
-
-
-
-###Connection Flow 3: Squid Open SSL Tunnel
 
 When user it's using a HTTPS connection to a darknet domain, this traffic it's considered as insecure.
 On darknet domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
