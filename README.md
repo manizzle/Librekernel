@@ -359,19 +359,7 @@ We still in research about this cheap Clearfog boards. Keep you posted.
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 
-#Installation and Setup
-
-###***Which hardware/Virtual resources you needed to run Librerouter scripts?***
-
-Anyone able to run a Debian 8.5  ARM,x86 or 64 bits 
-
-- At least 2 network interfaces NICS (external and internal always no matters bridge or server mode),
-- 2GB RAM
-- 4 cores CPU 
-- 1TB Hdd. or 32GBemc
-
-
-###***The way networking works in Librerouter will be as follows:
+#***Networking in Librerouter:
 
 - There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
 	
@@ -392,9 +380,6 @@ Librerouter has two way to work:
  - Server (no protection but services)
  - Network Router (services and network protection) (dont mix with NIC bridges that we have to separate 4 interfaces in 2 zones)
  
-
-##Steps to setup on Physical/Virtual machine.
-
 
 ##Server mode
 
@@ -420,21 +405,20 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
-##Menu GUI later on (check GUI md doc in this repository)
+
 
 
 #Network Working flow 
 
-Pending Update l7f and others
+![ip use cause](https://cloud.githubusercontent.com/assets/17382786/17254808/a88262ec-55b6-11e6-969d-bfac41e4dadd.png)
+
 
 ![networktraffic6](https://cloud.githubusercontent.com/assets/13025157/14437535/f40d21c4-0021-11e6-9e4a-1c73e06e965b.png)
 
+Squid SSL bumping 
+https://github.com/varnish/hitch
+https://github.com/dani87/sslbump
 
-
-Pending here arquitecture of unbound,iptables,squid,etc all chain
-
-
-###Connection Flow 3: Squid Open SSL Tunnel
 
 When user it's using a HTTPS connection to a darknet domain, this traffic it's considered as insecure.
 On darknet domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
@@ -472,8 +456,9 @@ Access from outside model (Bypass Router / Closed Ports
 
 
 #DNS:
+
 ##DNS engines:
--used today unbound-dns momentarely( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
+- Used today unbound-dns momentarely( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
 - If it can not resolved, then we need to ask through TOR if it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
 There are 3 different DNS servers (Unbound Tor and DjDNS) on LibreRouter that work together us one DNS resolution system, to provide the best open source solutions for anonymity and security.  
 Here is the list of servers and interfaces/ports DNS servers  are listening.
@@ -483,6 +468,8 @@ DjDNS running on 10.0.0.1:8053
 At first any DNS request comes to Unbound, which is the main dns server, then if needed unbound will forward the request to Tor or DjDNS. 
 
 ##DNS Workflow:
+![dns use cases](https://cloud.githubusercontent.com/assets/17382786/17254117/bc19c140-55b3-11e6-99fc-1b544f3adbd1.png)
+
 
 ###Classified domains that matched our app decentralized alternatives:
   * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
@@ -551,20 +538,40 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 
 
 
+#Steps to setup on Physical/Virtual machine.
 
+##Installation and Setup
 
+###***Which hardware/Virtual resources you needed to run Librerouter scripts?***
 
+Anyone able to run a Debian 8.5  ARM,x86 or 64 bits 
 
-#Step 3. Executing scripts.
+- At least 2 network interfaces NICS (external and internal always no matters bridge or server mode),
+- 2GB RAM
+- 4 cores CPU 
+- 1TB Hdd. or 32GBemc
+
+##Step 3. Executing scripts.
 
 In this step you need to download and execute the following scripts on your machine with given order.
 
- - 0. driver-script-pipoxY.sh pipoX8 or pipox10 plus opendrivers wlan
+ - 0. driver-script-pipo.sh 
  - 1. app-installation-script.sh
  - 2. app-configuration-script.sh
  - 3. app-post configuration encryption FDE fill disk en cryption
  - 4. System Wizards
  - 5. Subsystems GUIs for backends forked from IPFIRE
+
+###0. What the driver-script-pipo.sh  does?
+
+Installs the drivers for Pipo X8:
+ - WLAN 1 NON FREE
+ - WLAN 1 FREE
+ - TOUCH SCREEN
+ - SOUND CARD (there is no mic in the machine)
+ - Ethernet drivers (both usb and onboard) are free.
+
+###1. What the app-installation-script does?
 
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
 
