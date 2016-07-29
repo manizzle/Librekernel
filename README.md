@@ -420,7 +420,7 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
-##Menu GUI later on (check GUI md doc in this repository)
+
 
 
 #Network Working flow 
@@ -431,7 +431,8 @@ Pending Update l7f and others
 
 
 
-Pending here arquitecture of unbound,iptables,squid,etc all chain
+
+
 
 
 ###Connection Flow 3: Squid Open SSL Tunnel
@@ -472,8 +473,9 @@ Access from outside model (Bypass Router / Closed Ports
 
 
 #DNS:
+
 ##DNS engines:
--used today unbound-dns momentarely( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
+- Used today unbound-dns momentarely( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
 - If it can not resolved, then we need to ask through TOR if it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
 There are 3 different DNS servers (Unbound Tor and DjDNS) on LibreRouter that work together us one DNS resolution system, to provide the best open source solutions for anonymity and security.  
 Here is the list of servers and interfaces/ports DNS servers  are listening.
@@ -483,6 +485,8 @@ DjDNS running on 10.0.0.1:8053
 At first any DNS request comes to Unbound, which is the main dns server, then if needed unbound will forward the request to Tor or DjDNS. 
 
 ##DNS Workflow:
+![dns use cases](https://cloud.githubusercontent.com/assets/17382786/17254117/bc19c140-55b3-11e6-99fc-1b544f3adbd1.png)
+
 
 ###Classified domains that matched our app decentralized alternatives:
   * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
