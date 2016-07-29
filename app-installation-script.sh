@@ -438,7 +438,7 @@ elif [ $PLATFORM = "D8" ]; then
         gnupg openssl python-virtualenv python-pip python-lxml git \
 	libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
         postfix mailutils squid3 \
-	libssl-dev perl \
+	libssl-dev perl screen \
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
 	2>&1 > /tmp/apt-get-install1.log
 
@@ -522,11 +522,13 @@ fi
 	fi
 
 # Getting classified domains list from shallalist.de
-echo "Getting classified domains list ..."
-wget http://www.shallalist.de/Downloads/shallalist.tar.gz
-if [ $? -ne 0 ]; then
-        echo "Error: Unable to download domain list. Exithing"
-        exit 5
+if [ ! -e shallalist.tar.gz ]; then
+	echo "Getting classified domains list ..."
+	wget http://www.shallalist.de/Downloads/shallalist.tar.gz
+	if [ $? -ne 0 ]; then
+       		echo "Error: Unable to download domain list. Exithing"
+       		exit 5
+	fi
 fi
 
 # Getting Friendica 
