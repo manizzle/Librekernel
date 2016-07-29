@@ -403,7 +403,7 @@ The way networking works in Librerouter will be:
  -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
  -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not hable to defend against web browsing leaks,tracking,ads and malware)
 
-![untitled](https://cloud.githubusercontent.com/assets/17382786/17251287/588b1aa8-55a8-11e6-9c07-3ccca07a560a.png)
+
 ![untitled](https://cloud.githubusercontent.com/assets/17382786/17251155/d6e66fca-55a7-11e6-910d-4c8769bb57ab.png)
 ![server](https://cloud.githubusercontent.com/assets/13025157/14443924/9c798300-0042-11e6-85b1-1760c5b3789d.png)
 ![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
@@ -413,6 +413,7 @@ The way networking works in Librerouter will be:
 
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
 
+![untitled](https://cloud.githubusercontent.com/assets/17382786/17251287/588b1aa8-55a8-11e6-9c07-3ccca07a560a.png)
 ![bridge](https://cloud.githubusercontent.com/assets/13025157/14443871/4bf91bfc-0042-11e6-9ca5-06a23891d32e.png)
 ##Menu GUI later on (check GUI md doc in this repository)
 ![bridmode workflow](https://cloud.githubusercontent.com/assets/130157/14444156/373281de-0044-11e6-9d3d-6c536c0b3844.png)
