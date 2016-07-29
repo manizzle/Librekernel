@@ -425,7 +425,8 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 #Network Working flow 
 
-Pending Update l7f and others
+![ip use cause](https://cloud.githubusercontent.com/assets/17382786/17254808/a88262ec-55b6-11e6-969d-bfac41e4dadd.png)
+
 
 ![networktraffic6](https://cloud.githubusercontent.com/assets/13025157/14437535/f40d21c4-0021-11e6-9e4a-1c73e06e965b.png)
 
