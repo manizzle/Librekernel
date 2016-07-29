@@ -359,19 +359,7 @@ We still in research about this cheap Clearfog boards. Keep you posted.
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 
-#Installation and Setup
-
-###***Which hardware/Virtual resources you needed to run Librerouter scripts?***
-
-Anyone able to run a Debian 8.5  ARM,x86 or 64 bits 
-
-- At least 2 network interfaces NICS (external and internal always no matters bridge or server mode),
-- 2GB RAM
-- 4 cores CPU 
-- 1TB Hdd. or 32GBemc
-
-
-###***The way networking works in Librerouter will be as follows:
+#***Networking in Librerouter:
 
 - There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
 	
@@ -392,9 +380,6 @@ Librerouter has two way to work:
  - Server (no protection but services)
  - Network Router (services and network protection) (dont mix with NIC bridges that we have to separate 4 interfaces in 2 zones)
  
-
-##Steps to setup on Physical/Virtual machine.
-
 
 ##Server mode
 
@@ -556,20 +541,40 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 
 
 
+#Steps to setup on Physical/Virtual machine.
 
+##Installation and Setup
 
+###***Which hardware/Virtual resources you needed to run Librerouter scripts?***
 
+Anyone able to run a Debian 8.5  ARM,x86 or 64 bits 
 
-#Step 3. Executing scripts.
+- At least 2 network interfaces NICS (external and internal always no matters bridge or server mode),
+- 2GB RAM
+- 4 cores CPU 
+- 1TB Hdd. or 32GBemc
+
+##Step 3. Executing scripts.
 
 In this step you need to download and execute the following scripts on your machine with given order.
 
- - 0. driver-script-pipoxY.sh pipoX8 or pipox10 plus opendrivers wlan
+ - 0. driver-script-pipo.sh 
  - 1. app-installation-script.sh
  - 2. app-configuration-script.sh
  - 3. app-post configuration encryption FDE fill disk en cryption
  - 4. System Wizards
  - 5. Subsystems GUIs for backends forked from IPFIRE
+
+###0. What the driver-script-pipo.sh  does?
+
+Installs the drivers for Pipo X8:
+ - WLAN 1 NON FREE
+ - WLAN 1 FREE
+ - TOUCH SCREEN
+ - SOUND CARD (there is no mic in the machine)
+ - Ethernet drivers (both usb and onboard) are free.
+
+###1. What the app-installation-script does?
 
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
 
