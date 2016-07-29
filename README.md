@@ -414,12 +414,10 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ![untitled](https://cloud.githubusercontent.com/assets/17382786/17251287/588b1aa8-55a8-11e6-9c07-3ccca07a560a.png)
 ![bridge](https://cloud.githubusercontent.com/assets/13025157/14443871/4bf91bfc-0042-11e6-9ca5-06a23891d32e.png)
-
+![bridmode workflow](https://cloud.githubusercontent.com/assets/130157/14444156/373281de-0044-11e6-9d3d-6c536c0b3844.png)
+![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
 ##Menu GUI later on (check GUI md doc in this repository)
-
-![bridmode workflow](https://cloud.githubusercontent.com/assets/130157/14444156/373281de-0044-11e6-9d3d-6c536c0b3844.png)
-
 
 
 #Network Working flow 
