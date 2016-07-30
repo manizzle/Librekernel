@@ -8,10 +8,23 @@
 
 
 - [Overview of Linux Libre and Libre Kernel for personal cyber security and privacy](#overview-of-linux-libre-and-libre-kernel-for-personal-cyber-security-and-privacy)
-	- [Purpose of this document](#purpose-of-this-document)\
+	- [Purpose of this document](#purpose-of-this-document)
 	- [Introduction] (#introduction)
-	- [Need for this technology?] (#Need-for-this-technology)
-	- [About Linux Libre Technology](#About-linux-libre-technology)
+	- [Need for this technology] (#need-for-this-technology)
+	- [About Linux Libre Technology](#about-linux-libre-technology)
+	- [Ways of Proprietary firmware removal and its good effects](#ways-of-proprietary-firmware-removal-and-its-good-effects)
+	- [Libre Router Technology](#libre-router-technology)	
+	- [Open Source Hardware](#open-ource-hardware)
+	- [Licenses and certifications available for hardware openness compliance](#licenses-and-certifications-available-for-hardware-openness-compliance)
+	- [Certifications available for privacy and security compliance](#certifications-available-for-privacy-and-security-compliance)
+	- [Certifications for product security compliance](#certifications-for-product-security-compliance)
+	- [Purposed Operating Systems using Linux Libre](#purposed-operating-systems-using-linux-libre)
+	- [Distributions using Linux-Libre](#distributions-using-linux-libre)
+	- [Distributions with default kernel proposing to use Linux-Libre]   (#distributions-with-default-kernel-proposing-to-use-linux-libre)
+	
+
+
+
 	- [What intend to be librouter?](#what-intend-to-be-librerouter)
 	- [Who? Why? What? How?](#who-why-what-how)
 	- [What is open source hardware?](#what-is-open-source-hardware)
@@ -64,7 +77,7 @@ For an example please see Blob Example at following link at the bottom
 
 [Blob Example](#blob-example)
 
-##***Need for this technology?***
+##***Need for this technology***
 
 - **Sniffers**: those that are checking your traffic.
 - **Government spy/monitoring institutions passive actions**: collecting general data from worldwide.
@@ -85,6 +98,185 @@ As explained earlier, its an operating system kernel and a GNU package whose aim
 Linux kernel any source code with blobs, with obfuscated source code, or is has proprietary licenses.
 Software components with no available source code are called binary blobs and, as such, are mostly used 
 for proprietary firmware images in the Linux kernel.
+
+##Ways of Proprietary firmware removal and its good effects
+
+1. Deblobing : It is cleaning up and verifying Linux tarballs and patches for non-Free blobs. This is 
+done using the script files deblob-check for verifying the Vanilla Linux kernel tarball for any non-free
+proprietary, blobs. . Similarly for removing the blobs there is a scripts deblob-* where * represents 
+the Kernel version its tested and applicable for. The script can be found here 
+<http://www.fsfla.org/svn/fsfla/software/linux-libre/scripts/>
+
+2. Keep the base deblobbed kernel clean:
+Use clean basement and don't allow installation of 3rd party software that is established by trust control 
+is free of blobs. For Example for Linux Libre here is the link 
+<http://www.linux-libre.fsfla.org/pub/linux-libre/releases/LATEST-4.6.N/> 
+
+3. VRMS: 
+VRMS(Virtual Richard M. Stallman) is a program that analyzes the set of currently-installed packages 
+on a Debian-based system, and reports all of the packages from the non-free tree which are currently 
+installed. Software gets placed in the non-free tree when it is agreed not to be too problematic for 
+Debian to distribute but does not meet the Debian Free Software Guidelines and therefore cannot be 
+included in their official distribution. For each program from "non-free" installed, VRMS displays 
+an explanation of why it is non-free, if one is available. More information about VRMS can be fount at 
+<https://alioth.debian.org/projects/vrms/>
+
+So to speak Debian vanilla kernel:
+	- Doesn't include any non-free firmware (bugs aside), but it allows users to load non-free 
+          firmware if they wish to do so, which might pose the same kind of threats like, Trojans, tracking, 
+          kernel training with malicious software, sniffing etc.
+	
+Where as Linux Libre:
+	- The Linux Libre kernel doesn't include any non-free firmware or anything looking like firmware, 
+          and it prevents users from loading non-free firmware even if they wish to do so.
+	- Is built by running a deblob script on the kernel source code. This goes through the 
+  	  kernel source code, and makes various firmware-related changes. 
+	- Any firmware for which source code is available is preserved, but the script makes sure the 
+  	  source code is available. 
+	- Any module requiring firmware is stripped of the ability to load the firmware. 
+	- Any source code which looks like firmware (sequences of numbers) is removed. 
+	- Any file containing only firmware (e.g. the contents of firmware/radeon) is removed. 
+	
+##Libre Router Technology
+
+In the previous section we talked about Linux Libre which is Linux based operating system kernel and a GNU package.
+IN this and following few sessions we are going to talk about it's counterpart called Linux Router which is nothing
+but a Open Source hardware with no malignant backdoors, with source code for kernel logic as well as firmware where
+Open Source developers will have as much control as possible to bypass the censorship and enforce the security for
+users.
+
+In simplest term it's a GNU Free and Open Source Hardware (FOSH) running a GNU software.
+
+It's a unique combination of open source hardware, GNU software controlled and monitors by Open Source community.
+With minimal training and simple documentation you can achieve a decrease of the cyber risks as, mentioned earlier. 
+It's a solution to bypass censorship, spy agencies, anti net neutrality internet providers, and government control. 
+It's really very easy to use for all people with little or no computers and networking knowledge. 
+This is simple Plug and play system to make your traffic untraceable and secure. 
+It is the future Data Center resilience infrastructure. 
+
+SO lets have a brief look into what is Open Source Hardware.
+
+##Open Source Hardware
+It consists of physical artifacts of technology designed and offered by the open design movement. Both free and 
+open-source software (FOSS) as well as open-source hardware is created by this open-source culture movement and 
+applies a like concept to a variety of components. It is sometimes, thus, referred to as FOSH 
+(free and open-source hardware). The term usually means that information about the hardware is easily discerned 
+so that others can make it - coupling it closely to the maker movement. Hardware design (i.e. mechanical 
+drawings, schematics, bills of material, PCB layout data, HDL source code and integrated circuit layout data), 
+in addition to the software that drives the hardware, are all released under free/Libre terms. The original 
+sharer gains feedback and potentially improvements on the design from the FOSH community. There is now significant 
+evidence that such sharing can drive a high return on investment for investors.
+
+LGPL (Lesser General Public License):
+The GNU Lesser General Public License (LGPL) is a free software license published by the Free Software Foundation (FSF). 
+The license allows developers and companies to use and integrate software released under the LGPL into their own 
+(even proprietary) software without being required by the terms of a strong copyleft license to release the source 
+code of their own components. The license only requires software under the LGPL be modifiable by end users via source 
+code availability. For proprietary software, code under the LGPL is usually used in the form of a shared library such 
+as a DLL, so that there is a clear separation between the proprietary and LGPL components. The LGPL is primarily used 
+for software libraries, although it is also used by some stand-alone applications.
+
+For information on LGPL please visit <https://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License> 
+
+CC (Creative Commons) License:
+A Creative Commons (CC) license is one of several public copyright licenses that enable the free distribution of 
+an otherwise copyrighted work. A CC license is used when an author wants to give people the right to share, use, 
+and build upon a work that they have created. CC provides an author flexibility (for example, they might choose 
+to allow only non-commercial uses of their own work) and protects the people who use or redistribute an author's 
+work from concerns of copyright infringement as long as they abide by the conditions that are specified in the 
+license by which the author distributes the work.
+
+For information on please visit <https://en.wikipedia.org/wiki/Creative_Commons_license>
+
+Many Hardware providers claims they produce open hardware but it's not really true. The market is full of crowd-funded 
+project where the funder claimed the project is open hardware but in real the hardware is full of binary blobs, 
+chipset restitutions and questions about missing parts of info and doc. Few of them are listed below:
+
+	ARM Trustzone 
+	Many controllers in Chipset of the network nics are not open source 
+	No source code. 
+	Binary Blobs in the ROMs or bROM. 
+	No documentation and schematics provided
+	Need signed binary for being accepted by the board. 
+	Do not accept free booting. 
+
+<https://cloud.githubusercontent.com/assets/17382786/14741525/16a5c3f8-0897-11e6-8b2b-ec1f3fbdc5de.png>
+
+##Licenses and certifications available for hardware openness compliance
+
+http://www.ohwr.org/documents/294 
+http://www.gnu.org/licenses/quick-guide-gplv3.en.html 
+http://www.tapr.org/OHL 
+http://www.opengroup.org/accreditation/o-ttps 
+http://www.fsf.org/resources/hw/endorsement/respects-your-freedom 
+
+##Certifications available for privacy and security compliance
+
+www.vub.ac.be/LSTS/pub/Dehert/481.pdf 
+https://www.truste.com/business-products/dpm-services/ 
+https://www.european-privacy-seal.eu/EPS-en/Certification 
+http://www.iso.org/iso/catalogue_detail.htm?csnumber=61498 
+http://www.tuv.com/en/corporate/business_customers/information_security_cw/strategic_information_security/data_protection_certification/data_privacy_certification.html 
+http://www.export.gov/safeharbor/ 
+https://safeharbor.export.gov/swisslist.aspx 
+https://www.tuvit.de/en/privacy/uld-privacy-seal-1075.htm 
+http://www.prismintl.org/Privacy-Certification/privacy/about-the-privacy-plus-program.html 
+https://www.esrb.org/privacy/ 
+http://www.privacytrust.org/certification/privacy/ 
+https://www.datenschutzzentrum.de/zertifizierung/ 
+http://www.edaa.eu/certification-process/trust-seal/ 
+
+##Certifications for product security compliance:
+
+http://www.dekra-certification.com/en/cyber-security 
+http://www.exsolutiongroup.com/blog/various-types-of-iso-certification-uae-has-to-offer/ 
+https://digital.premierit.com/all-about-iso-27001-certification 
+https://www.apcon.com/apcon-certified-applications?gclid=CMrqsaCTt8wCFcQp0wodJokNQg 
+http://www.cyberark.com/awards/ 
+https://czarsecurities.com/security-seal 
+http://www.teletrust.de/en/itsmig/ 
+https://iapp.org/certify/cipt/ 
+http://www.cdse.edu/certification/become.html 
+https://en.wikipedia.org/wiki/Evaluation_Assurance_Level 
+https://en.wikipedia.org/wiki/Common_Criteria 
+http://www.asd.gov.au/infosec/aisep/crypto.htm 
+
+
+##Purposed Operating Systems using Linux Libre
+Following distributions are tested only in Debian 8.5 x86 32bits
+
+Debian (after deblobbing,hardening,enlightening)   <debian.org> 
+Lubuntu (after deblobbing,hardening,enlightening)  <lubuntu.org> 
+Ubuntu Core (after deblobbing)                   <https://developer.ubuntu.com/en/snappy/start/intel-nuc/> 
+Devuan (Libre Kernel,(after apply hardening)      <https://devuan.org/> 
+Uruk (Libre Kernel),(after apply hardening)       <https://urukproject.org//dist/index.html> 
+LibreWRT 
+Dockers (further containerization for security) (reference qubeOS.org) 
+
+##Distributions using Linux-Linux
+Distributions in which Linux-Libre is the default kernel used:
+
+	Dragora GNU/Linux-Libre
+	dyne:bolic
+	Guix System Distribution
+	Musix GNU+Linux
+	Parabola GNU/Linux-Libre
+	Trisquel
+
+	##Distributions with default kernel proposing to use Linux-Libre
+
+	Arch Linux
+	Canaima
+	Gentoo Linux
+
+
+
+
+
+
+
+
+
 
 ####***3 ways to have Linux with no blobs:***
 - **Deblobing** : clean up and verify linux tarballs and patches for non-Free blobs, you can check if your linux tarballs has non-free blobs or not from [here](http://www.fsfla.org/svn/fsfla/software/linux-libre/scripts/deblob-check)
