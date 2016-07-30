@@ -23,15 +23,6 @@
 	- [Distributions with default kernel proposing to use Linux-Libre]   (#distributions-with-default-kernel-proposing-to-use-linux-libre)
 	
 
-
-
-	- [What intend to be librouter?](#what-intend-to-be-librerouter)
-	- [Who? Why? What? How?](#who-why-what-how)
-	- [What is open source hardware?](#what-is-open-source-hardware)
-	- [Which are the licenses and certifications that show openness in the hardware?](#which-are-the-licenses-and-certifications-that-show-openness-in-the-hardware)
-	- [Which are the certifications for privacy and security?](#which-are-the-certifications-for-privacy-and-security)
-	- [Which are security product certifications?](#which-are-security-product-certifications)
-	- [Purposed Operating Systems](#purposed-operating-systems)
 - [Technical Overview](#technical-overview)
 	- [How to use Librerouter in Hardware?](#how-to-use-librerouter-in-hardware)
 	- [Which hardware is needed to run Librerouter?](#which-hardware-is-needed-to-run-librerouter?)
