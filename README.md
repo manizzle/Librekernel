@@ -14,14 +14,16 @@
 	- [About Linux Libre Technology](#about-linux-libre-technology)
 	- [Ways of Proprietary firmware removal and its good effects](#ways-of-proprietary-firmware-removal-and-its-good-effects)
 	- [Libre Router Technology](#libre-router-technology)	
-	- [Open Source Hardware](#open-ource-hardware)
+	- [Open Source Hardware](#open-source-hardware)
 	- [Licenses and certifications available for hardware openness compliance](#licenses-and-certifications-available-for-hardware-openness-compliance)
 	- [Certifications available for privacy and security compliance](#certifications-available-for-privacy-and-security-compliance)
 	- [Certifications for product security compliance](#certifications-for-product-security-compliance)
 	- [Purposed Operating Systems using Linux Libre](#purposed-operating-systems-using-linux-libre)
-	- [Distributions using Linux-Libre](#distributions-using-linux-libre)
-	- [Distributions with default kernel proposing to use Linux-Libre]   (#distributions-with-default-kernel-proposing-to-use-linux-libre)
-	
+
+
+
+
+
 
 - [Technical Overview](#technical-overview)
 	- [How to use Librerouter in Hardware?](#how-to-use-librerouter-in-hardware)
@@ -148,6 +150,7 @@ It is the future Data Center resilience infrastructure.
 SO lets have a brief look into what is Open Source Hardware.
 
 ##Open Source Hardware
+
 It consists of physical artifacts of technology designed and offered by the open design movement. Both free and 
 open-source software (FOSS) as well as open-source hardware is created by this open-source culture movement and 
 applies a like concept to a variety of components. It is sometimes, thus, referred to as FOSH 
@@ -244,8 +247,8 @@ Uruk (Libre Kernel),(after apply hardening)       <https://urukproject.org//dist
 LibreWRT 
 Dockers (further containerization for security) (reference qubeOS.org) 
 
-##Distributions using Linux-Linux
-Distributions in which Linux-Libre is the default kernel used:
+##Distributions using Linux-Libre
+	- Distributions in which Linux-Libre is the default kernel used:
 
 	Dragora GNU/Linux-Libre
 	dyne:bolic
@@ -254,38 +257,13 @@ Distributions in which Linux-Libre is the default kernel used:
 	Parabola GNU/Linux-Libre
 	Trisquel
 
-	##Distributions with default kernel proposing to use Linux-Libre
+	- Distributions with default kernel proposing to use Linux-Libre
 
 	Arch Linux
 	Canaima
 	Gentoo Linux
 
 
-
-
-
-
-
-
-
-
-####***3 ways to have Linux with no blobs:***
-- **Deblobing** : clean up and verify linux tarballs and patches for non-Free blobs, you can check if your linux tarballs has non-free blobs or not from [here](http://www.fsfla.org/svn/fsfla/software/linux-libre/scripts/deblob-check)
-- Use clean basement and dont allow instaltion of 3rd party software that is stablished by trust control is free of blobls. Example [linux libre](http://www.linux-libre.fsfla.org/pub/linux-libre/releases/LATEST-4.6.N/)
-- **VRMS**: VRMS(Virtual Richard M. Stallman) is a program that analyzes the set of currently-installed packages on a Debian-based system, and reports all of the packages from the non-free tree which are currently installed. Software gets placed in the non-free tree when it is agreed not to be too problematic for Debian to distribute but does not meet the Debian Free Software Guidelines and therefore cannot be included in their official distribution. For each program from "non-free" installed, vrms displays an explanation of why it is non-free, if one is available.:https://alioth.debian.org/projects/vrms/
-
-#####***Philosophically speaking, you could consider the difference to be as follows:***
-
-- The Debian kernel doesn't include any non-free firmware (bugs aside), but it allows users to load non-free firmware if they wish to do so.
-
-- The Linux-libre kernel doesn't include any non-free firmware or anything looking like firmware, and it prevents users from loading non-free firmware even if they wish to do so.
-
-#####***Linux-libre is built by running a deblob script on the kernel source code. This goes through the kernel source code, and makes various firmware-related changes:***
-
-- Any firmware for which source code is available is preserved, but the script makes sure the source code is available.
-- Any module requiring firmware is stripped of the ability to load the firmware.
-- Any source code which looks like firmware (sequences of numbers) is removed.
-- Any file containing only firmware (e.g. the contents of firmware/radeon) is removed.
 
 ##***What intend to be Librerouter?***
 GNU open hardware running and GNU software:
