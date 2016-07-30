@@ -200,46 +200,46 @@ chipset restitutions and questions about missing parts of info and doc. Few of t
 	Need signed binary for being accepted by the board. 
 	Do not accept free booting. 
 
-<https://cloud.githubusercontent.com/assets/17382786/14741525/16a5c3f8-0897-11e6-8b2b-ec1f3fbdc5de.png>
+![arm boot tz]<https://cloud.githubusercontent.com/assets/17382786/14741525/16a5c3f8-0897-11e6-8b2b-ec1f3fbdc5de.png>
 
 ##Licenses and certifications available for hardware openness compliance
 
-http://www.ohwr.org/documents/294 
-http://www.gnu.org/licenses/quick-guide-gplv3.en.html 
-http://www.tapr.org/OHL 
-http://www.opengroup.org/accreditation/o-ttps 
-http://www.fsf.org/resources/hw/endorsement/respects-your-freedom 
+	- http://www.ohwr.org/documents/294 
+	- http://www.gnu.org/licenses/quick-guide-gplv3.en.html 
+	- http://www.tapr.org/OHL 
+	- http://www.opengroup.org/accreditation/o-ttps 
+	- http://www.fsf.org/resources/hw/endorsement/respects-your-freedom 
 
 ##Certifications available for privacy and security compliance
 
-www.vub.ac.be/LSTS/pub/Dehert/481.pdf 
-https://www.truste.com/business-products/dpm-services/ 
-https://www.european-privacy-seal.eu/EPS-en/Certification 
-http://www.iso.org/iso/catalogue_detail.htm?csnumber=61498 
-http://www.tuv.com/en/corporate/business_customers/information_security_cw/strategic_information_security/data_protection_certification/data_privacy_certification.html 
-http://www.export.gov/safeharbor/ 
-https://safeharbor.export.gov/swisslist.aspx 
-https://www.tuvit.de/en/privacy/uld-privacy-seal-1075.htm 
-http://www.prismintl.org/Privacy-Certification/privacy/about-the-privacy-plus-program.html 
-https://www.esrb.org/privacy/ 
-http://www.privacytrust.org/certification/privacy/ 
-https://www.datenschutzzentrum.de/zertifizierung/ 
-http://www.edaa.eu/certification-process/trust-seal/ 
+	- www.vub.ac.be/LSTS/pub/Dehert/481.pdf 
+	- https://www.truste.com/business-products/dpm-services/ 
+	- https://www.european-privacy-seal.eu/EPS-en/Certification 
+	- http://www.iso.org/iso/catalogue_detail.htm?csnumber=61498 
+	- http://www.tuv.com/en/corporate/business_customers/information_security_cw/strategic_information_security/data_protection_certification/data_privacy_certification.html 
+	- http://www.export.gov/safeharbor/ 
+	- https://safeharbor.export.gov/swisslist.aspx 
+	- https://www.tuvit.de/en/privacy/uld-privacy-seal-1075.htm 
+	- http://www.prismintl.org/Privacy-Certification/privacy/about-the-privacy-plus-program.html 
+	- https://www.esrb.org/privacy/ 
+	- http://www.privacytrust.org/certification/privacy/ 
+	- https://www.datenschutzzentrum.de/zertifizierung/ 
+	- http://www.edaa.eu/certification-process/trust-seal/ 
 
 ##Certifications for product security compliance:
 
-http://www.dekra-certification.com/en/cyber-security 
-http://www.exsolutiongroup.com/blog/various-types-of-iso-certification-uae-has-to-offer/ 
-https://digital.premierit.com/all-about-iso-27001-certification 
-https://www.apcon.com/apcon-certified-applications?gclid=CMrqsaCTt8wCFcQp0wodJokNQg 
-http://www.cyberark.com/awards/ 
-https://czarsecurities.com/security-seal 
-http://www.teletrust.de/en/itsmig/ 
-https://iapp.org/certify/cipt/ 
-http://www.cdse.edu/certification/become.html 
-https://en.wikipedia.org/wiki/Evaluation_Assurance_Level 
-https://en.wikipedia.org/wiki/Common_Criteria 
-http://www.asd.gov.au/infosec/aisep/crypto.htm 
+	- http://www.dekra-certification.com/en/cyber-security 
+	- http://www.exsolutiongroup.com/blog/various-types-of-iso-certification-uae-has-to-offer/ 
+	- https://digital.premierit.com/all-about-iso-27001-certification 
+	- https://www.apcon.com/apcon-certified-applications?gclid=CMrqsaCTt8wCFcQp0wodJokNQg 
+	- http://www.cyberark.com/awards/ 
+	- https://czarsecurities.com/security-seal 
+	- http://www.teletrust.de/en/itsmig/ 
+	- https://iapp.org/certify/cipt/ 
+	- http://www.cdse.edu/certification/become.html 
+	- https://en.wikipedia.org/wiki/Evaluation_Assurance_Level 
+	- https://en.wikipedia.org/wiki/Common_Criteria 
+	- http://www.asd.gov.au/infosec/aisep/crypto.htm 
 
 
 ##Purposed Operating Systems using Linux Libre
