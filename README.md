@@ -19,13 +19,11 @@
 	- [Certifications available for privacy and security compliance](#certifications-available-for-privacy-and-security-compliance)
 	- [Certifications for product security compliance](#certifications-for-product-security-compliance)
 	- [Purposed Operating Systems using Linux Libre](#purposed-operating-systems-using-linux-libre)
+	- [Technical Overview](#technical-overview)
 
 
 
 
-
-
-- [Technical Overview](#technical-overview)
 	- [How to use Librerouter in Hardware?](#how-to-use-librerouter-in-hardware)
 	- [Which hardware is needed to run Librerouter?](#which-hardware-is-needed-to-run-librerouter?)
 	- [Services are running in Librerouter](#services-are-running-in-librouter)
@@ -265,31 +263,6 @@ Dockers (further containerization for security) (reference qubeOS.org)
 
 
 
-##***What intend to be Librerouter?***
-GNU open hardware running and GNU software:
-
-##***Who? Why? What? How?***
-
-A unique combination of open hardware or audited, GNU software and trainning you can achieve **a decrease** of the cyber risks:
-
-- Open source comunity.
-- Solution to bypass censorship, spy agencies, anti net neutrality internet providers, and gov. control.
-- Easy to use for all people with zero tech knowledge.
-- Plug and play system to make your traffic untraceable.
-- It is the future Data Center resilience infrastructure.
-
-##***What is open source hardware?***
-
-It consists of physical artifacts of technology designed and offered by the open design movement. Both free and open-source software (FOSS) as well as open-source hardware is created by this open-source culture movement and applies a like concept to a variety of components. It is sometimes, thus, referred to as FOSH (free and open-source hardware). The term usually means that information about the hardware is easily discerned so that others can make it - coupling it closely to the maker movement.[1] Hardware design (i.e. mechanical drawings, schematics, bills of material, PCB layout data, HDL source code[2] and integrated circuit layout data), in addition to the software that drives the hardware, are all released under free/libre terms. The original sharer gains feedback and potentially improvements on the design from the FOSH community. There is now significant evidence that such sharing can drive a high return on investment for investors.
-
-
-###***LGPL***
-
-The GNU Lesser General Public License (LGPL) is a free software license published by the Free Software Foundation (FSF). The license allows developers and companies to use and integrate software released under the LGPL into their own (even proprietary) software without being required by the terms of a strong copyleft license to release the source code of their own components. The license only requires software under the LGPL be modifiable by end users via source code availability. For proprietary software, code under the LGPL is usually used in the form of a shared library such as a DLL, so that there is a clear separation between the proprietary and LGPL components. The LGPL is primarily used for software libraries, although it is also used by some stand-alone applications.
-
-###***CC***
-
-A Creative Commons (CC) license is one of several public copyright licenses that enable the free distribution of an otherwise copyrighted work. A CC license is used when an author wants to give people the right to share, use, and build upon a work that they have created. CC provides an author flexibility (for example, they might choose to allow only non-commercial uses of their own work) and protects the people who use or redistribute an author's work from concerns of copyright infringement as long as they abide by the conditions that are specified in the license by which the author distributes the work.
 
 ###***Many H/W providers claimed they produce open hardware but it's just crap?***
 
@@ -358,6 +331,9 @@ tested only in debian 8.5 x86 32bits 2Gib Ram and 32GB emc
 - Dockers (further containerization for security) (reference qubeOS.org)
 
 #Technical Overview
+
+Libre Router exploits the technologies like Free Open Source hardware, Linux Libre, deblobbed, hardened Linux Kernel, 
+Linux iptables, encryption and many other services to protect the intrusions, malicious attacks, unwanted advertisements etc.
 
 ###***How to connect to use Librerouter in Hardware?***
 
