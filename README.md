@@ -335,7 +335,7 @@ tested only in debian 8.5 x86 32bits 2Gib Ram and 32GB emc
 Libre Router exploits the technologies like Free Open Source hardware, Linux Libre, deblobbed, hardened Linux Kernel, 
 Linux iptables, encryption and many other services to protect the intrusions, malicious attacks, unwanted advertisements etc.
 
-###***How to connect to use Librerouter in Hardware?***
+###***Using Libre Router to build a secure network***
 
 From inside secureLAN
 
@@ -346,22 +346,38 @@ From being routed through any Darknet
 ![from outdoor](https://cloud.githubusercontent.com/assets/13025157/14445989/c1160490-0051-11e6-9996-bc6ffe9386f1.png)
 
 
-###***How it will protect me?***
+###***How does Libre Router protects us?***
 
-- With our bridge, a secured open operating system when we would have the hardened version of it (initially based debian libre)
+Libre router combined with Linux Libre and hardened OS configuration shown above protects us in many ways as follows:
+ 
+	- With our OS, a secured open operating system when we would have the hardened version of it based on 
+	  Debian Libre - Put here similar foto of Totemo distro piramid. #***TODO***
+	- Decentralizing the services you consume from the cloud at local alternatives (making impossible to 
+	  apply big data enemy corps.) 
+	- A decentralized anonymous Search Engine with admin rights.  
+	- A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
+	- Secure decentralized video conferences based in XMPPoverTOR or WebRTC. 
+	- A secure Storage System with collaborative tools based in : TahoeLafs over i2P and blocksnet.
+	- Transparent Email encryption for your actual email. 
+	- Anonymous web traffic enforcer Ad-blocker, intrusion prevention system, anti-virus and anti-tracking technology 
+	  for your web - browsing. Filtering virus, exploits, malware, ads , bad reputation IP and tasteless content. 
+	- Different services that tract of all the data transaction like Internet proxy, clamav, surikata proxy, snort
+          unbound DNS lists, iptables etc
+	- Self hosted obfuscated authentication (dissolve legal relation between user-human and legal-name), Forcing         encryption in transport and in rest data.
+	- Network filtering the MetaData that expose you, like scripts,cookies, browser info, docs meta, etc.  
 
-![mempo](https://cloud.githubusercontent.com/assets/17382786/17207306/48017294-54b4-11e6-8d6e-d50e66288416.png)
+Following security pyramid diagram explains the different components that make our network secure.
 
-- Decentralizing the services you consume from the cloud at local alternatives (making impossible to apply big data enemy corps.)
-- Anonymous web traffic enforcer Ad-blocker, intrusion prevention system, anti-virus and anti-tracking technology for your web - browsing. Filtering virus, exploits, malware, ads , bad reputational IP and tasteless content.
-- Selfhosted obfuscated authentication (dissolve legal relation between user-human and legal-name), 
-- Forcing encryption in transport and in rest data.
-- Decentralization of auth https://cageos.org/index.php?page=apps&section=Autenticacion
-- Network filtering the MetaData that expose you, like scripts,cookies, browser info, docs meta, etc. 
+![mempro](https://cloud.githubusercontent.com/assets/17382786/17207306/48017294-54b4-11e6-8d6e-d50e66288416.png)
+
+Following image shows how Libre Router protects by sitting between the outer Internet and out private network
+
 ![metapollas](https://cloud.githubusercontent.com/assets/13025157/14502287/d6467f16-01aa-11e6-91d3-5e757c73a626.jpg)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-![softwarelist](https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+
+Following diagram shows the current issues, safeguards against them and the open Source components that help us get rid of it. 
+
+	<https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg>
+
 
 #***Services are running in Librerouter***
 
