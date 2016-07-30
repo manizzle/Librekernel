@@ -376,7 +376,8 @@ Following image shows how Libre Router protects by sitting between the outer Int
 
 Following diagram shows the current issues, safeguards against them and the open Source components that help us get rid of it. 
 
-	<https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg>
+![Issues_Safegaurds](https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg)
+
 
 
 #***Services are running in Librerouter***
