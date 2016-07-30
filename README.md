@@ -8,8 +8,8 @@
 
 
 - [Overview of Linux Libre and Libre Kernel for personal cyber security and privacy](#overview-of-linux-libre-and-libre-kernel-for-personal-cyber-security-and-privacy)
-	- [Purpose of this document](#purpose-of-this-document)
-
+	- [Purpose of this document](#purpose-of-this-document)\
+	- [Introduction] (#introduction)
 	- [Why we need this technology?] (#why-do-we-need-this-technology)
 	- [What is linux libre?](#what-is-linux-libre)
 	- [What intend to be librouter?](#what-intend-to-be-librerouter)
@@ -47,9 +47,22 @@ wrongs things that happen with or without our explicit or implicit knowledge:
 
 ##Overview of Linux Libre and Libre Kernel for personal cyber pirvacy and security:
 
+##***Introduction***
 
+Software components with no available source code are called binary blobs(Binary Large Objects 
+or a collection of binary data stored as a single object) and, as such, are 
+mostly used for proprietary firmware images in the Linux kernel like hard drives, Ethernet, 
+USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give 
+the user the freedom to review, audit, scrutinize, modify or, consequently, redistribute their 
+modified versions.
 
+Linux Libre is an Linux based operating system kernel and a GNU package that is maintained 
+from modified versions of the Linux kernel. The aim of the Linux Libre is to remove from the 
+Linux kernel any software that does not include its source code, has its source code obfuscated, 
+or is released under proprietary licenses that we call binary blobs.
+For an example please see Blob Example at following link at the bottom
 
+[Blob Example](#blob-example)
 
 ##***Why do we need this technology?***
 
@@ -798,7 +811,9 @@ can explain the different technical blocks involved in the project.
 To be specified
 Features to be implemented in the project to be listed here in order of priority
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+##***Blob Example***
+	- add example here
+	
 ##***FAQ***
 	
 	Q. Can you define the project in a line here?
@@ -909,7 +924,57 @@ The below picture of Software Wars is not relevant, it should be deleted
 ![9dovoix](https://cloud.githubusercontent.com/assets/17382786/17207521/45ba7c00-54b5-11e6-9f6c-f3236f32b9a1.jpg)
 
 
+##Blob Example
+Example of a blob from vanilla Linux kernel from Linus that gets distributed on kernel.org
+Here is one example from Linux-2.6.24/drivers/net/tg3.c 
 
+--------------------------------------------------------------------------------------------
+/*
+  * tg3.c: Broadcom Tigon3 ethernet driver.
+  *
+  * Copyright (C) 2001, 2002, 2003, 2004 David S. Miller (davem@???)
+  * Copyright (C) 2001, 2002, 2003 Jeff Garzik (jgarzik@???)
+  * Copyright (C) 2004 Sun Microsystems Inc.
+  * Copyright (C) 2005-2007 Broadcom Corporation.
+  *
+  * Firmware is:
+  *      Derived from proprietary unpublished source code,
+  *      Copyright (C) 2000-2003 Broadcom Corporation.
+  *
+  *      Permission is hereby granted for the distribution of this firmware
+  *      data in hexadecimal or equivalent format, provided this copyright
+  *      notice is accompanying it.
+  */
+
+
+
+It then has screenfulls of non-free code like this: 
+
+0x0e000003, 0x00000000, 0x08001b24, 0x00000000, 0x10000003, 0x00000000, 
+0x0000000d, 0x0000000d, 0x3c1d0800, 0x37bd4000, 0x03a0f021, 0x3c100800, 
+0x26100000, 0x0e000010, 0x00000000, 0x0000000d, 0x27bdffe0, 0x3c04fefe, 
+0xafbf0018, 0x0e0005d8, 0x34840002, 0x0e000668, 0x00000000, 0x3c030800, 
+0x90631b68, 0x24020002, 0x3c040800, 0x24841aac, 0x14620003, 0x24050001, 
+0x3c040800, 0x24841aa0, 0x24060006, 0x00003821, 0xafa00010, 0x0e00067c, 
+0xafa00014, 0x8f625c50, 0x34420001, 0xaf625c50, 0x8f625c90, 0x34420001, 
+0xaf625c90, 0x2402ffff, 0x0e000034, 0xaf625404, 0x8fbf0018, 0x03e00008, 
+0x27bd0020, 0x00000000, 0x00000000, 0x00000000, 0x27bdffe0, 0xafbf001c, 
+0xafb20018, 0xafb10014, 0x0e00005b, 0xafb00010, 0x24120002, 0x24110001, 
+0x8f706820, 0x32020100, 0x10400003, 0x00000000, 0x0e0000bb, 0x00000000, 
+0x8f706820, 0x32022000, 0x10400004, 0x32020001, 0x0e0001f0, 0x24040001, 
+0x32020001, 0x10400003, 0x00000000, 0x0e0000a3, 0x00000000, 0x3c020800, 
+0x90421b98, 0x14520003, 0x00000000, 0x0e0004c0, 0x00000000, 0x0a00003c, 
+0xaf715028, 0x8fbf001c, 0x8fb20018, 0x8fb10014, 0x8fb00010, 0x03e00008, 
+0x27bd0020, 0x27bdffe0, 0x3c040800, 0x24841ac0, 0x00002821, 0x00003021, 
+0x00003821, 0xafbf0018, 0xafa00010, 0x0e00067c, 0xafa00014, 0x3c040800, 
+0x248423d8, 0xa4800000, 0x3c010800, 0xa0201b98, 0x3c010800, 0xac201b9c, 
+0x3c010800, 0xac201ba0, 0x3c010800, 0xac201ba4, 0x3c010800, 0xac201bac, 
+0x3c010800, 0xac201bb8, 0x3c010800, 0xac201bbc, 0x8f624434, 0x3c010800, 
+0xac221b88, 0x8f624438, 0x3c010800, 0xac221b8c, 0x8f624410, 0xac80f7a8, 
+0x3c010800, 0xac201b84, 0x3c010800, 0xac2023e0, 0x3c010800, 0xac2023c8, 
+
+we call these Hexadecimle numbers as blogs and it's hard to impossible 
+to know its purpose and effect on our system.  
 
 
 
