@@ -4,10 +4,12 @@
 
 &nbsp;
 
+##[Index]
 
 
-- [Introduction](#introduction)
-	- [FAQ] (#faq)
+- [Overview of Linux Libre and Libre Kernel for personal cyber security and privacy](#overview-of-linux-libre-and-libre-kernel-for-personal-cyber-security-and-privacy)
+	- [Purpose of this document](#purpose-of-this-document)
+
 	- [Why we need this technology?] (#why-do-we-need-this-technology)
 	- [What is linux libre?](#what-is-linux-libre)
 	- [What intend to be librouter?](#what-intend-to-be-librerouter)
@@ -26,22 +28,27 @@
 	- [Prerequisites](#prerequisites)
 	
 - [Roadmap](#roadmap)
+- [FAQ] (#faq)
 - [To be categorized](#others)
 
-#Introduction
+##***Overview of Linux Libre and Libre Kernel for personal cyber security and privacy***
+
+##***Purpose of this document***
+
+This document is meant to explain the Linux Libre and the Libre Router, Linux based Open Source Software and open Source Hardware technologies developed for creating a secure network for normal users to avoid following
+wrongs things that happen with or without our explicit or implicit knowledge: 
+
+	- Traffic Sniffing: those that are checking your traffic. 
+	- Government spy/monitoring institutions passive actions: collecting general data from worldwide. 
+	- Libre Router evil nodes: a box Owned for those bad people. 
+	- Malicious Internet nodes: better known as blackbones. 
+	- Your Internet provider (ISP): if they would trying anything with your data.
+	- Keeping back-doors in software and hardware to achieve one or more of the above things 
+
+##Overview of Linux Libre and Libre Kernel for personal cyber pirvacy and security:
 
 
 
-##***FAQ***
-	
-	Q. Can you define the project in a line here?
-	-> An end user privacy firewall
-
-	Q. Are there any other similar projects?
-	-> Sure there are
-
-	Q. Is their any demo showing that it is actually doing what is being claimed?
-	-> Work-in-progress
 
 
 ##***Why do we need this technology?***
@@ -792,6 +799,16 @@ To be specified
 Features to be implemented in the project to be listed here in order of priority
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+##***FAQ***
+	
+	Q. Can you define the project in a line here?
+	-> An end user privacy firewall
+
+	Q. Are there any other similar projects?
+	-> Sure there are
+
+	Q. Is their any demo showing that it is actually doing what is being claimed?
+	-> Work-in-progress
 
 
 **Following sections need to be placed at appropriate places**
