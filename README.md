@@ -10,8 +10,8 @@
 - [Overview of Linux Libre and Libre Kernel for personal cyber security and privacy](#overview-of-linux-libre-and-libre-kernel-for-personal-cyber-security-and-privacy)
 	- [Purpose of this document](#purpose-of-this-document)\
 	- [Introduction] (#introduction)
-	- [Why we need this technology?] (#why-do-we-need-this-technology)
-	- [What is linux libre?](#what-is-linux-libre)
+	- [Need for this technology?] (#Need-for-this-technology)
+	- [About Linux Libre Technology](#About-linux-libre-technology)
 	- [What intend to be librouter?](#what-intend-to-be-librerouter)
 	- [Who? Why? What? How?](#who-why-what-how)
 	- [What is open source hardware?](#what-is-open-source-hardware)
@@ -64,7 +64,7 @@ For an example please see Blob Example at following link at the bottom
 
 [Blob Example](#blob-example)
 
-##***Why do we need this technology?***
+##***Need for this technology?***
 
 - **Sniffers**: those that are checking your traffic.
 - **Government spy/monitoring institutions passive actions**: collecting general data from worldwide.
@@ -72,11 +72,19 @@ For an example please see Blob Example at following link at the bottom
 - **Malicious internet nodes**: better known as _blackbones_.
 - **Your internet provider (ISP)**: if they would trying anything with your data.
 
-##***What is Linux-libre?***
+##***About Linux Libre Technology***
 
-Is an operating system kernel and a GNU package[3] that is maintained from modified versions of the Linux kernel. The aim of the project is to remove from the Linux kernel any software that does not include its source code, has its source code obfuscated, or is released under proprietary licenses.
+Linux Libre is a free/Libre version of the kernel Linux suitable for use with the GNU Operating System.
+It removes non-free components from Linux, that are disguised as source code or distributed in separate
+files. It also disables run-time requests for non-free components, shipped separately or as part of 
+Linux, and documentation pointing to them. The GNU Linux Libre project takes a minimal-changes approach 
+to cleaning up Linux, making no effort to substitute components that need to be removed with functionally
+equivalent free/Libre ones.
 
-Software components with no available source code are called binary blobs and, as such, are mostly used for proprietary firmware images in the Linux kernel. While generally redistributable, binary blobs do not give the user the freedom to audit, modify or, consequently, redistribute their modified versions.
+As explained earlier, its an operating system kernel and a GNU package whose aim is to remove from the 
+Linux kernel any source code with blobs, with obfuscated source code, or is has proprietary licenses.
+Software components with no available source code are called binary blobs and, as such, are mostly used 
+for proprietary firmware images in the Linux kernel.
 
 ####***3 ways to have Linux with no blobs:***
 - **Deblobing** : clean up and verify linux tarballs and patches for non-Free blobs, you can check if your linux tarballs has non-free blobs or not from [here](http://www.fsfla.org/svn/fsfla/software/linux-libre/scripts/deblob-check)
