@@ -431,13 +431,13 @@ elif [ $PLATFORM = "D8" ]; then
 	curl macchanger ntpdate tor bc sudo lsb-release dnsutils \
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
-	i2p i2p-keyring yacy virtualenv pwgen gcc make \
+	i2p i2p-keyring yacy virtualenv pwgen gcc g++ make \
         killyourtv-keyring i2p-tahoe-lafs \
 	c-icap clamav  clamav-daemon libcurl4-gnutls-dev libicapapi-dev \
 	deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
 	libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
-        postfix mailutils squid3 \
+        postfix mailutils \
 	libssl-dev perl screen \
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
 	2>&1 > /tmp/apt-get-install1.log
@@ -808,10 +808,16 @@ tar zxvf /tmp/squid-3.4.13.tar.gz
 
 echo "Building squid ..."
 cd /root/squid-3.4.13
-./configure --with-openssl --enable-ssl --enable-ssl-crtd --with-default-user=squid 
+./configure --prefix=/usr --localstatedir=/var --libexecdir=/lib/squid --datadir=/usr/share/squid --sysconfdir=/etc/squid --with-logdir=/var/log/squid --with-pidfile=/var/run/squid.pid --enable-icap-client --enable-linux-netfilter --enable-ssl-crtd --with-openssl --enable-ltdl-convenience --enable-ssl
+# --with-openssl --enable-ssl --enable-ssl-crtd --with-default-user=squid 
 make
 make install
 cd
+
+# Getting squid startup script
+if [ ! -e /etc/squid/squid3.rc ]; then
+wget -P /etc/squid/ https://raw.githubusercontent.com/grosskur/squid3-deb/master/debian/squid3.rc 
+fi
 }
 
 
@@ -903,15 +909,15 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	check_internet          # Check Internet access
 #	check_assemblance
 #	check_requirements      # Checking requirements for 
-	configure_bridges       # Configure bridge interfacers
-				# Physical or Virtual machine
         get_dhcp_and_Internet  	# Get DHCP on eth0 or eth1 and 
 				# connect to Internet
+        configure_bridges       # Configure bridge interfacers
+                                # Physical or Virtual machine
 	configure_repositories	# Prepare and update repositories
 	install_packages       	# Download and install packages	
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
-	#install_squid		# Install squid package
+	install_squid		# Install squid package
 	install_squidclamav	# install SquidClamav package
         save_variables	        # Save detected variables
 
