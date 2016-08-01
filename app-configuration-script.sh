@@ -1012,20 +1012,6 @@ fi
 
 
 # ---------------------------------------------------------
-# Function to configure Mailpile local service
-# ---------------------------------------------------------
-configure_mailpile()
-{
-echo "Configuring Mailpile local service ..."
-export MAILPILE_HOME=.local/share/Mailpile
-if [ -e $MAILPIEL_HOME/default/mailpile.cfg ]; then
-  echo "Configuration file does not exist. Exiting ..."
-  exit 6
-fi
-}
-
-
-# ---------------------------------------------------------
 # Function to configure Privoxy
 # --------------------------------------------------------
 configure_privoxy()
@@ -1107,17 +1093,31 @@ configure_squid()
 echo "Configuring squid server ..."
 
 # Generating certificates for ssl connection
-#echo "Generating certificates ..."
-#if [ ! -e /etc/ssl/squid.pam ]; then
-#openssl req -new -newkey rsa:1024 -days 1365 -nodes -x509 -keyout myca.pem -out /etc/ssl/squid.pem -batch
-#fi
+echo "Generating certificates ..."
+if [ ! -e /etc/squid/ssl_cert ]; then
+mkdir /etc/squid/ssl_cert
+openssl req -new -newkey rsa:2048 -days 365 -nodes -x509  \
+	-keyout /etc/squid/ssl_cert/squid.key \
+        -out /etc/squid/ssl_cert/squid.crt -batch
+chown -R proxy:proxy /etc/squid/ssl_cert/*
+chmod -R 700
+fi
 
-# Initializing squid ssl_db
-#/usr/local/squid/libexec/ssl_crtd -c -s /var/lib/ssl_db
-#chown -R squid.squid /var/lib/ssl_db
+echo "Creating log directory for Squid..."
+mkdir /var/log/squid
+chown -R proxy:proxy /var/log/squid
+chmod -R 766 /var/log/squid/*
+
+echo "Calling Squid to create swap directories and initialize cert cache dir..."
+squid -z
+if [ -d "/var/cache/squid/ssl_db" ]; then
+	rm -rf /var/cache/squid/ssl_db
+fi
+/lib/squid/ssl_crtd -c -s /var/cache/squid/ssl_db
+chown -R proxy:proxy /var/cache/squid/ssl_db
 
 # squid configuration
-
+echo "Creating squid conf file ..."
 echo "
 acl SSL_ports port 443
 acl Safe_ports port 80          # http
@@ -1141,26 +1141,30 @@ http_access allow librenetwork
 http_access deny all
 
 # http configuration
-http_port 10.0.0.1:3130 accel vhost allow-direct
-coredump_dir /var/spool/squid3
+http_port 10.0.0.1:3130 intercept
+coredump_dir /var/spool/squid
 
 # https configuration
-#https_port 3129 intercept ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB
- 
-#cert=/etc/ssl/squid.pem key=/etc/ssl/squid.pem
- 
-#ssl_bump server-first all
- 
-#sslcrtd_program /usr/local/squid/libexec/ssl_crtd -s /var/lib/ssl_db -M 4MB
-#sslcrtd_children 8 startup=1 idle=1
+https_port 10.0.0.1:3131 intercept ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/ssl_cert/squid.crt key=/etc/squid/ssl_cert/squid.key
+always_direct allow all
 
+# SSL Proxy options
+ssl_bump server-first all
+sslproxy_cert_error allow all
+sslproxy_cert_adapt setCommonName ssl::certDomainMismatch
+sslproxy_options ALL,SINGLE_DH_USE,NO_SSLv3,NO_SSLv2 
+
+# Refresh patterns
 refresh_pattern ^ftp:           1440    20%     10080
 refresh_pattern ^gopher:        1440    0%      1440
 refresh_pattern -i (/cgi-bin/|\\?) 0     0%      0
 refresh_pattern .               0       20%     4320
 
-# icap configuration
+# sslcrtd configuration
+sslcrtd_program /lib/squid/ssl_crtd -s /var/cache/squid/ssl_db -M 4MB
+sslcrtd_children 5
 
+# icap configuration
 icap_enable on
 icap_send_client_ip on
 icap_send_client_username on
@@ -1172,14 +1176,33 @@ icap_service service_req reqmod_precache bypass=1 icap://127.0.0.1:1344/squidcla
 adaptation_access service_req allow all
 icap_service service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
 adaptation_access service_resp allow all
-" > /etc/squid3/squid.conf
+" > /etc/squid/squid.conf
 
+echo "Configuring squid startup file ..."
+if [ ! -e /etc/squid/squid3.rc ]; then
+        echo "Could not find squid srartup script. Exiting ..."
+        exit 8
+else
+	rm -rf /etc/init.d/squid*
+        cp /etc/squid/squid3.rc /etc/init.d/squid
+	sed "s~Provides:.*~Provides:          squid~g" -i  /etc/init.d/squid
+	sed "s~NAME=.*~NAME=squid~g" -i  /etc/init.d/squid
+	sed "s~DAEMON=.*~DAEMON=/usr/sbin/squid~g" -i  /etc/init.d/squid
+	sed "s~PIDFILE=.*~PIDFILE=/var/run/squid.pid~g" \
+	-i  /etc/init.d/squid
+	sed "s~CONFIG=.*~CONFIG=/etc/squid/squid.conf~g" \
+	-i /etc/init.d/squid
+	chmod +x /etc/init.d/squid
+fi
+	
+update-rc.d squid start defaults
 echo "Restarting squid server ..."
-service squid3 restart
+service squid restart
 
 # squid TOR
 
-cat << EOF > /etc/squid3/squid-tor.conf 
+echo "Creating squid-tor conf file ..."
+cat << EOF > /etc/squid/squid-tor.conf 
 # Tor acl
 acl tor_url dstdomain .onion
 
@@ -1232,29 +1255,31 @@ never_direct allow all
 
 cache_store_log none
 
-pid_filename /var/run/squid3-tor.pid
+pid_filename /var/run/squid-tor.pid
 
-cache_log /var/log/squid3/cache.log
+cache_log /var/log/squid/cache.log
 
-coredump_dir /var/spool/squid3
+coredump_dir /var/spool/squid
 
 #url_rewrite_program /usr/bin/squidGuard
 
 no_cache deny all
 EOF
 
-cp /etc/init.d/squid3 /etc/init.d/squid3-tor
-sed "s~Provides:.*~Provides:          squid3-tor~g" -i  /etc/init.d/squid3-tor
-sed "s~PIDFILE=.*~PIDFILE=/var/run/squid3-tor.pid~g" -i  /etc/init.d/squid3-tor
-sed "s~CONFIG=.*~CONFIG=/etc/squid3/squid-tor.conf~g" -i /etc/init.d/squid3-tor
+echo "Configuring squid-tor startup file ..."
+cp /etc/init.d/squid /etc/init.d/squid-tor
+sed "s~Provides:.*~Provides:          squid-tor~g" -i  /etc/init.d/squid-tor
+sed "s~PIDFILE=.*~PIDFILE=/var/run/squid-tor.pid~g" -i  /etc/init.d/squid-tor
+sed "s~CONFIG=.*~CONFIG=/etc/squid/squid-tor.conf~g" -i /etc/init.d/squid-tor
 
-update-rc.d squid3-tor start defaults
-echo "Restarting squid3-tor ..."
-service squid3-tor restart
+update-rc.d squid-tor start defaults
+echo "Restarting squid-tor ..."
+service squid-tor restart
 
 #Squid I2P
 
-cat << EOF > /etc/squid3/squid-i2p.conf
+echo "Creating squid-i2p conf file ..."
+cat << EOF > /etc/squid/squid-i2p.conf
 cache_peer 127.0.0.1 parent 8118 7 no-query no-digest
 
 #acl manager proto cache_object
@@ -1297,11 +1322,11 @@ never_direct allow all
 
 cache_store_log none
 
-pid_filename /var/run/squid3-i2p.pid
+pid_filename /var/run/squid-i2p.pid
 
-cache_log /var/log/squid3/cache.log
+cache_log /var/log/squid/cache.log
 
-coredump_dir /var/spool/squid3
+coredump_dir /var/spool/squid
 
 #url_rewrite_program /usr/bin/squidGuard
 
@@ -1309,16 +1334,15 @@ no_cache deny all
 
 EOF
 
-cp /etc/init.d/squid3 /etc/init.d/squid3-i2p
+echo "Configuring squid-i2p startup file ..."
+cp /etc/init.d/squid /etc/init.d/squid-i2p
+sed "s~Provides:.*~Provides:          squid-i2p~g" -i  /etc/init.d/squid-i2p
+sed "s~PIDFILE=.*~PIDFILE=/var/run/squid-i2p.pid~g" -i  /etc/init.d/squid-i2p
+sed "s~CONFIG=.*~CONFIG=/etc/squid/squid-i2p.conf~g" -i /etc/init.d/squid-i2p
 
-sed "s~Provides:.*~Provides:          squid3-i2p~g" -i  /etc/init.d/squid3-i2p
-sed "s~PIDFILE=.*~PIDFILE=/var/run/squid3-i2p.pid~g" -i  /etc/init.d/squid3-i2p
-sed "s~CONFIG=.*~CONFIG=/etc/squid3/squid-i2p.conf~g" -i /etc/init.d/squid3-i2p
-
-update-rc.d squid3-i2p start defaults
-
-echo "Restarting squid3-i2p ..."
-service squid3-i2p restart
+update-rc.d squid-i2p start defaults
+echo "Restarting squid-i2p ..."
+service squid-i2p restart
 }
 
 
@@ -1458,8 +1482,15 @@ service postfix restart
 # ---------------------------------------------------------
 # Function to start mailpile local service
 # ---------------------------------------------------------
-start_mailpile()
+configure_mailpile()
 {
+echo "Configuring Mailpile local service ..."
+export MAILPILE_HOME=.local/share/Mailpile
+if [ -e $MAILPIEL_HOME/default/mailpile.cfg ]; then
+  echo "Configuration file does not exist. Exiting ..."
+  exit 6
+fi
+
 # Make Mailpile a service with upstart
 echo "
 description \"Mailpile Webmail Client\"
@@ -1486,7 +1517,7 @@ end script
 " > /etc/init/mailpile.conf
  
 echo "Starting Mailpile local service ..."
-/opt/Mailpile/mp
+/usr/bin/screen -dmS mailpile_init /opt/Mailpile/mp
 }
 
 
@@ -2192,7 +2223,6 @@ configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
 configure_postfix		# Configuring postfix mail service
-start_mailpile			# Starting Mailpile local service
 
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
