@@ -480,7 +480,7 @@ In our decentralized system your valuable information is encrypted three times:
 1. Before it even leaves your computer, in the web browser
 2. In the collaboration tool before the data goes to the hard disk
 3. When backing up to the grid, the slices will also be encrypted. 
-4. 
+
 ![tahoe](https://cloud.githubusercontent.com/assets/13025157/14444761/fea4bc0c-0047-11e6-80bd-583bcb7b0fda.jpg)
 
 The decentralized (i2p) version of Tahoe LAFS-Grid (with protections against Sybil attacks and upload Dodos) is a new way to make your data indestructible. 
@@ -495,13 +495,7 @@ A grid splits your files up into little pieces, encrypts them and spreads them o
 
 You can also sync your home Librerouter with all of your portable devices to have the same files and receive the same alerts in real time.If someone steals your cube or for some reason it is destroyed, you can simply buy a replacement Librerouter server and recover your lost data automatically from the Grid.In minutes you’re up and running again!
 
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-
-Libraries:
-https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:matrix:featurescomparison
-
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-
+Libraries: https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:matrix:featurescomparison
 
 #Setting up a lab:
 
