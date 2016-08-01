@@ -406,7 +406,7 @@ Following diagram shows the current issues, safeguards against them and the open
 https://cageos.org/index.php?page=apps&section=Collaborative
 https://openbazaar.org
 
-- A decentralized anonymous Search Engine with admin rights.
+- A decentralized anonymous  Search Engine with admin rights.
 - 
 ![data center or decent-ralization](https://cloud.githubusercontent.com/assets/13025157/14444635/1047009c-0047-11e6-89a2-b271457d9df7.png)
 
