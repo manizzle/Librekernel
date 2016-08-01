@@ -20,6 +20,23 @@
 	- [Certifications for product security compliance](#certifications-for-product-security-compliance)
 	- [Purposed Operating Systems using Linux Libre](#purposed-operating-systems-using-linux-libre)
 	- [Technical Overview](#technical-overview)
+		- [Using Libre Router to build a secure network](#using-libre-router-to-build-a-secure-network)
+
+		- [How does Libre Router protects us?](#how-does-libre-router-protects-us?)
+
+		- [Services are running in Librerouter](#services-are-running-in-librerouter)
+
+		- [A decentralized anonymous Search Engine with admin rights](#a-decentralized-anonymous-search-engine-with-admin-rights)
+
+		- [Secure decentralized video conferences based in XMPPoverTOR or WebRTC](#secure-decentralized-video-conferences-based-in-xmppovertor-or-webrtc)
+
+		- [Transparent Email encryption for your actual email](#transparent-email-encryption-for-your-actual-email)
+
+		- [Service The descentralized Social network](#service-the-descentralized-social-network)
+
+		- [Service The descentralized Video Conference](#service-the-descentralized-video-conference)
+
+		- [Service Descentralized Indestructible Storage the RockStar app](#service-descentralized-indestructible-storage-the-rockStar-app)
 
 
 
@@ -346,7 +363,7 @@ From being routed through any Darknet
 ![from outdoor](https://cloud.githubusercontent.com/assets/13025157/14445989/c1160490-0051-11e6-9996-bc6ffe9386f1.png)
 
 
-###***How does Libre Router protects us?***
+##***How does Libre Router protects us***
 
 Libre router combined with Linux Libre and hardened OS configuration shown above protects us in many ways as follows:
  
@@ -378,8 +395,6 @@ Following diagram shows the current issues, safeguards against them and the open
 
 ![Issues_Safegaurds](https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg)
 
-#***TODO***
-
 #***Services are running in Librerouter***
 
 ![servicecomparison](https://cloud.githubusercontent.com/assets/13025157/14443209/0a778136-003e-11e6-98dc-5a699933e7f6.jpg)
@@ -401,12 +416,12 @@ Following diagram shows the current issues, safeguards against them and the open
 |Postfix|Yes|No|?|Public|Yes|No|
 |:---|:---|:---|:---|:---|:---|:---|
 
-- Decentrazied collaboration and makerplaces
+#***Decentrazied collaboration and makerplaces***
 
 https://cageos.org/index.php?page=apps&section=Collaborative
 https://openbazaar.org
 
-- A decentralized anonymous  Search Engine with admin rights.
+#***A decentralized anonymous  Search Engine with admin rights.***
 - 
 ![data center or decent-ralization](https://cloud.githubusercontent.com/assets/13025157/14444635/1047009c-0047-11e6-89a2-b271457d9df7.png)
 
@@ -414,38 +429,38 @@ https://openbazaar.org
 
 https://cageos.org/index.php?page=apps&section=SearchEngine
 
-- A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
+A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
 
 https://cageos.org/index.php?page=apps&section=SocialNetworks
 
 ![socialnetworks](https://cloud.githubusercontent.com/assets/13025157/14444852/be938994-0048-11e6-9200-0299ac312b3b.jpg)
 
-- Secure decentralized video conferences based in XMPPoverTOR or WebRTC.
+#***Secure decentralized video conferences based in XMPPoverTOR or WebRTC.***
 - 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
 ![rtcio](https://cloud.githubusercontent.com/assets/13025157/14445429/3081fd8e-004d-11e6-893f-8a4b4ccc9c1e.jpg)
 
 
-- A secure Storage System with collaborative tools based in : TahoeLafs over i2P and blocksnet.
+#***A secure Storage System with collaborative tools based in : TahoeLafs over i2P and blocksnet.***
 
 https://cageos.org/index.php?page=apps&section=StorageOwnCloud
 
 https://cageos.org/index.php?page=apps&section=DecentralizedBackup
 
-- Transparent Email encryption for your actual email.
+#***Transparent Email encryption for your actual email.***
 - 
 https://cageos.org/index.php?page=apps&section=SecureEmail
 
 ![email](https://cloud.githubusercontent.com/assets/13025157/14445983/c101a78e-0051-11e6-9efc-35569cf73c04.jpg)
 
-## Service The descentralized Social networkNetwork
+#***Service The descentralized Social networkNetwork***
 
 Librerouter can act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you.For example, do you hate cat videos? (Really? Can I get you some help?)
 You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
 You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab.We aren’t asking you to give up on social media.Instead we offer you a way to be in the captain’s chair.
 
-## Service The descentralized Video Conference
+##Service The descentralized Video Conference
 
 With federated XMPP servers for authentication but perfect for discovering users outside the Librerouter network with security from the normal web.  
 Unauthenticated and decentralized web browser video conferencing through anonymous links to create fast video conference rooms without third parties or middlemen involved.
