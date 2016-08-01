@@ -499,15 +499,14 @@ Libraries: https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:
 
 #Setting up a lab:
 
-You would need to setup 2 machines like this:
+For Virtual Machine setup we need one system with two guests installed in it, one Debian 8 32 bit and one Windows 10
+As shown in the following figure.
 
 ![deded](https://cloud.githubusercontent.com/assets/17382786/17208311/782c6d8a-54b8-11e6-82b7-e408db4f966d.png)
 
-One is a Debian where you will do a Virtual Machine Snapshoot BEFORE! installing the in YOUR Debian LFS the Librerouter Scripts
+In the Debian Snapshot we install the Debian Librerouter Scripts.
 
-The other VirtualMachine could be a privacyshit like windows 10 or simillar conected to the internal interface of the Librerouter.
-
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+The other VirtualMachine is windows 10 or simillar conected to the internal interface of the Librerouter.
 
 ##1. Setup Librerouter software Virtual machine 
 
@@ -519,8 +518,6 @@ Ongoing further: Devuan,Lubuntu/Core,Uruk,Dockers, Librewrt
 
 PIPO Intel NUC Z8083 is NOT! open hardware/source because the boot is NOT able to support yet replacement with Coreboot or Uboot
 Due to limitations: Only PRE-sold 300 boxes in crowdfunding, we can NOT go prod with ARM-FPGA boards plus screen in case, its too expensive)
-
-![infografia_12](https://cloud.githubusercontent.com/assets/13025157/16766793/67d0bb0e-483c-11e6-99ad-9b6ccf856e1a.jpg)
 
 Pipo do not have 1Tb HDD or 2 ethernets or 2 wlans, the version we test has addiotional components.
 The Debian LFromScratch will contain drivers that may be restrictive, again if you want a 100% open the you need fpga/arm boards in the market for router compatible with debian. 
