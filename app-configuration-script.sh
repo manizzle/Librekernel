@@ -398,9 +398,9 @@ configure_iptables()
 # Disabling ipv6 and enabling ipv4 forwarding
 echo "
 net.ipv4.ip_forward=1
-#net.ipv6.conf.all.disable_ipv6 = 1
-#net.ipv6.conf.default.disable_ipv6 = 1
-#net.ipv6.conf.lo.disable_ipv6 = 1
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
 " > /etc/sysctl.conf
 
 # Restarting sysctl
@@ -426,19 +426,19 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 80 -j
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 443 -j REDIRECT --to-ports 443
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 7000 -j REDIRECT --to-ports 7000
 
-# i2p network
+# to squid-i2p 
 iptables -t nat -A OUTPUT     -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
 iptables -t nat -A PREROUTING -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m tcp --sport 80 -d 10.191.0.1 -j REDIRECT --to-ports 3128
 
-# tor
+# to squid-tor
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --to 10.0.0.1:3129
 
-# squid
+# to squid http 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 80 -j DNAT --to 10.0.0.1:3130
 
-# https 
-iptables -t nat -I POSTROUTING -p tcp --dport 443 -o $EXT_INTERFACE -j MASQUERADE
+# to squid https 
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 443 -j REDIRECT --to-ports 3131
 
 # Redirecting traffic to tor
 #iptables -t nat -A PREROUTING -i eth0 -p tcp -d 10.0.0.0/8 --dport 80 --syn -j REDIRECT --to-ports 9040
@@ -1100,13 +1100,13 @@ openssl req -new -newkey rsa:2048 -days 365 -nodes -x509  \
 	-keyout /etc/squid/ssl_cert/squid.key \
         -out /etc/squid/ssl_cert/squid.crt -batch
 chown -R proxy:proxy /etc/squid/ssl_cert/*
-chmod -R 700
+chmod -R 777 /etc/squid/ssl_cert/*
 fi
 
 echo "Creating log directory for Squid..."
 mkdir /var/log/squid
 chown -R proxy:proxy /var/log/squid
-chmod -R 766 /var/log/squid/*
+chmod -R 777 /var/log/squid/*
 
 echo "Calling Squid to create swap directories and initialize cert cache dir..."
 squid -z
@@ -1115,6 +1115,7 @@ if [ -d "/var/cache/squid/ssl_db" ]; then
 fi
 /lib/squid/ssl_crtd -c -s /var/cache/squid/ssl_db
 chown -R proxy:proxy /var/cache/squid/ssl_db
+chmod -R 777 /var/cache/squid/ssl_db
 
 # squid configuration
 echo "Creating squid conf file ..."
