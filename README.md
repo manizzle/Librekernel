@@ -219,7 +219,7 @@ The market is full of crowdfunded project where the funder claimed the project i
 - Neeed sign binaries for bein accepted by the board.
 - Not accept free booting.
 
-![arm boot tz](https://www.widevisiondesign.com/img2.jpg)
+![arm boot tz](http://widevisiondesign.com/img2.jpg)
 
 
 ###***Which are the licenses and certifications that show openness in the hardware?***
