@@ -339,8 +339,8 @@ https://cageos.org/index.php?page=apps&section=Collaborative
 https://openbazaar.org
 
 #***A decentralized anonymous  Search Engine with admin rights.***
-- 
-![data center or decent-ralization](https://cloud.githubusercontent.com/assets/13025157/14444635/1047009c-0047-11e6-89a2-b271457d9df7.png)
+
+![data center or decent-ralization](http://widevisiondesign.com/11-12_v2.png)
 
 ![search engine](https://cloud.githubusercontent.com/assets/13025157/14445495/ac8eeeb4-004d-11e6-92c0-89fdc5c8cbb4.jpg)
 
@@ -356,7 +356,7 @@ https://cageos.org/index.php?page=apps&section=SocialNetworks
 - 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
-![rtcio](https://cloud.githubusercontent.com/assets/13025157/14445429/3081fd8e-004d-11e6-893f-8a4b4ccc9c1e.jpg)
+![rtcio](http://widevisiondesign.com/8-9_v2.png)
 
 
 #***A secure Storage System with collaborative tools based in : TahoeLafs over i2P and blocksnet.***
