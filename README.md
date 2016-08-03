@@ -615,75 +615,60 @@ If you don’t want to use Privoxy you can still set some options in your squid.
 
 #NETWORK USE CASES
 
-When user is using HTTPS connection to a darknet domain, this traffic it's considered super insecure. (the goverment try to explodes the browser for deanonymization)
-when the user is using HTTP because is considered insecure itself this clear traffic is going to go through TOR to add anonymization.
-
-On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
+When user is using HTTPS connection to a darknet domain, this traffic it's considered dangerus and insecure. (the goverment try to explodes the browser for deanonymization) On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
 If this connection it's to a HTTPS regular/banking domain, this SSL tunnel will be not open Bumped/inspected. Will be routed directly to the clearnet internet (ex: https://yourbank.com)
 
-###Connection Flow 4: Squid Content Filtering Virus & Anonymous HTTP Headers
-
-Content filtering will be done if it's a HTTPS open SSL tunnel, or a regular HTTP petition.
-
-Squid will do mainly two process of it.
-
-- With I-cmp/clamav plugin, filter all possible viruses.
-
-- Remove from HTTP headers all possible identification to you.
-Connection Flow 5: IPS & Exploits: Suricata
-
-If traffic it's a HTTPS open SSL tunnel (only in darknet domains), or a regular HTTP petition, then Suricata will inspect traffic, too.
-
-Suricata will be configured with rules to avoid, mainly, browser exploits (usually in darknets, to take control of browser).
-
-Loading VRT ruleset from snort and other IPS.
-
-Connection Flow 6: Connection to Outside
-
-If connection pass all blocks and Connection Flow filters, then this petition can reach the internet. Otherwise will be blocked. And will reach in this way
+When the user is using HTTP, because is considered insecure itself this clear traffic is going to go through TOR to add anonymization but after a threatment from the local engines to add privacy on it.. The user can also decide in the future about which things he dont want to use TOr for HTTP.
 
 - I2P domains/eepSite (ex: i2p2.i2p) will be redirected to I2P
-
-- SSL Regular domains (ex: https://yourbank.com) will reach te internet directly (remember no regular connections if you don't allow)
-
 - Hidden services (ex: asdf1234.onion) will go through TOR
-
 - HTTP (ex: http://news.com) will go through TOR to the internet site
-Access from outside model (Bypass Router / Closed Ports
 
 
 #DNS:
 
 ##DNS engines:
-- Used today unbound-dns momentarely( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
-- If it can not resolved, then we need to ask through TOR if it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
-There are 3 different DNS servers (Unbound Tor and DjDNS) on LibreRouter that work together us one DNS resolution system, to provide the best open source solutions for anonymity and security.  
+- Used today unbound-dns momentarily ( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
+
+- If it can not resolved, then we need to ask through TOR 
+- If it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
+
+X differents DNS servers (Unbound,Tor,I2p,Bitname,others and DjDNS(this last need maintenance is not workinghttps://github.com/DJDNS/djdns)) 
+
+Those need to work together us one DNS resolution system, to provide the best open source solutions for anonymity and security.  
 Here is the list of servers and interfaces/ports DNS servers  are listening.
-Unbound is running on 10.0.0.1:53
-Tor is running on 10.0.0.1:9053
-DjDNS running on 10.0.0.1:8053
-At first any DNS request comes to Unbound, which is the main dns server, then if needed unbound will forward the request to Tor or DjDNS. 
+
+- Unbound is running on 10.0.0.1:53
+- Tor is running on 10.0.0.1:9053
+- DjDNS running on 10.0.0.1:8053
+- Bitname is .....
+- Others....
+
+
 
 ##DNS Workflow:
+
 ![dns use cases](https://cloud.githubusercontent.com/assets/17382786/17254117/bc19c140-55b3-11e6-99fc-1b544f3adbd1.png)
 
 
-###Classified domains that matched our app decentralized alternatives:
+###Classified domains that matched our app decentralized alternatives:  If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server:
+
   * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
   * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound.
-  * Online Storage    - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
+  * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
   * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound.
- If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server
+
 Step: 1 Classified domains resolution
+
 We have integrated shallalist domains list into unbound, so when DNS request comes at first unbound will check if it’s classified. Classified domain are going to be resolved to local services ip addresses or be blocked.
 David describe it from the file perspective of the shalalists files
 
 Here is the list of domains
-1.	Chat domains – these domains are going to be resolved to IP address 10.0.0.250. We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
-2.	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
-3.	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound. We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
-4.	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound. We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
-5.	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
+- 1.	Chat domains – these domains are going to be resolved to IP address 10.0.0.250. We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
+- 2.	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
+- 3.	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound. We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
+- 4.	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound. We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
+- 5.	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
 
 #### Why?
 Because if the user make use of centralized webs like Facebook,Google,Dropbox etc, we cant protect his privacy
