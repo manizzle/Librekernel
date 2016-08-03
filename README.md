@@ -451,22 +451,21 @@ We still testing  Clearfog boards.
 ![xclearfog-base-with-som-01-800x676 jpg pagespeed ic lfn3kzosut](https://cloud.githubusercontent.com/assets/17382786/17366167/17b7d0a8-598a-11e6-8d82-1cd53a57bcb6.jpg)
 
 https://images.solid-build.xyz/A38X/
+
 https://www.solid-run.com/product/clearfog-base/
+
 http://blog.hypriot.com/post/introducing-the-clearfog-pro-router-board/
 
 We'll Keep you posted.
 
-
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-
 
 #***Networking in Librerouter:
 
 - There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
 	
-1. External area red bridge acting as WAN (2 nics): cable or wireless interface as DHCP client of your internet router
+1. External area red bridge acting as WAN (2 nics): cable or wireless interface as DHCP client of your internet router.
+
 2. Internal area gren bridge acting as LAN (2 nics): cable or wireless interface as an AP for being DHCP server for your new secure LAN.
 
 - Four possible PHySICAL scenarios:
@@ -518,14 +517,102 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ![networktraffic6](https://cloud.githubusercontent.com/assets/13025157/14437535/f40d21c4-0021-11e6-9e4a-1c73e06e965b.png)
 
-Squid SSL bumping 
-https://github.com/varnish/hitch
-https://github.com/dani87/sslbump
+Technical background for each use case:
+
+Privacy testers:
+
+ - https://anonymous-proxy-servers.net/en/help/security_test.html
+ - www.iprivacytools.com
+ - checker.samair.ru
+ - https://anonymous-proxy-servers.net/en/help/security_test.html
+ - https://www.onion-router.net/Tests.html
+ - analyze.privacy.net
+ - https://www.maxa-tools.com/cookie-privacy.php
+ - https://panopticlick.eff.org/
+ - https://www.perfect-privacy.com/german/webrtc-leaktest/
+ - https://www.browserleaks.com/
+ - browserspy.dk
+
+ 
+Squid SSL bumping :
+
+ - https://hitch-tls.org/
+ - https://github.com/varnish/hitch
+ - https://github.com/dani87/sslbump
+ - https://github.com/jpelias/squid3-ssl-bump/blob/master/Install%20Squid%203.4%20with%20ssl%20bump%20on%20Debian%208%20(Jessie)
+
+Ads filters and Content filter with Dansguardian and others:
+
+ - https://github.com/e2guardian/e2guardian
+ - https://github.com/andybalholm/redwood
 
 
-When user it's using a HTTPS connection to a darknet domain, this traffic it's considered as insecure.
-On darknet domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
-If this connection it's to a HTTPS regular domain, this SSL tunnel will be not open nor inspected. Will be routed directly to the internet (ex: https://yourbank.com)
+Squid tuning conf for Privacy :
+
+If you don’t want to use Privoxy you can still set some options in your squid.conf 
+
+via off
+forwarded_for off
+header_access From deny all
+header_access Server deny all
+header_access WWW-Authenticate deny all
+header_access Link deny all
+header_access Cache-Control deny all
+header_access Proxy-Connection deny all
+header_access X-Cache deny all
+header_access X-Cache-Lookup deny all
+header_access Via deny all
+header_access Forwarded-For deny all
+header_access X-Forwarded-For deny all
+header_access Pragma deny all
+header_access Keep-Alive deny all
+  request_header_access Authorization allow all
+  request_header_access Proxy-Authorization allow all
+  request_header_access Cache-Control allow all
+  request_header_access Content-Length allow all
+  request_header_access Content-Type allow all
+  request_header_access Date allow all
+  request_header_access Host allow all
+  request_header_access If-Modified-Since allow all
+  request_header_access Pragma allow all
+  request_header_access Accept allow all
+  request_header_access Accept-Charset allow all
+  request_header_access Accept-Encoding allow all
+  request_header_access Accept-Language allow all
+  request_header_access Connection allow all
+  request_header_access All deny all
+
+# Hide client ip #
+forwarded_for delete
+ 
+# Turn off via header #
+via off
+ 
+# Deny request for original source of a request
+follow_x_forwarded_for deny all
+ 
+# See below
+request_header_access X-Forwarded-For deny all
+
+Set the following options in squid3.conf:
+
+ request_header_access From deny all
+ request_header_access Referer deny all
+ request_header_access User-Agent deny all
+
+
+
+
+
+
+
+#NETWORK USE CASES
+
+When user is using HTTPS connection to a darknet domain, this traffic it's considered super insecure. (the goverment try to explodes the browser for deanonymization)
+when the user is using HTTP because is considered insecure itself this clear traffic is going to go through TOR to add anonymization.
+
+On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
+If this connection it's to a HTTPS regular/banking domain, this SSL tunnel will be not open Bumped/inspected. Will be routed directly to the clearnet internet (ex: https://yourbank.com)
 
 ###Connection Flow 4: Squid Content Filtering Virus & Anonymous HTTP Headers
 
@@ -626,6 +713,7 @@ Unbound dns  configuration is implemented by configure_unbound() function. (line
 Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
 
 ##Intelligence IP, Domain Providers:
+
 - Shallalist
 - mesdk12
 - http://urlblacklist.com/?sec=download
@@ -634,7 +722,7 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 - https://github.com/rustybird/corridor
 - Spamhaus
 - Virustotal
-
+- http://urlblacklist.com/
 
 
 
