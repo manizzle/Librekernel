@@ -511,15 +511,28 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 
 #Network Working flow 
+ 
+![dns](https://cloud.githubusercontent.com/assets/17382786/14493566/5ebfcba6-0186-11e6-9c0d-e6032290dcc0.png)
 
 ![ip use cause](https://cloud.githubusercontent.com/assets/17382786/17254808/a88262ec-55b6-11e6-969d-bfac41e4dadd.png)
-
 
 ![networktraffic6](https://cloud.githubusercontent.com/assets/13025157/14437535/f40d21c4-0021-11e6-9e4a-1c73e06e965b.png)
 
 Technical background for each use case:
 
-Privacy testers:
+##Intelligence IP, Domain Providers:
+
+- Shallalist
+- mesdk12 http://squidguard.mesd.k12.or.us/blacklists.tgz
+- http://urlblacklist.com/?sec=download
+- https://www.iblocklist.com/lists
+- http://iplists.firehol.org/
+- https://github.com/rustybird/corridor
+- Spamhaus
+- Virustotal
+- http://urlblacklist.com/
+
+##Privacy testers:
 
  - https://anonymous-proxy-servers.net/en/help/security_test.html
  - www.iprivacytools.com
@@ -533,16 +546,16 @@ Privacy testers:
  - https://www.browserleaks.com/
  - browserspy.dk
 
-Squid Transparent mode interception with IPtables:
+##Squid Transparent mode interception with IPtables:
 
  - http://blog.davidvassallo.me/2011/03/22/squid-transparent-ssl-interception/
  - http://wiki.squid-cache.org/SquidFaq/InterceptionProxy
  
-Squid CLAMAV Antivirus:
+##Squid CLAMAV Antivirus:
 
  - https://sathisharthars.wordpress.com/2013/07/31/configuring-proxy-server-with-antivirus-squidclamavsquidguarddansguardian/
 
-Squid ADS :
+##Squid ADS :
 
  - https://github.com/jamesmacwhite/squidguard-adblock
  - http://www.squidguard.org/
@@ -550,28 +563,28 @@ Squid ADS :
  - http://adzapper.sourceforge.net/
  - http://pgl.yoyo.org/adservers/
 
-Unboudndns ADs:
+##Unboudndns ADs:
 
  - https://github.com/jodrell/unbound-block-hosts
 
-Squid SSL bumping for AV SSL and IPS (intrusion prevention applied to decrypt traffic) :
+##Squid SSL bumping for AV SSL and IPS (intrusion prevention applied to decrypt traffic) :
 
  - https://hitch-tls.org/
  - https://github.com/varnish/hitch
  - https://github.com/dani87/sslbump
  - https://github.com/jpelias/squid3-ssl-bump/blob/master/Install%20Squid%203.4%20with%20ssl%20bump%20on%20Debian%208%20(Jessie)
 
-Squid Content filter with privacy enhacement:
+##Squid Content filter with privacy enhacement:
 
  - https://github.com/e2guardian/e2guardian
  - https://github.com/andybalholm/redwood
 
-Privoxy and Privacy :
+##Privoxy and Privacy :
 
 ![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
 
 
-Squid tuning conf for Privacy :
+##Squid tuning conf for Privacy :
 
 If you don’t want to use Privoxy you can still set some options in your squid.conf 
 
@@ -651,75 +664,77 @@ Here is the list of servers and interfaces/ports DNS servers  are listening.
 ![dns use cases](https://cloud.githubusercontent.com/assets/17382786/17254117/bc19c140-55b3-11e6-99fc-1b544f3adbd1.png)
 
 
-###Classified domains that matched our app decentralized alternatives:  If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server:
+###Classified domains that matched our app decentralized alternatives:  If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server. We have integrated shallalist domains list into unbound, so when DNS request comes at first unbound will check if it’s classified. Classified domain are going to be resolved to local services ip addresses or be blocked.
 
+
+![part2_4](https://cloud.githubusercontent.com/assets/17382786/14854169/e39c500c-0c8e-11e6-9802-9b26b951eff5.png)
+ 
+ 
   * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
   * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound.
   * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
   * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound.
 
-Step: 1 Classified domains resolution
-
-We have integrated shallalist domains list into unbound, so when DNS request comes at first unbound will check if it’s classified. Classified domain are going to be resolved to local services ip addresses or be blocked.
-David describe it from the file perspective of the shalalists files
-
-Here is the list of domains
-- 1.	Chat domains – these domains are going to be resolved to IP address 10.0.0.250. We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
-- 2.	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
-- 3.	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound. We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
-- 4.	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound. We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
-- 5.	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
-
-#### Why?
-Because if the user make use of centralized webs like Facebook,Google,Dropbox etc, we cant protect his privacy
-#### Can I workaround it:
-Yes in the future via GUI should be possible to reconfigure this cage.
- ### Darknets Domains
+#### Darknets Domains
+ 
   * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
   * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
   * .onion - unbound will forward this zone to Tor DNS running on 10.0.0.1:9053
-The rest of shadow darknets are coming in the further revisions .
- - Freenet domains:> not yet implemented http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
-- Bit domains> blockchain bitcoin> not yet implemented https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
 
+
+![part_1_4_dns](https://cloud.githubusercontent.com/assets/17382786/14854168/e37aa830-0c8e-11e6-8ff4-05eddebf200e.png)
+
+
+- 1.	IM domains – these domains are going to be resolved to IP address 10.0.0.250. 
+- We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
+
+- 2.	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. 
+- We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
+
+- 3.	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound.
+- We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
+- 
+- 4.	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound.
+- We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
+- 
+- 5.	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. 
+- We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
+
+Still prblems with HSTS https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+
+When a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
+
+
+#### Why we try the end user use more fair services than the offered in internet by big corporations?
+
+Because if the user make use of centralized webs like Facebook,Google,Dropbox etc, we cant protect his privacy and he is going to disclosure himself his data.
+
+#### Can the user in the future workaround it:
+
+Yes in the future via GUI should be possible to reconfigure this cage.
+
+ 
+More shadow darknets are coming in the further revisions .
+
+- Freenet domains:> not yet implemented
+- http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
+- Bit domains> blockchain bitcoin> not yet implemented 
+- https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
 - Zeronet> not yet implemented
-
 - Openbazaar> not yet implemented
 
-- Other decentraized webs> not yet implemented
-####onion domains resolution 
-If incoming DNS request is for .onion domain then it will be forwarded To Tor DNS server running on 10.0.0.1:9053. Tor DNS server will resolve that request qithin Tor network and resolved ip address will be from 10.192.0.0/16 network.
-#### .i2p domains resolution
-If incoming DNS request is for .i2p domain then it will be resolved to ip address 10.191.0.1 by unbound.
 
- ### Other Domains
-- Regular webpages (example: www.meneame.net) would need to be resolved by decentralized DNS engine like DjDNS 
-![dns](https://cloud.githubusercontent.com/assets/17382786/14493566/5ebfcba6-0186-11e6-9c0d-e6032290dcc0.png)
-![part_1_4_dns](https://cloud.githubusercontent.com/assets/17382786/14854168/e37aa830-0c8e-11e6-8ff4-05eddebf200e.png)
-![part2_4](https://cloud.githubusercontent.com/assets/17382786/14854169/e39c500c-0c8e-11e6-9802-9b26b951eff5.png)
- 
  
 ###Blocking – this  group includes tracker, redirector, governmental, spyware domains. - these domains are going to be resolved to IP address 10.0.0.1 by unbound. We have Webmin running on 10.0.0.1, so when you type some storage domain you will get Webmin administration interface in your browser to allow/deny given domain
  
 Unbound dns  configuration is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
 Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
 
-##Intelligence IP, Domain Providers:
-
-- Shallalist
-- mesdk12 http://squidguard.mesd.k12.or.us/blacklists.tgz
-- http://urlblacklist.com/?sec=download
-- https://www.iblocklist.com/lists
-- http://iplists.firehol.org/
-- https://github.com/rustybird/corridor
-- Spamhaus
-- Virustotal
-- http://urlblacklist.com/
 
 
 
 
-
+![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 #Steps to setup on Physical/Virtual machine.
 
@@ -727,23 +742,26 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 
 ###***Which hardware/Virtual resources you needed to run Librerouter scripts?***
 
-Anyone able to run a Debian 8.5  ARM,x86 or 64 bits 
+Anyone able to run a Debian 8.5 ARM x86 32 or 64 bits 
 
 - At least 2 network interfaces NICS (external and internal always no matters bridge or server mode),
 - 2GB RAM
 - 4 cores CPU 
-- 1TB Hdd. or 32GBemc
+- 32GB HDD but better 1TB
 
 ##Step 3. Executing scripts.
 
 In this step you need to download and execute the following scripts on your machine with given order.
 
- - 0. driver-script-pipo.sh 
- - 1. app-installation-script.sh
- - 2. app-configuration-script.sh
- - 3. app-post configuration encryption FDE fill disk en cryption
- - 4. System Wizards
- - 5. Subsystems GUIs for backends forked from IPFIRE
+
+ - 0. Install a Debian 8.5 and make the Virtual Machine snapshot 
+ - 1. driver-script-pipo.sh (bypass if not using PIPO hardware)
+ - 2. app-installation-script.sh
+ - 3. Make a VM snapshot for further app-configuration-script patched being applied in the lab.
+ - 3. app-configuration-script.sh
+ - 4. app-post configuration encryption FDE fill disk encryption
+ - 5. System Wizards
+ - 6. Subsystems GUIs for backends forked from IPFIRE
 
 ###0. What the driver-script-pipo.sh  does?
 
