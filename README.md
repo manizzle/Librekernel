@@ -414,6 +414,9 @@ You can also sync your home Librerouter with all of your portable devices to hav
 
 Libraries: https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:matrix:featurescomparison
 
+![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+
 #Setting up a lab:
 
 For Virtual Machine setup we need one system with two guests installed in it, one Debian 8 32 bit and one Windows 10
@@ -438,25 +441,20 @@ Due to limitations: Only PRE-sold 300 boxes in crowdfunding, we can NOT go prod 
 
 Pipo do not have 1Tb HDD or 2 ethernets or 2 wlans, the version we test has addiotional components.
 The Debian LFromScratch will contain drivers that may be restrictive, again if you want a 100% open the you need fpga/arm boards in the market for router compatible with debian. 
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 We plan to dev in to the next presented hreally open hardware when is fully ready but for now the test is customized PIPO
 
-![pismasher_sbc](https://cloud.githubusercontent.com/assets/17382786/17208572/96313d46-54b9-11e6-99e0-ee4018a90a92.jpg)
+We still testing  Clearfog boards. 
 
-http://dab-embedded.com/en/cases/openwrt-atmel-sama5d3-and-max10-fpga-board/
+![xclearfog-base-with-som-01-800x676 jpg pagespeed ic lfn3kzosut](https://cloud.githubusercontent.com/assets/17382786/17366167/17b7d0a8-598a-11e6-8d82-1cd53a57bcb6.jpg)
 
-![owtbrd](https://cloud.githubusercontent.com/assets/17382786/17208817/7400644e-54ba-11e6-8607-2347be8de41a.png)
+https://images.solid-build.xyz/A38X/
+https://www.solid-run.com/product/clearfog-base/
+http://blog.hypriot.com/post/introducing-the-clearfog-pro-router-board/
 
-Or you can buy expensive board like this one:
-
-![clearfog_pro_openwrt_router_board](https://cloud.githubusercontent.com/assets/17382786/17208844/90b919c8-54ba-11e6-928a-c07c732d25b6.jpg)
-
-https://www.solid-run.com/product-category/clearfog-carriers/
-
-
-We still in research about this cheap Clearfog boards. Keep you posted.
+We'll Keep you posted.
 
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
