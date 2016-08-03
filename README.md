@@ -162,8 +162,7 @@ It's really very easy to use for all people with little or no computers and netw
 This is simple Plug and play system to make your traffic untraceable and secure. 
 It is the future Data Center resilience infrastructure. 
 
-SO lets have a brief look into what is Open Source Hardware.
-
+ 
 ##Open Source Hardware
 
 It consists of physical artifacts of technology designed and offered by the open design movement. Both free and 
@@ -194,62 +193,7 @@ and build upon a work that they have created. CC provides an author flexibility 
 to allow only non-commercial uses of their own work) and protects the people who use or redistribute an author's 
 work from concerns of copyright infringement as long as they abide by the conditions that are specified in the 
 license by which the author distributes the work.
-
-For information on please visit <https://en.wikipedia.org/wiki/Creative_Commons_license>
-
-Many Hardware providers claims they produce open hardware but it's not really true. The market is full of crowd-funded 
-project where the funder claimed the project is open hardware but in real the hardware is full of binary blobs, 
-chipset restitutions and questions about missing parts of info and doc. Few of them are listed below:
-
-	ARM Trustzone 
-	Many controllers in Chipset of the network nics are not open source 
-	No source code. 
-	Binary Blobs in the ROMs or bROM. 
-	No documentation and schematics provided
-	Need signed binary for being accepted by the board. 
-	Do not accept free booting. 
-
-![arm boot tz]<https://cloud.githubusercontent.com/assets/17382786/14741525/16a5c3f8-0897-11e6-8b2b-ec1f3fbdc5de.png>
-
-##Licenses and certifications available for hardware openness compliance
-
-	- http://www.ohwr.org/documents/294 
-	- http://www.gnu.org/licenses/quick-guide-gplv3.en.html 
-	- http://www.tapr.org/OHL 
-	- http://www.opengroup.org/accreditation/o-ttps 
-	- http://www.fsf.org/resources/hw/endorsement/respects-your-freedom 
-
-##Certifications available for privacy and security compliance
-
-	- www.vub.ac.be/LSTS/pub/Dehert/481.pdf 
-	- https://www.truste.com/business-products/dpm-services/ 
-	- https://www.european-privacy-seal.eu/EPS-en/Certification 
-	- http://www.iso.org/iso/catalogue_detail.htm?csnumber=61498 
-	- http://www.tuv.com/en/corporate/business_customers/information_security_cw/strategic_information_security/data_protection_certification/data_privacy_certification.html 
-	- http://www.export.gov/safeharbor/ 
-	- https://safeharbor.export.gov/swisslist.aspx 
-	- https://www.tuvit.de/en/privacy/uld-privacy-seal-1075.htm 
-	- http://www.prismintl.org/Privacy-Certification/privacy/about-the-privacy-plus-program.html 
-	- https://www.esrb.org/privacy/ 
-	- http://www.privacytrust.org/certification/privacy/ 
-	- https://www.datenschutzzentrum.de/zertifizierung/ 
-	- http://www.edaa.eu/certification-process/trust-seal/ 
-
-##Certifications for product security compliance:
-
-	- http://www.dekra-certification.com/en/cyber-security 
-	- http://www.exsolutiongroup.com/blog/various-types-of-iso-certification-uae-has-to-offer/ 
-	- https://digital.premierit.com/all-about-iso-27001-certification 
-	- https://www.apcon.com/apcon-certified-applications?gclid=CMrqsaCTt8wCFcQp0wodJokNQg 
-	- http://www.cyberark.com/awards/ 
-	- https://czarsecurities.com/security-seal 
-	- http://www.teletrust.de/en/itsmig/ 
-	- https://iapp.org/certify/cipt/ 
-	- http://www.cdse.edu/certification/become.html 
-	- https://en.wikipedia.org/wiki/Evaluation_Assurance_Level 
-	- https://en.wikipedia.org/wiki/Common_Criteria 
-	- http://www.asd.gov.au/infosec/aisep/crypto.htm 
-
+ 
 
 ##Purposed Operating Systems using Linux Libre
 Following distributions are tested only in Debian 8.5 x86 32bits
@@ -261,24 +205,6 @@ Devuan (Libre Kernel,(after apply hardening)      <https://devuan.org/>
 Uruk (Libre Kernel),(after apply hardening)       <https://urukproject.org//dist/index.html> 
 LibreWRT 
 Dockers (further containerization for security) (reference qubeOS.org) 
-
-##Distributions using Linux-Libre
-	- Distributions in which Linux-Libre is the default kernel used:
-
-	Dragora GNU/Linux-Libre
-	dyne:bolic
-	Guix System Distribution
-	Musix GNU+Linux
-	Parabola GNU/Linux-Libre
-	Trisquel
-
-	- Distributions with default kernel proposing to use Linux-Libre
-
-	Arch Linux
-	Canaima
-	Gentoo Linux
-
-
 
 
 ###***Many H/W providers claimed they produce open hardware but it's just crap?***
@@ -294,6 +220,7 @@ The market is full of crowdfunded project where the funder claimed the project i
 - Not accept free booting.
 
 ![arm boot tz](https://cloud.githubusercontent.com/assets/17382786/14741525/16a5c3f8-0897-11e6-8b2b-ec1f3fbdc5de.png)
+
 
 ###***Which are the licenses and certifications that show openness in the hardware?***
 
@@ -334,18 +261,8 @@ The market is full of crowdfunded project where the funder claimed the project i
 - https://en.wikipedia.org/wiki/Common_Criteria
 - http://www.asd.gov.au/infosec/aisep/crypto.htm
 
-###***Purposed Operating Systems***
 
-tested only in debian 8.5 x86 32bits 2Gib Ram and 32GB emc
-
-- Debian (after deblobling,hardening,enlight) debian.org
-- Lubuntu (after deblobling,hardening,enlight) lubuntu.org
-- Ubuntu Core NUC (after deblobling) https://developer.ubuntu.com/en/snappy/start/intel-nuc/
-- Devuan (librekernel,(after apply hardening) https://devuan.org/  do not boot in Pipo
-- Uruk   (librekernel),(after apply hardening) https://urukproject.org//dist/index.html
-- LibreWRT (librekernel)
-- FreeBSD (librekernel) complex
-- Dockers (further containerization for security) (reference qubeOS.org)
+ 
 
 #Technical Overview
 
