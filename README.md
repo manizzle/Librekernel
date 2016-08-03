@@ -533,77 +533,84 @@ Privacy testers:
  - https://www.browserleaks.com/
  - browserspy.dk
 
+Squid Transparent mode interception with IPtables:
+
+ - http://blog.davidvassallo.me/2011/03/22/squid-transparent-ssl-interception/
+ - http://wiki.squid-cache.org/SquidFaq/InterceptionProxy
  
-Squid SSL bumping :
+Squid CLAMAV Antivirus:
+
+ - https://sathisharthars.wordpress.com/2013/07/31/configuring-proxy-server-with-antivirus-squidclamavsquidguarddansguardian/
+
+Squid ADS :
+
+ - https://github.com/jamesmacwhite/squidguard-adblock
+ - http://www.squidguard.org/
+ - https://calomel.org/squid_adservers.html
+ - http://adzapper.sourceforge.net/
+ - http://pgl.yoyo.org/adservers/
+
+Unboudndns ADs:
+
+ - https://github.com/jodrell/unbound-block-hosts
+
+Squid SSL bumping for AV SSL and IPS (intrusion prevention applied to decrypt traffic) :
 
  - https://hitch-tls.org/
  - https://github.com/varnish/hitch
  - https://github.com/dani87/sslbump
  - https://github.com/jpelias/squid3-ssl-bump/blob/master/Install%20Squid%203.4%20with%20ssl%20bump%20on%20Debian%208%20(Jessie)
 
-Ads filters and Content filter with Dansguardian and others:
+Squid Content filter with privacy enhacement:
 
  - https://github.com/e2guardian/e2guardian
  - https://github.com/andybalholm/redwood
+
+Privoxy and Privacy :
+
+![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
 
 
 Squid tuning conf for Privacy :
 
 If you don’t want to use Privoxy you can still set some options in your squid.conf 
 
-via off
-forwarded_for off
-header_access From deny all
-header_access Server deny all
-header_access WWW-Authenticate deny all
-header_access Link deny all
-header_access Cache-Control deny all
-header_access Proxy-Connection deny all
-header_access X-Cache deny all
-header_access X-Cache-Lookup deny all
-header_access Via deny all
-header_access Forwarded-For deny all
-header_access X-Forwarded-For deny all
-header_access Pragma deny all
-header_access Keep-Alive deny all
-  request_header_access Authorization allow all
-  request_header_access Proxy-Authorization allow all
-  request_header_access Cache-Control allow all
-  request_header_access Content-Length allow all
-  request_header_access Content-Type allow all
-  request_header_access Date allow all
-  request_header_access Host allow all
-  request_header_access If-Modified-Since allow all
-  request_header_access Pragma allow all
-  request_header_access Accept allow all
-  request_header_access Accept-Charset allow all
-  request_header_access Accept-Encoding allow all
-  request_header_access Accept-Language allow all
-  request_header_access Connection allow all
-  request_header_access All deny all
-
-# Hide client ip #
-forwarded_for delete
- 
-# Turn off via header #
-via off
- 
-# Deny request for original source of a request
-follow_x_forwarded_for deny all
- 
-# See below
-request_header_access X-Forwarded-For deny all
-
-Set the following options in squid3.conf:
-
- request_header_access From deny all
- request_header_access Referer deny all
- request_header_access User-Agent deny all
-
-
-
-
-
+	- via off
+	- forwarded_for off
+	- header_access From deny all
+	- header_access Server deny all
+	- header_access WWW-Authenticate deny all
+	- header_access Link deny all
+	- header_access Cache-Control deny all
+	- header_access Proxy-Connection deny all
+	- header_access X-Cache deny all
+	- header_access X-Cache-Lookup deny all
+	- header_access Via deny all
+	- header_access Forwarded-For deny all
+	- header_access X-Forwarded-For deny all
+	- header_access Pragma deny all
+	- header_access Keep-Alive deny all
+	-   request_header_access Authorization allow all
+	-   request_header_access Proxy-Authorization allow all
+	-   request_header_access Cache-Control allow all
+	-   request_header_access Content-Length allow all
+	-   request_header_access Content-Type allow all
+	-   request_header_access Date allow all
+	-   request_header_access Host allow all
+	-   request_header_access If-Modified-Since allow all
+	-   request_header_access Pragma allow all
+	-   request_header_access Accept allow all
+	-   request_header_access Accept-Charset allow all
+	-   request_header_access Accept-Encoding allow all
+	-   request_header_access Accept-Language allow all
+ 	-   request_header_access Connection allow all
+	-   request_header_access All deny all
+	-   forwarded_for delete
+	-   follow_x_forwarded_for deny all
+ 	-   request_header_access X-Forwarded-For deny all
+	-   request_header_access From deny all
+	-   request_header_access Referer deny all
+	-   request_header_access User-Agent deny all
 
 
 #NETWORK USE CASES
@@ -715,7 +722,7 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 ##Intelligence IP, Domain Providers:
 
 - Shallalist
-- mesdk12
+- mesdk12 http://squidguard.mesd.k12.or.us/blacklists.tgz
 - http://urlblacklist.com/?sec=download
 - https://www.iblocklist.com/lists
 - http://iplists.firehol.org/
