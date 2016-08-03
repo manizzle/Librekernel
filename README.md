@@ -302,7 +302,7 @@ Libre router combined with Linux Libre and hardened OS configuration shown above
 
 Following security pyramid diagram explains the different components that make our network secure.
 
-![mempro](https://cloud.githubusercontent.com/assets/17382786/17207306/48017294-54b4-11e6-8d6e-d50e66288416.png)
+![mempro](http://widevisiondesign.com/6_v2.png)
 
 Following image shows how Libre Router protects by sitting between the outer Internet and out private network
 
