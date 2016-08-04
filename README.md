@@ -694,10 +694,10 @@ Here is the list of servers and interfaces/ports DNS servers  are listening.
 
 - 3.	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound.
 - We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
-- 
+
 - 4.	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound.
 - We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
-- 
+ 
 - 5.	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. 
 - We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
 
