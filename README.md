@@ -219,7 +219,7 @@ The market is full of crowdfunded project where the funder claimed the project i
 - Neeed sign binaries for bein accepted by the board.
 - Not accept free booting.
 
-![arm boot tz](http://widevisiondesign.com/img2.jpg)
+![arm boot tz](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/imgg.png)
 
 
 ###***Which are the licenses and certifications that show openness in the hardware?***
