@@ -273,11 +273,11 @@ Linux iptables, encryption and many other services to protect the intrusions, ma
 
 From inside secureLAN
 
-![from home](http://widevisiondesign.com/7.png)
+![from home](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/7.png)
 
 From being routed through any Darknet 
 
-![from outdoor](http://widevisiondesign.com/10.png)
+![from outdoor](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/10.png)
 
 
 ##***How does Libre Router protects us***
