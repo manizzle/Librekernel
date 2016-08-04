@@ -686,24 +686,24 @@ Here is the list of servers and interfaces/ports DNS servers  are listening.
 ![part_1_4_dns](https://cloud.githubusercontent.com/assets/17382786/14854168/e37aa830-0c8e-11e6-8ff4-05eddebf200e.png)
 
 
-- 1.	IM domains – these domains are going to be resolved to IP address 10.0.0.250. 
+- 	IM domains – these domains are going to be resolved to IP address 10.0.0.250. 
 - We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
 
-- 2.	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. 
+- 	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. 
 - We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
 
-- 3.	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound.
+- 	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound.
 - We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
 
-- 4.	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound.
+- 	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound.
 - We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
  
-- 5.	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. 
+- 	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. 
 - We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
 
-Still prblems with HSTS https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 
-When a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
+Still prblems with HSTS https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+Also still problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
 
 
 #### Why we try the end user use more fair services than the offered in internet by big corporations?
