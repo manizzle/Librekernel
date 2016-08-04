@@ -512,7 +512,8 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 #Network Working flow 
  
-![dns](https://cloud.githubusercontent.com/assets/17382786/14493566/5ebfcba6-0186-11e6-9c0d-e6032290dcc0.png)
+![layers](https://cloud.githubusercontent.com/assets/17382786/17397142/f4f4ba92-5a36-11e6-8721-eddfcc1f18be.png)
+
 
 ![ip use cause](https://cloud.githubusercontent.com/assets/17382786/17254808/a88262ec-55b6-11e6-969d-bfac41e4dadd.png)
 
