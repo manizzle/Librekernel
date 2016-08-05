@@ -732,14 +732,21 @@ More shadow darknets are coming in the further revisions .
 - We have Webmin running on 10.0.0.1, so when you type some storage domain you will get Webmin administration interface in your browser to allow/deny given domain. (in theory we would have to customize our own webmin version or a new from scratch GUI)
  
 ##Unbound dns  configuration.
-is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
+
+- Is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
+
+##TOR configuration.
 Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
 
+##I2P configuration.
 
+##NGINX configuration.
 
+##Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
 
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+
 
 #Steps to setup on Physical/Virtual machine.
 
@@ -759,22 +766,22 @@ Anyone able to run a Debian 8.5 ARM x86 32 or 64 bits
 In this step you need to download and execute the following scripts on your machine with given order.
 
 
- - 0. Install a Debian 8.5 and make the Virtual Machine snapshot 
- - 1. driver-script-pipo.sh (bypass if not using PIPO hardware)
- - 2. app-installation-script.sh
- - 3. Make a VM snapshot for further app-configuration-script patched being applied in the lab.
+ - 0. Install a Debian 8.5 vanilla or desktop and make when ready, the Virtual Machine snapshot before anything. 
+ - 1. driver-script-pipo.sh (bypass if your not using the PIPO hardware)
+ - 2. app-installation-script.sh 
+ - 3. Make (again!) a VM snapshot in the lab.
  - 3. app-configuration-script.sh
- - 4. app-post configuration encryption FDE fill disk encryption
- - 5. System Wizards
- - 6. Subsystems GUIs for backends forked from IPFIRE
+ - 4. app-post configuration encryption FDE fill disk encryption (not implemented yet)
+ - 5. System GUI Wizards  (not implemented/dev yed)
+ - 6. Subsystems GUIs for backends forked from IPFIRE   (not implemented/dev yed) check gui.md for further reference
 
 ###0. What the driver-script-pipo.sh  does?
 
 Installs the drivers for Pipo X8:
  - WLAN 1 NON FREE
  - WLAN 1 FREE
- - TOUCH SCREEN
- - SOUND CARD (there is no mic in the machine)
+ - TOUCH SCREEN  NON FREE
+ - SOUND CARD (there is no mic in the machine)  NON FREE
  - Ethernet drivers (both usb and onboard) are free.
 
 ###1. What the app-installation-script does?
@@ -830,6 +837,9 @@ The same as in Physical/Virtual machine case.
 The same as in Physical/Virtual machine case.
 If step 7 finished successfully then test.sh execution for odroid board is finished successfully and it's time to run the next script “app-installation-script.sh”. 
 
+ - Step 8 Required (not implemented)
+Setup the proper exit for the script with a proper succes or not
+Success need to be based in a list check for all apps has being installed.
  
 
 
