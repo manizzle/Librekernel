@@ -6,7 +6,7 @@ The GUI need to be basic for non technical people but have to be prepared by met
 
 Every slider on or off will directly execute a matrix of scripts that will reconfigure multiple places configurations files and system paramenters.  A single option can affect the entire system and diferent engines and subengines. In that way the script will check how other options in the system are configured before start the modification of the paramenter and configuration files.
 
-
+![click and drill](https://cloud.githubusercontent.com/assets/17382786/17436107/61e300bc-5b15-11e6-8ae4-b650577fb9a6.png)
 
 ##FUTURE WIZARDS AND GUIS
 
