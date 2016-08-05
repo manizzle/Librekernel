@@ -198,13 +198,13 @@ license by which the author distributes the work.
 ##Purposed Operating Systems using Linux Libre
 Following distributions are tested only in Debian 8.5 x86 32bits
 
-Debian (after deblobbing,hardening,enlightening)   <debian.org> 
-Lubuntu (after deblobbing,hardening,enlightening)  <lubuntu.org> 
-Ubuntu Core (after deblobbing)                   <https://developer.ubuntu.com/en/snappy/start/intel-nuc/> 
-Devuan (Libre Kernel,(after apply hardening)      <https://devuan.org/> 
-Uruk (Libre Kernel),(after apply hardening)       <https://urukproject.org//dist/index.html> 
-LibreWRT 
-Dockers (further containerization for security) (reference qubeOS.org) 
+- Debian (after deblobbing,hardening,enlightening)   <debian.org> 
+- Lubuntu (after deblobbing,hardening,enlightening)  <lubuntu.org> 
+- Ubuntu Core (after deblobbing)                   <https://developer.ubuntu.com/en/snappy/start/intel-nuc/> 
+- Devuan (Libre Kernel,(after apply hardening)      <https://devuan.org/> 
+- Uruk (Libre Kernel),(after apply hardening)       <https://urukproject.org//dist/index.html> 
+- LibreWRT 
+- Dockers (further containerization for security) (reference qubeOS.org) 
 
 
 ###***Many H/W providers claimed they produce open hardware but it's just crap?***
