@@ -707,7 +707,7 @@ Still prblems with HSTS https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Secu
 Also still problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
 
 
-#### Why we try the end user use more fair services than the offered in internet by big corporations?
+#### Why we try the end user use more fair services than the offered for free (bullshit youll pay entirelife) in internet by some corporations?
 
 Because if the user make use of centralized webs like Facebook,Google,Dropbox etc, we cant protect his privacy and he is going to disclosure himself his data.
 
@@ -727,15 +727,11 @@ More shadow darknets are coming in the further revisions .
 
 
  
-- Blocking – this  group includes tracker, redirector, governmental, spyware domains.
-- These domains are going to be resolved to IP address 10.0.0.1 by unbound. 
-- We have Webmin running on 10.0.0.1, so when you type some storage domain you will get Webmin administration interface in your browser to allow/deny given domain. (in theory we would have to customize our own webmin version or a new from scratch GUI)
- 
-##Unbound dns  configuration.
+##Unbounddns server configuration.
 
 - Is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
 
-##TOR configuration.
+##TOR configurations.
 Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
 
 ##I2P configuration.
@@ -744,8 +740,16 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 
 ##Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
 
+##Privoxy configuration.
+
+##Iptables configuration.
+
+##X further service configuration.
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+
+
+
 
 
 #Steps to setup on Physical/Virtual machine.
@@ -766,7 +770,7 @@ Anyone able to run a Debian 8.5 ARM x86 32 or 64 bits
 In this step you need to download and execute the following scripts on your machine with given order.
 
 
- - 0. Install a Debian 8.5 vanilla or desktop and make when ready, the Virtual Machine snapshot before anything. 
+ - 0. Install a Debian 8.5 vanilla or desktop and make a Virtual Machine snapshot before anything after the installation succesfully finished. 
  - 1. driver-script-pipo.sh (bypass if your not using the PIPO hardware)
  - 2. app-installation-script.sh 
  - 3. Make (again!) a VM snapshot in the lab.
