@@ -336,6 +336,7 @@ Following diagram shows the current issues, safeguards against them and the open
 #***Decentrazied collaboration and makerplaces***
 
 https://cageos.org/index.php?page=apps&section=Collaborative
+
 https://openbazaar.org
 
 #***A decentralized anonymous  Search Engine with admin rights.***
@@ -444,9 +445,9 @@ The Debian LFromScratch will contain drivers that may be restrictive, again if y
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
-We plan to dev in to the next presented hreally open hardware when is fully ready but for now the test is customized PIPO
+We plan to to use open hardware, when is fully ready, but for now, the test is customized PIPO X8-9s-10
 
-We still testing  Clearfog boards. 
+We still testing  Clearfog Base board 96$ (no screentouch is possible then the adminGUI need to by direct browser request). 
 
 ![xclearfog-base-with-som-01-800x676 jpg pagespeed ic lfn3kzosut](https://cloud.githubusercontent.com/assets/17382786/17366167/17b7d0a8-598a-11e6-8d82-1cd53a57bcb6.jpg)
 
@@ -726,9 +727,12 @@ More shadow darknets are coming in the further revisions .
 
 
  
-###Blocking – this  group includes tracker, redirector, governmental, spyware domains. - these domains are going to be resolved to IP address 10.0.0.1 by unbound. We have Webmin running on 10.0.0.1, so when you type some storage domain you will get Webmin administration interface in your browser to allow/deny given domain
+- Blocking – this  group includes tracker, redirector, governmental, spyware domains.
+- These domains are going to be resolved to IP address 10.0.0.1 by unbound. 
+- We have Webmin running on 10.0.0.1, so when you type some storage domain you will get Webmin administration interface in your browser to allow/deny given domain. (in theory we would have to customize our own webmin version or a new from scratch GUI)
  
-Unbound dns  configuration is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
+##Unbound dns  configuration.
+is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
 Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
 
 
