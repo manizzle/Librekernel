@@ -727,24 +727,24 @@ More shadow darknets are coming in the further revisions .
 
 
  
-##Unbounddns server configuration.
+###Unbounddns server configuration.
 
 - Is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
 
-##TOR configurations.
+###TOR configurations.
 Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
 
-##I2P configuration.
+###I2P configuration.
 
-##NGINX configuration.
+###NGINX configuration.
 
-##Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
+###Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
 
-##Privoxy configuration.
+###Privoxy configuration.
 
-##Iptables configuration.
+###Iptables configuration.
 
-##X further service configuration.
+###X further service configuration.
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
@@ -781,7 +781,8 @@ In this step you need to download and execute the following scripts on your mach
 
 ###0. What the driver-script-pipo.sh  does?
 
-Installs the drivers for Pipo X8:
+Installs the drivers for Pipo X8 hardware (not necesary if you using a virtual environment):
+
  - WLAN 1 NON FREE
  - WLAN 1 FREE
  - TOUCH SCREEN  NON FREE
@@ -846,57 +847,6 @@ Setup the proper exit for the script with a proper succes or not
 Success need to be based in a list check for all apps has being installed.
  
 
-
-
-
-#Executing scripts.
-
-In this step you need to download and execute the following scripts on your machine with given order.
-
-
-#Workflow of scripts.
-
-##1. app-installation-script.sh (Initialization script)**
-
-![installation_script2](https://cloud.githubusercontent.com/assets/18449119/17086029/ee2354f0-51e7-11e6-9fbb-0a0764173b94.JPG)
-
-
-Script workflow
-
-1. Check User 
-  * You need to run script as root user
-
-2. Check Platform 
-  * Platform should be Debian 7/8, Ubuntu 12.04/14.04, Trisquel 7.0
-
-3. Check Hardware 
-  * If you are running this script on odroid it should detect Intel processor
-
-4. Check Requirements (Only for Physical/Virtual machine) 
-  * Machine should match the requirements mentioned above
-
-5. Check Internet
-  * Check Internet connection
-
-6. Check If Assembled (Only gor LibreRouter)
-  * All neccessary modules should be connected to odroid board
-
-7. Configure Bridge Interfaces (Only for LibreRouter)
-  * eth0 and wlan0 will be bridged into interface br0
-  * eth1 and wlan1 will be bridged into interface br1
-  * In ethernet network, br0 should be connected to Internet and br0 to local network
-  * In wireless network, bridge interdace with wore powerful wlan will be connected to Internet and other one to local network
-
-8. Prepare perositories
-  * Update repositories for necessary packages
-
-9. Download packages
-  * Download necessary packages
-
-10. Install packages
-  * Install necessary packages
-
- 
 
 
 #app-configuration-script.sh (Parametrization script)**
