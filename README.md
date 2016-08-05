@@ -285,7 +285,7 @@ From being routed through any Darknet
 Libre router combined with Linux Libre and hardened OS configuration shown above protects us in many ways as follows:
  
 	- With our OS, a secured open operating system when we would have the hardened version of it based on 
-	  Debian Libre - Put here similar foto of Totemo distro piramid. #***TODO***
+	  Debian Libre and LFS  https://cageos.org/index.php?page=technical#kernel
 	- Decentralizing the services you consume from the cloud at local alternatives (making impossible to 
 	  apply big data enemy corps.) 
 	- A decentralized anonymous Search Engine with admin rights.  
@@ -414,6 +414,8 @@ A grid splits your files up into little pieces, encrypts them and spreads them o
 You can also sync your home Librerouter with all of your portable devices to have the same files and receive the same alerts in real time.If someone steals your cube or for some reason it is destroyed, you can simply buy a replacement Librerouter server and recover your lost data automatically from the Grid.In minutes you’re up and running again!
 
 Libraries: https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:matrix:featurescomparison
+https://cageos.org/index.php?page=pilarservices
+
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
