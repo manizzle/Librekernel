@@ -877,46 +877,48 @@ fi
 configure_friendica()
 {
 echo "Configuring Friendica local service ..."
-if [ ! -e  /var/lib/mysql/frndc ]; then
+if [ ! -e  /var/lib/mysql/frndcdb ]; then
 
   # Defining MySQL user and password variables
 # MYSQL_PASS="librerouter"
   MYSQL_USER="root"
 
   # Creating MySQL database frndc for friendica local service
-  echo "CREATE DATABASE frndc; grant all privileges on frndc.* to  \
-  friendica@localhost  identified by 'SuperPass8Wor1_2';" \
+  echo "CREATE DATABASE frndcdb;" \
   | mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" 
 fi
+
+  # Inserting friendica database
+  mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" frndcdb < /var/www/friendica/database.sql
 
 if [ -z "$(grep "friendica/include/poller" /etc/crontab)" ]; then
     echo '*/10 * * * * /usr/bin/php /var/www/friendica/include/poller.php' >> /etc/crontab
 fi
 
 # Creating friendica configuration
-#echo "
-#<?php
-#
-#\$db_host = 'localhost';
-#\$db_user = 'root';
-#\$db_pass = '$MYSQL_PASS';
-#\$db_data = 'frndc';
-#
-#\$a->path = '';
-#\$default_timezone = 'America/Los_Angeles';
-#\$a->config['sitename'] = \"My Friend Network\";
-#\$a->config['register_policy'] = REGISTER_OPEN;
-#\$a->config['register_text'] = '';
-#\$a->config['admin_email'] = 'admin@librerouter.com';
-#\$a->config['max_import_size'] = 200000;
-#\$a->config['system']['maximagesize'] = 800000;
-#\$a->config['php_path'] = '/usr/bin/php';
-#\$a->config['system']['huburl'] = '[internal]';
-#\$a->config['system']['rino_encrypt'] = true;
-#\$a->config['system']['theme'] = 'duepuntozero';
-#\$a->config['system']['no_regfullname'] = true;
-#\$a->config['system']['directory'] = 'http://dir.friendi.ca';
-#" > /var/www/friendica/.htconfig.php
+echo "
+<?php
+
+\$db_host = 'localhost';
+\$db_user = 'root';
+\$db_pass = '$MYSQL_PASS';
+\$db_data = 'frndcdb';
+
+\$a->path = '';
+\$default_timezone = 'America/Los_Angeles';
+\$a->config['sitename'] = \"My Friend Network\";
+\$a->config['register_policy'] = REGISTER_OPEN;
+\$a->config['register_text'] = '';
+\$a->config['admin_email'] = 'admin@librerouter.com';
+\$a->config['max_import_size'] = 200000;
+\$a->config['system']['maximagesize'] = 800000;
+\$a->config['php_path'] = '/usr/bin/php';
+\$a->config['system']['huburl'] = '[internal]';
+\$a->config['system']['rino_encrypt'] = true;
+\$a->config['system']['theme'] = 'duepuntozero';
+\$a->config['system']['no_regfullname'] = true;
+\$a->config['system']['directory'] = 'http://dir.friendi.ca';
+" > /var/www/friendica/.htconfig.php
 
 }
 
