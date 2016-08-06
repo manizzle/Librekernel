@@ -669,7 +669,7 @@ check_requirements()
 #               * 3. Warn user and exit with error.
 #
 # ----------------------------------------------
-get_dhcp_and_Internet()
+get_interfaces()
 {
 	# Check internet Connection. If Connection exist then get 
 	# and save Internet side network interface name in 
@@ -802,17 +802,21 @@ install_squid()
 echo "Installing squid dependences ..."
 aptitude build-dep squid
 
+echo "Installing squid ..."
+if [ ! -e /tmp/squid-3.4.13.tar.gz ]; then
 echo "Downloading squid ..."
 wget -P /tmp/ http://www.squid-cache.org/Versions/v3/3.4/squid-3.4.13.tar.gz
-tar zxvf /tmp/squid-3.4.13.tar.gz
+fi
+
+if [ ! -e /opt/squid-3.4.13 ]; then
+echo "Extracting squid ..."
+tar zxvf /tmp/squid-3.4.13.tar.gz -C /opt/
+fi
 
 echo "Building squid ..."
-cd /root/squid-3.4.13
-./configure --prefix=/usr --localstatedir=/var --libexecdir=/lib/squid --datadir=/usr/share/squid --sysconfdir=/etc/squid --with-logdir=/var/log/squid --with-pidfile=/var/run/squid.pid --enable-icap-client --enable-linux-netfilter --enable-ssl-crtd --with-openssl --enable-ltdl-convenience --enable-ssl
-# --with-openssl --enable-ssl --enable-ssl-crtd --with-default-user=squid 
-make
-make install
-cd
+/opt/squid-3.4.13/configure --prefix=/usr --localstatedir=/var --libexecdir=/lib/squid --datadir=/usr/share/squid --sysconfdir=/etc/squid --with-logdir=/var/log/squid --with-pidfile=/var/run/squid.pid --enable-icap-client --enable-linux-netfilter --enable-ssl-crtd --with-openssl --enable-ltdl-convenience --enable-ssl
+make -C '/opt/squid-3.4.13/'
+make -C '/opt/squid-3.4.13/' install
 
 # Getting squid startup script
 if [ ! -e /etc/squid/squid3.rc ]; then
@@ -826,16 +830,21 @@ fi
 # ----------------------------------------------
 install_squidclamav()
 {
+echo "Installing squidclamav ..."
+if [ ! -e /tmp/squidclamav-6.15.tar.gz ]; then
 echo "Downloading squidclamav ..."
-wget -P /tmp/ http://downloads.sourceforge.net/project/squidclamav/squidclamav/6.15/squidclamav-6.15.tar.gz 
-tar zxvf /tmp/squidclamav-6.15.tar.gz 
-cd /root/squidclamav-6.15 
+wget -P /tmp/ http://downloads.sourceforge.net/project/squidclamav/squidclamav/6.15/squidclamav-6.15.tar.gz
+fi 
+
+if [ ! -e /opt/squidclamav-6.15 ]; then
+echo "Extracting squidclamav ..."
+tar zxvf /tmp/squidclamav-6.15.tar.gz -C /opt/
+fi
 
 echo "Building squidclamav ..."
-./configure --with-c-icap 
-make
-make install
-cd
+/opt/squidclamav-6.15/configure --with-c-icap 
+make -C '/opt/squidclamav-6.15/'
+make -C '/opt/squidclamav-6.15/' install
 
 # Creating configuration file
 if [ -e /etc/squidclamav.conf ]; then
@@ -909,7 +918,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	check_internet          # Check Internet access
 #	check_assemblance
 #	check_requirements      # Checking requirements for 
-        get_dhcp_and_Internet  	# Get DHCP on eth0 or eth1 and 
+        get_interfaces  	# Get DHCP on eth0 or eth1 and 
 				# connect to Internet
         configure_bridges       # Configure bridge interfacers
                                 # Physical or Virtual machine
@@ -935,7 +944,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	#check_assemblance
 	#configure_bridges      # Configure bridge interfacers
 	#check_internet         # Check Internet access
-        #get_dhcp_and_Internet  # Get DHCP on eth0 or eth1 and 
+        #get_interfaces		# Get DHCP on eth0 or eth1 and 
 				# connect to Internet
 	#configure_repositories # Prepare and update repositories
 	#install_packages       # Download and install packages
@@ -950,6 +959,6 @@ fi
 # If script reachs to this point then it's done 
 # successfully
 # ---------------------------------------------
-echo "Initialization done successfully"
+#echo "Initialization done successfully"
 
 exit 
