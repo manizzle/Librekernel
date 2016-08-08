@@ -327,8 +327,8 @@ configure_bridges()
 		exit 8
 	else
 
-	EXT_BR_INT=`echo $EXT_INTERFACE | head -c 4`
-       	INT_BR_INT=`echo $INT_INTERFACE | head -c 4`
+	EXT_BR_INT=`echo $EXT_INTERFACE | tail -c 2`
+       	INT_BR_INT=`echo $INT_INTERFACE | tail -c 2`
 
 	echo "Configuring bridge interfaces..."
 	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
@@ -386,6 +386,13 @@ install_packages ()
 	apt-get update 2>&1 > /tmp/apt-get-update.log
 	echo "Installing packages ... "
 
+# Setting mysql password
+if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
+        MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
+else
+        MYSQL_PASS=`pwgen 10 1`
+fi
+
 # Installing Packages for Debian 7 GNU/Linux
 
 if [ $PLATFORM = "D7" ]; then
@@ -405,11 +412,10 @@ if [ $PLATFORM = "D7" ]; then
 	deb.torproject.org-keyring u-boot-tools console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
         libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
-        postfix mailutils \
+        postfix mailutils aptitude \
 	2>&1 > /tmp/apt-get-install.log
  	
 	# Setting MySQL password
-	MYSQL_PASS=`pwgen 10 1`
 	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
 	| debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password \
@@ -438,12 +444,11 @@ elif [ $PLATFORM = "D8" ]; then
         gnupg openssl python-virtualenv python-pip python-lxml git \
 	libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
         postfix mailutils \
-	libssl-dev perl screen \
+	libssl-dev perl screen aptitude \
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
 	2>&1 > /tmp/apt-get-install1.log
 
 	# Setting MySQL password
-	MYSQL_PASS=`pwgen 10 1`
 	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
 	| debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password \
@@ -471,11 +476,10 @@ elif [ $PLATFORM = "T7" ]; then
 	deb.torproject.org-keyring u-boot-tools console-setup \
         gnupg openssl python-virtualenv python-pip python-lxml git \
         libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev \
-        postfix mailutils \
+        postfix mailutils aptitude \
 	2>&1 > /tmp/apt-get-install.log
 
 	# Setting MySQL password
-	MYSQL_PASS=`pwgen 10 1`
 	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
 	| debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password \
@@ -502,11 +506,10 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
 	u-boot-tools console-tools* \
         gnupg openssl python-virtualenv python-pip python-lxml git \
          zlib1g-dev python-dev webmin \
-        postfix mailutils \
+        postfix mailutils aptitude \
 	2>&1 > /tmp/apt-get-install.log
 	
 	# Setting MySQL password
-	MYSQL_PASS=`pwgen 10 1`
 	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
 	| debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password \
@@ -800,7 +803,7 @@ cd
 install_squid()
 {
 echo "Installing squid dependences ..."
-aptitude build-dep squid
+aptitude -y build-dep squid
 
 echo "Installing squid ..."
 if [ ! -e /tmp/squid-3.4.13.tar.gz ]; then
@@ -808,15 +811,17 @@ echo "Downloading squid ..."
 wget -P /tmp/ http://www.squid-cache.org/Versions/v3/3.4/squid-3.4.13.tar.gz
 fi
 
-if [ ! -e /opt/squid-3.4.13 ]; then
+if [ ! -e squid-3.4.13 ]; then
 echo "Extracting squid ..."
-tar zxvf /tmp/squid-3.4.13.tar.gz -C /opt/
+tar zxvf /tmp/squid-3.4.13.tar.gz 
 fi
 
 echo "Building squid ..."
-/opt/squid-3.4.13/configure --prefix=/usr --localstatedir=/var --libexecdir=/lib/squid --datadir=/usr/share/squid --sysconfdir=/etc/squid --with-logdir=/var/log/squid --with-pidfile=/var/run/squid.pid --enable-icap-client --enable-linux-netfilter --enable-ssl-crtd --with-openssl --enable-ltdl-convenience --enable-ssl
-make -C '/opt/squid-3.4.13/'
-make -C '/opt/squid-3.4.13/' install
+cd squid-3.4.13
+./configure --prefix=/usr --localstatedir=/var --libexecdir=/lib/squid --datadir=/usr/share/squid --sysconfdir=/etc/squid --with-logdir=/var/log/squid --with-pidfile=/var/run/squid.pid --enable-icap-client --enable-linux-netfilter --enable-ssl-crtd --with-openssl --enable-ltdl-convenience --enable-ssl
+make 
+make install
+cd ../
 
 # Getting squid startup script
 if [ ! -e /etc/squid/squid3.rc ]; then
@@ -836,15 +841,17 @@ echo "Downloading squidclamav ..."
 wget -P /tmp/ http://downloads.sourceforge.net/project/squidclamav/squidclamav/6.15/squidclamav-6.15.tar.gz
 fi 
 
-if [ ! -e /opt/squidclamav-6.15 ]; then
+if [ ! -e squidclamav-6.15 ]; then
 echo "Extracting squidclamav ..."
-tar zxvf /tmp/squidclamav-6.15.tar.gz -C /opt/
+tar zxvf /tmp/squidclamav-6.15.tar.gz 
 fi
 
 echo "Building squidclamav ..."
-/opt/squidclamav-6.15/configure --with-c-icap 
-make -C '/opt/squidclamav-6.15/'
-make -C '/opt/squidclamav-6.15/' install
+cd squidclamav-6.15
+./configure  --with-c-icap 
+make
+make install
+cd ../
 
 # Creating configuration file
 if [ -e /etc/squidclamav.conf ]; then
