@@ -76,7 +76,6 @@ mostly used for proprietary firmware images in the Linux kernel like hard drives
 USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give 
 the user the freedom to review, audit, scrutinize, modify or, consequently, redistribute their 
 modified versions.
-<<<<<<< HEAD
 
 Linux Libre is an Linux based operating system kernel and a GNU package that is maintained 
 from modified versions of the Linux kernel. The aim of the Linux Libre is to remove from the 
@@ -86,17 +85,6 @@ For an example please see Blob Example at following link at the bottom
 
 [Blob Example](#blob-example)
 
-=======
-
-Linux Libre is an Linux based operating system kernel and a GNU package that is maintained 
-from modified versions of the Linux kernel. The aim of the Linux Libre is to remove from the 
-Linux kernel any software that does not include its source code, has its source code obfuscated, 
-or is released under proprietary licenses that we call binary blobs.
-For an example please see Blob Example at following link at the bottom
-
-[Blob Example](#blob-example)
-
->>>>>>> script-touchscreen
 ##***Need for this technology***
 
 - **Sniffers**: those that are checking your traffic.
@@ -280,7 +268,6 @@ The market is full of crowdfunded project where the funder claimed the project i
 
 Libre Router exploits the technologies like Free Open Source hardware, Linux Libre, deblobbed, hardened Linux Kernel, 
 Linux iptables, encryption and many other services to protect the intrusions, malicious attacks, unwanted advertisements etc.
-<<<<<<< HEAD
 
 ###***Using Libre Router to build a secure network***
 
@@ -295,22 +282,6 @@ From being routed through any Darknet
 
 ##***How does Libre Router protects us***
 
-=======
-
-###***Using Libre Router to build a secure network***
-
-From inside secureLAN
-
-![from home](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/7.png)
-
-From being routed through any Darknet 
-
-![from outdoor](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/10.png)
-
-
-##***How does Libre Router protects us***
-
->>>>>>> script-touchscreen
 Libre router combined with Linux Libre and hardened OS configuration shown above protects us in many ways as follows:
  
 	- With our OS, a secured open operating system when we would have the hardened version of it based on 
@@ -338,15 +309,9 @@ Following image shows how Libre Router protects by sitting between the outer Int
 ![metapollas](https://cloud.githubusercontent.com/assets/13025157/14502287/d6467f16-01aa-11e6-91d3-5e757c73a626.jpg)
 
 Following diagram shows the current issues, safeguards against them and the open Source components that help us get rid of it. 
-<<<<<<< HEAD
 
 ![Issues_Safegaurds](https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg)
 
-=======
-
-![Issues_Safegaurds](https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg)
-
->>>>>>> script-touchscreen
 #***Services are running in Librerouter***
 
 ![servicecomparison](https://cloud.githubusercontent.com/assets/13025157/14443209/0a778136-003e-11e6-98dc-5a699933e7f6.jpg)
@@ -369,14 +334,6 @@ Following diagram shows the current issues, safeguards against them and the open
 |:---|:---|:---|:---|:---|:---|:---|
 
 #***Decentrazied collaboration and makerplaces***
-<<<<<<< HEAD
-
-https://cageos.org/index.php?page=apps&section=Collaborative
-
-https://openbazaar.org
-
-#***A decentralized anonymous  Search Engine with admin rights.***
-=======
 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
@@ -401,26 +358,6 @@ https://cageos.org/index.php?page=apps&section=SocialNetworks
 https://cageos.org/index.php?page=apps&section=Collaborative
 
 ![rtcio](http://widevisiondesign.com/8-9_v2.png)
->>>>>>> script-touchscreen
-
-![data center or decent-ralization](http://widevisiondesign.com/11-12_v2.png)
-
-<<<<<<< HEAD
-![search engine](https://cloud.githubusercontent.com/assets/13025157/14445495/ac8eeeb4-004d-11e6-92c0-89fdc5c8cbb4.jpg)
-
-https://cageos.org/index.php?page=apps&section=SearchEngine
-
-A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
-
-https://cageos.org/index.php?page=apps&section=SocialNetworks
-
-![socialnetworks](https://cloud.githubusercontent.com/assets/13025157/14444852/be938994-0048-11e6-9200-0299ac312b3b.jpg)
-
-#***Secure decentralized video conferences based in XMPPoverTOR or WebRTC.***
-- 
-https://cageos.org/index.php?page=apps&section=Collaborative
-
-![rtcio](http://widevisiondesign.com/8-9_v2.png)
 
 
 #***A secure Storage System with collaborative tools based in : TahoeLafs over i2P and blocksnet.***
@@ -429,14 +366,6 @@ https://cageos.org/index.php?page=apps&section=StorageOwnCloud
 
 https://cageos.org/index.php?page=apps&section=DecentralizedBackup
 
-=======
-#***A secure Storage System with collaborative tools based in : TahoeLafs over i2P and blocksnet.***
-
-https://cageos.org/index.php?page=apps&section=StorageOwnCloud
-
-https://cageos.org/index.php?page=apps&section=DecentralizedBackup
-
->>>>>>> script-touchscreen
 #***Transparent Email encryption for your actual email.***
 - 
 https://cageos.org/index.php?page=apps&section=SecureEmail
@@ -503,7 +432,6 @@ In the Debian Snapshot we install the Debian Librerouter Scripts.
 The other VirtualMachine is windows 10 or simillar conected to the internal interface of the Librerouter.
 
 ##1. Setup Librerouter software Virtual machine 
-<<<<<<< HEAD
 
 You need Debian 8.5 32bits
 
@@ -519,23 +447,6 @@ The Debian LFromScratch will contain drivers that may be restrictive, again if y
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
-=======
-
-You need Debian 8.5 32bits
-
-Ongoing further: Devuan,Lubuntu/Core,Uruk,Dockers, Librewrt
-
-##2. Seting up in Pipo X8-9-10.
-
-PIPO Intel NUC Z8083 is NOT! open hardware/source because the boot is NOT able to support yet replacement with Coreboot or Uboot
-Due to limitations: Only PRE-sold 300 boxes in crowdfunding, we can NOT go prod with ARM-FPGA boards plus screen in case, its too expensive)
-
-Pipo do not have 1Tb HDD or 2 ethernets or 2 wlans, the version we test has addiotional components.
-The Debian LFromScratch will contain drivers that may be restrictive, again if you want a 100% open the you need fpga/arm boards in the market for router compatible with debian. 
-
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-
->>>>>>> script-touchscreen
 We plan to to use open hardware, when is fully ready, but for now, the test is customized PIPO X8-9s-10
 
 We still testing  Clearfog Base board 96$ (no screentouch is possible then the adminGUI need to by direct browser request). 
@@ -720,21 +631,12 @@ If you don’t want to use Privoxy you can still set some options in your squid.
 
 
 #NETWORK USE CASES
-<<<<<<< HEAD
 
 When user is using HTTPS connection to a darknet domain, this traffic it's considered dangerus and insecure. (the goverment try to explodes the browser for deanonymization) On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
 If this connection it's to a HTTPS regular/banking domain, this SSL tunnel will be not open Bumped/inspected. Will be routed directly to the clearnet internet (ex: https://yourbank.com)
 
 When the user is using HTTP, because is considered insecure itself this clear traffic is going to go through TOR to add anonymization but after a threatment from the local engines to add privacy on it.. The user can also decide in the future about which things he dont want to use TOr for HTTP.
 
-=======
-
-When user is using HTTPS connection to a darknet domain, this traffic it's considered dangerus and insecure. (the goverment try to explodes the browser for deanonymization) On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
-If this connection it's to a HTTPS regular/banking domain, this SSL tunnel will be not open Bumped/inspected. Will be routed directly to the clearnet internet (ex: https://yourbank.com)
-
-When the user is using HTTP, because is considered insecure itself this clear traffic is going to go through TOR to add anonymization but after a threatment from the local engines to add privacy on it.. The user can also decide in the future about which things he dont want to use TOr for HTTP.
-
->>>>>>> script-touchscreen
 - I2P domains/eepSite (ex: i2p2.i2p) will be redirected to I2P
 - Hidden services (ex: asdf1234.onion) will go through TOR
 - HTTP (ex: http://news.com) will go through TOR to the internet site
@@ -839,7 +741,6 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 ###NGINX configuration.
 
 ###Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
-<<<<<<< HEAD
 
 ###Privoxy configuration.
 
@@ -848,35 +749,11 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 ###X further service configuration.
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-=======
-
-###Privoxy configuration.
->>>>>>> script-touchscreen
-
-###Iptables configuration.
-
-###X further service configuration.
-
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 
 
 
-#Steps to setup on Physical/Virtual machine.
 
-<<<<<<< HEAD
-##Installation and Setup
-
-###***Which hardware/Virtual resources you needed to run Librerouter scripts?***
-
-Anyone able to run a Debian 8.5 ARM x86 32 or 64 bits 
-
-- At least 2 network interfaces NICS (external and internal always no matters bridge or server mode),
-- 2GB RAM
-- 4 cores CPU 
-- 32GB HDD but better 1TB
-
-=======
 #Steps to setup on Physical/Virtual machine.
 
 ##Installation and Setup
@@ -890,7 +767,6 @@ Anyone able to run a Debian 8.5 ARM x86 32 or 64 bits
 - 4 cores CPU 
 - 32GB HDD but better 1TB
 
->>>>>>> script-touchscreen
 ##Step 3. Executing scripts.
 
 In this step you need to download and execute the following scripts on your machine with given order.
@@ -1033,17 +909,10 @@ Features to be implemented in the project to be listed here in order of priority
 	
 	Q. Can you define the project in a line here?
 	-> An end user privacy firewall
-<<<<<<< HEAD
 
 	Q. Are there any other similar projects?
 	-> Sure there are
 
-=======
-
-	Q. Are there any other similar projects?
-	-> Sure there are
-
->>>>>>> script-touchscreen
 	Q. Is their any demo showing that it is actually doing what is being claimed?
 	-> Work-in-progress
 
@@ -1133,22 +1002,16 @@ There's a first version of Superbrowser  for windows 32bit. It doens't have I2P 
 
 https://cloud.Librerouter.com:8083/public.php?service=files&t=8d6e823f6d24dd12605084084299e0fb
 
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 The Internet is full of ___free___ services and you are the product they sell your data, in their _terms and conditions page_, that ***almost nobody reads***, and **Librerouter** operates exactly the opposite:
+
 [![4954401_orig](https://cloud.githubusercontent.com/assets/18449119/14941752/a885d1f2-0fa7-11e6-883a-317ceb75aff6.jpg)](https://www.youtube.com/watch?v=yzyafieRcWE)
+
+The below picture of Software Wars is not relevant, it should be deleted
 ![microsoftempire](https://cloud.githubusercontent.com/assets/17382786/14495567/578ee6e6-0190-11e6-9c93-016a32a56a93.png)
 ![paranoia](https://cloud.githubusercontent.com/assets/17382786/14495569/57af9850-0190-11e6-9051-9a4ed5977457.png)
 ![backdoorrouters](https://cloud.githubusercontent.com/assets/17382786/14653063/894a02f6-0677-11e6-9e34-963c0535858d.png)
 ![netneut](https://cloud.githubusercontent.com/assets/17382786/14496448/800de600-0193-11e6-885e-5537c8714c58.png)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> script-touchscreen
 ![9dovoix](https://cloud.githubusercontent.com/assets/17382786/17207521/45ba7c00-54b5-11e6-9f6c-f3236f32b9a1.jpg)
 
 
@@ -1275,6 +1138,4 @@ to know its purpose and effect on our system.
 
 
 
-=======
->>>>>>> script-touchscreen
 ![milestones](https://cloud.githubusercontent.com/assets/17382786/14495088/46ff610e-018e-11e6-960a-b9725c7f6127.png)
