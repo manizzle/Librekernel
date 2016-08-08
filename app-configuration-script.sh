@@ -968,43 +968,35 @@ fi
 chown -R www-data /var/www/owncloud
 
 # Creating MySQL database owncloud for owncloud local service
-if [ ! -e  /var/lib/mysql/owncloud ]; then
+#if [ ! -e  /var/lib/mysql/owncloud ]; then
 
   # Defining MySQL user and password variables
 # MYSQL_PASS="librerouter"
-  MYSQL_USER="root"
+# MYSQL_USER="root"
 
-#  echo "CREATE DATABASE owncloud; grant all privileges on owncloud.* to  \
-#  root@localhost  identified by 'librerouter';" \
-#  | mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" 
-fi
+#echo "CREATE DATABASE owncloud; grant all privileges on owncloud.* to  \
+#root@localhost  identified by 'librerouter';" \
+#| mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" 
+#fi
 
 # Creating Owncloud configuration file 
 #echo "
-#<?php
-#$CONFIG = array (
-#  'instanceid' => 'oc5606b55d9a',
-#  'passwordsalt' => 'V1ufXood1AXa0ikQ8reY13k5pm01Ci',
-#  'secret' => 'd/JPELayYmcHagt4sDfe5d+c6ZQAwt6ZAlTHZ/oJzJviDU9C',
+#<?php 
+#$CONFIG = array ( 
+#  'passwordsalt' => 'qnCIHrqhipLBEtREHYwp4zdGLdbtGs',
+#  'secret' => 't3H3oML8GAArbFrjkDfvgHzjIpY+Wva/q/HAvCQghsdhCfMq',
 #  'trusted_domains' => 
 #  array (
 #    0 => 'owncloud.librenet',
 #  ),
 #  'datadirectory' => '/var/www/owncloud/data',
-#  'overwrite.cli.url' => 'http://owncloud.librenet',
+#  'overwrite.cli.url' => 'https://owncloud.librenet',
 #  'dbtype' => 'mysql',
-#  'dbhost' => 'localhost',
+#  'version' => '8.1.9.2', 
 #  'dbname' => 'owncloud',
-#  'dbuser' => 'root',
-#  'dbpassword' => '$MYSQL_PASS',
-#  'default_language' => 'en',
-#  'defaultapp' => 'files',
-#  'knowledgebaseenabled' => true,
-#  'allow_user_to_change_display_name' => true,
-#  'remember_login_cookie_lifetime' => 60*60*24*15,
-#  'session_lifetime' => 60 * 60 * 24,
-#  'session_keepalive' => true,
-#  'version' => '8.1.7.2',
+#  'dbhost' => 'localhost',
+#  'dbtableprefix' => 'oc_',
+#  'dbpassword' => 'n3u459nl0sim3y9epv3sg6xbat7fcw',
 #  'logtimezone' => 'UTC',
 #  'installed' => true,
 #);
@@ -1842,37 +1834,92 @@ echo "Configuring Owncloud virtual host ..."
 # Getting Tor hidden service owncloud hostname
 SERVER_OWNCLOUD="$(cat /var/lib/tor/hidden_service/owncloud/hostname 2>/dev/null)"
 
+echo "Generating keys and certificates for Owncloud ..."
+rm -rf /etc/ssl/nginx/owncloud.key
+rm -rf /etc/ssl/nginx/owncloud.csr
+rm -rf /etc/ssl/nginx/owncloud.crt
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+	-keyout /etc/ssl/nginx/owncloud.key \
+	-out /etc/ssl/nginx/owncloud.crt -batch
+
 # Creating Owncloud virtual host configuration
 echo "
 # Redirect connections from port 7070 to Tor hidden service owncloud port 80
 server {
   listen 10.0.0.253:7070;
   server_name $SERVER_OWNCLOUD;
-  return 301 http://$SERVER_OWNCLOUD;
+  return 301 https://$SERVER_OWNCLOUD;
 }
 
-# Redirect connections from 10.0.0.253 to Tor hidden service owncloud
+# Redirect connections from 10.0.0.253 to owncloud with https
 server {
         listen 10.0.0.253:80;
         server_name _;
-        return 301 http://owncloud.librenet;
+        return 301 https://owncloud.librenet;
 }
   
 # Redirect connections from owncloud.librenet to Tor hidden service owncloud
 server {
-  listen 10.0.0.253:80;
+  listen 10.0.0.253:443 ssl;
+  ssl_certificate      /etc/ssl/nginx/owncloud.crt;
+  ssl_certificate_key  /etc/ssl/nginx/owncloud.key;
   server_name owncloud.librenet;
   index index.php;
   root /var/www/owncloud;
 
-  # php5-fpm configuration
-  location ~ \.php$ {
-  fastcgi_split_path_info ^(.+\.php)(/.+)$;
-  fastcgi_pass unix:/var/run/php5-fpm.sock;
-  fastcgi_index index.php;
-  fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-  include fastcgi_params;
-  }
+  # set max upload size
+  client_max_body_size 10G;
+  fastcgi_buffers 64 4K;
+
+  # rewrite rules
+  rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
+  rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
+  rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
+
+  # error pages paths
+  error_page 403 /core/templates/403.php;
+  error_page 404 /core/templates/404.php;
+
+  location ~ \.php(?:\$|/) {
+   fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+   include fastcgi_params;
+   fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+   fastcgi_param PATH_INFO \$fastcgi_path_info;
+   fastcgi_param HTTPS on;
+   fastcgi_pass unix:/var/run/php5-fpm.sock;
+   }
+
+
+  location = /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+    }
+
+  location ~ ^/(?:\.htaccess|data|config|db_structure\.xml|README){
+    deny all;
+    }
+
+  location / {
+   # The following 2 rules are only needed with webfinger
+   rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+   rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
+
+   rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
+   rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
+
+   rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
+
+   try_files \$uri \$uri/ /index.php;
+   }
+
+   # Optional: set long EXPIRES header on static assets
+   location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
+       expires 30d;
+       # Optional: Dont log access to assets
+         access_log off;
+   }
+
 }
 
 # Main server for Tor hidden service owncloud
