@@ -72,28 +72,6 @@ get_variables()
 
 
 # ---------------------------------------------------------
-# This function checks network interfaces.
-# The interface connected to network will be saved on 
-# EXT_INTERFACE variaable and other awailable interface
-# will be saved on INT_INTERFACE variable.
-# ---------------------------------------------------------
-get_interfaces()
-{
-	echo "Checking network interfaces ..."
-	# Getting external interface name
-	EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} \
-			| grep -w "0.0.0.0" | awk {'print $2'}`
-	echo "External interface: $EXT_INTERFACE"
-	
-	# Getting internal interface name
-	INT_INTERFACE=`ls /sys/class/net/ | \
-        grep -w 'eth0\|eth1\|wlan0\|wlan1' | \
-	grep -v '$EXT_INTERFACE' | sed -n '1p'` 
-	echo "Internal interface: $INT_INTERFACE"
-}
-
-
-# ---------------------------------------------------------
 # This functions configures hostname and static lookup
 # table 
 # ---------------------------------------------------------
@@ -557,15 +535,22 @@ service nginx stop
 sleep 10
 service tor restart
 
-t=0
-while [ $t -lt 1 ]
+LOOP_S=0
+LOOP_N=0
+while [ $LOOP_S -lt 1 ]
 do
  if [ -e "/var/lib/tor/hidden_service/yacy/hostname" ]; then
    echo "Tor successfully configured"
-   t=1
+   LOOP_S=1
  else
    sleep 1
+   LOOP_N=$((LOOP_N + 1))
  fi
+ # Wail up to 30 s for tor hidden services to become available
+ if [ $LOOP_N -eq 30 ]; then
+   echo "Error: Unable to configure tor. Exiting ..." 
+   break 
+ fi 
 done
 }
 
@@ -965,41 +950,6 @@ if [ ! -e  /var/www/owncloud ]; then
 fi
 
 chown -R www-data /var/www/owncloud
-
-# Creating MySQL database owncloud for owncloud local service
-#if [ ! -e  /var/lib/mysql/owncloud ]; then
-
-  # Defining MySQL user and password variables
-# MYSQL_PASS="librerouter"
-# MYSQL_USER="root"
-
-#echo "CREATE DATABASE owncloud; grant all privileges on owncloud.* to  \
-#root@localhost  identified by 'librerouter';" \
-#| mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" 
-#fi
-
-# Creating Owncloud configuration file 
-#echo "
-#<?php 
-#$CONFIG = array ( 
-#  'passwordsalt' => 'qnCIHrqhipLBEtREHYwp4zdGLdbtGs',
-#  'secret' => 't3H3oML8GAArbFrjkDfvgHzjIpY+Wva/q/HAvCQghsdhCfMq',
-#  'trusted_domains' => 
-#  array (
-#    0 => 'owncloud.librenet',
-#  ),
-#  'datadirectory' => '/var/www/owncloud/data',
-#  'overwrite.cli.url' => 'https://owncloud.librenet',
-#  'dbtype' => 'mysql',
-#  'version' => '8.1.9.2', 
-#  'dbname' => 'owncloud',
-#  'dbhost' => 'localhost',
-#  'dbtableprefix' => 'oc_',
-#  'dbpassword' => 'n3u459nl0sim3y9epv3sg6xbat7fcw',
-#  'logtimezone' => 'UTC',
-#  'installed' => true,
-#);
-#" > /var/www/owncloud/config/config.php
 
 }
 
@@ -2244,14 +2194,17 @@ service nginx restart
 # ---------------------------------------------------------
 configure_mysql()
 {
+	echo "Configuring MySQL ..."
+	# Getting MySQL password
 	if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
 		MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
 	else
-
 		MYSQL_PASS=`pwgen 10 1`
 		echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
+		# Setting password
 		mysqladmin -u root password $MYSQL_PASS
 	fi
+
 }
 
 
@@ -2264,7 +2217,6 @@ configure_mysql()
 
 check_root			# Checking user
 get_variables			# Getting variables
-#get_interfaces			# Getting external and internal interfaces
 configure_hosts			# Configurint hostname and /etc/hosts
 configure_interfaces		# Configuring external and internal interfaces
 configure_dhcp			# Configuring DHCP server 
