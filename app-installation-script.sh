@@ -241,8 +241,8 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		wget --no-check-certificate https://geti2p.net/_static/i2p-debian-repo.key.asc -O- | apt-key add -
 
 		# Prepare tor repo
-		echo 'deb http://deb.torproject.org/torproject.org wheezy main'  > /etc/apt/sources.list.d/tor.list
-		gpg --keyserver 223.252.21.101 --recv 886DDD89
+		echo 'deb http://deb.torproject.org/torproject.org jessie main'  > /etc/apt/sources.list.d/tor.list
+		gpg --keyserver pgp.net.nz --recv 886DDD89
 		gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
 		
 		# Prepare Webmin repo
@@ -304,7 +304,7 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		
 		# Prepare tor repo
 		echo 'deb http://deb.torproject.org/torproject.org wheezy main'  > /etc/apt/sources.list.d/tor.list
-		gpg --keyserver 223.252.21.101 --recv 886DDD89
+		gpg --keyserver pgp.net.nz --recv 886DDD89
 		gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -
 
 		# Prepare Webmin repo
