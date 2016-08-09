@@ -404,7 +404,8 @@ install_packages ()
 # Installing Packages for Debian 7 GNU/Linux
 
 if [ $PLATFORM = "D7" ]; then
-	apt-get install -y --force-yes privoxy nginx php5-common \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	privoxy nginx php5-common \
 	php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
 	php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
 	node npm apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
@@ -426,12 +427,13 @@ if [ $PLATFORM = "D7" ]; then
 # Installing Packages for Debian 8 GNU/Linux
 
 elif [ $PLATFORM = "D8" ]; then
-	apt-get install -y --force-yes privoxy nginx php5-common \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	privoxy nginx php5-common \
         php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
         php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
 	node npm apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
 	apache2.2-common- openjdk-7-jre-headless phpmyadmin php5 \
-	php5-gd php5-imap smarty3 git ntpdate macchanger \
+	mysql-server php5-gd php5-imap smarty3 git ntpdate macchanger \
 	bridge-utils hostapd isc-dhcp-server hostapd bridge-utils \
 	curl macchanger ntpdate tor bc sudo lsb-release dnsutils \
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
@@ -450,12 +452,13 @@ elif [ $PLATFORM = "D8" ]; then
 # Installing Packages for Trisquel 7.0 GNU/Linux
 
 elif [ $PLATFORM = "T7" ]; then
-	apt-get install -y --force-yes privoxy nginx php5-common \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	privoxy nginx php5-common \
 	php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
 	php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
 	node npm apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
 	apache2.2-common- openjdk-7-jre-headless phpmyadmin php5 \
-	php5-gd php5-imap smarty3 git ntpdate macchanger \
+	mysql-server php5-gd php5-imap smarty3 git ntpdate macchanger \
 	bridge-utils hostapd isc-dhcp-server hostapd bridge-utils \
 	curl macchanger ntpdate tor bc sudo lsb-release dnsutils \
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
@@ -472,7 +475,8 @@ elif [ $PLATFORM = "T7" ]; then
 # Installing Packages for Ubuntu 14.04 GNU/Linux
 
 elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
-	apt-get install -y --force-yes pwgen debconf-utils privoxy nginx php5-common \
+	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	pwgen debconf-utils privoxy nginx php5-common \
 	php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
 	php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
 	node npm apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
@@ -492,24 +496,6 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
 fi
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install packages"
-		exit 3
-	fi
-
-# Setting MySQL password
-	if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
-		MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
-	else
-		MYSQL_PASS=`pwgen 10 1`
-	fi
-	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
-	| debconf-set-selections
-	echo mysql-server mysql-server/root_password_again password \
-	$MYSQL_PASS | debconf-set-selections
-
-# Installing MySQL server package
- 	apt-get install -y --force-yes mysql-server
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to install mysql-server"
 		exit 3
 	fi
 
@@ -897,8 +883,7 @@ save_variables()
 Hardware: $HARDWARE\n\
 Processor: $PROCESSOR\n\
 Ext_interface: $EXT_INTERFACE\n\
-Int_interface: $INT_INTERFACE\n\
-DB_PASS: $MYSQL_PASS" \
+Int_interface: $INT_INTERFACE" \
                  > /var/box_variables
 }
 

@@ -50,7 +50,6 @@ get_variables()
 		PROCESSOR=`cat /var/box_variables | grep "Processor" | awk {'print $2'}`
 		EXT_INTERFACE=`cat /var/box_variables | grep "Ext_int" | awk {'print $2'}`
 		INT_INTERFACE=`cat /var/box_variables | grep "Int_int" | awk {'print $2'}`
-		MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
 
 #	touch "/tmp/variables.log"
 
@@ -2240,6 +2239,15 @@ service php5-fpm restart
 service nginx restart
 }
 
+# ---------------------------------------------------------
+# Function to configure mysql
+# ---------------------------------------------------------
+configure_mysql()
+{
+	MYSQL_PASS=`pwgen 10 1`
+	echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
+	mysqladmin -u root password $MYSQL_PASS
+}
 
 
 # ---------------------------------------------------------
@@ -2259,6 +2267,7 @@ configure_dhcp			# Configuring DHCP server
 
 # Block 2: Configuring services
 
+configure_mysql			# Configuring mysql password
 configure_iptables		# Configuring iptables rules
 configure_tor			# Configuring TOR server
 configure_i2p			# Configuring i2p services
