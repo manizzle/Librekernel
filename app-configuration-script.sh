@@ -2244,9 +2244,14 @@ service nginx restart
 # ---------------------------------------------------------
 configure_mysql()
 {
-	MYSQL_PASS=`pwgen 10 1`
-	echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
-	mysqladmin -u root password $MYSQL_PASS
+	if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
+		MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
+	else
+
+		MYSQL_PASS=`pwgen 10 1`
+		echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
+		mysqladmin -u root password $MYSQL_PASS
+	fi
 }
 
 
