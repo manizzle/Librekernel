@@ -492,11 +492,28 @@ sed "s~RUN_DAEMON=.*~RUN_DAEMON=\"yes\"~g" -i /etc/default/tor
 
 
 rm -f /etc/tor/torrc
-cp /usr/share/tor/tor-service-defaults-torrc /etc/tor/torrc
+#cp /usr/share/tor/tor-service-defaults-torrc /etc/tor/torrc
+echo "" > /usr/share/tor/tor-service-defaults-torrc
 
 echo "Configuring Tor hidden services"
 
 echo "
+DataDirectory /var/lib/tor
+PidFile /var/run/tor/tor.pid
+RunAsDaemon 1
+User debian-tor
+
+ControlSocket /var/run/tor/control GroupWritable RelaxDirModeCheck
+ControlSocketsGroupWritable 1
+SocksPort unix:/var/run/tor/socks WorldWritable
+SocksPort 127.0.0.1:9050
+
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+CookieAuthFile /var/run/tor/control.authcookie
+
+Log notice file /var/log/tor/log
+
 HiddenServiceDir /var/lib/tor/hidden_service/yacy
 HiddenServicePort 80 127.0.0.1:8090
 
@@ -521,14 +538,6 @@ HiddenServicePort 80 127.0.0.1:8080
 DNSPort   127.0.0.1:9053
 VirtualAddrNetworkIPv4 10.0.0.0/8
 AutomapHostsOnResolve 1
-
-SocksPort 127.0.0.1:9050
-Log notice file /var/log/tor/tor.log
-
-RunAsDaemon 1
-CookieAuthentication 1
-
-
 " >>  /etc/tor/torrc
 
 service nginx stop 
@@ -547,9 +556,9 @@ do
    LOOP_N=$((LOOP_N + 1))
  fi
  # Wail up to 30 s for tor hidden services to become available
- if [ $LOOP_N -eq 30 ]; then
-   echo "Error: Unable to configure tor. Exiting ..." 
-   break 
+ if [ $LOOP_N -eq 60 ]; then
+   echo "Error: Unable to configure tor. Exiting ..."
+   exit 1 
  fi 
 done
 }
@@ -2094,61 +2103,46 @@ echo "Configuring EasyRTC virtual host ..."
 SERVER_EASYRTC="$(cat /var/lib/tor/hidden_service/easyrtc/hostname 2>/dev/null)"
 
 # Generating keys and certificates for https connection
-echo "Generating keys and certificates for EasyRTC ..."
-if [ ! -e /etc/ssl/nginx/$SERVER_EASYRTC.key -o ! -e /etc/ssl/nginx/$SERVER_EASYRTC.csr -o ! -e  /etc/ssl/nginx/$SERVER_EASYRTC.crt ]; then
-    openssl genrsa -out /etc/ssl/nginx/$SERVER_EASYRTC.key 2048 -batch
-    openssl req -new -key /etc/ssl/nginx/$SERVER_EASYRTC.key -out /etc/ssl/nginx/$SERVER_EASYRTC.csr -batch
-    cp /etc/ssl/nginx/$SERVER_EASYRTC.key /etc/ssl/nginx/$SERVER_EASYRTC.key.org 
-    openssl rsa -in /etc/ssl/nginx/$SERVER_EASYRTC.key.org -out /etc/ssl/nginx/$SERVER_EASYRTC.key 
-    openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_EASYRTC.csr -signkey /etc/ssl/nginx/$SERVER_EASYRTC.key -out /etc/ssl/nginx/$SERVER_EASYRTC.crt 
-fi
+echo "Generating keys and certificates for Owncloud ..."
+rm -rf /etc/ssl/nginx/easyrtc.key
+rm -rf /etc/ssl/nginx/easyrtc.csr
+rm -rf /etc/ssl/nginx/easyrtc.crt
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout /etc/ssl/nginx/easyrtc.key \
+        -out /etc/ssl/nginx/easyrtc.crt -batch
 
 # Creating EasyRTC virtual host configuration
 echo "
-# Redirect easyrtc.librenet to Tor hidden service easyrtc
-server {
-        listen 10.0.0.250:80;
-        server_name easyrtc.librenet;
-location / {
-    proxy_pass       http://127.0.0.1:8080;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
-}
-
-# Redirect connections from 10.0.0.250 to EasyTRC tor hidden service 
+# Redirect connections from 10.0.0.250 to EasyTRC https 
 server {
         listen 10.0.0.250;
         server_name _;
-        return 301 http://easyrtc.librenet\$request_uri;
+        return 301 https://easyrtc.librenet/demos/;
 }
 
-# Redirect connections to easyrtc running on 127.0.0.1:8080
+# easyrtc https server 
 server {
-        listen 10.0.0.250:80;
-        server_name $SERVER_EASYRTC;
-
-location / {
+        listen 10.0.0.250:443 ssl;
+        server_name easyrtc.librenet;
+        ssl_certificate /etc/ssl/nginx/easyrtc.crt;
+        ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
+  location / {
     proxy_pass       http://127.0.0.1:8080;
     proxy_set_header Host      \$host;
     proxy_set_header X-Real-IP \$remote_addr;
   }
 }
 
-# Redirect https connections to http
-server {
-        listen 10.0.0.250:443 ssl;
-        server_name easyrtc.librenet;
-        ssl_certificate /etc/ssl/nginx/$SERVER_EASYRTC.crt;
-        ssl_certificate_key /etc/ssl/nginx/$SERVER_EASYRTC.key;
-        return 301 http://easyrtc.librenet;
-}
 server {
         listen 10.0.0.250:443 ssl;
         server_name $SERVER_EASYRTC;
-        ssl_certificate /etc/ssl/nginx/$SERVER_EASYRTC.crt;
-        ssl_certificate_key /etc/ssl/nginx/$SERVER_EASYRTC.key;
-        return 301 http://$SERVER_EASYRTC;
+        ssl_certificate /etc/ssl/nginx/easyrtc.crt;
+        ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
+  location / {
+    proxy_pass       http://127.0.0.1:8080;
+    proxy_set_header Host      \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+  }
 }
 " > /etc/nginx/sites-enabled/easyrtc
 
