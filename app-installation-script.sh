@@ -90,6 +90,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 #        	echo "deb http://security.ubuntu.com/ubuntu precise-security main" >> /etc/apt/sources.list
  		echo "Installing apt-transport-https ..."
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		if [ $? -ne 0 ]; then
+			echo "Error: Unable to install apt-transport-https"
+			exit 3
+		fi
 		
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' > /etc/apt/sources.list.d/owncloud.list
@@ -118,6 +122,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
         	#apt-get update 2>&1 > /tmp/apt-get-update-default.log
  		echo "Installing apt-transport-https ..."
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		if [ $? -ne 0 ]; then
+			echo "Error: Unable to install apt-transport-https"
+			exit 3
+		fi
 		
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' > /etc/apt/sources.list.d/owncloud.list
@@ -152,6 +160,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 	        apt-get update 2>&1 > /tmp/apt-get-update-default.log
  		echo "Installing apt-transport-https ..."
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		if [ $? -ne 0 ]; then
+			echo "Error: Unable to install apt-transport-https"
+			exit 3
+		fi
 	
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' > /etc/apt/sources.list.d/owncloud.list
@@ -203,7 +215,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
        		apt-get update 2>&1 > /tmp/apt-get-update-default.log
  		echo "Installing apt-transport-https ..."
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
-
+		if [ $? -ne 0 ]; then
+			echo "Error: Unable to install apt-transport-https"
+			exit 3
+		fi
 
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/ /' > /etc/apt/sources.list.d/owncloud.list
@@ -386,13 +401,6 @@ install_packages ()
 	apt-get update 2>&1 > /tmp/apt-get-update.log
 	echo "Installing packages ... "
 
-# Setting mysql password
-if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
-        MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
-else
-        MYSQL_PASS=`pwgen 10 1`
-fi
-
 # Installing Packages for Debian 7 GNU/Linux
 
 if [ $PLATFORM = "D7" ]; then
@@ -414,15 +422,6 @@ if [ $PLATFORM = "D7" ]; then
         libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
         postfix mailutils aptitude \
 	2>&1 > /tmp/apt-get-install.log
- 	
-	# Setting MySQL password
-	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
-	| debconf-set-selections
-	echo mysql-server mysql-server/root_password_again password \
-	$MYSQL_PASS | debconf-set-selections
-
-	# Installing MySQL server package
- 	apt-get install -y --force-yes mysql-server
 
 # Installing Packages for Debian 8 GNU/Linux
 
@@ -448,15 +447,6 @@ elif [ $PLATFORM = "D8" ]; then
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
 	2>&1 > /tmp/apt-get-install1.log
 
-	# Setting MySQL password
-	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
-	| debconf-set-selections
-	echo mysql-server mysql-server/root_password_again password \
-	$MYSQL_PASS | debconf-set-selections
-
-	# Installing MySQL server package
- 	apt-get install -y --force-yes mysql-server
-
 # Installing Packages for Trisquel 7.0 GNU/Linux
 
 elif [ $PLATFORM = "T7" ]; then
@@ -479,15 +469,6 @@ elif [ $PLATFORM = "T7" ]; then
         postfix mailutils aptitude \
 	2>&1 > /tmp/apt-get-install.log
 
-	# Setting MySQL password
-	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
-	| debconf-set-selections
-	echo mysql-server mysql-server/root_password_again password \
-	$MYSQL_PASS | debconf-set-selections
-
-	# Installing MySQL server package
- 	apt-get install -y --force-yes mysql-server
-
 # Installing Packages for Ubuntu 14.04 GNU/Linux
 
 elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
@@ -508,19 +489,27 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
          zlib1g-dev python-dev webmin \
         postfix mailutils aptitude \
 	2>&1 > /tmp/apt-get-install.log
-	
-	# Setting MySQL password
+fi
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install packages"
+		exit 3
+	fi
+
+# Setting MySQL password
+	if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
+		MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
+	else
+		MYSQL_PASS=`pwgen 10 1`
+	fi
 	echo mysql-server mysql-server/root_password password $MYSQL_PASS \
 	| debconf-set-selections
 	echo mysql-server mysql-server/root_password_again password \
 	$MYSQL_PASS | debconf-set-selections
 
-	# Installing MySQL server package
+# Installing MySQL server package
  	apt-get install -y --force-yes mysql-server
-
-fi
 	if [ $? -ne 0 ]; then
-		echo "ERROR: unable to install packages"
+		echo "Error: unable to install mysql-server"
 		exit 3
 	fi
 
@@ -539,8 +528,16 @@ echo "Getting Friendica ..."
 if [ ! -e  /var/www/friendica ]; then
 	cd /var/www
 	git clone https://github.com/friendica/friendica.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download friendica"
+		exit 3
+	fi
 	cd friendica
 	git clone https://github.com/friendica/friendica-addons.git addon
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download friendica addons"
+		exit 3
+	fi
 
 	chown -R www-data:www-data /var/www/friendica/view/smarty3
 	chmod g+w /var/www/friendica/view/smarty3
@@ -761,10 +758,14 @@ check_assemblance()
 # Function to install mailpile package
 # ----------------------------------------------
 install_mailpile() {
-git clone --recursive https://github.com/mailpile/Mailpile.git /opt/Mailpile
-virtualenv -p /usr/bin/python2.7 --system-site-packages /opt/Mailpile/mailpile-env
-source /opt/Mailpile/mailpile-env/bin/activate
-pip install -r /opt/Mailpile/requirements.txt
+	git clone --recursive https://github.com/mailpile/Mailpile.git /opt/Mailpile
+	virtualenv -p /usr/bin/python2.7 --system-site-packages /opt/Mailpile/mailpile-env
+	source /opt/Mailpile/mailpile-env/bin/activate
+	pip install -r /opt/Mailpile/requirements.txt
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install Mailpile"
+		exit 3
+	fi
 }
 
 
@@ -773,27 +774,35 @@ pip install -r /opt/Mailpile/requirements.txt
 # ----------------------------------------------
 install_easyrtc() 
 {
-echo "Installing EasyRTC package ..."
+	echo "Installing EasyRTC package ..."
 
-# Creating home folder for EasyRTC 
-if [ -e /opt/easyrtc ]; then
-	rm -r /opt/easyrtc
-fi
-mkdir /opt/easyrtc
+	# Creating home folder for EasyRTC
+	if [ -e /opt/easyrtc ]; then
+		rm -r /opt/easyrtc
+	fi
+	mkdir /opt/easyrtc
 
-# Installing Node.js
-curl -sL https://deb.nodesource.com/setup | bash -
-apt-get install -y --force-yes nodejs
+	# Installing Node.js
+	curl -sL https://deb.nodesource.com/setup | bash -
+	apt-get install -y --force-yes nodejs
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install Node"
+		exit 3
+	fi
 
-# Getting EasyRTC files
-wget --no-check-certificate https://easyrtc.com/assets/files/easyrtc_server_example.zip
-unzip easyrtc_server_example.zip -d /opt/easyrtc
-rm -r easyrtc_server_example.zip
+	# Getting EasyRTC files
+	wget --no-check-certificate https://easyrtc.com/assets/files/easyrtc_server_example.zip
+	unzip easyrtc_server_example.zip -d /opt/easyrtc
+	rm -r easyrtc_server_example.zip
 
-# Downloading the required dependencies
-cd /opt/easyrtc
-npm install
-cd
+	# Downloading the required dependencies
+	cd /opt/easyrtc
+	npm install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install EasyRTC"
+		exit 3
+	fi
+	cd
 }
 
 
@@ -802,31 +811,39 @@ cd
 # ----------------------------------------------
 install_squid()
 {
-echo "Installing squid dependences ..."
-aptitude -y build-dep squid
+	echo "Installing squid dependences ..."
+	aptitude -y build-dep squid
 
-echo "Installing squid ..."
-if [ ! -e /tmp/squid-3.4.13.tar.gz ]; then
-echo "Downloading squid ..."
-wget -P /tmp/ http://www.squid-cache.org/Versions/v3/3.4/squid-3.4.13.tar.gz
-fi
+	echo "Installing squid ..."
+	if [ ! -e /tmp/squid-3.4.13.tar.gz ]; then
+		echo "Downloading squid ..."
+		wget -P /tmp/ http://www.squid-cache.org/Versions/v3/3.4/squid-3.4.13.tar.gz
+	fi
 
-if [ ! -e squid-3.4.13 ]; then
-echo "Extracting squid ..."
-tar zxvf /tmp/squid-3.4.13.tar.gz 
-fi
+	if [ ! -e squid-3.4.13 ]; then
+		echo "Extracting squid ..."
+		tar zxvf /tmp/squid-3.4.13.tar.gz
+	fi
 
-echo "Building squid ..."
-cd squid-3.4.13
-./configure --prefix=/usr --localstatedir=/var --libexecdir=/lib/squid --datadir=/usr/share/squid --sysconfdir=/etc/squid --with-logdir=/var/log/squid --with-pidfile=/var/run/squid.pid --enable-icap-client --enable-linux-netfilter --enable-ssl-crtd --with-openssl --enable-ltdl-convenience --enable-ssl
-make 
-make install
-cd ../
+	echo "Building squid ..."
+	cd squid-3.4.13
+	./configure --prefix=/usr --localstatedir=/var \
+		--libexecdir=/lib/squid --datadir=/usr/share/squid \
+		--sysconfdir=/etc/squid --with-logdir=/var/log/squid \
+		--with-pidfile=/var/run/squid.pid --enable-icap-client \
+		--enable-linux-netfilter --enable-ssl-crtd --with-openssl \
+		--enable-ltdl-convenience --enable-ssl
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install squid"
+		exit 3
+	fi
+	cd ../
 
-# Getting squid startup script
-if [ ! -e /etc/squid/squid3.rc ]; then
-wget -P /etc/squid/ https://raw.githubusercontent.com/grosskur/squid3-deb/master/debian/squid3.rc 
-fi
+	# Getting squid startup script
+	if [ ! -e /etc/squid/squid3.rc ]; then
+		wget -P /etc/squid/ https://raw.githubusercontent.com/grosskur/squid3-deb/master/debian/squid3.rc
+	fi
 }
 
 
@@ -835,30 +852,29 @@ fi
 # ----------------------------------------------
 install_squidclamav()
 {
-echo "Installing squidclamav ..."
-if [ ! -e /tmp/squidclamav-6.15.tar.gz ]; then
-echo "Downloading squidclamav ..."
-wget -P /tmp/ http://downloads.sourceforge.net/project/squidclamav/squidclamav/6.15/squidclamav-6.15.tar.gz
-fi 
+	echo "Installing squidclamav ..."
+	if [ ! -e /tmp/squidclamav-6.15.tar.gz ]; then
+		echo "Downloading squidclamav ..."
+		wget -P /tmp/ http://downloads.sourceforge.net/project/squidclamav/squidclamav/6.15/squidclamav-6.15.tar.gz
+	fi
 
-if [ ! -e squidclamav-6.15 ]; then
-echo "Extracting squidclamav ..."
-tar zxvf /tmp/squidclamav-6.15.tar.gz 
-fi
+	if [ ! -e squidclamav-6.15 ]; then
+		echo "Extracting squidclamav ..."
+		tar zxvf /tmp/squidclamav-6.15.tar.gz
+	fi
 
-echo "Building squidclamav ..."
-cd squidclamav-6.15
-./configure  --with-c-icap 
-make
-make install
-cd ../
+	echo "Building squidclamav ..."
+	cd squidclamav-6.15
+	./configure --with-c-icap
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install squidclamav"
+		exit 3
+	fi
+	cd ../
 
-# Creating configuration file
-if [ -e /etc/squidclamav.conf ]; then
-rm -rf /etc/squidclamav.conf
-fi
-ln -s /etc/c-icap/squidclamav.conf /etc/squidclamav.conf 
-
+	# Creating configuration file
+	ln -sf /etc/c-icap/squidclamav.conf /etc/squidclamav.conf
 }
 
 
@@ -884,10 +900,6 @@ Ext_interface: $EXT_INTERFACE\n\
 Int_interface: $INT_INTERFACE\n\
 DB_PASS: $MYSQL_PASS" \
                  > /var/box_variables
-        if [ $? -ne  0 ]; then
-                echo "Error: Unable to save variables. Exiting"
-                exit 11
-        fi
 }
 
 
