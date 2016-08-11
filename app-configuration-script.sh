@@ -1051,7 +1051,7 @@ mkdir /etc/squid/ssl_cert
 openssl req -new -newkey rsa:2048 -days 365 -nodes -x509  \
 	-keyout /etc/squid/ssl_cert/squid.key \
         -out /etc/squid/ssl_cert/squid.crt -batch
-chown -R proxy:proxy /etc/squid/ssl_cert/*
+chown -R proxy:proxy /etc/squid/ssl_cert
 chmod -R 777 /etc/squid/ssl_cert
 fi
 
