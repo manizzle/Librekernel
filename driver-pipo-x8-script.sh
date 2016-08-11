@@ -8,7 +8,7 @@ ORIG_DIR="$(pwd)"
 
 function _configure_repos() {
 	# Backports for Jessie, needed for newer kernel
-	echo "deb http://httpredir.debian.org/debian/ jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list
+	echo "deb http://ftp.es.debian.org/debian/ jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list
 	apt update
 }
 
@@ -20,7 +20,7 @@ function _install_packages() {
 
 # Touchscreen, free driver
 function _touchscreen() {
-	KERNEL_TARGET="4.6.0-0.bpo.1-686"
+	KERNEL_TARGET="4.6.0-0.bpo.1-amd64"
 	# Check if needed packages are installed
 	_configure_repos
 	_install_packages build-essential linux-image-$KERNEL_TARGET/jessie-backports linux-headers-$KERNEL_TARGET/jessie-backports  linux-base/jessie-backports
