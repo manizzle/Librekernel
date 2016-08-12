@@ -577,6 +577,7 @@ Technical background for each use case:
  - https://github.com/varnish/hitch
  - https://github.com/dani87/sslbump
  - https://github.com/jpelias/squid3-ssl-bump/blob/master/Install%20Squid%203.4%20with%20ssl%20bump%20on%20Debian%208%20(Jessie)
+ - https://github.com/diladele
 
 ##Squid Content filter with privacy enhacement:
 
