@@ -514,6 +514,40 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 
 #Network Working flow 
+
+David to clarify architecture for use cases:
+a) https to onion
+b) https to i2p
+c) http to onion
+d) http to i2p
+e) http with ads to internet
+f) https with ads to internet
+g) https with not allowed content porn to internet
+h) https to a bank
+i) http to a bad domain
+h) https to a bad domain
+i) https to a good domain that tries to exploit the browser via flash exploit
+h) https that tries to download a exe file with virus.
+i) http conecting to a place but this conection matches a botnet signature.
+j) ssh to a server between the librerouter and internet (internal lan of the user , external side of the librerouter)
+k) tahoe trying to use TOR or I2P addresses.
+l) user browser a keyword in browser formularie > browser tries to query google or duckduckgo or bing for that search.
+m) a guy trying to explode/abuse the local services url -> from hidden services -> so from TOR or I2P how you protect it.
+n) any local machine tries to go to youtube> how to macke interactive the procces where librerouter ask to the users to allow or not.
+o) any web tries to track via installing certificates like fb of gmail or google to spy on users.
+p) how the user will allow or not any IoT while is blocked in librerouter?
+q) what we do with udp?
+r) udp dns request that not goes to unbound?
+s) udp p2p trafic from emule?
+t) udp others?
+u) icmp ping to any IP
+v) non http,icmp,https,dns traffic (how layer 7 will try to identify the protocol and alert the user to allow or not)
+w) a request from xmmp federation from internet or from TOR or I2P
+x) to allow or not javascript,flash, etc on preallowed white and black list
+y) yacy trying to go by TOR or I2P
+z) prosody trying to conect via over TOR
+a1) webrtc protocol
+
  
 ![layers](https://cloud.githubusercontent.com/assets/17382786/17397142/f4f4ba92-5a36-11e6-8721-eddfcc1f18be.png)
 
