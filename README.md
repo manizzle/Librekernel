@@ -306,15 +306,15 @@ Following security pyramid diagram explains the different components that make o
 
 Following image shows how Libre Router protects by sitting between the outer Internet and out private network
 
-![metapollas]((https://github.com/Librerouter/Librekernel/blob/gh-pages/images/13.png)
+![metapollas](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/13.png)
 
 Following diagram shows the current issues, safeguards against them and the open Source components that help us get rid of it. 
 
-![Issues_Safegaurds]((https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
+![Issues_Safegaurds](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
 
 #***Services are running in Librerouter***
 
-![servicecomparison]((https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
+![servicecomparison](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
 
 |App|Decentralized|AnonymInsid|Ncryptclientside|Ncryptservrside|PubPrivF2F|ExposepubIP|
 |:---|:---|:---|:---|:---|:---|:---|
