@@ -403,13 +403,13 @@ In our decentralized system your valuable information is encrypted three times:
 
 The decentralized (i2p) version of Tahoe LAFS-Grid (with protections against Sybil attacks and upload Dodos) is a new way to make your data indestructible. 
 
-![storage](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/19.png)
+![storage](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/18-19.jpg)
 
 A grid splits your files up into little pieces, encrypts them and spreads them out geographically, making it immune to any disaster or service outage.
 
 ![grid](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/16.png)
 
-![grid4](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/18-19.jpg)
+![grid4](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/20.jpg)
 
 You can also sync your home Librerouter with all of your portable devices to have the same files and receive the same alerts in real time.If someone steals your cube or for some reason it is destroyed, you can simply buy a replacement Librerouter server and recover your lost data automatically from the Grid.In minutes you’re up and running again!
 
