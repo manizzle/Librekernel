@@ -367,6 +367,24 @@ chmod +x /etc/blacklists/blacklists-iptables.sh
 
 
 # ---------------------------------------------------------
+# Function to configure mysql
+# ---------------------------------------------------------
+configure_mysql()
+{
+        echo "Configuring MySQL ..."
+        # Getting MySQL password
+        if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
+                MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
+        else
+                MYSQL_PASS=`pwgen 10 1`
+                echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
+                # Setting password
+                mysqladmin -u root password $MYSQL_PASS
+        fi
+}
+
+
+# ---------------------------------------------------------
 # Function to configure iptables
 # ---------------------------------------------------------
 configure_iptables()
@@ -1549,6 +1567,7 @@ echo "
 server {
         listen 10.0.0.251:80;
         server_name yacy.librenet;
+        rewrite ^/search(.*) http://\$server_name/yacysearch.html\$1 permanent;
 location / {
     proxy_pass       http://127.0.0.1:8090;
     proxy_set_header Host      \$host;
@@ -2184,21 +2203,188 @@ service nginx restart
 }
 
 # ---------------------------------------------------------
-# Function to configure mysql
+# Function to check interfaces
 # ---------------------------------------------------------
-configure_mysql()
+check_interfaces()
 {
-	echo "Configuring MySQL ..."
-	# Getting MySQL password
-	if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
-		MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
-	else
-		MYSQL_PASS=`pwgen 10 1`
-		echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
-		# Setting password
-		mysqladmin -u root password $MYSQL_PASS
-	fi
+# Preparing script file
+rm -rf /root/libre_scripts/
+mkdir /root/libre_scripts/
+touch /root/libre_scripts/check_interfaces.sh
+chmod +x /root/libre_scripts/check_interfaces.sh
 
+
+# Script to check interfaces
+cat << EOF > /root/libre_scripts/check_interfaces.sh
+#!/bin/bash
+# Checking physical interfaces (eth0 and eth1)
+if ip addr show eth1 | grep 'state UP'; then
+    if ip addr show eth0 | grep 'state UP'; then
+        # Checking virtual interfaces (ethx:1 ethx:2 ethx:3 ethx:4 ethx:5 ethx:6)
+            if ping -c 1 10.0.0.10; then
+                if ping -c 1 10.0.0.250; then
+                    if ping -c 1 10.0.0.251; then
+                        if ping -c 1 10.0.0.252; then
+                            if ping -c 1 10.0.0.253; then
+                                if ping -c 1 10.0.0.254; then
+                                    logger "Check Interfaces: Network is ok"
+                                else
+                                    #Make a note in syslog
+                                    logger "Check Interfaces: ethx:4 is down, restarting network ..."
+                                    /etc/init.d/networking restart
+                                    exit
+                                fi
+                            else
+                                #Make a note in syslog
+                                logger "Check Interfaces: ethx:3 is down, restarting network ..."
+                                /etc/init.d/networking restart
+                                exit
+                            fi
+                        else
+                            #Make a note in syslog
+                            logger "Check Interfaces: ethx:2 is down, restarting network ..."
+                            /etc/init.d/networking restart
+                            exit
+                        fi
+                    else
+                        #Make a note in syslog
+                        logger "Check Interfaces: ethx:1 is down, restarting network ..."
+                        /etc/init.d/networking restart
+                        exit
+                    fi
+                else
+                    #Make a note in syslog
+                    logger "Check Interfaces: ethx:6 is down, restarting network ..."
+                    /etc/init.d/networking restart
+                    exit
+                fi
+            else
+                #Make a note in syslog
+                logger "Check Interfaces: ethx:5 is down, restarting network ..."
+                /etc/init.d/networking restart
+                exit
+            fi
+    else
+        #Make a note in syslog
+        logger "Check Interfaces: eth0 is down, restarting network ..."
+        /etc/init.d/networking restart
+        exit
+    fi
+else
+    #Make a note in syslog
+    logger "Check Interfaces: eth1 is down, restarting network ..."
+    /etc/init.d/networking restart
+    exit
+fi
+EOF
+
+
+# Creating cron job
+rm -rf /root/libre_scripts/cron_jobs
+echo "@reboot sleep 20 && /root/libre_scripts/check_interfaces.sh" > /root/libre_scripts/cron_jobs
+crontab /root/libre_scripts/cron_jobs
+}
+
+
+# ---------------------------------------------------------
+# Function to check services
+# ---------------------------------------------------------
+check_services()
+{
+# Preparing script file
+rm -rf /root/libre_scripts/check_services.sh
+touch /root/libre_scripts/check_services.sh
+chmod +x /root/libre_scripts/check_services.sh
+
+
+# Script to check services
+cat << EOF > /root/libre_scripts/check_services.sh
+#!/bin/bash
+# Checking unbound
+if /etc/init.d/unbound status | grep "active (running)"; then
+    logger "Check Services: Unbound is ok"
+else
+    logger "Check Services: Unbound is not running. Restarting ..."
+    /etc/init.d/unbound restart
+fi
+
+# Checking isc-dhcp-server
+if /etc/init.d/isc-dhcp-server status | grep "active (running)"; then
+    logger "Check Services: isc-dhcp-server is ok"
+else
+    logger "Check Services: isc-dhcp-server is not running. Restarting ..."
+    /etc/init.d/isc-dhcp-server restart
+fi
+
+# Checking squid
+if /etc/init.d/squid status | grep "active (running)"; then
+    logger "Check Services: squid is ok"
+else
+    logger "Check Services: squid is not running. Restarting ..."
+    /etc/init.d/squid restart
+fi
+
+# Checking squid-tor
+if /etc/init.d/squid-tor status | grep "active (running)"; then
+    logger "Check Services: squid-tor is ok"
+else
+    logger "Check Services: squid-tor is not running. Restarting ..."
+    /etc/init.d/squid-tor restart
+fi
+
+# Checking squid-i2p
+if /etc/init.d/squid-i2p status | grep "active (running)"; then
+    logger "Check Services: squid-i2p is ok"
+else
+    logger "Check Services: squid-i2p is not running. Restarting ..."
+    /etc/init.d/squid-i2p restart
+fi
+
+# Checking clamav-daemon
+if /etc/init.d/clamav-daemon status | grep "active (running)"; then
+    logger "Check Services: clamav-daemon is ok"
+else
+    logger "Check Services: clamav-daemon is not running. Restarting ..."
+    /etc/init.d/clamav-daemon restart
+fi
+
+# Checking c-icap
+if /etc/init.d/c-icap status | grep "active (running)"; then
+    logger "Check Services: c-icap is ok"
+else
+    logger "Check Services: c-icap is not running. Restarting ..."
+    /etc/init.d/c-icap restart
+fi
+
+# Checking privoxy
+if /etc/init.d/privoxy status | grep "active (running)"; then
+    logger "Check Services: privoxy is ok"
+else
+    logger "Check Services: privoxy is not running. Restarting ..."
+    /etc/init.d/privoxy restart
+fi
+
+# Checking privoxy-tor
+if /etc/init.d/privoxy-tor status | grep "active (running)"; then
+    logger "Check Services: privoxy-tor is ok"
+else
+    logger "Check Services: privoxy-tor is not running. Restarting ..."
+    /etc/init.d/privoxy-tor restart
+fi
+
+# Checking nginx
+if /etc/init.d/nginx status | grep "active (running)"; then
+    logger "Check Services: Nginx is ok"
+else
+    logger "Check Services: Nginx is not running. Restarting ..."
+    /etc/init.d/nginx restart
+fi
+EOF
+
+
+# Creating cron job
+echo "@reboot sleep 40 && /root/libre_scripts/check_interfaces.sh" >> /root/libre_scripts/cron_jobs
+crontab /root/libre_scripts/cron_jobs
 }
 
 
@@ -2228,12 +2414,13 @@ configure_easyrtc		# Configuring EasyRTC local service
 configure_owncloud		# Configuring Owncloud local service
 configure_mailpile		# Configuring Mailpile local service
 configure_nginx                 # Configuring Nginx web server
-configure_privoxy		# Configure Privoxy proxy server
+configure_privoxy		# Configuring Privoxy proxy server
 configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
 configure_postfix		# Configuring postfix mail service
-
+check_interfaces		# Checking network interfaces
+check_services			# Checking services 
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
 
