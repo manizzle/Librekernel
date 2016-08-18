@@ -306,15 +306,15 @@ Following security pyramid diagram explains the different components that make o
 
 Following image shows how Libre Router protects by sitting between the outer Internet and out private network
 
-![metapollas](https://cloud.githubusercontent.com/assets/13025157/14502287/d6467f16-01aa-11e6-91d3-5e757c73a626.jpg)
+![metapollas]((https://github.com/Librerouter/Librekernel/blob/gh-pages/images/13.png)
 
 Following diagram shows the current issues, safeguards against them and the open Source components that help us get rid of it. 
 
-![Issues_Safegaurds](https://cloud.githubusercontent.com/assets/13025157/14445470/7411e258-004d-11e6-8447-2e2f554ca756.jpg)
+![Issues_Safegaurds]((https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
 
 #***Services are running in Librerouter***
 
-![servicecomparison](https://cloud.githubusercontent.com/assets/13025157/14443209/0a778136-003e-11e6-98dc-5a699933e7f6.jpg)
+![servicecomparison]((https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
 
 |App|Decentralized|AnonymInsid|Ncryptclientside|Ncryptservrside|PubPrivF2F|ExposepubIP|
 |:---|:---|:---|:---|:---|:---|:---|
@@ -391,7 +391,7 @@ Imagine all the important information you have stored on the hard drive of your 
 • Disaster: Your external hard disks fail or stolen. (no disaster recovery)   
 • Privacy: You're at risk of having your data hacked and stolen if it’s not encrypted.
 
-![gridstorage](https://cloud.githubusercontent.com/assets/13025157/14445990/c11a4172-0051-11e6-93f8-23a53225b479.jpg)
+![gridstorage](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/16.png)
 
 The decentralized (i2p) version of Tahoe LAFS-Grid (with protections against Sybil attacks and upload Dodos) is a new way to make your data indestructible. A grid splits your files up into little pieces, encrypts them and spreads them out geographically, making it immune to any disaster or service outage.
 In our decentralized system your valuable information is encrypted three times:
@@ -399,17 +399,17 @@ In our decentralized system your valuable information is encrypted three times:
 2. In the collaboration tool before the data goes to the hard disk
 3. When backing up to the grid, the slices will also be encrypted. 
 
-![tahoe](https://cloud.githubusercontent.com/assets/13025157/14444761/fea4bc0c-0047-11e6-80bd-583bcb7b0fda.jpg)
+![tahoe](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/17.png)
 
 The decentralized (i2p) version of Tahoe LAFS-Grid (with protections against Sybil attacks and upload Dodos) is a new way to make your data indestructible. 
 
-![storage](https://cloud.githubusercontent.com/assets/13025157/14444754/f0ebf814-0047-11e6-9558-25e26b3d614b.jpg)
+![storage](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/19.png)
 
 A grid splits your files up into little pieces, encrypts them and spreads them out geographically, making it immune to any disaster or service outage.
 
-![grid](https://cloud.githubusercontent.com/assets/13025157/14444751/e3eaba38-0047-11e6-95f4-e4753c0d50c5.jpg)
+![grid](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/16.png)
 
-![grid4](https://cloud.githubusercontent.com/assets/13025157/14444809/5f670ebe-0048-11e6-8b0d-5170ab2afdc4.png)
+![grid4](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/18-19.png)
 
 You can also sync your home Librerouter with all of your portable devices to have the same files and receive the same alerts in real time.If someone steals your cube or for some reason it is destroyed, you can simply buy a replacement Librerouter server and recover your lost data automatically from the Grid.In minutes you’re up and running again!
 
@@ -425,7 +425,7 @@ https://cageos.org/index.php?page=pilarservices
 For Virtual Machine setup we need one system with two guests installed in it, one Debian 8 32 bit and one Windows 10
 As shown in the following figure.
 
-![deded](https://cloud.githubusercontent.com/assets/17382786/17208311/782c6d8a-54b8-11e6-82b7-e408db4f966d.png)
+![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
 
 In the Debian Snapshot we install the Debian Librerouter Scripts.
 
