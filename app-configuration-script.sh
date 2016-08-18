@@ -1567,7 +1567,7 @@ echo "
 server {
         listen 10.0.0.251:80;
         server_name yacy.librenet;
-        rewrite ^/search(.*) http://\$server_name/yacysearch.html\$1 permanent;
+	rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
 location / {
     proxy_pass       http://127.0.0.1:8090;
     proxy_set_header Host      \$host;
@@ -1583,32 +1583,37 @@ server {
 }
 
 # Redirect connections to yacy running on 127.0.0.1:8090
+#server {
+#        listen 10.0.0.251:80;
+#        server_name $SERVER_YACY;
+#
+#location / {
+#    proxy_pass       http://127.0.0.1:8090;
+#    proxy_set_header Host      \$host;
+#    proxy_set_header X-Real-IP \$remote_addr;
+#  }
+}
+
+# Redirect https connections to http
+#server {
+#        listen 10.0.0.251:443 ssl;
+#        server_name $SERVER_YACY;
+#        ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
+#        ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
+#        return 301 http://$SERVER_YACY;
+#}
 server {
-        listen 10.0.0.251:80;
-        server_name $SERVER_YACY;
+        listen 10.0.0.251:443 ssl;
+        server_name yacy.librenet;
+        ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
+        ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
+        rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
 
 location / {
     proxy_pass       http://127.0.0.1:8090;
     proxy_set_header Host      \$host;
     proxy_set_header X-Real-IP \$remote_addr;
   }
-
-}
-
-# Redirect https connections to http
-server {
-        listen 10.0.0.251:443 ssl;
-        server_name $SERVER_YACY;
-        ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
-        ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
-        return 301 http://$SERVER_YACY;
-}
-server {
-        listen 10.0.0.251:443 ssl;
-        server_name yacy.librenet;
-        ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
-        ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
-        return 301 http://yacy.librenet;
 }
 " > /etc/nginx/sites-enabled/yacy
 
