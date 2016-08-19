@@ -333,7 +333,7 @@ Following diagram shows the current issues, safeguards against them and the open
 |Postfix|Yes|No|?|Public|Yes|No|
 |:---|:---|:---|:---|:---|:---|:---|
 
-#***Decentrazied collaboration and makerplaces***
+#***Decentralized collaboration and makerplaces***
 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
