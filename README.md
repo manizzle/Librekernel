@@ -214,24 +214,6 @@ https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
 - https://en.wikipedia.org/wiki/Common_Criteria
 - http://www.asd.gov.au/infosec/aisep/crypto.htm
 
-
-#Technical Overview
-
-Libre Router use technologies like Free Open Source hardware, Linux Libre, hardened Linux , encryption and many other  to protect the end user or clients agaisnt intrusions, malicious attacks, unwanted advertisements creating a LAN (Local Netwrok area) insside another LAN (your internet router lan)
-
-###***Using Libre Router to build a secure network***
-
-####From inside secureLAN
-Imagine your at home, then you use the services locally (local server, local services)
-
-![from home](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/7.png)
-
-From being routed through any Darknet 
-Imagine your at work, then you use the services in your home through Darknets (remote server, remote services in TOR, I2P, and others VPNs) In your company its just https traffic so nobody see insside. You can use your personal storage, socialnetwork and everything with security and obscurity. 
-
-![from outdoor](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/10.png)
-
-
 ##***How does Libre Router protects us***
 
 Libre router combined with Linux Libre and hardened OS configuration shown above protects us in many ways as follows:
@@ -259,6 +241,22 @@ Following security pyramid diagram explains the different components that make o
 Following image shows how Libre Router protects by sitting between the outer Internet and out private network
 
 ![metapollas](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/13.png)
+
+#Technical Overview
+
+Libre Router use technologies like Free Open Source hardware, Linux Libre, hardened Linux , encryption and many other  to protect the end user or clients agaisnt intrusions, malicious attacks, unwanted advertisements creating a LAN (Local Netwrok area) insside another LAN (your internet router lan)
+
+###***Using Libre Router to build a secure network***
+
+####From inside secureLAN
+Imagine your at home, then you use the services locally (local server, local services)
+
+![from home](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/7.png)
+
+From being routed through any Darknet 
+Imagine your at work, then you use the services in your home through Darknets (remote server, remote services in TOR, I2P, and others VPNs) In your company its just https traffic so nobody see insside. You can use your personal storage, socialnetwork and everything with security and obscurity. 
+
+![from outdoor](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/10.png)
 
 Following diagram shows the current issues, safeguards against them and the open Source components that help us get rid of it. 
 
