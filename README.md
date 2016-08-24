@@ -177,6 +177,7 @@ https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
 ###***Which are the licenses and certifications that show openness in the hardware?***
 
 - http://www.ohwr.org/documents/294
+- http://www.ohwr.org/projects/cernohl/wiki
 - http://www.gnu.org/licenses/quick-guide-gplv3.en.html
 - http://www.tapr.org/OHL
 - http://www.opengroup.org/accreditation/o-ttps
