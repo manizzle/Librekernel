@@ -215,12 +215,9 @@ https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
 - http://www.asd.gov.au/infosec/aisep/crypto.htm
 
 
- 
-
 #Technical Overview
 
-Libre Router exploits the technologies like Free Open Source hardware, Linux Libre, deblobbed, hardened Linux Kernel, 
-Linux iptables, encryption and many other services to protect the intrusions, malicious attacks, unwanted advertisements etc.
+Libre Router use technologies like Free Open Source hardware, Linux Libre, hardened Linux , encryption and many other  to protect the end user or clients agaisnt intrusions, malicious attacks, unwanted advertisements creating a LAN (Local Netwrok area) insside another LAN (your internet router lan)
 
 ###***Using Libre Router to build a secure network***
 
