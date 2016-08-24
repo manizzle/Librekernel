@@ -7,11 +7,11 @@
 ##[Index]
 
 
-- [Overview of Linux Libre and Libre Kernel for personal cyber security and privacy](#overview-of-linux-libre-and-libre-kernel-for-personal-cyber-security-and-privacy)
+- [Overview of Libre Kernel for personal cyber security-privacy](#overview-of-linux-libre-and-libre-kernel-for-personal-cyber-security-and-privacy)
 	- [Purpose of this document](#purpose-of-this-document)
 	- [Introduction] (#introduction)
 	- [Need for this technology] (#need-for-this-technology)
-	- [About Linux Libre Technology](#about-linux-libre-technology)
+	- [About Linux Libre](#about-linux-libre)
 	- [Ways of Proprietary firmware removal and its good effects](#ways-of-proprietary-firmware-removal-and-its-good-effects)
 	- [Libre Router Technology](#libre-router-technology)	
 	- [Open Source Hardware](#open-source-hardware)
@@ -56,113 +56,71 @@
 
 ##***Purpose of this document***
 
-This document is meant to explain the Linux Libre and the Libre Router, Linux based Open Source Software and open Source Hardware technologies developed for creating a secure network for normal users to avoid following
-wrongs things that happen with or without our explicit or implicit knowledge: 
+This document is meant to explain the Libre Router linux based open source hardware technologies integrated for creating a secure network for end users to avoid following issues that may happen with or without our explicit or implicit knowledge: 
 
-	- Traffic Sniffing: those that are checking your traffic. 
-	- Government spy/monitoring institutions passive actions: collecting general data from worldwide. 
-	- Libre Router evil nodes: a box Owned for those bad people. 
+##***The need for this technology***
+
+	- Traffic Sniffing: those that are checking your traffic: Government spy/monitoring institutions passive actions: collecting general data from worldwide. 
 	- Malicious Internet nodes: better known as blackbones. 
-	- Your Internet provider (ISP): if they would trying anything with your data.
-	- Keeping back-doors in software and hardware to achieve one or more of the above things 
+	- Your Internet provider (ISP): if they would trying anything with your data like DNS spoofing, traffic shaping, DPI.
+	- Back-doors in software (windows friend of NSA) and hardware (Cisco, Huawei,Fortinet,TP-Link) to achieve one or more of the above issues: Control, Spionage, Privacy spooks, politics, police interception, apply bigdata to your cloud for marketing, law enforcement, market research, or simply hacking outbreachs.
+	
 
-##Overview of Linux Libre and Libre Kernel for personal cyber pirvacy and security:
+##Overview of Libre Kernel components:
 
-##***Introduction***
+##***Introduction to what is called Pseudo Backdoor and code (a secret entry door in the program)***
 
-Software components with no available source code are called binary blobs(Binary Large Objects 
-or a collection of binary data stored as a single object) and, as such, are 
-mostly used for proprietary firmware images in the Linux kernel like hard drives, Ethernet, 
-USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give 
-the user the freedom to review, audit, scrutinize, modify or, consequently, redistribute their 
-modified versions.
-
-Linux Libre is an Linux based operating system kernel and a GNU package that is maintained 
-from modified versions of the Linux kernel. The aim of the Linux Libre is to remove from the 
-Linux kernel any software that does not include its source code, has its source code obfuscated, 
-or is released under proprietary licenses that we call binary blobs.
-For an example please see Blob Example at following link at the bottom
+Software components with no available source code are called binary blobs(Binary Large Objects or a collection of binary data stored as a single object) and, as such, are mostly used for proprietary firmware images in the Linux kernel like hard drives, Ethernet, USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give the user the freedom to review, audit, scrutinize, modify or, consequently, redistribute their modified versions.
 
 [Blob Example](#blob-example)
 
-##***Need for this technology***
-
-- **Sniffers**: those that are checking your traffic.
-- **Government spy/monitoring institutions passive actions**: collecting general data from worldwide.
-- **Librerouter evil nodes**:  a box Owned for those _bad people_.
-- **Malicious internet nodes**: better known as _blackbones_.
-- **Your internet provider (ISP)**: if they would trying anything with your data.
-
-##***About Linux Libre Technology***
+##***About Linux Libre***
 
 Linux Libre is a free/Libre version of the kernel Linux suitable for use with the GNU Operating System.
-It removes non-free components from Linux, that are disguised as source code or distributed in separate
-files. It also disables run-time requests for non-free components, shipped separately or as part of 
-Linux, and documentation pointing to them. The GNU Linux Libre project takes a minimal-changes approach 
-to cleaning up Linux, making no effort to substitute components that need to be removed with functionally
-equivalent free/Libre ones.
+It removes non-free components from Linux, that are disguised as source code or distributed in separate files. It also disables run-time requests for non-free components, shipped separately or as part of Linux, and documentation pointing to them. The GNU Linux Libre project takes a minimal-changes approach to cleaning up Linux, making no effort to substitute components that need to be removed with functionally equivalent free/Libre ones.
 
-As explained earlier, its an operating system kernel and a GNU package whose aim is to remove from the 
-Linux kernel any source code with blobs, with obfuscated source code, or is has proprietary licenses.
-Software components with no available source code are called binary blobs and, as such, are mostly used 
-for proprietary firmware images in the Linux kernel.
+As explained earlier, its an operating system kernel and a GNU package whose aim is to remove from the Linux kernel any source code with blobs, with obfuscated source code, or is has proprietary licenses.Software components with no available source code are called binary blobs and, as such, are mostly used for proprietary firmware images in the Linux kernel.
 
 ##Ways of Proprietary firmware removal and its good effects
 
-1. Deblobing : It is cleaning up and verifying Linux tarballs and patches for non-Free blobs. This is 
-done using the script files deblob-check for verifying the Vanilla Linux kernel tarball for any non-free
-proprietary, blobs. . Similarly for removing the blobs there is a scripts deblob-* where * represents 
-the Kernel version its tested and applicable for. The script can be found here 
-<http://www.fsfla.org/svn/fsfla/software/linux-libre/scripts/>
+1. Deblobing : It is cleaning up and verifying Linux tarballs and patches for non-Free blobs. This is done using the script files deblob-check for verifying the Vanilla Linux kernel tarball for any non-free proprietary, blobs. . Similarly for removing the blobs there is a scripts deblob-* where * represents the Kernel version its tested and applicable for. The script can be found here <http://www.fsfla.org/svn/fsfla/software/linux-libre/scripts/>
 
-2. Keep the base deblobbed kernel clean:
-Use clean basement and don't allow installation of 3rd party software that is established by trust control 
-is free of blobs. For Example for Linux Libre here is the link 
-<http://www.linux-libre.fsfla.org/pub/linux-libre/releases/LATEST-4.6.N/> 
+2. VRMS(Virtual Richard M. Stallman)
+A program that analyzes the set of currently-installed packages on a Debian-based system, and reports all of the packages from the non-free tree which are currently installed. Software gets placed in the non-free tree when it is agreed not to be too problematic for 
+Debian to distribute but does not meet the Debian Free Software Guidelines and therefore cannot be included in their official distribution. For each program from "non-free" installed, VRMS displays an explanation of why it is non-free, if one is available. More information about VRMS can be fount at <https://alioth.debian.org/projects/vrms/>
 
-3. VRMS: 
-VRMS(Virtual Richard M. Stallman) is a program that analyzes the set of currently-installed packages 
-on a Debian-based system, and reports all of the packages from the non-free tree which are currently 
-installed. Software gets placed in the non-free tree when it is agreed not to be too problematic for 
-Debian to distribute but does not meet the Debian Free Software Guidelines and therefore cannot be 
-included in their official distribution. For each program from "non-free" installed, VRMS displays 
-an explanation of why it is non-free, if one is available. More information about VRMS can be fount at 
-<https://alioth.debian.org/projects/vrms/>
+3. Keep the base deblobbed kernel compilation clean:
+Use clean basement and don't allow installation of 3rd party software that is established by trust control is free of blobs. For Example for Linux Libre here is the link <http://www.linux-libre.fsfla.org/pub/linux-libre/releases/LATEST-4.6.N/> 
 
-So to speak Debian vanilla kernel:
+###Kernel
+
+The Linux kernel is a Unix-like computer operating system kernel. The Linux operating system is based on it and deployed on both traditional computer systems such as personal computers and servers, usually in the form of Linux distributions,[9] and on various embedded devices such as routers, wireless access points, PBXes, set-top boxes, FTA receivers, smart TVs, PVRs and NAS appliances. The Android operating system for tablet computers, smartphones and smartwatches is also based atop the Linux kernel.
+The Linux kernel was conceived and created in 1991 by Linus Torvalds[10] for his personal computer and with no cross-platform intentions, but has since expanded to support a huge array of computer architectures, many more than other operating systems or kernels
+
+Debian vanilla kernel:
 	- Doesn't include any non-free firmware (bugs aside), but it allows users to load non-free 
           firmware if they wish to do so, which might pose the same kind of threats like, Trojans, tracking, 
           kernel training with malicious software, sniffing etc.
 	
-Where as Linux Libre:
-	- The Linux Libre kernel doesn't include any non-free firmware or anything looking like firmware, 
-          and it prevents users from loading non-free firmware even if they wish to do so.
-	- Is built by running a deblob script on the kernel source code. This goes through the 
-  	  kernel source code, and makes various firmware-related changes. 
-	- Any firmware for which source code is available is preserved, but the script makes sure the 
-  	  source code is available. 
+Linux Libre kernel:
+	- The Linux Libre kernel doesn't include any non-free firmware or anything looking like firmware, and it prevents users from loading non-free firmware even if they wish to do so.
+	- Is built by running a deblob script on the kernel source code. This goes through the kernel source code, and makes various firmware-related changes. 
+	- Any firmware for which source code is available is preserved, but the script makes sure the source code is available. 
 	- Any module requiring firmware is stripped of the ability to load the firmware. 
 	- Any source code which looks like firmware (sequences of numbers) is removed. 
 	- Any file containing only firmware (e.g. the contents of firmware/radeon) is removed. 
 	
-##Libre Router Technology
+##Libre Router
 
 In the previous section we talked about Linux Libre which is Linux based operating system kernel and a GNU package.
-IN this and following few sessions we are going to talk about it's counterpart called Linux Router which is nothing
-but a Open Source hardware with no malignant backdoors, with source code for kernel logic as well as firmware where
-Open Source developers will have as much control as possible to bypass the censorship and enforce the security for
-users.
+In this and following few sessions we are going to talk about it's counterpart called LibreRouter which is nothing but a Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and enforce the security for users.
 
-In simplest term it's a GNU Free and Open Source Hardware (FOSH) running a GNU software.
+In simplest term it's a GNU Free and Open Source Hardware (FOSH) running GNU software.
 
-It's a unique combination of open source hardware, GNU software controlled and monitors by Open Source community.
-With minimal training and simple documentation you can achieve a decrease of the cyber risks as, mentioned earlier. 
-It's a solution to bypass censorship, spy agencies, anti net neutrality internet providers, and government control. 
-It's really very easy to use for all people with little or no computers and networking knowledge. 
-This is simple Plug and play system to make your traffic untraceable and secure. 
-It is the future Data Center resilience infrastructure. 
+A unique integration of open source hardware by GNU software maintained by Open Source community.
+With minimal training and simple documentation you can achieve a decrease cyber risks levels and increase your privacy.
+The aim its to make a really very easy to use for all people without computers and networking knowledge also, aim to be simple Plug and play system to make your traffic untraceable and secure. It is the future home and only privacy viable data center infrastructure. 
 
- 
 ##Open Source Hardware
 
 It consists of physical artifacts of technology designed and offered by the open design movement. Both free and 
@@ -175,52 +133,46 @@ in addition to the software that drives the hardware, are all released under fre
 sharer gains feedback and potentially improvements on the design from the FOSH community. There is now significant 
 evidence that such sharing can drive a high return on investment for investors.
 
-LGPL (Lesser General Public License):
+### Licenses for being open
+
+####LGPL (Lesser General Public License):
 The GNU Lesser General Public License (LGPL) is a free software license published by the Free Software Foundation (FSF). 
 The license allows developers and companies to use and integrate software released under the LGPL into their own 
 (even proprietary) software without being required by the terms of a strong copyleft license to release the source 
 code of their own components. The license only requires software under the LGPL be modifiable by end users via source 
 code availability. For proprietary software, code under the LGPL is usually used in the form of a shared library such 
 as a DLL, so that there is a clear separation between the proprietary and LGPL components. The LGPL is primarily used 
-for software libraries, although it is also used by some stand-alone applications.
+for software libraries, although it is also used by some stand-alone applications. please visit <https://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License> 
 
-For information on LGPL please visit <https://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License> 
-
-CC (Creative Commons) License:
+####CC (Creative Commons) License:
 A Creative Commons (CC) license is one of several public copyright licenses that enable the free distribution of 
 an otherwise copyrighted work. A CC license is used when an author wants to give people the right to share, use, 
 and build upon a work that they have created. CC provides an author flexibility (for example, they might choose 
 to allow only non-commercial uses of their own work) and protects the people who use or redistribute an author's 
 work from concerns of copyright infringement as long as they abide by the conditions that are specified in the 
 license by which the author distributes the work.
- 
 
-##Purposed Operating Systems using Linux Libre
-Following distributions are tested only in Debian 8.5 x86 32bits
+###***Hardware openess license and confusing "open" terms***
 
-- Debian (after deblobbing,hardening,enlightening)   <debian.org> 
-- Lubuntu (after deblobbing,hardening,enlightening)  <lubuntu.org> 
-- Ubuntu Core (after deblobbing)                   <https://developer.ubuntu.com/en/snappy/start/intel-nuc/> 
-- Devuan (Libre Kernel,(after apply hardening)      <https://devuan.org/> 
-- Uruk (Libre Kernel),(after apply hardening)       <https://urukproject.org//dist/index.html> 
-- LibreWRT 
-- Dockers (further containerization for security) (reference qubeOS.org) 
+The market is full of crowdfunded projects where the funders claimed that the project is based in open hardware.
+What mostly resulted under a deep research that it requires to operate full range of such called binary blobls (possible backdoor), chipset restringtions (software requires to be signed by the manufacturer) and questions about missing or obfsucated documented parts or schemas/diagrams. The result could be any of this posibilites:
 
+- ARM Truszone is a blackbox (rustZone technology within Cortex-A based application processors is commonly used to run trusted boot and a trusted OS to create a Trusted Execution Environment (TEE). Typical use cases include the protection of authentication mechanisms, cryptography, key material and DRM) As you can imagine this is a big antiopen market mechanism.
 
-###***Many H/W providers claimed they produce open hardware but it's just crap?***
+- Device drivers=controllers or the chipset could may be not opensource (https://en.wikipedia.org/wiki/Device_driver)
+- No source code or the compiler is not opensource
+https://en.wikipedia.org/wiki/Source_code 
+https://en.wikipedia.org/wiki/Compiler
+http://unix.stackexchange.com/questions/89897/how-to-compile-the-c-compiler-from-scratch-then-compile-unix-linux-from-scratch
+https://en.wikipedia.org/wiki/Bootstrapping_(compilers)#The_chicken_and_egg_problem
+https://en.wikipedia.org/wiki/Bootstrapping_(compilers)
+https://www.win.tue.nl/~aeb/linux/hh/thompson/trust.html
 
-The market is full of crowdfunded project where the funder claimed the project is open hardware but in real the hardware is full of binary blobls, chipset restringtions and questions about missing parts of info and doc:
-
-- ARM Truszone is a blackbox
-- Controllers or Chipset not opensource
-- No source code.
-- Dark Binaries required.
-- No documentation No schematics
-- Neeed sign binaries for bein accepted by the board.
-- Not accept free booting.
-
+- No documentation No schematics on the components of the circuit board.
+- Not using free booting boot system. 
+https://en.wikipedia.org/wiki/Coreboot 
+https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
 ![arm boot tz](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/imgg.png)
-
 
 ###***Which are the licenses and certifications that show openness in the hardware?***
 
