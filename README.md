@@ -396,6 +396,8 @@ We still testing  Clearfog Base board 96$ (no screentouch is possible then the a
 - https://images.solid-build.xyz/A38X/
 - https://www.solid-run.com/product/clearfog-base/
 - http://blog.hypriot.com/post/introducing-the-clearfog-pro-router-board/
+
+
 We'll Keep you posted.
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
