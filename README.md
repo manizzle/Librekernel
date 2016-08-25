@@ -438,7 +438,8 @@ The way networking works in Librerouter will be:
 ![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
 
  
-##Router brdige mode
+##Router bridge mode
+
 ![bridgemode](https://cloud.githubusercontent.com/assets/17382786/17981308/75d9fa96-6b03-11e6-8691-9ca1e283ccff.png)
 
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
