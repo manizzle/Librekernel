@@ -157,21 +157,24 @@ license by which the author distributes the work.
 The market is full of crowdfunded projects where the funders claimed that the project is based in open hardware.
 What mostly resulted under a deep research that it requires to operate full range of such called binary blobls (possible backdoor), chipset restringtions (software requires to be signed by the manufacturer) and questions about missing or obfsucated documented parts or schemas/diagrams. The result could be any of this posibilites:
 
-- ARM Truszone is a blackbox (rustZone technology within Cortex-A based application processors is commonly used to run trusted boot and a trusted OS to create a Trusted Execution Environment (TEE). Typical use cases include the protection of authentication mechanisms, cryptography, key material and DRM) As you can imagine this is a big antiopen market mechanism.
+- ARM Truszone is a blackbox (TrustZone technology within Cortex-A based application processors is commonly used to run trusted boot and a trusted OS to create a Trusted Execution Environment (TEE). Typical use cases include the protection of authentication mechanisms, cryptography, key material and DRM) As you can imagine this is a big antiopen market mechanism.
 
 - Device drivers=controllers or the chipset could may be not opensource (https://en.wikipedia.org/wiki/Device_driver)
 - No source code or the compiler is not opensource
-https://en.wikipedia.org/wiki/Source_code 
-https://en.wikipedia.org/wiki/Compiler
-http://unix.stackexchange.com/questions/89897/how-to-compile-the-c-compiler-from-scratch-then-compile-unix-linux-from-scratch
-https://en.wikipedia.org/wiki/Bootstrapping_(compilers)#The_chicken_and_egg_problem
-https://en.wikipedia.org/wiki/Bootstrapping_(compilers)
-https://www.win.tue.nl/~aeb/linux/hh/thompson/trust.html
+- https://en.wikipedia.org/wiki/Source_code 
+- https://en.wikipedia.org/wiki/Compiler
+- http://unix.stackexchange.com/questions/89897/how-to-compile-the-c-compiler-from-scratch-then-compile-unix-linux-from-scratch
+- https://en.wikipedia.org/wiki/Bootstrapping_(compilers)#The_chicken_and_egg_problem
+- https://en.wikipedia.org/wiki/Bootstrapping_(compilers)
+- https://www.win.tue.nl/~aeb/linux/hh/thompson/trust.html
+
 
 - No documentation No schematics on the components of the circuit board.
 - Not using free booting boot system. 
-https://en.wikipedia.org/wiki/Coreboot 
+- https://en.wikipedia.org/wiki/Coreboot 
+
 https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
+
 ![arm boot tz](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/imgg.png)
 
 ###***Which are the licenses and certifications that show openness in the hardware?***
