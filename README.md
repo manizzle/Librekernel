@@ -409,7 +409,9 @@ We'll Keep you posted.
 2. Internal area gren bridge acting as LAN (2 nics): cable or wireless interface as an AP for being DHCP server for your new secure LAN.
 
 - Four possible PHySICAL scenarios:
-![cable or wifi](https://cloud.githubusercontent.com/assets/13025157/14445978/c0e3a824-0051-11e6-9b69-aeca8d572b2e.png)
+![perfect](https://cloud.githubusercontent.com/assets/17382786/17981075/62f4e0ae-6b02-11e6-9dbe-9464a66b27f4.png)
+
+
  - WAN is WiFi, LAN is WiFi
  - WAN is WiFi, LAN is Cabled Ethernet
  - WAN is Cabled Ethernet, LAN is WiFi
