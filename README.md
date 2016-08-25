@@ -455,9 +455,9 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 #Network Working flow 
 
 
-#DNS:
+##DNS:
 
-##DNS engines:
+###DNS engines:
 - Used today unbound-dns momentarily ( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
 
 - If it can not resolved, then we need to ask through TOR 
