@@ -452,9 +452,94 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 #Network Working flow 
 
-David to clarify architecture for use cases:
+
+#DNS:
+
+##DNS engines:
+- Used today unbound-dns momentarily ( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
+
+- If it can not resolved, then we need to ask through TOR 
+- If it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
+
+X differents DNS servers (Unbound,Tor,I2p,Bitname,others and DjDNS(this last need maintenance is not workinghttps://github.com/DJDNS/djdns)) 
+
+Those need to work together us one DNS resolution system, to provide the best open source solutions for anonymity and security.  
+Here is the list of servers and interfaces/ports DNS servers  are listening.
+
+- Unbound is running on 10.0.0.1:53
+- Tor is running on 10.0.0.1:9053
+- DjDNS running on 10.0.0.1:8053
+- Bitname is .....
+- Others....
+
+
+
+##DNS Workflow:
+
+![dns use cases](https://cloud.githubusercontent.com/assets/17382786/17254117/bc19c140-55b3-11e6-99fc-1b544f3adbd1.png)
+
+
+####Classified domains that matched our app decentralized alternatives:  If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server. We have integrated shallalist domains list into unbound, so when DNS request comes at first unbound will check if it’s classified. Classified domain are going to be resolved to local services ip addresses or be blocked.
+
+![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
+ 
+  * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
+  * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound.
+  * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
+  * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound.
+
+#### Darknets Domains
+ 
+  * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
+  * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
+  * .onion - unbound will forward this zone to Tor DNS running on 10.0.0.1:9053
+  
+![dnsipdated](https://cloud.githubusercontent.com/assets/17382786/17974408/4054bb80-6ae6-11e6-9747-a79d3d703e65.png)
+
+- 	IM domains – these domains are going to be resolved to IP address 10.0.0.250. 
+- We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
+
+- 	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. 
+- We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
+
+- 	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound.
+- We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
+
+- 	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound.
+- We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
+ 
+- 	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. 
+- We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
+
+
+Still prblems with HSTS https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+Also still problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
+
+
+#### Why we try the end user use more fair services than the offered for free (bullshit youll pay entirelife) in internet by some corporations?
+
+Because if the user make use of centralized webs like Facebook,Google,Dropbox etc, we cant protect his privacy and he is going to disclosure himself his data.
+
+#### Can the user in the future workaround it:
+
+Yes in the future via GUI should be possible to reconfigure this cage.
+
+ 
+More shadow darknets are coming in the further revisions .
+
+- Freenet domains:> not yet implemented
+- http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
+- Bit domains> blockchain bitcoin> not yet implemented 
+- https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
+- Zeronet> not yet implemented
+- Openbazaar> not yet implemented
+
+
+#Network use cases
 
  -  a) https to onion
+![netflow2](https://cloud.githubusercontent.com/assets/17382786/17976814/52db6750-6aef-11e6-8ebf-46813e09ab2b.jpg)
+
  -  b) https to i2p
  -  c) http to onion
  -  d) http to i2p
@@ -492,9 +577,8 @@ a1) webrtc protocol
 
 ![ip use cause](https://cloud.githubusercontent.com/assets/17382786/17254808/a88262ec-55b6-11e6-969d-bfac41e4dadd.png)
 
-![networktraffic6](https://cloud.githubusercontent.com/assets/13025157/14437535/f40d21c4-0021-11e6-9e4a-1c73e06e965b.png)
+![total](https://cloud.githubusercontent.com/assets/17382786/17976691/d007c3fa-6aee-11e6-90f4-23739dbc7892.png)
 
-Technical background for each use case:
 
 ##Intelligence IP, Domain Providers:
 
@@ -613,87 +697,6 @@ When the user is using HTTP, because is considered insecure itself this clear tr
 - I2P domains/eepSite (ex: i2p2.i2p) will be redirected to I2P
 - Hidden services (ex: asdf1234.onion) will go through TOR
 - HTTP (ex: http://news.com) will go through TOR to the internet site
-
-
-#DNS:
-
-##DNS engines:
-- Used today unbound-dns momentarily ( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
-
-- If it can not resolved, then we need to ask through TOR 
-- If it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
-
-X differents DNS servers (Unbound,Tor,I2p,Bitname,others and DjDNS(this last need maintenance is not workinghttps://github.com/DJDNS/djdns)) 
-
-Those need to work together us one DNS resolution system, to provide the best open source solutions for anonymity and security.  
-Here is the list of servers and interfaces/ports DNS servers  are listening.
-
-- Unbound is running on 10.0.0.1:53
-- Tor is running on 10.0.0.1:9053
-- DjDNS running on 10.0.0.1:8053
-- Bitname is .....
-- Others....
-
-
-
-##DNS Workflow:
-
-![dns use cases](https://cloud.githubusercontent.com/assets/17382786/17254117/bc19c140-55b3-11e6-99fc-1b544f3adbd1.png)
-
-
-###Classified domains that matched our app decentralized alternatives:  If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server. We have integrated shallalist domains list into unbound, so when DNS request comes at first unbound will check if it’s classified. Classified domain are going to be resolved to local services ip addresses or be blocked.
-![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
- 
-  * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
-  * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound.
-  * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
-  * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound.
-
-#### Darknets Domains
- 
-  * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
-  * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
-  * .onion - unbound will forward this zone to Tor DNS running on 10.0.0.1:9053
-  
-![dnsipdated](https://cloud.githubusercontent.com/assets/17382786/17974408/4054bb80-6ae6-11e6-9747-a79d3d703e65.png)
-
-- 	IM domains – these domains are going to be resolved to IP address 10.0.0.250. 
-- We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
-
-- 	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. 
-- We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
-
-- 	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound.
-- We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
-
-- 	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound.
-- We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
- 
-- 	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. 
-- We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
-
-
-Still prblems with HSTS https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
-Also still problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
-
-
-#### Why we try the end user use more fair services than the offered for free (bullshit youll pay entirelife) in internet by some corporations?
-
-Because if the user make use of centralized webs like Facebook,Google,Dropbox etc, we cant protect his privacy and he is going to disclosure himself his data.
-
-#### Can the user in the future workaround it:
-
-Yes in the future via GUI should be possible to reconfigure this cage.
-
- 
-More shadow darknets are coming in the further revisions .
-
-- Freenet domains:> not yet implemented
-- http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
-- Bit domains> blockchain bitcoin> not yet implemented 
-- https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
-- Zeronet> not yet implemented
-- Openbazaar> not yet implemented
 
 
  
