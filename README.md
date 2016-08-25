@@ -373,26 +373,22 @@ Libraries:
 
 #Setting up a lab:
 
-For Virtual Machines setup would need hardware system with two guests VMs connected in it, 
-Debian 8 any sub version
-Windows 10 (office, dropbox client, all the browsers: seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
+For Virtual Machines setup would need hardware system with two guests VMs connected in it, Debian 8 any sub version and
+Windows 10 ( with installed microsoft office, openoffice, dropbox client, all the browsers: seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
 
 As shown in the following figure.
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
 
-In the Debian do a Snapshot in the Virtual machine just after being provisioned and before!, you test/install any the Librerouter Script.
-In the Windows 10 please conect to the internal interface of the Debian Librerouter.
+- In the Debian do a Snapshot in the Virtual machine just after being provisioned and before!, you test/install any the Librerouter Script.
+- In the Windows 10 please conect to the internal interface of the Debian Librerouter.
 
 ##2. Seting up in Pipo X8-9-10.
 
 PIPO Intel NUC Z8083 is NOT open hardware/source! because the boot is NOT able to support yet replacement with Coreboot or Uboot
-Due to limitations: Only PRE-sold 300 boxes in crowdfunding, we can NOT go prod with ARM-FPGA boards plus screen in case, its too expensive)
-
-Pipo do not have 1Tb HDD or 2 ethernets or 2 wlans, the version we test has addiotional components.
-The Debian LFromScratch will contain drivers that may be restrictive, again if you want a 100% open the you need fpga/arm boards in the market for router compatible with debian. 
-
+Due to limitations: Only PRE-sold 300 boxes in crowdfunding.
+Pipo do not have 1Tb HDD or 2 ethernets or 2 wlans, the version we test we attached addiotional components.
+The Debian LFromScratch (not yet ready) will contain drivers that may be restrictive from Pipo, again if you want a 100% open the you need clearfog board or open hardware compatible with debian. 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-
 We plan to to use open hardware, when is fully ready, but for now, the test is customized PIPO X8-9s-10
 
 We still testing  Clearfog Base board 96$ (no screentouch is possible then the adminGUI need to by direct browser request). 
@@ -400,7 +396,6 @@ We still testing  Clearfog Base board 96$ (no screentouch is possible then the a
 - https://images.solid-build.xyz/A38X/
 - https://www.solid-run.com/product/clearfog-base/
 - http://blog.hypriot.com/post/introducing-the-clearfog-pro-router-board/
-
 We'll Keep you posted.
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
