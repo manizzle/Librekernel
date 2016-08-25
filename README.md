@@ -399,9 +399,7 @@ We still testing  Clearfog Base board 96$ (no screentouch is possible then the a
 
 
 We'll Keep you posted.
-
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-
 #***Networking in Librerouter:
 
 - There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
@@ -644,10 +642,7 @@ Here is the list of servers and interfaces/ports DNS servers  are listening.
 
 
 ###Classified domains that matched our app decentralized alternatives:  If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server. We have integrated shallalist domains list into unbound, so when DNS request comes at first unbound will check if it’s classified. Classified domain are going to be resolved to local services ip addresses or be blocked.
-
-
-![part2_4](https://cloud.githubusercontent.com/assets/17382786/14854169/e39c500c-0c8e-11e6-9802-9b26b951eff5.png)
- 
+![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
  
   * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
   * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound.
@@ -659,10 +654,8 @@ Here is the list of servers and interfaces/ports DNS servers  are listening.
   * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
   * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
   * .onion - unbound will forward this zone to Tor DNS running on 10.0.0.1:9053
-
-
-![part_1_4_dns](https://cloud.githubusercontent.com/assets/17382786/14854168/e37aa830-0c8e-11e6-8ff4-05eddebf200e.png)
-
+  
+![dnsipdated](https://cloud.githubusercontent.com/assets/17382786/17974408/4054bb80-6ae6-11e6-9747-a79d3d703e65.png)
 
 - 	IM domains – these domains are going to be resolved to IP address 10.0.0.250. 
 - We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
