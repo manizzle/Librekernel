@@ -409,8 +409,6 @@ We'll Keep you posted.
 2. Internal area gren bridge acting as LAN (2 nics): cable or wireless interface as an AP for being DHCP server for your new secure LAN.
 
 - Four possible PHySICAL scenarios:
-![perfect](https://cloud.githubusercontent.com/assets/17382786/17981075/62f4e0ae-6b02-11e6-9dbe-9464a66b27f4.png)
-
 
  - WAN is WiFi, LAN is WiFi
  - WAN is WiFi, LAN is Cabled Ethernet
@@ -428,6 +426,7 @@ Librerouter has two way to work:
 ##Server mode
 
 The way networking works in Librerouter will be:
+![servermode](https://cloud.githubusercontent.com/assets/17382786/17981311/780ec724-6b03-11e6-9e26-10d4edc2c0ac.png)
 
  -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
  -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not hable to defend against web browsing leaks,tracking,ads and malware)
@@ -439,7 +438,8 @@ The way networking works in Librerouter will be:
 ![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
 
  
-##Router mode
+##Router brdige mode
+![bridgemode](https://cloud.githubusercontent.com/assets/17382786/17981308/75d9fa96-6b03-11e6-8691-9ca1e283ccff.png)
 
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
 
