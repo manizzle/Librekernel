@@ -366,33 +366,26 @@ A grid splits your files up into little pieces, encrypts them and spreads them o
 
 You can also sync your home Librerouter with all of your portable devices to have the same files and receive the same alerts in real time.If someone steals your cube or for some reason it is destroyed, you can simply buy a replacement Librerouter server and recover your lost data automatically from the Grid.In minutes you’re up and running again!
 
-Libraries: https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:matrix:featurescomparison
-https://cageos.org/index.php?page=pilarservices
-
-
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+Libraries: 
+- https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:matrix:featurescomparison
+- https://cageos.org/index.php?page=pilarservices
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 #Setting up a lab:
 
-For Virtual Machine setup we need one system with two guests installed in it, one Debian 8 32 bit and one Windows 10
-As shown in the following figure.
+For Virtual Machines setup would need hardware system with two guests VMs connected in it, 
+Debian 8 any sub version
+Windows 10 (office, dropbox client, all the browsers: seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
 
+As shown in the following figure.
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
 
-In the Debian Snapshot we install the Debian Librerouter Scripts.
-
-The other VirtualMachine is windows 10 or simillar conected to the internal interface of the Librerouter.
-
-##1. Setup Librerouter software Virtual machine 
-
-You need Debian 8.5 32bits
-
-Ongoing further: Devuan,Lubuntu/Core,Uruk,Dockers, Librewrt
+In the Debian do a Snapshot in the Virtual machine just after being provisioned and before!, you test/install any the Librerouter Script.
+In the Windows 10 please conect to the internal interface of the Debian Librerouter.
 
 ##2. Seting up in Pipo X8-9-10.
 
-PIPO Intel NUC Z8083 is NOT! open hardware/source because the boot is NOT able to support yet replacement with Coreboot or Uboot
+PIPO Intel NUC Z8083 is NOT open hardware/source! because the boot is NOT able to support yet replacement with Coreboot or Uboot
 Due to limitations: Only PRE-sold 300 boxes in crowdfunding, we can NOT go prod with ARM-FPGA boards plus screen in case, its too expensive)
 
 Pipo do not have 1Tb HDD or 2 ethernets or 2 wlans, the version we test has addiotional components.
@@ -404,13 +397,9 @@ We plan to to use open hardware, when is fully ready, but for now, the test is c
 
 We still testing  Clearfog Base board 96$ (no screentouch is possible then the adminGUI need to by direct browser request). 
 ![cleargof](https://cloud.githubusercontent.com/assets/17382786/17963891/dda51e22-6ab7-11e6-9d50-53b3eaf7230b.png)
-
-
-https://images.solid-build.xyz/A38X/
-
-https://www.solid-run.com/product/clearfog-base/
-
-http://blog.hypriot.com/post/introducing-the-clearfog-pro-router-board/
+- https://images.solid-build.xyz/A38X/
+- https://www.solid-run.com/product/clearfog-base/
+- http://blog.hypriot.com/post/introducing-the-clearfog-pro-router-board/
 
 We'll Keep you posted.
 
