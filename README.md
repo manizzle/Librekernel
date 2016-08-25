@@ -538,7 +538,8 @@ More shadow darknets are coming in the further revisions .
 #Network use cases
 
  -  a) https to onion
-![netflow2](https://cloud.githubusercontent.com/assets/17382786/17976814/52db6750-6aef-11e6-8ebf-46813e09ab2b.jpg)
+![esquema](https://cloud.githubusercontent.com/assets/17382786/17980839/67b9f9a4-6b01-11e6-8703-e8684fb6d1a8.png)
+
 
  -  b) https to i2p
  -  c) http to onion
