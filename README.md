@@ -400,8 +400,8 @@ The Debian LFromScratch will contain drivers that may be restrictive, again if y
 We plan to to use open hardware, when is fully ready, but for now, the test is customized PIPO X8-9s-10
 
 We still testing  Clearfog Base board 96$ (no screentouch is possible then the adminGUI need to by direct browser request). 
+![cleargof](https://cloud.githubusercontent.com/assets/17382786/17963891/dda51e22-6ab7-11e6-9d50-53b3eaf7230b.png)
 
-![xclearfog-base-with-som-01-800x676 jpg pagespeed ic lfn3kzosut](https://cloud.githubusercontent.com/assets/17382786/17366167/17b7d0a8-598a-11e6-8d82-1cd53a57bcb6.jpg)
 
 https://images.solid-build.xyz/A38X/
 
