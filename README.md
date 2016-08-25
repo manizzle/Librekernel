@@ -291,7 +291,7 @@ https://openbazaar.org
 
 #***A decentralized anonymous  Search Engine with admin rights.***
 
-![data center or decent-ralization](http://widevisiondesign.com/11-12_v2.png)
+![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
 ![search engine](https://cloud.githubusercontent.com/assets/13025157/14445495/ac8eeeb4-004d-11e6-92c0-89fdc5c8cbb4.jpg)
 
@@ -307,7 +307,7 @@ https://cageos.org/index.php?page=apps&section=SocialNetworks
 - 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
-![rtcio](http://widevisiondesign.com/8-9_v2.png)
+![rtcio](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/8-9_v2.png)
 
 
 #***A secure Storage System with collaborative tools based in : TahoeLafs over i2P and blocksnet.***
