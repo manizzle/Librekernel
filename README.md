@@ -559,7 +559,7 @@ More shadow darknets are coming in the further revisions .
  -  j) ssh to a server between the librerouter and internet (internal lan of the user , external side of the librerouter)
  -  k) tahoe trying to use TOR or I2P addresses.
  -  l) user browser a keyword in browser formularie > browser tries to query google or duckduckgo or bing for that search.
- -  m) a guy trying to explode/abuse the local services url -> from hidden services -> so from TOR or I2P how you protect it.
+ -  m) Attacks  to local services url from  from TOR or I2P.
  -  n) any local machine tries to go to youtube> how to macke interactive the procces where librerouter ask to the users to allow or not.
  -  o) any web tries to track via installing certificates like fb of gmail or google to spy on users.
  -  p) how the user will allow or not any IoT while is blocked in librerouter?
