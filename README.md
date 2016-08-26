@@ -540,10 +540,9 @@ More shadow darknets are coming in the further revisions .
 
 #Network use cases
 
+![esquema](https://cloud.githubusercontent.com/assets/17382786/17998947/2875386e-6b77-11e6-9a32-7dbb8fbb9c53.png)
+
  -  a) https to onion
-![esquema](https://cloud.githubusercontent.com/assets/17382786/17980839/67b9f9a4-6b01-11e6-8703-e8684fb6d1a8.png)
-
-
  -  b) https to i2p
  -  c) http to onion
  -  d) http to i2p
