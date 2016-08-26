@@ -542,6 +542,7 @@ More shadow darknets are coming in the further revisions .
 
 ![esquema](https://cloud.githubusercontent.com/assets/17382786/17998947/2875386e-6b77-11e6-9a32-7dbb8fbb9c53.png)
 
+
  -  a) https to onion
  -  b) https to i2p
  -  c) http to onion
@@ -573,7 +574,8 @@ More shadow darknets are coming in the further revisions .
  -  y) yacy trying to go by TOR or I2P
  -  z) prosody trying to conect via over TOR
 a1) webrtc protocol
-
+ -  a1) hsts via browser direct entry for example gmaik push enter key
+ -  b1) hsts via browser corrected entry form for example https://www.gmail.com enter key 
  
 ![layers](https://cloud.githubusercontent.com/assets/17382786/17397142/f4f4ba92-5a36-11e6-8721-eddfcc1f18be.png)
 
