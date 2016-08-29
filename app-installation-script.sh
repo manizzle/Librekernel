@@ -253,6 +253,19 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		wget http://www.webmin.com/jcameron-key.asc
 		apt-key add jcameron-key.asc 
 
+		# Prepare backports repo (suricata, roundcube)
+		echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list
+
+		# Prepare bro repo
+		wget http://download.opensuse.org/repositories/network:bro/Debian_8.0/Release.key -O- | apt-key add -
+		echo 'deb http://download.opensuse.org/repositories/network:/bro/Debian_8.0/ /' > /etc/apt/sources.list.d/bro.list
+
+		# Prepare elastic repo
+		wget https://packages.elastic.co/GPG-KEY-elasticsearch -O- | apt-key add -
+		echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" > /etc/apt/sources.list.d/kibana.list
+		echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" > /etc/apt/sources.list.d/logstash.list
+		echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" > /etc/apt/sources.list.d/elastic.list
+
 # Preparing repositories for Trisquel GNU/Linux 7.0
 
 	elif [ $PLATFORM = "T7" ]; then
@@ -431,7 +444,7 @@ elif [ $PLATFORM = "D8" ]; then
 	privoxy nginx php5-common \
         php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
         php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
-	node npm apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
+	apache2- apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
 	apache2.2-common- openjdk-7-jre-headless phpmyadmin php5 \
 	mysql-server php5-gd php5-imap smarty3 git ntpdate macchanger \
 	bridge-utils hostapd isc-dhcp-server hostapd bridge-utils \
@@ -447,6 +460,15 @@ elif [ $PLATFORM = "D8" ]; then
         postfix mailutils \
 	libssl-dev perl screen aptitude \
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
+	flex bison libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
+	libnetfilter-queue-dev libdumbnet-dev autoconf \
+	roundcube roundcube-mysql roundcube-plugins bro ntop libndpi-bin \
+	argus-server argus-client libnids-dev tinyproxy prosody \
+	flow-tools libfixbuf3 libgd-perl libgd-graph-perl rrdtool \
+	librrd-dev librrds-perl libsqlite3-dev \
+	pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
+	librrd-dev librrds-perl libapache2-mod-php5- \
+	libtool elasticsearch logstash kibana conky \
 	2>&1 > /tmp/apt-get-install1.log
 
 # Installing Packages for Trisquel 7.0 GNU/Linux
@@ -752,6 +774,7 @@ install_mailpile() {
 		echo "Error: unable to install Mailpile"
 		exit 3
 	fi
+	deactivate
 }
 
 
@@ -830,6 +853,16 @@ install_squid()
 	if [ ! -e /etc/squid/squid3.rc ]; then
 		wget -P /etc/squid/ https://raw.githubusercontent.com/grosskur/squid3-deb/master/debian/squid3.rc
 	fi
+
+	# squid adservers
+	curl -sS -L --compressed \
+	"http://pgl.yoyo.org/adservers/serverlist.php?mimetype=plaintext" \
+		> /etc/squid/squid.adservers
+
+	# squid adzapper
+	wget http://adzapper.sourceforge.net/scripts/squid_redirect
+	chmod +x ./squid_redirect
+	mv squid_redirect /usr/bin/
 }
 
 
@@ -861,6 +894,602 @@ install_squidclamav()
 
 	# Creating configuration file
 	ln -sf /etc/c-icap/squidclamav.conf /etc/squidclamav.conf
+}
+
+
+# ----------------------------------------------
+# Function to install squidguard
+# ----------------------------------------------
+install_squidguard()
+{
+	echo "Installing squidguard ..."
+
+	# Berkeley DB 4.6
+	echo "Downloading Berkeley DB ..."
+	URL="http://download.oracle.com/berkeley-db"
+	PKG="db-4.6.21.NC.tar.gz"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	rm -rf /tmp/$PKG
+
+	echo "Building Berkeley DB ..."
+	cd db-4.6.21.NC/build_unix
+	../dist/configure --prefix=/usr --enable-compat185 \
+		--enable-dbm --disable-static --enable-cxx
+	make && make docdir=/usr/share/doc/db-6.2.23 install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install Berkeley DB"
+		exit 3
+	fi
+	cd ../../
+
+	# squidguard
+	echo "Downloading squidguard ..."
+	URL="http://www.squidguard.org/Downloads"
+	PKG="squidGuard-1.4.tar.gz"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	rm -rf /tmp/$PKG
+
+	echo "Building squidguard ..."
+	cd squidGuard-1.4
+	./configure --prefix=/usr --with-squiduser=root
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install squidguard"
+		exit 3
+	fi
+	cd ../
+
+	# squidguard-adblock
+	echo "Downloading squidguard-adblock ..."
+	git clone https://github.com/jamesmacwhite/squidguard-adblock.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download squidguard-adblock"
+		exit 3
+	fi
+	cd squidguard-adblock
+	mkdir -p /etc/squid/squidguard-adblock
+	cp get-easylist.sh /etc/squid/squidguard-adblock/
+	cp patterns.sed /etc/squid/squidguard-adblock/
+	cp urls.txt /etc/squid/squidguard-adblock/
+	chmod +x /etc/squid/squidguard-adblock/get-easylist.sh
+	cd ../
+
+	# Cleanup
+	rm -rf db-4.6.21.NC
+	rm -rf squidGuard-1.4
+	rm -rf squidguard-adblock
+}
+
+
+# ----------------------------------------------
+# Function to install e2guardian
+# ----------------------------------------------
+install_e2guardian()
+{
+	echo "Installing e2guardian ..."
+
+	echo "Downloading e2guardian ..."
+	git clone https://github.com/e2guardian/e2guardian
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download e2guardian"
+		exit 3
+	fi
+
+	echo "Building e2guardian ..."
+	cd e2guardian
+	./autogen.sh
+	./configure --prefix=/usr --enable-clamd=yes --enable-fancydm=no
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install e2guardian"
+		exit 3
+	fi
+	cd ../
+
+	# Cleanup
+	rm -rf ./e2guardian
+}
+
+
+# ----------------------------------------------
+# Function to install ecapguardian
+# ----------------------------------------------
+install_ecapguardian()
+{
+	echo "Installing ecapguardian ..."
+
+	echo "Downloading ecapguardian ..."
+	git clone https://github.com/androda/ecapguardian
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download ecapguardian"
+		exit 3
+	fi
+
+	echo "Building ecapguardian ..."
+	cd ecapguardian
+	./autogen.sh
+	./configure --prefix=/usr --enable-clamd=yes --enable-fancydm=no
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install ecapguardian"
+		exit 3
+	fi
+	cd ../
+
+	# Cleanup
+	rm -rf ./ecapguardian
+}
+
+
+# ----------------------------------------------
+# Function to install Suricata
+# ----------------------------------------------
+install_suricata()
+{
+	echo "Installing suricata ..."
+
+	apt-get install -y -t jessie-backports suricata
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install suricata"
+		exit 3
+	fi
+
+	echo "Downloading rules ..."
+	echo "url = https://rules.emergingthreats.net/open/suricata-3.1/emerging.rules.tar.gz" \
+		>> /etc/oinkmaster.conf
+	oinkmaster -C /etc/oinkmaster.conf -o /etc/suricata/rules
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install suricata rules"
+		exit 3
+	fi
+}
+
+
+# ----------------------------------------------
+# Function to install scirius package
+# ----------------------------------------------
+install_scirius()
+{
+	echo "Installing scirius ..."
+
+	echo "Downloading scirius ..."
+	git clone https://github.com/StamusNetworks/scirius /opt/scirius
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download scirius"
+		exit 3
+	fi
+
+	echo "Installing scirius ..."
+	pip install -r /opt/scirius/requirements.txt && pip install pyinotify
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install scirius dependencies"
+		exit 3
+	fi
+	python /opt/scirius/manage.py syncdb --noinput
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install scirius"
+		exit 3
+	fi
+}
+
+
+# ----------------------------------------------
+# Function to install Snort
+# ----------------------------------------------
+install_snort()
+{
+	echo "Installing snort ..."
+
+	# DAQ
+	echo "Downloading daq ..."
+	URL="https://www.snort.org/downloads/archive/snort"
+	PKG="daq-2.0.6.tar.gz"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	rm -rf /tmp/$PKG
+
+	echo "Building daq ..."
+	cd daq-2.0.6
+	./configure --prefix=/usr
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install daq"
+		exit 3
+	fi
+	cd ../
+
+	# Snort
+	echo "Downloading snort ..."
+	URL="https://www.snort.org/downloads/archive/snort"
+	PKG="snort-2.9.8.3.tar.gz"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	rm -rf /tmp/$PKG
+
+	echo "Building snort ..."
+	cd snort-2.9.8.3
+	./configure --prefix=/usr --enable-sourcefire \
+		--enable-flexresp --enable-dynamicplugin \
+		--enable-perfprofiling --enable-reload
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install snort"
+		exit 3
+	fi
+
+	# Copy config files
+	mkdir -p /etc/snort/preproc_rules /var/log/snort /etc/snort/rules
+	mkdir -p /usr/lib/snort_dynamicrules
+	cp ./etc/*.conf* ./etc/*.map /etc/snort/
+	# Create Snort directories
+	touch /etc/snort/rules/white_list.rules
+	touch /etc/snort/rules/black_list.rules
+	touch /etc/snort/rules/local.rules
+	cd ../
+
+	# Pulled Pork
+	echo "Downloading pulledpork ..."
+	git clone https://github.com/shirkdog/pulledpork.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download pulledpork"
+		exit 3
+	fi
+	cd pulledpork
+	cp pulledpork.pl /usr/bin/
+	chmod +x /usr/bin/pulledpork.pl
+	cp ./etc/*.conf /etc/snort/
+	cd ../
+	mkdir -p /etc/snort/rules/iplists
+	touch /etc/snort/rules/iplists/default.blacklist
+
+	echo "Updating Snort rules ..."
+	# Comment current includes
+	sed -i -e 's/include \$RULE\_PATH/#include \$RULE\_PATH/' /etc/snort/snort.conf
+	# Fix pulledpork configuration
+	sed -i -e 's/^\(rule_url.*<oinkcode>\)/#\1/g' /etc/snort/pulledpork.conf
+	sed -i -e 's@/usr/local/lib/@/usr/lib/@g' /etc/snort/pulledpork.conf
+	sed -i -e 's@/usr/local/@/@g' /etc/snort/pulledpork.conf
+	# Download rules
+	pulledpork.pl -c /etc/snort/pulledpork.conf -l
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to update Snort rules"
+		exit 3
+	fi
+
+	# Cleanup
+	rm -rf daq-2.0.6
+	rm -rf snort-2.9.8.3
+	rm -rf pulledpork
+}
+
+
+# ----------------------------------------------
+# Function to install vortex-ids package
+# ----------------------------------------------
+install_vortex_ids()
+{
+	echo "Installing vortex-ids ..."
+
+	echo "Downloading vortex-ids ..."
+	git clone https://github.com/lmco/vortex-ids
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download vortex-ids"
+		exit 3
+	fi
+
+	cd vortex-ids
+	echo "Building libbsf ..."
+	gcc -Wall -fPIC -shared libbsf/libbsf.c -o libbsf.so
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to build libbsf"
+		exit 3
+	fi
+	cp libbsf/bsf.h /usr/include/ && cp libbsf.so /usr/lib/
+
+	echo "Building vortex ..."
+	gcc vortex/vortex.c -lpcap -lnids -lpthread -lbsf -Wall -DWITH_BSF -o vortex.bin -O2
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to build vortex"
+		exit 3
+	fi
+	cp vortex.bin /usr/bin/vortex
+
+	echo "Building xpipes ..."
+	gcc xpipes/xpipes.c -lpthread -Wall -o xpipes.bin -O2
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to build xpipes"
+		exit 3
+	fi
+	cp xpipes.bin /usr/bin/xpipes
+	cd ../
+
+	# Cleanup
+	rm -rf vortex-ids
+}
+
+
+# ----------------------------------------------
+# Function to install openwips-ng package
+# ----------------------------------------------
+install_openwips_ng()
+{
+	echo "Installing openwips-ng ..."
+
+	echo "Downloading openwips-ng ..."
+	git clone https://github.com/aircrack-ng/OpenWIPS-ng.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download openwips-ng"
+		exit 3
+	fi
+
+	echo "Building openwips-ng ..."
+	cd OpenWIPS-ng
+	# disable Werror flag
+	sed -i -e 's/-Werror//g' ./common.mak
+
+	make LIBS+="-lpcap -lssl -lz -lcrypto -ldl -lm -lpthread -lsqlite3" &&
+	make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install openwips-ng"
+		exit 3
+	fi
+	cd ../
+
+	# Cleanup
+	rm -rf OpenWIPS-ng
+}
+
+
+# ----------------------------------------------
+# Function to install hakabana
+# ----------------------------------------------
+install_hakabana()
+{
+	echo "Installing hakabana ..."
+
+	echo "Downloading hakabana ..."
+	URL="https://github.com/haka-security/hakabana/releases/download/0.2.1"
+	PKG="hakabana_0.2.1_all.deb"
+	wget -P /tmp/ $URL/$PKG
+
+	echo "Installing hakabana ..."
+	dpkg -i /tmp/$PKG && apt-get install -f
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install hakabana"
+		exit 3
+	fi
+
+	# Cleanup
+	rm -rf /tmp/$PKG
+}
+
+
+# ----------------------------------------------
+# Function to install FlowViewer
+# ----------------------------------------------
+install_flowviewer()
+{
+	echo "Installing FlowViewer ..."
+
+	echo "Downloading SiLK ..."
+	URL="http://tools.netsa.cert.org/releases"
+	PKG="silk-3.12.2.tar.gz"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	rm -rf /tmp/$PKG
+
+	cd silk-3.12.2
+	./configure --prefix=/usr --with-python --with-libfixbuf --enable-ipv6
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install SiLK"
+		exit 3
+	fi
+	cd ../
+
+	echo "Downloading FlowViewer ..."
+	URL="https://sourceforge.net/projects/flowviewer/files"
+	PKG="FlowViewer_4.6.tar"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download FlowViewer"
+		exit 3
+	fi
+	mv FlowViewer_4.6 /opt/FlowViewer
+
+	# Cleanup
+	rm -rf /tmp/$PKG
+	rm -rf silk-3.12.2
+}
+
+
+# ----------------------------------------------
+# Function to install pmgraph
+# ----------------------------------------------
+install_pmgraph()
+{
+	echo "Installing pmgraph ..."
+
+	echo "Downloading pmgraph ..."
+	git clone https://github.com/aptivate/pmgraph
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download pmgraph"
+		exit 3
+	fi
+
+	echo "Building pmgraph ..."
+	cd pmgraph
+	sed -i -e 's/tomcat6/tomcat7/g' \
+		Installer/pmGraphInstaller.sh debian/pmgraph.postinst \
+		debian/pmgraph.postrm debian/control
+	sed -i -e 's/pmacct restart/pmacctd restart/g' \
+		Installer/pmGraphInstaller.sh debian/pmgraph.postinst \
+		debian/pmgraph.postrm debian/control
+	sed -i -e 's/ | tomcat5.5//g' debian/control
+	sed -i -e 's/openjdk-6-jdk/openjdk-7-jdk/g' debian/control
+	sed -i -e 's/java-6-sun/java-7-openjdk-amd64/g' debian/rules
+
+	debuild -us -uc
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to pack pmgraph"
+		exit 3
+	fi
+	DEBIAN_FRONTEND=noninteractive dpkg -i ../pmgraph_1.2.3_all.deb && 
+	DEBIAN_FRONTEND=noninteractive apt-get install -f
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install pmgraph"
+		exit 3
+	fi
+	cd ../
+
+	# Cleanup
+	rm -rf ./pmgraph
+	rm -rf ./pmgraph_1.2.3*
+}
+
+
+# ----------------------------------------------
+# Function to install nfsen
+# ----------------------------------------------
+install_nfsen()
+{
+	echo "Installing nfsen ..."
+
+	# nfdump
+	echo "Downloading nfdump ..."
+	URL="https://sourceforge.net/projects/nfdump/files/stable/nfdump-1.6.13"
+	PKG="nfdump-1.6.13.tar.gz"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	rm -rf /tmp/$PKG
+
+	echo "Building nfdump ..."
+	cd nfdump-1.6.13
+	./configure --enable-nfprofile
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install nfdump"
+		exit 3
+	fi
+	cd ../
+
+	# nfsen
+	echo "Downloading nfsen ..."
+	URL="https://sourceforge.net/projects/nfsen/files/stable/nfsen-1.3.6p1"
+	PKG="nfsen-1.3.6p1.tar.gz"
+	wget -P /tmp/ $URL/$PKG
+	tar xvf /tmp/$PKG
+	rm -rf /tmp/$PKG
+
+	echo "Building nfsen ..."
+	cd nfsen-1.3.6p1
+	# Fix broken input
+	sed -i -e 's@import Socket6@Socket6->import(qw(pack_sockaddr_in6 unpack_sockaddr_in6 inet_pton getaddrinfo))@g' \
+		libexec/AbuseWhois.pm libexec/Lookup.pm
+	# Fix configuration
+	cp ./etc/nfsen-dist.conf ./etc/nfsen.conf
+	sed -i -e 's@^\$BASEDIR.*$@$BASEDIR = "/var/nfsen";@g' ./etc/nfsen.conf
+	sed -i -e 's@^\$USER.*$@$USER = "www-data";@g' ./etc/nfsen.conf
+	sed -i -e 's@^\$WWWUSER.*$@$WWWUSER = "www-data";@g' ./etc/nfsen.conf
+	sed -i -e 's@^\$WWWGROUP.*$@$WWWGROUP = "www-data";@g' ./etc/nfsen.conf
+	sed -i -e '/^.*peer[12].*$/d' ./etc/nfsen.conf
+	# Disable interactive mode
+	sed -i -e '/chomp(\$ans = <STDIN>);/d' ./install.pl
+	perl ./install.pl ./etc/nfsen.conf
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install nfsen"
+		exit 3
+	fi
+	cd ../
+
+	# Cleanup
+	rm -rf nfdump-1.6.13
+	rm -rf nfsen-1.3.6p1
+}
+
+
+# ----------------------------------------------
+# Function to install evebox package
+# ----------------------------------------------
+install_evebox()
+{
+	echo "Installing EveBox ..."
+
+	URL="https://github.com/jasonish/evebox/releases/download/0.5.0"
+	PKG="evebox_0.5.0_amd64.deb"
+	wget -P /tmp/ $URL/$PKG
+	dpkg -i /tmp/$PKG && apt-get install -y -f
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install evebox"
+		exit 3
+	fi
+
+	# Cleanup
+	rm -rf /tmp/$PKG
+}
+
+
+# ----------------------------------------------
+# Function to install SELKS GUI
+# ----------------------------------------------
+install_selks()
+{
+	echo "Installing SELKS ..."
+
+	echo "Installing timelion plugin ..."
+	touch /opt/kibana/config/kibana.yml
+	/opt/kibana/bin/kibana plugin -i elastic/timelion
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install timelion plugin"
+		exit 3
+	fi
+
+	echo "Downloading KTS ..."
+	git clone https://github.com/StamusNetworks/KTS.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download KTS"
+		exit 3
+	fi
+
+	echo "Patching Kibana ..."
+	patch -p1 -d /opt/kibana/ < KTS/patches/kibana-integer.patch &&
+	patch -p1 -d /opt/kibana/ < KTS/patches/timelion-integer.patch
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to patch Kibana"
+		exit 3
+	fi
+	mv KTS /opt/
+
+	echo "Downloading SELKS Scripts ..."
+	git clone https://github.com/StamusNetworks/selks-scripts.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download SELKS Scripts"
+		exit 3
+	fi
+	cd selks-scripts
+	# Fix conky
+	sed -i -e 's/lightgey/lightgrey/g' \
+		Scripts/Configs/Conky/etc/conky/conky.conf
+	sed -i -e "s@\(-F\\\\\)'@\1\\\"@g" \
+		Scripts/Configs/Conky/etc/conky/conky.conf
+
+	#'" this comment fix formatting
+
+	echo "Installing SELKS configuration ..."
+	cp Scripts/Configs/Conky/etc/conky/conky.conf /etc/conky/conky.conf
+	cp Scripts/Configs/Elasticsearch/etc/elasticsearch/elasticsearch.yml \
+		/etc/elasticsearch/elasticsearch.yml
+	cp Scripts/Configs/Logrotate/etc/logrotate.d/suricata /etc/logrotate.d/
+	cp Scripts/Configs/Logstash/etc/logstash/conf.d/logstash.conf \
+		/etc/logstash/conf.d/
+
+	cd ../
+
+	# Cleanup
+	rm -rf selks-scripts
 }
 
 
@@ -931,8 +1560,22 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
 	install_squid		# Install squid package
-	install_squidclamav	# install SquidClamav package
-        save_variables	        # Save detected variables
+	install_squidclamav	# Install SquidClamav package
+	install_squidguard	# Install Squidguard package
+	install_e2guardian	# Inatall e2guardian package
+	install_ecapguardian	# Inatall ecapguardian package
+	install_suricata	# Install Suricata package
+	install_scirius		# Install Scirius package
+	install_snort		# Install Snort package
+	install_vortex_ids	# Install Vortex-ids package
+	install_openwips_ng	# Install Openwips-ng package
+	install_hakabana	# Install hakabana package
+	install_flowviewer	# Install FlowViewer package
+	install_pmgraph		# Install pmgraph package
+	install_nfsen		# Install nfsen package
+	install_evebox		# Install EveBox package
+	install_selks		# Install SELKS GUI
+	save_variables	        # Save detected variables
 
 # ---------------------------------------------
 # If script detects odroid board then next 
