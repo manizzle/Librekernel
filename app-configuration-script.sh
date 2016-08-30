@@ -1267,6 +1267,19 @@ coredump_dir /var/spool/squid
 #url_rewrite_program /usr/bin/squidGuard
 
 no_cache deny all
+
+# icap configuration
+icap_enable on
+icap_send_client_ip on
+icap_send_client_username on
+icap_client_username_encode off
+icap_client_username_header X-Authenticated-User
+icap_preview_enable on
+icap_preview_size 1024
+icap_service service_req reqmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
+adaptation_access service_req allow all
+icap_service service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
+adaptation_access service_resp allow all
 EOF
 
 echo "Configuring squid-tor startup file ..."
@@ -1335,6 +1348,18 @@ coredump_dir /var/spool/squid
 
 no_cache deny all
 
+# icap configuration
+icap_enable on
+icap_send_client_ip on
+icap_send_client_username on
+icap_client_username_encode off
+icap_client_username_header X-Authenticated-User
+icap_preview_enable on
+icap_preview_size 1024
+icap_service service_req reqmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
+adaptation_access service_req allow all
+icap_service service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
+adaptation_access service_resp allow all
 EOF
 
 echo "Configuring squid-i2p startup file ..."
