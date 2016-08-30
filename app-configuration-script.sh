@@ -435,6 +435,9 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 80 -j DNAT --to 1
 # to squid https 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 443 -j REDIRECT --to-ports 3131
 
+# iptables nat
+iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE 
+
 # Redirecting traffic to tor
 #iptables -t nat -A PREROUTING -i eth0 -p tcp -d 10.0.0.0/8 --dport 80 --syn -j REDIRECT --to-ports 9040
 #iptables -t nat -A PREROUTING -i eth0 -p udp --dport 53 -j REDIRECT --to-ports 53
@@ -480,6 +483,26 @@ EOF
 chmod +x /etc/rc.local
 
 /etc/rc.local
+}
+
+
+# ---------------------------------------------------------
+# Function to configure banks direct access to Internet
+# ---------------------------------------------------------
+configure_banks_access()
+{
+touch /var/banks_ips.txt
+echo "192.229.182.219
+194.224.167.58
+195.21.32.34
+195.21.32.40
+192.229.182.219
+" > /var/banks_ips.txt
+
+for i in $(cat /var/banks_ips.txt)
+do
+iptables -t nat -I PREROUTING -i $INT_INTERFACE -p tcp -d $i -j ACCEPT
+done
 }
 
 
@@ -2500,6 +2523,7 @@ configure_dhcp			# Configuring DHCP server
 
 configure_mysql			# Configuring mysql password
 configure_iptables		# Configuring iptables rules
+configure_banks_access		# Configuring banks access
 configure_tor			# Configuring TOR server
 configure_i2p			# Configuring i2p services
 configure_unbound		# Configuring Unbound DNS server
