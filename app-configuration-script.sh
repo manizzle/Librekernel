@@ -385,6 +385,31 @@ configure_mysql()
 
 
 # ---------------------------------------------------------
+# Function to configure banks direct access to Internet
+# ---------------------------------------------------------
+configure_banks_access()
+{
+touch /var/banks_ips.txt
+echo "192.229.182.219
+194.224.167.58
+195.21.32.34
+195.21.32.40
+192.229.182.219
+" > /var/banks_ips.txt
+
+touch /var/banks_access.sh
+echo << EOF > /var/banks_access.sh
+#!bin/bash
+for i in \$(cat /var/banks_ips.txt)
+do
+iptables -t nat -I PREROUTING -i $INT_INTERFACE -p tcp -d \$i -j ACCEPT
+done
+EOF
+chmod a+x /var/banks_access.sh
+}
+
+
+# ---------------------------------------------------------
 # Function to configure iptables
 # ---------------------------------------------------------
 configure_iptables()
@@ -459,6 +484,8 @@ iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE
 ## Enable Blacklist
 #[ -e /etc/blacklists/blacklists-iptables.sh ] && /etc/blacklists/blacklists-iptables.sh &
 
+# Configuring banks direct access
+/var/banks_access.sh
 
 # Stopping dnsmasq
 kill -9 \`ps aux | grep dnsmasq | awk {'print \$2'} | sed -n '1p'\` \
@@ -483,26 +510,6 @@ EOF
 chmod +x /etc/rc.local
 
 /etc/rc.local
-}
-
-
-# ---------------------------------------------------------
-# Function to configure banks direct access to Internet
-# ---------------------------------------------------------
-configure_banks_access()
-{
-touch /var/banks_ips.txt
-echo "192.229.182.219
-194.224.167.58
-195.21.32.34
-195.21.32.40
-192.229.182.219
-" > /var/banks_ips.txt
-
-for i in $(cat /var/banks_ips.txt)
-do
-iptables -t nat -I PREROUTING -i $INT_INTERFACE -p tcp -d $i -j ACCEPT
-done
 }
 
 
@@ -1513,9 +1520,35 @@ dest porn {
         urllist porn/urls
         }
 
+dest ads {
+        domainlist ads/domains
+        urllist ads/urls
+        }
+
+dest proxy {
+        domainlist proxy/domains
+        urllist proxy/urls
+        }
+
+dest spyware {
+        domainlist spyware/domains
+        urllist spyware/urls
+        }
+
+dest redirector {
+        domainlist redirector/domains
+        urllist redirector/urls
+        }
+
+dest suspect {
+        domainlist suspect/domains
+        urllist suspect/urls
+        }
+
+# Access control 
 acl {
         default {
-                pass !porn all
+                pass !porn !ads !proxy !spyware !redirector !suspect all
                 redirect http://localhost/block.html
         }
  }
@@ -2522,8 +2555,8 @@ configure_dhcp			# Configuring DHCP server
 # Block 2: Configuring services
 
 configure_mysql			# Configuring mysql password
-configure_iptables		# Configuring iptables rules
 configure_banks_access		# Configuring banks access
+configure_iptables		# Configuring iptables rules
 configure_tor			# Configuring TOR server
 configure_i2p			# Configuring i2p services
 configure_unbound		# Configuring Unbound DNS server
