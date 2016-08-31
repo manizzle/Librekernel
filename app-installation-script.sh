@@ -945,11 +945,13 @@ install_e2guardian()
 {
 	echo "Installing e2guardian ..."
 
-	echo "Downloading e2guardian ..."
-	git clone https://github.com/e2guardian/e2guardian
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to download e2guardian"
-		exit 3
+	if [ ! -e e2guardian ]; then
+		echo "Downloading e2guardian ..."
+		git clone https://github.com/e2guardian/e2guardian
+		if [ $? -ne 0 ]; then
+			echo "Error: unable to download e2guardian"
+			exit 3
+		fi
 	fi
 
 	echo "Building e2guardian ..."
@@ -1538,18 +1540,18 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_squidclamav	# Install SquidClamav package
 	install_squidguard_bl	# Install Squidguard blacklists 
 	install_e2guardian	# Inatall e2guardian package
-	install_ecapguardian	# Inatall ecapguardian package
-	install_suricata	# Install Suricata package
-	install_scirius		# Install Scirius package
-	install_snort		# Install Snort package
-	install_vortex_ids	# Install Vortex-ids package
-	install_openwips_ng	# Install Openwips-ng package
-	install_hakabana	# Install hakabana package
-	install_flowviewer	# Install FlowViewer package
-	install_pmgraph		# Install pmgraph package
-	install_nfsen		# Install nfsen package
-	install_evebox		# Install EveBox package
-	install_selks		# Install SELKS GUI
+#	install_ecapguardian	# Inatall ecapguardian package
+#	install_suricata	# Install Suricata package
+#	install_scirius		# Install Scirius package
+#	install_snort		# Install Snort package
+#	install_vortex_ids	# Install Vortex-ids package
+#	install_openwips_ng	# Install Openwips-ng package
+#	install_hakabana	# Install hakabana package
+#	install_flowviewer	# Install FlowViewer package
+#	install_pmgraph		# Install pmgraph package
+#	install_nfsen		# Install nfsen package
+#	install_evebox		# Install EveBox package
+#	install_selks		# Install SELKS GUI
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
