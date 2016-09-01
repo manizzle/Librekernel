@@ -956,6 +956,14 @@ install_e2guardian()
 
 	echo "Building e2guardian ..."
 	cd e2guardian
+
+	# Adding ssl options
+	echo "
+	#define __SSLMITM
+	#define __SSLCERT
+	" > dgconfig.h
+	sed  -i '/LIBS = -lz/c\LIBS = -lz -lcrypto -lssl' Makefile
+
 	./autogen.sh
 	./configure --prefix=/usr --enable-clamd=yes --enable-fancydm=no
 	make && make install
