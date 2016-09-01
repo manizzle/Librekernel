@@ -175,7 +175,7 @@ What mostly resulted under a deep research that it requires to operate full rang
 
 https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
 
-![arm boot tz](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/imgg.png)
+![ddvdvdvd](https://cloud.githubusercontent.com/assets/17382786/18171246/9296906e-7061-11e6-821e-37e086f26bbf.png)
 
 ###***Which are the licenses and certifications that show openness in the hardware?***
 
@@ -430,8 +430,6 @@ The way networking works in Librerouter will be:
 
  -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
  -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not hable to defend against web browsing leaks,tracking,ads and malware)
-
-![untitled](https://cloud.githubusercontent.com/assets/17382786/17251466/3cd5a804-55a9-11e6-883f-2088e8653138.png)
 
 ![server](https://cloud.githubusercontent.com/assets/13025157/14443924/9c798300-0042-11e6-85b1-1760c5b3789d.png)
 
