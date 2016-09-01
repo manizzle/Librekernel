@@ -1541,7 +1541,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_squidguard_bl	# Install Squidguard blacklists 
 	install_e2guardian	# Inatall e2guardian package
 #	install_ecapguardian	# Inatall ecapguardian package
-#	install_suricata	# Install Suricata package
+	install_suricata	# Install Suricata package
 #	install_scirius		# Install Scirius package
 #	install_snort		# Install Snort package
 #	install_vortex_ids	# Install Vortex-ids package
@@ -1551,7 +1551,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_pmgraph		# Install pmgraph package
 #	install_nfsen		# Install nfsen package
 #	install_evebox		# Install EveBox package
-#	install_selks		# Install SELKS GUI
+	install_selks		# Install SELKS GUI
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------

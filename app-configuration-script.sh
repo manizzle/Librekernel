@@ -11,7 +11,7 @@
 
 # Global variables list
 EXT_INETRFACE="N/A"		# External interface variable
-INT_INTERfACE="N/A"		# Internal interface variable
+INT_INTERFACE="N/A"		# Internal interface variable
 
 
 # ---------------------------------------------------------
@@ -88,6 +88,7 @@ cat << EOF > /etc/hosts
 127.0.0.1       localhost.librenet librerouter localhost
 10.0.0.1        librerouter.librenet
 10.0.0.10       webmin.librenet
+10.0.0.11       kibana.librenet
 10.0.0.250      easyrtc.librenet
 10.0.0.251      yacy.librenet
 10.0.0.252      friendica.librenet
@@ -165,6 +166,13 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	iface $INT_INTERFACE:6 inet static
 	    address 10.0.0.250
             netmask 255.255.255.0
+
+	#Kibana
+	auto $INT_INTERFACE:7
+	allow-hotplug $INT_INTERFACE:7
+	iface $INT_INTERFACE:7 inet static
+	    address 10.0.0.11
+	    netmask 255.255.255.0
 EOF
 	# Network interfaces configuration for board
 #	elif [ "$PROCESSOR" = "ARM" ]; then
@@ -435,6 +443,7 @@ iptables -t nat -F
 iptables -t filter -F
 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.10 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.250 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.251 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.252 -j ACCEPT
@@ -717,7 +726,8 @@ local-zone: "librenet" static
 local-data: "librerouter.librenet. IN A 10.0.0.1"
 local-data: "i2p.librenet. IN A 10.0.0.1"
 local-data: "tahoe.librenet. IN A 10.0.0.1"
-local-data: "webmin.librenet. IN A 10.0.0.10"' > /etc/unbound/unbound.conf
+local-data: "webmin.librenet. IN A 10.0.0.10"
+local-data: "kibana.librenet. IN A 10.0.0.11"' > /etc/unbound/unbound.conf
 
     for i in $(ls /var/lib/tor/hidden_service/)
     do
@@ -2265,6 +2275,47 @@ location / {
 }
 " > /etc/nginx/sites-enabled/webmin
 
+# Configuring Kibana virtual host
+echo "Configuring Kibana virtual host ..."
+
+# Generating certificates for Kibana ssl connection
+echo "Generating keys and certificates for Kibana"
+if [ ! -e /etc/ssl/kibana/kibana.key -o ! -e  /etc/ssl/nginx/kibana.crt ]; then
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/kibana.key -out /etc/ssl/nginx/kibana.crt -batch
+fi
+
+# Creating Kibana virtual host configuration
+echo '
+server {
+	listen 10.0.0.11;
+	server_name _;
+	return 301 https://kibana.librenet;
+	}
+
+server {
+	listen 80;
+	listen 443 ssl;
+	server_name kibana.librenet;
+
+	ssl on;
+	ssl_certificate /etc/ssl/nginx/kibana.crt;
+	ssl_certificate_key /etc/ssl/nginx/kibana.key;
+	ssl_session_timeout 5m;
+	ssl_protocols SSLv3 TLSv1;
+	ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+	ssl_prefer_server_ciphers on;
+	access_log /var/log/nginx/kibana.access.log;
+	error_log /var/log/nginx/kibana.error.log;
+
+	location / {
+		proxy_pass       http://127.0.0.1:5601;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Host $host;
+		proxy_cache_bypass $http_upgrade;
+	}
+}
+' > /etc/nginx/sites-enabled/kibana
+
 # Configuring EasyRTC virtual host
 echo "Configuring EasyRTC virtual host ..."
 
@@ -2539,6 +2590,121 @@ crontab /root/libre_scripts/cron_jobs
 
 
 # ---------------------------------------------------------
+# Function to configure Suricata service
+# ---------------------------------------------------------
+configure_suricata()
+{
+	echo "Configuring Suricata ..."
+
+	# Suricata configuration
+	sed -i -e '/#HOME_NET:/d' /etc/suricata/suricata.yaml
+	sed -i -e 's@HOME_NET:.*$@HOME_NET: "[10.0.0.0/8]"@g' /etc/suricata/suricata.yaml
+	sed -i -e 's@  windows: \[.*\]@  windows: []@g' /etc/suricata/suricata.yaml
+	sed -i -e 's@  linux: \[.*\]@  linux: [0.0.0.0]@g' /etc/suricata/suricata.yaml
+	sed -i -e "s@  - interface: eth0@  - interface: $INT_INTERFACE@g" /etc/suricata/suricata.yaml
+
+	# Suricata logs
+	touch /var/log/suricata/eve.json
+	touch /var/log/suricata/fast.log
+	touch /var/log/suricata/stats.log
+	touch /var/log/suricata/suricata.log
+	chmod 644 /var/log/suricata/*.log
+
+	# Suricata service
+	cat << EOF > /etc/default/suricata
+# Default config for Suricata
+
+# set to yes to start the server in the init.d script
+RUN=yes
+
+# Configuration file to load
+SURCONF=/etc/suricata/suricata.yaml
+
+# Listen mode: pcap, nfqueue or af-packet
+# depending on this value, only one of the two following options
+# will be used (af-packet uses neither).
+# Please note that IPS mode is only available when using nfqueue
+LISTENMODE=af-packet
+
+# Interface to listen on (for pcap mode)
+IFACE=$INT_INTERFACE
+
+# Queue number to listen on (for nfqueue mode)
+NFQUEUE=0
+
+# Pid file
+PIDFILE=/var/run/suricata.pid
+EOF
+	echo "Restarting suricata ..."
+	update-rc.d suricata defaults
+	service suricata restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configure Kibana
+# ---------------------------------------------------------
+configure_kibana()
+{
+        echo "Configuring Kibana ..."
+
+	# Configure PAM limits
+	sed -i -e '/# End of file/d' /etc/security/limits.conf
+	echo 'elasticsearch hard memlock 102400' >> /etc/security/limits.conf
+	echo '# End of file' >> /etc/security/limits.conf
+	# Configure elastic
+	cat << EOF > /etc/default/elasticsearch
+################################
+# Elasticsearch
+################################
+
+ES_JAVA_OPTS="Des.insecure.allow.root=true"
+
+# Elasticsearch home directory
+ES_HOME=/usr/share/elasticsearch
+
+# Elasticsearch configuration directory
+CONF_DIR=/etc/elasticsearch
+
+# Elasticsearch data directory
+DATA_DIR=/var/lib/elasticsearch
+
+# Elasticsearch logs directory
+LOG_DIR=/var/log/elasticsearch
+
+# Elasticsearch PID directory
+PID_DIR=/var/run/elasticsearch
+
+# Memory usage
+ES_HEAP_SIZE=128m
+MAX_LOCKED_MEMORY=102400
+ES_JAVA_OPTS=-server
+
+# The number of seconds to wait before checking if Elasticsearch started successfully as a daemon process
+ES_STARTUP_SLEEP_TIME=15
+EOF
+	# Fix logstash permissions
+	sed -i -e 's/LS_GROUP=.*/LS_GROUP=root/g' /etc/init.d/logstash
+	systemctl daemon-reload
+
+	# Enable autostart
+	systemctl enable elasticsearch
+	echo "Restarting elasticsearch ..."
+	service elasticsearch restart
+	systemctl enable kibana
+	systemctl enable logstash
+
+	echo "Restarting logstash ..."
+	service logstash restart
+	echo "Restarting kibana ..."
+	service kibana restart
+	echo "Applying Kibana dashboards ..."
+	sleep 20 && /opt/KTS/load.sh && echo ""
+	echo "Kibana dashboards were successfully configured"
+}
+
+
+# ---------------------------------------------------------
 # ************************ MAIN ***************************
 # This is the main function on this script
 # ---------------------------------------------------------
@@ -2573,6 +2739,8 @@ configure_squidguard		# Configuring squidguard
 configure_postfix		# Configuring postfix mail service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
+configure_suricata		# Configure Suricata service
+configure_kibana		# Configure Kibana server
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
 
