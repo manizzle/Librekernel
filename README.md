@@ -123,6 +123,8 @@ The aim its to make a really very easy to use for all people without computers a
 
 ##Open Source Hardware
 
+![ddvdvdvd](https://cloud.githubusercontent.com/assets/17382786/18171246/9296906e-7061-11e6-821e-37e086f26bbf.png)
+
 It consists of physical artifacts of technology designed and offered by the open design movement. Both free and 
 open-source software (FOSS) as well as open-source hardware is created by this open-source culture movement and 
 applies a like concept to a variety of components. It is sometimes, thus, referred to as FOSH 
@@ -172,10 +174,8 @@ What mostly resulted under a deep research that it requires to operate full rang
 - No documentation No schematics on the components of the circuit board.
 - Not using free booting boot system. 
 - https://en.wikipedia.org/wiki/Coreboot 
+- https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
 
-https://www.phoronix.com/scan.php?page=news_item&px=Coreboot-U-Boot-Payload
-
-![ddvdvdvd](https://cloud.githubusercontent.com/assets/17382786/18171246/9296906e-7061-11e6-821e-37e086f26bbf.png)
 
 ###***Which are the licenses and certifications that show openness in the hardware?***
 
