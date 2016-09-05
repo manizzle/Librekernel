@@ -89,6 +89,7 @@ cat << EOF > /etc/hosts
 10.0.0.1        librerouter.librenet
 10.0.0.10       webmin.librenet
 10.0.0.11       kibana.librenet
+10.0.0.12       snorby.librenet
 10.0.0.250      easyrtc.librenet
 10.0.0.251      yacy.librenet
 10.0.0.252      friendica.librenet
@@ -172,6 +173,13 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	allow-hotplug $INT_INTERFACE:7
 	iface $INT_INTERFACE:7 inet static
 	    address 10.0.0.11
+	    netmask 255.255.255.0
+
+	#Snorby
+	auto $INT_INTERFACE:8
+	allow-hotplug $INT_INTERFACE:8
+	iface $INT_INTERFACE:8 inet static
+	    address 10.0.0.12
 	    netmask 255.255.255.0
 EOF
 	# Network interfaces configuration for board
@@ -444,6 +452,7 @@ iptables -t filter -F
 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.10 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.250 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.251 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.252 -j ACCEPT
@@ -727,7 +736,8 @@ local-data: "librerouter.librenet. IN A 10.0.0.1"
 local-data: "i2p.librenet. IN A 10.0.0.1"
 local-data: "tahoe.librenet. IN A 10.0.0.1"
 local-data: "webmin.librenet. IN A 10.0.0.10"
-local-data: "kibana.librenet. IN A 10.0.0.11"' > /etc/unbound/unbound.conf
+local-data: "kibana.librenet. IN A 10.0.0.11"
+local-data: "snorby.librenet. IN A 10.0.0.12"' > /etc/unbound/unbound.conf
 
     for i in $(ls /var/lib/tor/hidden_service/)
     do
@@ -2373,7 +2383,7 @@ echo "Configuring Kibana virtual host ..."
 
 # Generating certificates for Kibana ssl connection
 echo "Generating keys and certificates for Kibana"
-if [ ! -e /etc/ssl/kibana/kibana.key -o ! -e  /etc/ssl/nginx/kibana.crt ]; then
+if [ ! -e /etc/ssl/nginx/kibana.key -o ! -e  /etc/ssl/nginx/kibana.crt ]; then
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/kibana.key -out /etc/ssl/nginx/kibana.crt -batch
 fi
 
@@ -2408,6 +2418,45 @@ server {
 	}
 }
 ' > /etc/nginx/sites-enabled/kibana
+
+# Configuring Snorby virtual host
+echo "Configuring Snorby virtual host ..."
+echo '
+server {
+	listen 10.0.0.12:80;
+	server_name snorby.librenet;
+	passenger_enabled on;
+	passenger_ruby /usr/bin/ruby2.1;
+	passenger_user  root;
+	passenger_group root;
+
+	access_log /var/log/nginx/snorby.log;
+	root /var/www/snorby/public;
+	index index.html;
+	
+	location /snorby {
+		root /usr/www/snorby/public;
+		index index.html;
+		location ~ \.cgi$ {
+			try_files $uri =404;
+			include fastcgi_params;
+			fastcgi_pass unix:/var/run/fcgiwrap/fcgiwrap.sock;
+			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+			fastcgi_param REMOTE_USER $remote_user;
+		}
+
+		location ~ \.php$ {
+			try_files $uri =404;
+			include fastcgi_params;
+			fastcgi_pass 127.0.0.1:9000;
+			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		}
+	}
+}
+' > /etc/nginx/sites-enabled/snorby
+
+# Include passenger in nginx
+sed -i -e 's@\t# include /etc/nginx/passenger.conf.*@\tinclude /etc/nginx/passenger.conf;@g' /etc/nginx/nginx.conf
 
 # Configuring EasyRTC virtual host
 echo "Configuring EasyRTC virtual host ..."
@@ -2691,7 +2740,7 @@ configure_suricata()
 
 	# Suricata configuration
 	sed -i -e '/#HOME_NET:/d' /etc/suricata/suricata.yaml
-	sed -i -e 's@HOME_NET:.*$@HOME_NET: "[10.0.0.0/8]"@g' /etc/suricata/suricata.yaml
+	sed -i -e 's@HOME_NET:.*$@HOME_NET: "[10.0.0.0/24]"@g' /etc/suricata/suricata.yaml
 	sed -i -e 's@  windows: \[.*\]@  windows: []@g' /etc/suricata/suricata.yaml
 	sed -i -e 's@  linux: \[.*\]@  linux: [0.0.0.0]@g' /etc/suricata/suricata.yaml
 	sed -i -e "s@  - interface: eth0@  - interface: $INT_INTERFACE@g" /etc/suricata/suricata.yaml
@@ -2789,13 +2838,150 @@ EOF
 
 	echo "Restarting logstash ..."
 	service logstash restart
-	echo "Restarting kibana ..."
-	service kibana restart
 	echo "Applying Kibana dashboards ..."
 	sleep 20 && /opt/KTS/load.sh && echo ""
 	echo "Kibana dashboards were successfully configured"
+	echo "Restarting kibana ..."
+	service kibana restart
 }
 
+
+configure_snortbarn()
+{
+	echo "Configuring Snort + Barnyard2"
+
+	# Configure Snort
+	sed -i -e 's@ipvar HOME_NET .*@ipvar HOME_NET 10.0.0.0/24@g' /etc/snort/snort.conf
+	sed -i -e 's@ipvar EXTERNAL_NET .*@ipvar EXTERNAL_NET !$HOME_NET@g' /etc/snort/snort.conf
+	echo 'output unified2: filename snort.log, limit 128' >> /etc/snort/snort.conf
+
+	# Validate Snort configuration
+	snort -T -i $INT_INTERFACE -c /etc/snort/snort.conf
+	if [ $? -ne 0 ]; then
+		echo "Error: invalid Snort configuration"
+		exit 1
+	fi
+
+	# Configure Barnyard
+	sed -i -e 's/#config hostname:.*/config hostname: librerouter/g' /etc/snort/barnyard2.conf
+	sed -i -e "s/#config interface:.*/config interface: $INT_INTERFACE/g" /etc/snort/barnyard2.conf
+	echo "output database: log, mysql, user=root password=$MYSQL_PASS dbname=snorby host=localhost" >> /etc/snort/barnyard2.conf
+	touch /var/log/snort/barnyard2.waldo
+
+	# Create startup scripts
+	cat << EOF > /etc/init.d/snortbarn
+#!/bin/sh
+#
+### BEGIN INIT INFO
+#Provides: snortbarn
+#Required-Start: \$remote_fs \$syslog mysql
+#Required-Stop: \$remote_fs \$syslog
+#Default-Start: 2 3 4 5
+#Default-Stop: 0 1 6
+#X-Interactive: true
+#Short-Description: Start Snort and Barnyard
+### END INIT INFO
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+mysqld_get_param() {
+/usr/sbin/mysqld --print-defaults | tr " " "\n" | grep -- "--\$1" | tail -n 1 | cut -d= -f2
+}
+
+do_start()
+{
+    log_daemon_msg "Starting Snort and Barnyard" ""
+    # Make sure mysql has finished starting
+    ps_alive=0
+    while [ \$ps_alive -lt 1 ];
+    do
+    pidfile=\`mysqld_get_param pid-file\`
+    if [ -f "\$pidfile" ] && ps \`cat \$pidfile\` >/dev/null 2>&1; then ps_alive=1; fi
+	sleep 1
+    done
+
+    /usr/bin/snort -q -i $INT_INTERFACE -c /etc/snort/snort.conf -D
+    /usr/bin/barnyard2 -q -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D
+
+    log_end_msg 0
+    return 0
+}
+
+do_stop()
+{
+    log_daemon_msg "Stopping Snort and Barnyard" ""
+    kill \$(pidof snort) 2> /dev/null
+    kill \$(pidof barnyard2) 2> /dev/null
+    log_end_msg 0
+    return 0
+}
+
+case "\$1" in
+ start)
+    do_start
+    ;;
+ stop)
+    do_stop
+    ;;
+ restart)
+    do_stop
+    do_start
+    ;;
+ *)
+    echo "Usage: snort-barn {start|stop|restart}" >&2
+    exit 3
+    ;;
+esac
+exit 0
+EOF
+	chmod +x /etc/init.d/snortbarn
+	update-rc.d snortbarn defaults
+	insserv -f -v snortbarn
+	service snortbarn start
+
+	# Create cron job for pulledpork
+	echo '10 1 * * * root /usr/sbin/pulledpork.pl -c /etc/snort/pulledpork.conf' >> /etc/crontab
+	echo '25 1 * * * root service snortbarn restart' >> /etc/crontab
+}
+
+
+configure_snorby()
+{
+	echo "Configuring Snorby"
+	cat << EOF > /var/www/snorby/config/snorby_config.yml
+production:
+  domain: 'snorbi.librenet'
+  wkhtmltopdf: /usr/bin/wkhtmltopdf
+  ssl: false
+  mailer_sender: 'snorby@example.com'
+  geoip_uri: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz"
+  rules:
+    - "/etc/snort/rules"
+  authentication_mode: database
+  timezone_search: true
+EOF
+
+	cat << EOF > /var/www/snorby/config/database.yml
+# Snorby Database Configuration
+snorby: &snorby
+  adapter: mysql
+  username: root
+  password: "$MYSQL_PASS"
+  host: localhost
+
+production:
+  database: snorby
+  <<: *snorby
+EOF
+	cd /var/www/snorby
+	RAILS_ENV=production bundle exec rake snorby:setup
+	cd
+	mysql -u root --password=$MYSQL_PASS -e "grant all on snorby.* to root@localhost"
+	mysql -u root --password=$MYSQL_PASS -e "flush privileges"
+	service snortbarn restart
+}
+	
 
 # ---------------------------------------------------------
 # ************************ MAIN ***************************
@@ -2829,12 +3015,14 @@ configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
 configure_squidguard		# Configuring squidguard
-configure_e2guardian		# COnfiguring e2guardian
+configure_e2guardian		# Configuring e2guardian
 configure_postfix		# Configuring postfix mail service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
 configure_suricata		# Configure Suricata service
-configure_kibana		# Configure Kibana server
+configure_kibana		# Configure Kibana service
+configure_snortbarn		# Configure Snort and Barnyard services
+configure_snorby		# Configure Snorby
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
 

@@ -266,6 +266,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" > /etc/apt/sources.list.d/logstash.list
 		echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" > /etc/apt/sources.list.d/elastic.list
 
+		# Prepare passenger repo
+		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+		echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger jessie main" > /etc/apt/sources.list.d/passenger.list
+
 # Preparing repositories for Trisquel GNU/Linux 7.0
 
 	elif [ $PLATFORM = "T7" ]; then
@@ -469,6 +473,8 @@ elif [ $PLATFORM = "D8" ]; then
 	pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
 	librrd-dev librrds-perl libapache2-mod-php5- \
 	libtool elasticsearch logstash kibana conky \
+	libmysqlclient-dev ruby bundler rails passenger wkhtmltopdf \
+	nginx-extras \
 	2>&1 > /tmp/apt-get-install1.log
 
 # Installing Packages for Trisquel 7.0 GNU/Linux
@@ -1136,6 +1142,15 @@ install_snort()
 	sed -i -e 's/^\(rule_url.*<oinkcode>\)/#\1/g' /etc/snort/pulledpork.conf
 	sed -i -e 's@/usr/local/lib/@/usr/lib/@g' /etc/snort/pulledpork.conf
 	sed -i -e 's@/usr/local/@/@g' /etc/snort/pulledpork.conf
+	# Fix Snort configuration
+	sed -i -e 's@/usr/local/lib/@/usr/lib/@g' /etc/snort/snort.conf
+	sed -i -e 's@var RULE_PATH .*@var RULE_PATH /etc/snort/rules@g' /etc/snort/snort.conf
+	sed -i -e 's@var SO_RULE_PATH .*@var SO_RULE_PATH /etc/snort/rules/so_rules@g' /etc/snort/snort.conf
+	sed -i -e 's@var PREPROC_RULE_PATH .*@var PREPROC_RULE_PATH /etc/snort/rules/preproc_rules@g' /etc/snort/snort.conf
+	sed -i -e 's@var WHITE_LIST_PATH .*@var WHITE_LIST_PATH /etc/snort/rules@g' /etc/snort/snort.conf
+	sed -i -e 's@var BLACK_LIST_PATH .*@var BLACK_LIST_PATH /etc/snort/rules@g' /etc/snort/snort.conf
+	echo 'include $RULE_PATH/local.rules' >> /etc/snort/snort.conf
+	echo 'include $RULE_PATH/snort.rules' >> /etc/snort/snort.conf
 	# Download rules
 	pulledpork.pl -c /etc/snort/pulledpork.conf -l
 	if [ $? -ne 0 ]; then
@@ -1147,6 +1162,39 @@ install_snort()
 	rm -rf daq-2.0.6
 	rm -rf snort-2.9.8.3
 	rm -rf pulledpork
+}
+
+
+# ----------------------------------------------
+# Function to install Barnyard2
+# ----------------------------------------------
+install_barnyard()
+{
+	echo "Installing Barnyard ..."
+
+	echo "Downloading Barnyard ..."
+	git clone https://github.com/firnsy/barnyard2.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download Barnyard"
+		exit 3
+	fi
+
+	cd barnyard2
+	echo "Building Barnyard ..."
+	./autogen.sh
+	./configure --prefix=/usr --with-mysql CFLAGS='-g -O2 -DHAVE_DUMBNET_H' \
+		--with-mysql-libraries=/usr/lib/x86_64-linux-gnu/
+	make && make install
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install Barnyard"
+		exit 3
+	fi
+	mv /usr/etc/barnyard2.conf /etc/snort/
+	mkdir -p /var/log/barnyard2
+	cd ..
+
+	# Cleanup
+	rm -rf barnyard2
 }
 
 
@@ -1479,6 +1527,35 @@ install_selks()
 
 
 # ----------------------------------------------
+# Function to install Snorby
+# ----------------------------------------------
+install_snorby()
+{
+	echo "Installing Snorby ..."
+
+	echo "Downloading Snorby ..."
+	git clone https://github.com/Snorby/snorby.git
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to download Snorby"
+		exit 3
+	fi
+	cd snorby
+	echo "Installing Gem dependencies ..."
+	bundle install --system
+	if [ $? -ne 0 ]; then
+		echo "Error: unable to install dependencies"
+		exit 3
+	fi
+	cp config/snorby_config.yml.example config/snorby_config.yml
+	cp config/database.yml.example config/database.yml
+	# Fix worker pid
+	sed -i -e 's@Snorby::Process.new(`ps -o ruser,pid,%cpu,%mem,vsize,rss,tt,stat,start,etime,command -p #{Worker.pid} |grep delayed_job |grep -v grep`.chomp.strip)@Snorby::Process.new("www   -1   0.0  0.0 0  0  ??  S    00:00PM        00:00 ruby: delayed_job (ruby)")@g' lib/snorby/worker.rb
+	cd ../
+	mv snorby /var/www/
+}
+
+
+# ----------------------------------------------
 # This function saves variables in file, so
 # parametization script can read and use these 
 # values
@@ -1551,7 +1628,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_ecapguardian	# Inatall ecapguardian package
 	install_suricata	# Install Suricata package
 #	install_scirius		# Install Scirius package
-#	install_snort		# Install Snort package
+	install_snort		# Install Snort package
+	install_barnyard	# Install Barnyard package
 #	install_vortex_ids	# Install Vortex-ids package
 #	install_openwips_ng	# Install Openwips-ng package
 #	install_hakabana	# Install hakabana package
@@ -1560,6 +1638,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_nfsen		# Install nfsen package
 #	install_evebox		# Install EveBox package
 	install_selks		# Install SELKS GUI
+	install_snorby		# Install Snorby package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
