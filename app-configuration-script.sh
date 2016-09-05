@@ -2852,8 +2852,9 @@ configure_snortbarn()
 
 	# Configure Snort
 	sed -i -e 's@ipvar HOME_NET .*@ipvar HOME_NET 10.0.0.0/24@g' /etc/snort/snort.conf
-	sed -i -e 's@ipvar EXTERNAL_NET .*@ipvar EXTERNAL_NET !$HOME_NET@g' /etc/snort/snort.conf
+	sed -i -e 's@ipvar EXTERNAL_NET .*@ipvar EXTERNAL_NET any@g' /etc/snort/snort.conf
 	echo 'output unified2: filename snort.log, limit 128' >> /etc/snort/snort.conf
+	sed -i -e 's@# alert@alert@g' /etc/snort/rules/snort.rules
 
 	# Validate Snort configuration
 	snort -T -i $INT_INTERFACE -c /etc/snort/snort.conf
@@ -2979,6 +2980,63 @@ EOF
 	cd
 	mysql -u root --password=$MYSQL_PASS -e "grant all on snorby.* to root@localhost"
 	mysql -u root --password=$MYSQL_PASS -e "flush privileges"
+	# Create startup script
+	cat << EOF > /etc/init.d/snorby
+#!/bin/sh
+#
+### BEGIN INIT INFO
+#Provides: snorby
+#Required-Start: \$remote_fs \$syslog mysql
+#Required-Stop: \$remote_fs \$syslog
+#Default-Start: 2 3 4 5
+#Default-Stop: 0 1 6
+#X-Interactive: true
+#Short-Description: Restart Snorby worker
+### END INIT INFO
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+do_start()
+{
+    log_daemon_msg "Starting Snorby worker" ""
+    cd /var/www/snorby
+    RAILS_ENV=production bundle exec rails r Snorby::Worker.start
+    log_end_msg 0
+    return 0
+}
+
+do_stop()
+{
+    log_daemon_msg "Stopping Snorby worker" ""
+    cd /var/www/snorby
+    RAILS_ENV=production bundle exec rails r Snorby::Worker.stop
+    log_end_msg 0
+    return 0
+}
+
+case "\$1" in
+ start)
+    do_start
+    ;;
+ stop)
+    do_stop
+    ;;
+ restart)
+    do_stop
+    do_start
+    ;;
+ *)
+    echo "Usage: snorby {start|stop|restart}" >&2
+    exit 3
+    ;;
+esac
+exit 0
+EOF
+	chmod +x /etc/init.d/snorby
+	update-rc.d snorby defaults
+	insserv -f -v snorby
+	service snorby restart
 	service snortbarn restart
 }
 	
