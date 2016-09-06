@@ -426,6 +426,7 @@ Librerouter has two way to work:
 ##Server mode
 
 The way networking works in Librerouter will be:
+
 ![servermode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/36.png)
 
  -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
