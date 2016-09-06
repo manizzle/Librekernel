@@ -90,6 +90,7 @@ cat << EOF > /etc/hosts
 10.0.0.10       webmin.librenet
 10.0.0.11       kibana.librenet
 10.0.0.12       snorby.librenet
+10.0.0.13       squidguard.librenet
 10.0.0.250      easyrtc.librenet
 10.0.0.251      yacy.librenet
 10.0.0.252      friendica.librenet
@@ -181,6 +182,13 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	iface $INT_INTERFACE:8 inet static
 	    address 10.0.0.12
 	    netmask 255.255.255.0
+
+        #squidguard
+        auto $INT_INTERFACE:9
+        allow-hotplug $INT_INTERFACE:9
+        iface $INT_INTERFACE:8 inet static
+            address 10.0.0.13
+            netmask 255.255.255.0
 EOF
 	# Network interfaces configuration for board
 #	elif [ "$PROCESSOR" = "ARM" ]; then
@@ -453,6 +461,7 @@ iptables -t filter -F
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.10 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.13 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.250 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.251 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.252 -j ACCEPT
@@ -521,6 +530,9 @@ nohup nodejs /opt/easyrtc/server.js &
 
 # Restarting tor
 /etc/init.d/tor restart
+
+# Running uwsgi
+uwsgi --ini /etc/uwsgi/uwsgi.ini
 
 exit 0
 EOF
@@ -737,7 +749,8 @@ local-data: "i2p.librenet. IN A 10.0.0.1"
 local-data: "tahoe.librenet. IN A 10.0.0.1"
 local-data: "webmin.librenet. IN A 10.0.0.10"
 local-data: "kibana.librenet. IN A 10.0.0.11"
-local-data: "snorby.librenet. IN A 10.0.0.12"' > /etc/unbound/unbound.conf
+local-data: "snorby.librenet. IN A 10.0.0.12"
+local-data: "squidguard.librenet. IN A 10.0.0.13"' > /etc/unbound/unbound.conf
 
     for i in $(ls /var/lib/tor/hidden_service/)
     do
@@ -1574,6 +1587,24 @@ EOF
 
 squidGuard -C all
 chmod -R a+rw /usr/local/squidGuard/db/*
+}
+
+
+# ---------------------------------------------------------
+# Function to configure squidguardmgr
+# ---------------------------------------------------------
+configure_squidguardmgr()
+{
+# uwcgi configuretion
+cat << EOF > /etc/uwsgi/uwsgi.ini
+[uwsgi]
+plugins = cgi
+threads = 20
+socket = 127.0.0.1:9000
+cgi=/var/www/squidguardmgr 
+cgi-allowed-ext = .cgi
+EOF
+
 }
 
 
@@ -2455,6 +2486,33 @@ server {
 }
 ' > /etc/nginx/sites-enabled/snorby
 
+# Configuring squidguard virtual host
+echo "Configuring squidguard virtual host ..."
+echo '
+# Redirect connections from 10.0.0.13 to squidguardmgr.librenet
+server {
+        listen 10.0.0.13:80;
+        server_name _;
+        return 301 http://squidguard.librenet;
+}
+
+server {
+  listen 10.0.0.13:80;
+  server_name squidguard.librenet;
+
+  index squidguardmgr.cgi;
+  charset utf-8;
+  root /var/www/squidguardmgr;
+  access_log /var/log/nginx/squidguardmgr.log;
+
+  location ~ .cgi\$ {
+    include uwsgi_params;
+    uwsgi_modifier1 9;
+    uwsgi_pass 127.0.0.1:9000;
+  }
+}
+' > /etc/nginx/sites-enabled/squidguard
+
 # Include passenger in nginx
 sed -i -e 's@\t# include /etc/nginx/passenger.conf.*@\tinclude /etc/nginx/passenger.conf;@g' /etc/nginx/nginx.conf
 
@@ -3073,6 +3131,7 @@ configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
 configure_squidguard		# Configuring squidguard
+configure_squidguardmgr		# Configure squidguardmgr
 configure_e2guardian		# Configuring e2guardian
 configure_postfix		# Configuring postfix mail service
 check_interfaces		# Checking network interfaces
