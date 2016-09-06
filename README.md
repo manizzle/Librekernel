@@ -296,7 +296,7 @@ https://openbazaar.org
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
-![search engine](https://cloud.githubusercontent.com/assets/13025157/14445495/ac8eeeb4-004d-11e6-92c0-89fdc5c8cbb4.jpg)
+![search engine](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/31-32.png)
 
 https://cageos.org/index.php?page=apps&section=SearchEngine
 
@@ -304,7 +304,7 @@ A filter-connector for your Social Networks in one single place using decentrali
 
 https://cageos.org/index.php?page=apps&section=SocialNetworks
 
-![socialnetworks](https://cloud.githubusercontent.com/assets/13025157/14444852/be938994-0048-11e6-9200-0299ac312b3b.jpg)
+![socialnetworks](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/33.png)
 
 #***Secure decentralized video conferences based in XMPPoverTOR or WebRTC.***
 - 
@@ -323,7 +323,7 @@ https://cageos.org/index.php?page=apps&section=DecentralizedBackup
 - 
 https://cageos.org/index.php?page=apps&section=SecureEmail
 
-![email](https://cloud.githubusercontent.com/assets/13025157/14445983/c101a78e-0051-11e6-9efc-35569cf73c04.jpg)
+![email](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/34-35.png)
 
 #***Service The descentralized Social networkNetwork***
 
@@ -426,25 +426,23 @@ Librerouter has two way to work:
 ##Server mode
 
 The way networking works in Librerouter will be:
-![servermode](https://cloud.githubusercontent.com/assets/17382786/17981311/780ec724-6b03-11e6-9e26-10d4edc2c0ac.png)
+![servermode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/36.png)
 
  -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
  -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not hable to defend against web browsing leaks,tracking,ads and malware)
 
-![server](https://cloud.githubusercontent.com/assets/13025157/14443924/9c798300-0042-11e6-85b1-1760c5b3789d.png)
+![server](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/37.png)
 
 ![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
 
  
 ##Router bridge mode
 
-![bridgemode](https://cloud.githubusercontent.com/assets/17382786/17981308/75d9fa96-6b03-11e6-8691-9ca1e283ccff.png)
+![bridgemode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/38.png)
 
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
 
-![untitled](https://cloud.githubusercontent.com/assets/17382786/17251287/588b1aa8-55a8-11e6-9c07-3ccca07a560a.png)
-
-![bridge](https://cloud.githubusercontent.com/assets/13025157/14443871/4bf91bfc-0042-11e6-9ca5-06a23891d32e.png)
+![untitled](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/39.png)
 
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
