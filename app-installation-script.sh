@@ -461,7 +461,7 @@ elif [ $PLATFORM = "D8" ]; then
 	deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
 	libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
-        postfix mailutils squidguard \
+        postfix mailutils squidguard uwsgi \
 	libssl-dev perl screen aptitude \
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
 	flex bison libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
@@ -941,6 +941,35 @@ install_squidguard_bl()
 	# Cleanup
         rm -rf /usr/local/squidGuard/db/blacklists.tar
 #	rm -rf squidguard-adblock
+}
+
+
+# ---------------------------------------------------------
+# Function to install squidguardmgr (Manager Gui)
+# ---------------------------------------------------------
+install_squidguardmgr()
+{
+	echo "Installing squidguardmgr ..."
+	if [ ! -e squidguardmgr ]; then
+                echo "Downloading squidguardmgr ..."
+		git clone https://github.com/darold/squidguardmgr 
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download quidguardmgr"
+                        exit 3
+                fi
+        fi
+
+	echo "Building quidguardmgr ..."
+        cd quidguardmgr
+        perl Makefile.PL \
+	CONFFILE=/etc/squidguard/squidguard.conf \
+	SQUIDUSR=squid SQUIDGRP=squid \
+	QUIET=1
+        make
+        make install
+	cd ../
+
+	chmod a+rw /etc/squidguard/squidguard.conf
 }
 
 
@@ -1623,7 +1652,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_easyrtc		# Install EasyRTC package
 	install_squid		# Install squid package
 	install_squidclamav	# Install SquidClamav package
-	install_squidguard_bl	# Install Squidguard blacklists 
+	install_squidguard_bl	# Install Squidguard blacklists
+	install_squidguardmgr	# Install Squidguardmgr (Manager Gui) 
 	install_e2guardian	# Inatall e2guardian package
 #	install_ecapguardian	# Inatall ecapguardian package
 	install_suricata	# Install Suricata package
