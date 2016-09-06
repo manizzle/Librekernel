@@ -296,7 +296,7 @@ https://openbazaar.org
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
-![search engine](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/31-32.png)
+![search engine](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/31_v2.png)
 
 https://cageos.org/index.php?page=apps&section=SearchEngine
 
