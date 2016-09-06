@@ -538,7 +538,7 @@ More shadow darknets are coming in the further revisions .
 
 #Network use cases
 
-![esquema](https://cloud.githubusercontent.com/assets/17382786/17998947/2875386e-6b77-11e6-9a32-7dbb8fbb9c53.png)
+![netflow5](https://cloud.githubusercontent.com/assets/17382786/18273064/c20ec8c4-743b-11e6-8159-bf8d821e77dd.png)
 
 
  -  a) https to onion
