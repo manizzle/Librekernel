@@ -1,57 +1,5 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
----------
-
-&nbsp;
-
-##[Index]
-
-
-- [Overview of Libre Kernel for personal cyber security-privacy](#overview-of-linux-libre-and-libre-kernel-for-personal-cyber-security-and-privacy)
-	- [Purpose of this document](#purpose-of-this-document)
-	- [Introduction] (#introduction)
-	- [Need for this technology] (#need-for-this-technology)
-	- [About Linux Libre](#about-linux-libre)
-	- [Ways of Proprietary firmware removal and its good effects](#ways-of-proprietary-firmware-removal-and-its-good-effects)
-	- [Libre Router Technology](#libre-router-technology)	
-	- [Open Source Hardware](#open-source-hardware)
-	- [Licenses and certifications available for hardware openness compliance](#licenses-and-certifications-available-for-hardware-openness-compliance)
-	- [Certifications available for privacy and security compliance](#certifications-available-for-privacy-and-security-compliance)
-	- [Certifications for product security compliance](#certifications-for-product-security-compliance)
-	- [Purposed Operating Systems using Linux Libre](#purposed-operating-systems-using-linux-libre)
-	- [Technical Overview](#technical-overview)
-		- [Using Libre Router to build a secure network](#using-libre-router-to-build-a-secure-network)
-
-		- [How does Libre Router protects us?](#how-does-libre-router-protects-us?)
-
-		- [Services are running in Librerouter](#services-are-running-in-librerouter)
-
-		- [A decentralized anonymous Search Engine with admin rights](#a-decentralized-anonymous-search-engine-with-admin-rights)
-
-		- [Secure decentralized video conferences based in XMPPoverTOR or WebRTC](#secure-decentralized-video-conferences-based-in-xmppovertor-or-webrtc)
-
-		- [Transparent Email encryption for your actual email](#transparent-email-encryption-for-your-actual-email)
-
-		- [Service The descentralized Social network](#service-the-descentralized-social-network)
-
-		- [Service The descentralized Video Conference](#service-the-descentralized-video-conference)
-
-		- [Service Descentralized Indestructible Storage the RockStar app](#service-descentralized-indestructible-storage-the-rockStar-app)
-
-
-
-
-	- [How to use Librerouter in Hardware?](#how-to-use-librerouter-in-hardware)
-	- [Which hardware is needed to run Librerouter?](#which-hardware-is-needed-to-run-librerouter?)
-	- [Services are running in Librerouter](#services-are-running-in-librouter)
-- [Functional Specification](#functional-specs)
-- [Installation and Setup](#installation-and-setup)
-	- [Prerequisites](#prerequisites)
-	
-- [Roadmap](#roadmap)
-- [FAQ] (#faq)
-- [To be categorized](#others)
-
 ##***Overview of Linux Libre and Libre Kernel for personal cyber security and privacy***
 
 ##***Purpose of this document***
