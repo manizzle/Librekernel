@@ -9,7 +9,7 @@ Built kind TOR browser framework based in TOR-BROWSER so Firefox with some featu
 6. That has disabled HSTS
 7. That is able to detect the proxy from the system or manually alocate credentials to be able to go through corporate networks.
 8. Be able to detect filtering in corporate networks.
-9: That retrieve the hidden addresses from the clients Librerouter and storage in the initial opening session as a menu to reach home.
+9. That retrieve the hidden addresses from the clients Librerouter and storage in the initial opening session as a menu to reach home.
 
 
 
