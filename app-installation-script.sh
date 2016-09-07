@@ -949,27 +949,29 @@ install_squidguard_bl()
 # ---------------------------------------------------------
 install_squidguardmgr()
 {
-	echo "Installing squidguardmgr ..."
-	if [ ! -e squidguardmgr ]; then
+        echo "Installing squidguardmgr ..."
+        if [ ! -e squidguardmgr ]; then
                 echo "Downloading squidguardmgr ..."
-		git clone https://github.com/darold/squidguardmgr 
+                git clone https://github.com/darold/squidguardmgr
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download quidguardmgr"
                         exit 3
                 fi
         fi
 
-	echo "Building quidguardmgr ..."
-        cd quidguardmgr
+        echo "Building quidguardmgr ..."
+        cd squidguardmgr
         perl Makefile.PL \
-	CONFFILE=/etc/squidguard/squidguard.conf \
-	SQUIDUSR=squid SQUIDGRP=squid \
-	QUIET=1
+        CONFFILE=/etc/squidguard/squidGuard.conf \
+        SQUIDUSR=root SQUIDGRP=root \
+        SQUIDCLAMAV=off \
+        QUIET=1
+
         make
         make install
-	cd ../
+        cd ../
 
-	chmod a+rw /etc/squidguard/squidguard.conf
+        chmod a+rw /etc/squidguard/squidGuard.conf
 }
 
 
