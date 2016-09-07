@@ -12,6 +12,7 @@ Built kind TOR browser framework based in TOR-BROWSER so Firefox with some featu
 9: That retrieve the hidden addresses from the clients Librerouter and storage in the initial opening session as a menu to reach home.
 
 
+
 a) Windows xp,7,10 portability is required
 b) Linux Ubuntu debian portability is required.
 
