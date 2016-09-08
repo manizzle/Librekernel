@@ -1,7 +1,17 @@
+Target: User lose his Librerouter
+Target: User recover all from anew Librerouter from the grid with just a password (40characters with complexity)
+Target: You can recover again all your data, even if your Librerouter breaks down completely.
+
+What means technically: That we need to backup system files and personal data files in an encrypted part of tahoe space
+
+
+
 app-installation-script installs all necesary software
 app-configuration-script configure and runs all necesary software
 
 app-configuration-script: Functions:
+
+b) Confgure backup for Owncloud home directories
 
 1 User generates tahohe keys
 2 user encrypts all keys in a zip file with long password
