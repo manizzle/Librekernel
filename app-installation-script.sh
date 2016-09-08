@@ -205,9 +205,9 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		export DEBIAN_FRONTEND=noninteractive
 
 		# Configuring Repositories for Debian 8
-		echo "deb http://ftp.es.debian.org/debian/ jessie main" > /etc/apt/sources.list
-		echo "deb http://ftp.es.debian.org/debian/ jessie-updates main" >> /etc/apt/sources.list
-		echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
+		#echo "deb http://ftp.es.debian.org/debian/ jessie main" > /etc/apt/sources.list
+		#echo "deb http://ftp.es.debian.org/debian/ jessie-updates main" >> /etc/apt/sources.list
+		#echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
 
 		# There is a need to install apt-transport-https 
 		# package before preparing third party repositories
