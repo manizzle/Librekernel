@@ -27,17 +27,49 @@ That we need to backup system files and personal data files in an encrypted part
  - j) Extract all data from private space and restore configuration files of system and owncloud home
 
 #Manuel versus script versus GUI wizard
-1 User generates tahohe keys
-2 user encrypts all keys in a zip file with long password
-3 user saves this password in 2 sheet of papers
-4 user stores part of the password securely
-5 user send zip file to public space in tahoe
-6 user uses private encrypt space of tahoe for backupbing part of the Librerouter configuration files,keys , certificates, generated sshs,generated dbpass, dbs , identities and data from him itself example woncloud home directory ,
-7 user lost his librerouter device
-8 user buy a newone
-9 new device connect public space of tahoe (no key are required)
-10 user take is zip file
-11 user decryp zip
-12 user recovery old tahoe keys
-13 user recover private space and files
-14 user recover all like magic
+
+**In script can be two choises:** 
+1. new device from scratch - steps 1-6
+2. Restore lost device  - steps 9-14
+
+**Steps:**
+
+1. User generates tahoe keys 
+Keys generated after run 'tahoe create-node' or 'tahoe create-client'
+Q: Routers will participate in tahoe grid as storage node or can be only clients?
+
+2. User encrypts all keys in a zip file with long password
+This part do script, before zipped this - script ask password from user.
+
+3. User saves this password in 2 sheet of papers 
+
+4. User stores part of the password securely 
+
+5. ~~user~~ Script send zip file to public space in tahoe
+Q: All files to one directory? Filename is hostname_DDMMYY.zip?
+
+6. User uses private encrypt space of tahoe for backuping part of the Librerouter configuration files,keys , certificates, generated sshs,generated dbpass, dbs , identities and data from him itself example owncloud home directory
+Use another script ~ backup.sh
+
+7. User lost his librerouter device
+
+8. User buy a new one 
+
+9. New device connect public space of tahoe (no key are required)
+but tahoe generate new keys after first run
+
+10. User take is zip file 
+  Find by name?
+ 
+11. User decrypt zip 
+    Script ask password
+
+12. User recovery old tahoe keys (replace keys) 
+    and restart tahoe
+
+13. User recover private space and files 
+    Use another script ~ restore.sh
+
+14. User recover all like magic
+
+Q: Have you plan to take hostnames for routers? It would be very good if we have unique name for tahoe node and, perhaps, for hostname. Node nickname can be zipped witch keys
