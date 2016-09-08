@@ -2,9 +2,14 @@ Target: User lose his Librerouter
 Target: User recover all from anew Librerouter from the grid with just a password (40characters with complexity)
 Target: You can recover again all your data, even if your Librerouter breaks down completely.
 
-What means technically: That we need to backup system files and personal data files in an encrypted part of tahoe space
+What means technically? : 
+That we need to backup system files and personal data files in an encrypted part of tahoe space private.
 
+Asumptions: Tahohe has a publicspace where no keys are required to acces but just a user.
 
+Posibilites:  
+Tahohe runs and the user is fresh  
+Tahoe runs and is a fesh user trying to recover a previous user keys. To restore the system.
 
 app-installation-script installs all necesary software
 app-configuration-script configure and runs all necesary software
