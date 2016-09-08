@@ -28,3 +28,6 @@ Test
 All good? redirects hidden services to the proper engines and do not act with AV DLP IDS IPS and crappy endpoint solution?
 Add proxy use capabilites via using a framweork for wizard that runs firstime the broweser is always opening doing check over the network to reach internet.
 ....
+ Questions:
+Did you set foxyproxy for I2P manually or it is automated some how?
+Also you mentioned during our conversation about some security plugins. What they are?
