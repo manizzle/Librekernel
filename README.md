@@ -71,7 +71,7 @@ The aim its to make a really very easy to use for all people without computers a
 
 ##Open Source Hardware
 
-![ddvdvdvd](https://cloud.githubusercontent.com/assets/17382786/18171246/9296906e-7061-11e6-821e-37e086f26bbf.png)
+![ddvdvdvd](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/correction_bulk.jpg)
 
 It consists of physical artifacts of technology designed and offered by the open design movement. Both free and 
 open-source software (FOSS) as well as open-source hardware is created by this open-source culture movement and 
