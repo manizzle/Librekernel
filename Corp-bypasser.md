@@ -39,3 +39,5 @@ Also you mentioned during our conversation about some security plugins. What the
 My plans for tomorrow:
 base on my analisys I decided to start from writing a plugin which is redirects to a different network based on websites domain for now it will be i2p and tor.
 
+Today I'm planing to work on an extension for redirect, aslo I will try to find some secure extensions for firefox. Before I installe it I will reach you. I let you know about my progress during the day
+
