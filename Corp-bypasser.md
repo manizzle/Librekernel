@@ -1,3 +1,7 @@
+Old version to be updated:
+https://37.148.137.138:1011/public.php?service=files&t=0e4890970e683f0b2169939679debd33
+pass 61676167
+
 Built kind TOR browser framework based in TOR-BROWSER so Firefox with some features:
 
 0. We need to use a USB that have writable protection. We need to find encryption poratble framework for Linux and Windows that do not interacts with corporate protections like Antivirues , DLPs and endpoint protection crap.
