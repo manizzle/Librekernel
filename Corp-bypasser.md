@@ -43,3 +43,6 @@ Today I'm planing to work on an extension for redirect, aslo I will try to find 
 
 I searched secure addons and found Browsec VPN, that encrypts traffic and unlocks sites
 I installed nodejs-legacy npm, installed jpm, created an addon skeleton
+
+
+Please explaine 10th item in your task by details.
