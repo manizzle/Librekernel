@@ -3097,6 +3097,46 @@ EOF
 	service snorby restart
 	service snortbarn restart
 }
+
+
+# ---------------------------------------------------------
+# Function to print info about services accessibility
+# ---------------------------------------------------------
+print_services()
+{
+touch /var/box_services
+echo "Printing local services info ..."
+echo ""
+echo "------------------------------------------------------------------------------" \
+| tee /var/box_services
+echo "| Service Name |       Tor domain       |    Direct access    |  IP Address  |" \
+| tee -a /var/box_services
+echo "------------------------------------------------------------------------------" \
+| tee -a /var/box_services
+for i in $(ls /var/lib/tor/hidden_service/)
+ do
+    if [ $i == "easyrtc" ]; then
+      IP_ADD="10.0.0.250"
+    fi
+    if [ $i == "yacy" ]; then
+      IP_ADD="10.0.0.251"
+    fi
+    if [ $i == "friendica" ]; then
+      IP_ADD="10.0.0.252"
+    fi
+    if [ $i == "owncloud" ]; then
+      IP_ADD="10.0.0.253"
+    fi
+    if [ $i == "mailpile" ]; then
+      IP_ADD="10.0.0.254"
+    fi
+    hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+    printf "|%12s  |%23s |%11s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+    | tee -a /var/box_services
+ done
+echo "------------------------------------------------------------------------------" \
+| tee -a /var/box_services
+}
 	
 
 # ---------------------------------------------------------
@@ -3140,6 +3180,7 @@ configure_suricata		# Configure Suricata service
 configure_kibana		# Configure Kibana service
 configure_snortbarn		# Configure Snort and Barnyard services
 configure_snorby		# Configure Snorby
+print_services			# Print info about service accessibility
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
 
