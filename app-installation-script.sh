@@ -1586,6 +1586,35 @@ install_snorby()
 }
 
 
+# ---------------------------------------------------------
+# Function to install glype proxy server
+# ---------------------------------------------------------
+install_glype()
+{
+	echo "Installing glype ..."
+
+	# Downloading glype-1.4.15
+	if [ ! -e glype-1.4.15.zip ]; then
+	    wget http://netix.dl.sourceforge.net/project/free-proxy-server/glype-1.4.15%20%281%29.zip
+	    if [ $? -ne 0 ]; then
+	        echo "Error: unable to download e2guardian"
+	        exit 3
+	    fi
+	    mv glype-1.4.15\ \(1\).zip glype-1.4.15.zip
+	fi
+
+	unzip glype-1.4.15.zip -d glype-1.4.15
+	rm -rf /var/www/glype
+
+	# Creating glype home
+	mkdir /var/www/glype
+	cp -R glype-1.4.15/* /var/www/glype
+
+	# Cleanup
+	rm -rf glype-1.4.15
+}
+
+
 # ----------------------------------------------
 # This function saves variables in file, so
 # parametization script can read and use these 
@@ -1671,6 +1700,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_evebox		# Install EveBox package
 	install_selks		# Install SELKS GUI
 	install_snorby		# Install Snorby package
+	install_glype		# Install glype proxy
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
