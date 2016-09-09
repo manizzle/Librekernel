@@ -41,3 +41,5 @@ base on my analisys I decided to start from writing a plugin which is redirects 
 
 Today I'm planing to work on an extension for redirect, aslo I will try to find some secure extensions for firefox. Before I installe it I will reach you. I let you know about my progress during the day
 
+I searched secure addons and found Browsec VPN, that encrypts traffic and unlocks sites
+I installed nodejs-legacy npm, installed jpm, created an addon skeleton
