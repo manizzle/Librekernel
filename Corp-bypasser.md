@@ -17,7 +17,8 @@ a) Windows xp,7,10 portability is required
 b) Linux Ubuntu debian portability is required.
 
 3. Initial Task:
-Find opensource encryption program.
+Result of analisys of the actual broswer i gave to you in the owncloud: which tools are used?
+Find opensource encryption program poratable for the  usb that works in linux and windows
 TEST in the USB with writable protection.
 Works? Decrypt is portable and not interact with corporate end user protection crap?
 Start to use latest version of the TOR browser for linux and windows
@@ -27,22 +28,4 @@ Add proxy redirection capabilities
 Test
 All good? redirects hidden services to the proper engines and do not act with AV DLP IDS IPS and crappy endpoint solution?
 Add proxy use capabilites via using a framweork for wizard that runs firstime the broweser is always opening doing check over the network to reach internet.
-....
- 
 
-Questions:
-Did you set foxyproxy for I2P manually or it is automated some how?
-Also you mentioned during our conversation about some security plugins. What they are?
-
-
-
-My plans for tomorrow:
-base on my analisys I decided to start from writing a plugin which is redirects to a different network based on websites domain for now it will be i2p and tor.
-
-Today I'm planing to work on an extension for redirect, aslo I will try to find some secure extensions for firefox. Before I installe it I will reach you. I let you know about my progress during the day
-
-I searched secure addons and found Browsec VPN, that encrypts traffic and unlocks sites
-I installed nodejs-legacy npm, installed jpm, created an addon skeleton
-
-
-Please explaine 10th item in your task by details.
