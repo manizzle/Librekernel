@@ -29,3 +29,5 @@ Test
 All good? redirects hidden services to the proper engines and do not act with AV DLP IDS IPS and crappy endpoint solution?
 Add proxy use capabilites via using a framweork for wizard that runs firstime the broweser is always opening doing check over the network to reach internet.
 
+1. Result of analisys of the actual broswer i gave to you in the owncloud: which tools are used? - Done.  
+2. Find opensource encryption program poratable for the  usb that works in linux and windows - in process.
