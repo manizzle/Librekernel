@@ -36,3 +36,6 @@ Add proxy use capabilites via using a framweork for wizard that runs firstime th
 
 1. Result of analisys of the actual broswer i gave to you in the owncloud: which tools are used? - Done.  
 2. Find opensource encryption program poratable for the  usb that works in linux and windows - in process.
+
+3. Updated browser on latest version (can send it to you, 60 MB). 
+4. Tested it on Linux. Found the reason why doesn't work i2p (report on email).
