@@ -669,6 +669,26 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 
 ###X further service configuration.
 
+### Suricata configuration.
+To provide full internet security, we want IDS/IPS to inspect all kind of communications in our network: tor, i2p and direct.
+But we also want to inspect all secure connections. To do so, we use squid proxy with ssl-bump feature to perform mitm.
+All decrypted traffic goes to icap server, where it's being scanned by clam antivirus.
+
+To accomplish our goal, we are going to make Suricata listen on two interfaces:
+ -  On LAN Suricata is going to detect potentially bad traffic (incoming and outgoing), block attackers/compromised hosts, tor exit nodes, etc.
+Suricata will inspect packets using default sets of rules: 
+  Botnet Command and Control Server Rules (BotCC),
+  ciarmy.com Top Attackers List,
+  Known CompromisedHost List,
+  Spamhaus.org DROP List,
+  Dshield Top Attackers List,
+  Tor exit Nodes List,
+  Protocol events List.
+ -  On localhost Suricata is supposed to scan icap port for bad content: browser/activex exploits, malware, attacks, etc.
+Modified emerging signatures for browsers will be implemented for this purpose.
+
+![suricata implementation](https://cloud.githubusercontent.com/assets/13828418/18439682/f9d35b1c-790e-11e6-86d2-44ff6b647e7b.png)
+
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 
