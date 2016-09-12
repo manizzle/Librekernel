@@ -42,3 +42,5 @@ Add proxy use capabilites via using a framweork for wizard that runs firstime th
 5. Tested updating the browser on Ubuntu 14.04 LTS. I updated it on Ubuntu several times. After the first updating
 everything worked, but after restarting the browser, it stopped working. The error is "Unable to find the proxy server" when foxyproxy is disabled or enabled. Then I updated another copy of your browser foxyproxy crashed.
 6. Tested updating the browser on Windows 7. The TOR, foxyproxy does not work
+7. I found a good encrypting program AES Crupt. This program is opensource, portable in liuux and windows.
+It can be run from command line in linux and windows. I have a question, whether all the browser files should be encrypted or only personal data: session data, history and the like. Does the encryption and decryption process must be automated?
