@@ -39,3 +39,6 @@ Add proxy use capabilites via using a framweork for wizard that runs firstime th
 
 3. Updated browser on latest version (can send it to you, 60 MB). 
 4. Tested it on Linux. Found the reason why doesn't work i2p (report on email).
+5. Tested updating the browser on Ubuntu 14.04 LTS. I updated it on Ubuntu several times. After the first updating
+everything worked, but after restarting the browser, it stopped working. The error is "Unable to find the proxy server" when foxyproxy is disabled or enabled. Then I updated another copy of your browser foxyproxy crashed.
+6. Tested updating the browser on Windows 7. The TOR, foxyproxy does not work
