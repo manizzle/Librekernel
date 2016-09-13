@@ -590,6 +590,31 @@ a1) webrtc protocol
  - https://github.com/e2guardian/e2guardian
  - https://github.com/andybalholm/redwood
 
+##IDS/IPS:
+
+ - https://suricata-ids.org
+ - https://www.snort.org
+ - https://www.bro.org
+ - https://github.com/lmco/vortex-ids
+ - http://www.ntop.org
+ - https://github.com/aircrack-ng/OpenWIPS-n
+ - http://www.haka-security.org/hakabana.html
+ - https://sourceforge.net/p/flowviewer/wiki/Home/
+ - https://github.com/aptivate/pmgraph
+ - http://nfdump.sourceforge.net 
+
+##Graphical Interface for IDS/IPS:
+
+ - https://github.com/StamusNetworks/scirius
+ - http://nfsen.sourceforge.net/
+ - https://github.com/jasonish/evebox
+ - https://github.com/StamusNetworks/KTS
+ - https://www.elastic.co/products/kibana
+ - https://github.com/Snorby/snorby
+ - https://www.prelude-siem.org/
+ - https://github.com/mcholste/elsa
+ - http://sguil.net
+
 ##Privoxy and Privacy :
 
 ![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
@@ -688,6 +713,112 @@ Suricata will inspect packets using default sets of rules:
 Modified emerging signatures for browsers will be implemented for this purpose.
 
 ![suricata implementation](https://cloud.githubusercontent.com/assets/13828418/18439682/f9d35b1c-790e-11e6-86d2-44ff6b647e7b.png)
+
+**Suricata will prevent the following sets of attacks:**
+
+a) Web Browsers
+  - ActiveX Remote Code Execution
+  - Microsoft IE ActiveX vulnerabilities
+  - Microsoft Video ActiveX vulnerabilities
+  - Snapshot Viewer for Microsoft Access ActiveX vulnerabilities
+  - http backdoors (get/post)
+  - DNS Poisoning
+  - Suspicious/compromises hosts
+  - ClickFraud URLs
+  - Tor exit nodes
+  - Chats vulnerabilities (Google Talk/Facebook)
+  - Gaming sites vulnerabilities (Alien Arena/Battle.net/Steam)
+  - Suspicious add-ins and add-ons downloading/execution
+  - Javascript backdoors
+  - trojans injections
+  - Microsoft Internet Explorer vulnerabilities
+  - Firefox vulnerabilities
+  - Firefox plug-ins vulnerabilities
+  - Google Chrome vulnerabilities
+  - Malicious Chrome extencions
+  - Android Browser vulnerabilities
+  - PDF vulnerabilities
+  - Stealth code execution
+  - Adobe Shockwave Flash vulnerabilities
+  - Adobe Flash Player vulnerabilities
+  - Browser plug-in commands injections
+  - Microsoft Office format vulnerabilities
+  - Adobe PDF Reader vulnerabilities
+  - spyware
+  - adware
+  - Web scans
+  - SQL Injection Points
+  - Suspicious self-signed sertificates
+  - Dynamic DNS requests to suspicious domains
+  - Metasploits
+  - Suspicious Java requests
+  - Suspicious python requests
+  - Phishing pages
+  - java.runtime execution
+  - Malicious files downloading
+
+b) Librerouter (router services)
+  - mysql attacks
+  - Apache/nginx Brute Force Attacks
+  - GPL attack responses
+  - php remote code injections
+  - Apache vulnerabilities
+  - Apache OGNL exploits
+  - Oracle Java vulnerabilities
+  - PHP exploits
+  - node.js exploits
+  - ssh attacks
+
+c) User devices
+  - GPL attack responses
+  - Metasploit Meterpreter
+  - Remote Windows command execution
+  - Remote Linux command execution
+  - IMAP attacks
+  - pop3 attacks
+  - smtp attacks
+  - Messengers vulnerabilities (ICQ/MSN/Jabber/TeamSpeak)
+  - Gaming software vulnerabilities (Steam/PunkBuster/Minecraft/UT/TrackMania/WoW)
+  - Microsoft Windows vulnerabilities
+  - OSX vulnerabilities
+  - FreeBSD vulnerabilities
+  - Redhat 7 vulnerabilities
+  - Apple QuickTime vulnerabilities
+  - RealPlayer/VLC exploits
+  - Adobe Acrobat vulnerabilities
+  - Worms, spambots
+  - Web specific apps vulnerabilities
+  - voip exploits
+  - Android trojans
+  - SymbOS trojans
+  - Mobile Spyware
+  - iOS malware
+  - NetBios exploits
+  - Oracle Java vulnerabilities
+  - RPC vulnerabilities
+  - telnet vulnerabilities
+  - MS-SQL exploits
+  - dll injections
+  - Microsoft Office vulnerabilities
+  - rsh exploits
+
+
+**Loopback issue:**
+
+Suricata >=3.1 is unable to listen on loopback in afp mode. When run with -i lo option, it dies with this messages:
+
+\<Error\> - [ERRCODE: SC_ERR_INVALID_VALUE(130)] - Frame size bigger than block size
+
+\<Error\> - [ERRCODE: SC_ERR_AFP_CREATE(190)] - Couldn't init AF_PACKET socket, fatal error
+
+Same configuration works fine with Suricata v3.0.0.
+
+**Possible solutions:**
+
+- Use pcap mode on lo and af-packet on eth0. May not be possible, because since 3.1 Suricata use af-packet mode by default
+- Reduce the MTU size
+
+
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
