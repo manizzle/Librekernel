@@ -830,24 +830,24 @@ install_squid()
 	aptitude -y build-dep squid
 
 	echo "Installing squid ..."
-	if [ ! -e /tmp/squid-3.4.13.tar.gz ]; then
+	if [ ! -e /tmp/squid-3.5.21.tar.gz ]; then
 		echo "Downloading squid ..."
-		wget -P /tmp/ http://www.squid-cache.org/Versions/v3/3.4/squid-3.4.13.tar.gz
+		wget -P /tmp/ http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.21.tar.gz
 	fi
 
-	if [ ! -e squid-3.4.13 ]; then
+	if [ ! -e squid-3.5.21 ]; then
 		echo "Extracting squid ..."
-		tar zxvf /tmp/squid-3.4.13.tar.gz
+		tar zxvf /tmp/squid-3.5.21.tar.gz
 	fi
 
 	echo "Building squid ..."
-	cd squid-3.4.13
+	cd squid-3.5.21
 	./configure --prefix=/usr --localstatedir=/var \
 		--libexecdir=/lib/squid --datadir=/usr/share/squid \
 		--sysconfdir=/etc/squid --with-logdir=/var/log/squid \
 		--with-pidfile=/var/run/squid.pid --enable-icap-client \
 		--enable-linux-netfilter --enable-ssl-crtd --with-openssl \
-		--enable-ltdl-convenience --enable-ssl
+		--enable-ltdl-convenience --enable-ssl --enable-ecap PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install squid"
@@ -1021,18 +1021,38 @@ install_e2guardian()
 install_ecapguardian()
 {
 	echo "Installing ecapguardian ..."
-
+        
+        if [ ! -e ecapguardian ]; then
 	echo "Downloading ecapguardian ..."
 	git clone https://github.com/androda/ecapguardian
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to download ecapguardian"
-		exit 3
+		if [ $? -ne 0 ]; then
+			echo "Error: unable to download ecapguardian"
+			exit 3
+		fi
 	fi
 
 	echo "Building ecapguardian ..."
+
 	cd ecapguardian
+
+	# Adding subdir for automake
+        sed -i '/AM_INIT_AUTOMAKE/c\AM_INIT_AUTOMAKE([subdir-objects])' configure.ac
+
 	./autogen.sh
-	./configure --prefix=/usr --enable-clamd=yes --enable-fancydm=no
+	./configure --prefix=/usr --enable-clamd=yes  \
+                    --with-proxyuser=e2guardian --with-proxygroup=e2guardian \
+                    --sysconfdir=/etc --localstatedir=/var --enable-icap=yes \
+                    --enable-commandline=yes --enable-email=yes \
+                    --enable-ntlm=yes --enable-trickledm=yes \
+                    --mandir=${prefix}/share/man \
+                    --infodir=${prefix}/share/info \
+                    CXXFLAGS=-g -O2 -fstack-protector \
+                    --param=ssp-buffer-size=4 -Wformat \
+                    -Werror=format-security LDFLAGS=-Wl,-z,relro \
+                    CPPFLAGS=-D_FORTIFY_SOURCE=2 CFLAGS=-g -O2 \
+                    -fstack-protector --param=ssp-buffer-size=4 -Wformat \
+                    -Werror=format-security --enable-pcre=yes \
+                    --enable-locallists=yes
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install ecapguardian"
@@ -1685,8 +1705,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_squidclamav	# Install SquidClamav package
 	install_squidguard_bl	# Install Squidguard blacklists
 	install_squidguardmgr	# Install Squidguardmgr (Manager Gui) 
-	install_e2guardian	# Inatall e2guardian package
-#	install_ecapguardian	# Inatall ecapguardian package
+#	install_e2guardian	# Inatall e2guardian package
+	install_ecapguardian	# Inatall ecapguardian package
 	install_suricata	# Install Suricata package
 #	install_scirius		# Install Scirius package
 	install_snort		# Install Snort package
