@@ -1238,10 +1238,22 @@ icap_client_username_encode off
 icap_client_username_header X-Authenticated-User
 icap_preview_enable on
 icap_preview_size 1024
-icap_service service_req reqmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
-adaptation_access service_req allow all
-icap_service service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
-adaptation_access service_resp allow all
+icap_service icap_service_req reqmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
+adaptation_access icap_service_req allow all
+icap_service icap_service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/squidclamav
+#adaptation_access icap_service_resp allow all
+
+# ecap configuration
+loadable_modules /usr/local/lib/libreqmod.so
+loadable_modules /usr/local/lib/librespmod.so
+ecap_enable on
+ecap_service ecap_service_req reqmod_precache ecap://filtergizmo.com/ecapguardian/reqmod ecapguardian_listen_socket=/etc/ecapguardian/ecap/reqmod
+adaptation_access ecap_service_req allow all
+ecap_service ecap_service_resp respmod_precache ecap://filtergizmo.com/ecapguardian/respmod ecapguardian_listen_socket=/etc/ecapguardian/ecap/respmod
+#adaptation_access ecap_service_resp allow all
+
+adaptation_service_chain myChain ecap_service_resp icap_service_resp
+adaptation_access myChain allow all
 " > /etc/squid/squid.conf
 
 echo "Configuring squid startup file ..."
