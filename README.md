@@ -16,9 +16,9 @@ This document is meant to explain the Libre Router linux based open source hardw
 
 ##Overview of Libre Kernel components:
 
-##***Introduction to what is called Pseudo Backdoor and code (a secret entry door in the program)***
+##***Introduction to what is called Pseudo Backdoor (a secret entry door in the program's code)***
 
-Software components with no available source code are called binary blobs(Binary Large Objects or a collection of binary data stored as a single object) and, as such, are mostly used for proprietary firmware images in the Linux kernel like hard drives, Ethernet, USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give the user the freedom to review, audit, scrutinize, modify or, consequently, redistribute their modified versions.
+Software components with no available source code (the how a program was made) are called binary blobs(Binary Large Objects) or a collection of binary data stored as a single obscure object) and, as such, are mostly used for proprietary firmware images in the Linux kernel like hard drives, Ethernet, USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give the users the freedom to review the source code or any other programmer the ability to check the program itself, audit, scrutinize, modify or, consequently, redistribute any further evoluted version.
 
 [Blob Example](#blob-example)
 
@@ -330,24 +330,6 @@ As shown in the following figure.
 - In the Debian do a Snapshot in the Virtual machine just after being provisioned and before!, you test/install any the Librerouter Script.
 - In the Windows 10 please conect to the internal interface of the Debian Librerouter.
 
-##2. Seting up in Pipo X8-9-10.
-
-PIPO Intel NUC Z8083 is NOT open hardware/source! because the boot is NOT able to support yet replacement with Coreboot or Uboot
-Due to limitations: Only PRE-sold 300 boxes in crowdfunding.
-Pipo do not have 1Tb HDD or 2 ethernets or 2 wlans, the version we test we attached addiotional components.
-The Debian LFromScratch (not yet ready) will contain drivers that may be restrictive from Pipo, again if you want a 100% open the you need clearfog board or open hardware compatible with debian. 
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
-We plan to to use open hardware, when is fully ready, but for now, the test is customized PIPO X8-9s-10
-
-We still testing  Clearfog Base board 96$ (no screentouch is possible then the adminGUI need to by direct browser request). 
-![cleargof](https://cloud.githubusercontent.com/assets/17382786/17963891/dda51e22-6ab7-11e6-9d50-53b3eaf7230b.png)
-- https://images.solid-build.xyz/A38X/
-- https://www.solid-run.com/product/clearfog-base/
-- http://blog.hypriot.com/post/introducing-the-clearfog-pro-router-board/
-
-
-We'll Keep you posted.
-![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 #***Networking in Librerouter:
 
 - There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
