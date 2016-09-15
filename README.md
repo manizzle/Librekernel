@@ -458,9 +458,9 @@ Yes in the future via GUI should be possible to reconfigure this cage.
  -  x) to allow or not javascript,flash, etc on preallowed white and black list
  -  y) yacy trying to go by TOR or I2P
  -  z) prosody trying to conect via over TOR
-a1) webrtc protocol
- -  a1) hsts via browser direct entry for example gmaik push enter key
- -  b1) hsts via browser corrected entry form for example https://www.gmail.com enter key 
+ -  a1) webrtc protocol
+ -  a2) hsts via browser direct entry for example gmaik push enter key
+ -  a3) hsts via browser corrected entry form for example https://www.gmail.com enter key 
  
 ![layers](https://cloud.githubusercontent.com/assets/17382786/17397142/f4f4ba92-5a36-11e6-8721-eddfcc1f18be.png)
 
