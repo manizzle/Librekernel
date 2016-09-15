@@ -321,8 +321,13 @@ Libraries:
 
 #Setting up a lab:
 
-For Virtual Machines setup would need hardware system with two guests VMs connected in it, Debian 8 any sub version and
-Windows 10 ( with installed microsoft office, openoffice, dropbox client, all the browsers: seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
+First you can use any virtualization software you prefer. Its transparent for us.
+
+Hardware resources:
+
+- Debian 8 version : 2GB RAM, 2 procesor, 2NICs (network interfaces)
+ 
+- Windows 10 (one network interface) ( install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
 
 As shown in the following figure.
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
