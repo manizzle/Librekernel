@@ -1,4 +1,4 @@
-#Built kind TOR browser framework based in TOR-BROWSER so Firefox with some features: portable broswer that uses portable proxies in an encrypted usb stick with portable encryption able to run in linux kernel 3 and windows 10
+#Built updated version TOR browser framework able to  enroute TOR,i2p,zeronet domains with some features: portable, compatible with antivirus, portable proxies and addons, runing in an encrypted usb stick with portable encryption software and easy to use able to run in linux kernel 3 and windows 10
 
 Old version to be updated:
 https://37.148.137.138:1011/public.php?service=files&t=0e4890970e683f0b2169939679debd33
