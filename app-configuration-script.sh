@@ -1621,97 +1621,23 @@ EOF
 
 
 # ---------------------------------------------------------
-# Function to configure e2guardian
+# Function to configure ecapguardian
 # ---------------------------------------------------------
-configure_e2guardian()
+configure_ecapguardian()
 {
 
-echo "Configuring e2guardian ..."
-
-cat << EOF > /etc/e2guardian/e2guardian.conf
-languagedir = '/usr/share/e2guardian/languages'
-language = 'ukenglish'
-loglevel = 3
-logexceptionhits = 2
-logfileformat = 1
-loglocation = '/var/log/e2guardian/access.log'
-dstatlocation = '/var/log/e2guardian/dstats.log'
-filterip = 127.0.0.1
-filterports = 8080
-proxyip = 127.0.0.1
-proxyport = 4444
-proxytimeout = 20
-proxyexchange = 20
-pcontimeout = 55
-usecustombannedimage = on
-custombannedimagefile = '/usr/share/e2guardian/transparent1x1.gif'
-usecustombannedflash = on
-custombannedflashfile = '/usr/share/e2guardian/blockedflash.swf'
-filtergroups = 1
-filtergroupslist = '/etc/e2guardian/lists/filtergroupslist'
-bannediplist = '/etc/e2guardian/lists/bannediplist'
-exceptioniplist = '/etc/e2guardian/lists/exceptioniplist'
-showweightedfound = on
-urlcachenumber = 1000
-urlcacheage = 900
-scancleancache = on
-phrasefiltermode = 2
-preservecase = 0
-hexdecodecontent = off
-forcequicksearch = off
-reverseaddresslookups = off
-reverseclientiplookups = off
-logclienthostnames = off
-prefercachedlists = off
-maxcontentfiltersize = 256
-maxcontentramcachescansize = 2000
-maxcontentfilecachescansize f= 20000
-filecachedir = '/tmp'
-deletedownloadedtempfiles = on
-initialtrickledelay = 20
-trickledelay = 10
-downloadmanager = '/etc/e2guardian/downloadmanagers/fancy.conf'
-downloadmanager = '/etc/e2guardian/downloadmanagers/default.conf'
-contentscannertimeout = 60
-contentscanexceptions = off
-recheckreplacedurls = off
-forwardedfor = off
-usexforwardedfor = off
-logconnectionhandlingerrors = on
-logsslerrors = off
-logchildprocesshandling = off
-maxchildren = 180
-minchildren = 20
-minsparechildren = 16
-preforkchildren = 10
-maxsparechildren = 32
-maxagechildren = 500
-maxips = 0
-ipcfilename = '/tmp/.e2guardianipc'
-urlipcfilename = '/tmp/.e2guardianurlipc'
-ipipcfilename = '/tmp/.e2guardianipipc'
-nodaemon = off
-nologger = off
-logadblocks = off
-loguseragent = off
-daemonuser = 'proxy'
-daemongroup = 'e2guardian'
-softrestart = off
-mailer = '/usr/sbin/sendmail -t'
-EOF
+echo "Configuring ecapguardian ..."
 
 # Creating log file
-touch /var/log/e2guardian/access.log
-chmod a+rw /var/log/e2guardian/access.log
+touch /usr/var/log/ecapguardian/access.log
+chmod a+rw /usr/var/log/ecapguardian/access.log
 
-# Creating e2guardian group
-groupadd e2guardian
-
-# killing all instances
-e2guardian -q
+# Creating socket directory
+mkdir -p /etc/ecapguardian/ecap
+chmod -R a+rw /etc/ecapguardian/ecap
 
 # Running e2guardian
-e2guardian
+ecapguardian &
 }
 
 
@@ -3184,7 +3110,7 @@ configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
 configure_squidguard		# Configuring squidguard
 configure_squidguardmgr		# Configure squidguardmgr
-configure_e2guardian		# Configuring e2guardian
+configure_ecapguardian		# Configuring ecapguardian
 configure_postfix		# Configuring postfix mail service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
