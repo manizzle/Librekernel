@@ -118,7 +118,6 @@ What mostly resulted under a deep research that it requires to operate full rang
 - https://en.wikipedia.org/wiki/Bootstrapping_(compilers)
 - https://www.win.tue.nl/~aeb/linux/hh/thompson/trust.html
 
-
 - No documentation No schematics on the components of the circuit board.
 - Not using free booting boot system. 
 - https://en.wikipedia.org/wiki/Coreboot 
@@ -313,9 +312,6 @@ A grid splits your files up into little pieces, encrypts them and spreads them o
 ![grid4](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/20.png)
 
 You can also sync your home Librerouter with all of your portable devices to have the same files and receive the same alerts in real time.If someone steals your cube or for some reason it is destroyed, you can simply buy a replacement Librerouter server and recover your lost data automatically from the Grid.In minutes you’re up and running again!
-
-Libraries: 
-- https://213.129.164.215:4580/dokuwiki/doku.php?id=technical:software:matrix:featurescomparison
 - https://cageos.org/index.php?page=pilarservices
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
@@ -325,9 +321,9 @@ First you can use any virtualization software you prefer. Its transparent for us
 
 Hardware resources:
 
-- Debian Linux Distribution version 8 Wheezy codename “jessie” : 2GB RAM, 60GB Vdisk (virtual harddrive) 2 procesor, 2NICs (network interfaces)
+- Debian 8 version : 2GB RAM, 2 procesor, 2NICs (network interfaces)
  
-- Windows 10 (one network interface) ( install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,Chromium(open source alternative of chrome)).
+- Windows 10 (one network interface) ( install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
 
 As shown in the following figure.
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
@@ -383,38 +379,13 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
 
-
-
-#Network Working flow 
-
-
 ##DNS:
 
-###DNS engines:
-- Used today unbound-dns momentarily ( because djdns needs upgrade and it not workeable due to 21july2016  we are searching for developers for it)). 
-
-- If it can not resolved, then we need to ask through TOR 
+- Unbound-dns 
 - If it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
-
-X differents DNS servers (Unbound,Tor,I2p,Bitname,others and DjDNS(this last need maintenance is not workinghttps://github.com/DJDNS/djdns)) 
-
-Those need to work together us one DNS resolution system, to provide the best open source solutions for anonymity and security.  
-Here is the list of servers and interfaces/ports DNS servers  are listening.
-
-- Unbound is running on 10.0.0.1:53
-- Tor is running on 10.0.0.1:9053
-- DjDNS running on 10.0.0.1:8053
-- Bitname is .....
-- Others....
-
-
-
-##DNS Workflow:
-
-![dns use cases](https://cloud.githubusercontent.com/assets/17382786/17254117/bc19c140-55b3-11e6-99fc-1b544f3adbd1.png)
-
-
-####Classified domains that matched our app decentralized alternatives:  If it's a local service (10.0.0.25x) petition it's forwarded to local Nginx server. We have integrated shallalist domains list into unbound, so when DNS request comes at first unbound will check if it’s classified. Classified domain are going to be resolved to local services ip addresses or be blocked.
+- If it can not resolved, then we need to ask through TOR 
+-
+Further integration will include Bitname,others like DjDNS (this last need maintenance is not workinghttps://github.com/DJDNS/djdns)) 
 
 ![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
  
@@ -423,33 +394,24 @@ Here is the list of servers and interfaces/ports DNS servers  are listening.
   * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
   * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound.
 
-#### Darknets Domains
+#### Darknets Domains:
  
   * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
   * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
   * .onion - unbound will forward this zone to Tor DNS running on 10.0.0.1:9053
   
+ -Freenet domains:> not yet implemented
+- http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
+- Bit domains> blockchain bitcoin> not yet implemented 
+- https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
+- Zeronet> not yet implemented
+- Openbazaar> not yet implemented
 ![dnsipdated](https://cloud.githubusercontent.com/assets/17382786/17974408/4054bb80-6ae6-11e6-9747-a79d3d703e65.png)
-
-- 	IM domains – these domains are going to be resolved to IP address 10.0.0.250. 
-- We have WebRTC running on 10.0.0.250, so when you type some chat domain you will get WebRTC in your browser.
-
-- 	Search engines – these domains are going to be resolved to IP address 10.0.0.251 by unbound. 
-- We have Yacy running on 10.0.0.251, so when you type some search engine domain you will get Yacy in your browser.
-
-- 	Social networks – these domains are going to be resolved to IP address 10.0.0.252 by unbound.
-- We have Friendica running on 10.0.0.252, so when you type some social network domain you will get Friendica in your browser.
-
-- 	Storage - these domains are going to be resolved to IP address 10.0.0.253 by unbound.
-- We have Owncloud running on 10.0.0.253, so when you type some storage domain you will get Owncloud in your browser.
  
-- 	Webmail - these domains are going to be resolved to IP address 10.0.0.254 by unbound. 
-- We have Mailpile running on 10.0.0.254, so when you type some storage domain you will get Mailpile in your browser.
 
-
-Still prblems with HSTS https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
-Also still problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
-
+###HSTS 
+https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+Problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
 
 #### Why we try the end user use more fair services than the offered for free (bullshit youll pay entirelife) in internet by some corporations?
 
@@ -459,15 +421,6 @@ Because if the user make use of centralized webs like Facebook,Google,Dropbox et
 
 Yes in the future via GUI should be possible to reconfigure this cage.
 
- 
-More shadow darknets are coming in the further revisions .
-
-- Freenet domains:> not yet implemented
-- http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
-- Bit domains> blockchain bitcoin> not yet implemented 
-- https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
-- Zeronet> not yet implemented
-- Openbazaar> not yet implemented
 
 
 #Network use cases
