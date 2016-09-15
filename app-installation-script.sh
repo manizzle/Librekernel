@@ -821,9 +821,75 @@ install_easyrtc()
 }
 
 
-# ----------------------------------------------
+# -----------------------------------------------
+# Function to install libecap 
+# -----------------------------------------------
+install_libecap()
+{
+        echo "Installing libecap ..."
+
+        if [ ! -e libecap-1.0.0 ]; then
+        echo "Downloading libecap ..."
+        wget http://www.measurement-factory.com/tmp/ecap/libecap-1.0.0.tar.gz
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download libecap"
+                        exit 3
+                fi
+        fi
+
+        echo "Building libecap ..."
+	tar -xzf libecap-1.0.0.tar.gz
+        
+	cd libecap-1.0.0/
+	
+	./configure 
+	make &&  make install
+
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install libecap"
+                exit 3
+        fi
+        cd ../
+
+	# Cleanup
+	rm -rf libecap-1.0.0.tar.gz
+}
+
+
+# -----------------------------------------------
+# Function to install fg-ecap
+# -----------------------------------------------
+install_fg-ecap()
+{
+        echo "Installing fg-ecap ..."
+
+        if [ ! -e fg-ecap ]; then
+        echo "Downloading fg-ecap ..."
+        git clone https://github.com/androda/fg_ecap
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download fg-ecap"
+                        exit 3
+                fi
+        fi
+
+        echo "Building fg-ecap ..."
+
+        cd fg-ecap
+
+        ./autogen.sh
+        ./configure 
+        make && make install
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install fg-ecap"
+                exit 3
+        fi
+        cd ../
+}
+
+
+# -----------------------------------------------
 # Function to install squid
-# ----------------------------------------------
+# -----------------------------------------------
 install_squid()
 {
 	echo "Installing squid dependences ..."
@@ -847,7 +913,8 @@ install_squid()
 		--sysconfdir=/etc/squid --with-logdir=/var/log/squid \
 		--with-pidfile=/var/run/squid.pid --enable-icap-client \
 		--enable-linux-netfilter --enable-ssl-crtd --with-openssl \
-		--enable-ltdl-convenience --enable-ssl --enable-ecap PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+		--enable-ltdl-convenience --enable-ssl \
+		--enable-ecap PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install squid"
@@ -869,6 +936,10 @@ install_squid()
 	wget http://adzapper.sourceforge.net/scripts/squid_redirect
 	chmod +x ./squid_redirect
 	mv squid_redirect /usr/bin/
+	
+	# Adding library path
+	echo "include /usr/local/lib" >> /etc/ld.so.conf 
+	ldconfig
 }
 
 
@@ -1701,6 +1772,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_packages       	# Download and install packages	
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
+	install_libecap		# Install libecap package
+	install_fg-ecap		# Install fg-ecap package
 	install_squid		# Install squid package
 	install_squidclamav	# Install SquidClamav package
 	install_squidguard_bl	# Install Squidguard blacklists
