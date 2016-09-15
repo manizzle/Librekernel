@@ -712,7 +712,7 @@ Suricata will inspect packets using default sets of rules:
  -  On localhost Suricata is supposed to scan icap port for bad content: browser/activex exploits, malware, attacks, etc.
 Modified emerging signatures for browsers will be implemented for this purpose.
 
-![suricata implementation](https://cloud.githubusercontent.com/assets/13828418/18439682/f9d35b1c-790e-11e6-86d2-44ff6b647e7b.png)
+![untitled](https://cloud.githubusercontent.com/assets/13025157/18548726/947f19fc-7b4a-11e6-8dc5-a9cd3a0f6c19.png)
 
 **Suricata will prevent the following sets of attacks:**
 
