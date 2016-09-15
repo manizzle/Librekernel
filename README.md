@@ -461,16 +461,9 @@ Yes in the future via GUI should be possible to reconfigure this cage.
  -  a1) webrtc protocol
  -  a2) hsts via browser direct entry for example gmaik push enter key
  -  a3) hsts via browser corrected entry form for example https://www.gmail.com enter key 
- 
-![layers](https://cloud.githubusercontent.com/assets/17382786/17397142/f4f4ba92-5a36-11e6-8721-eddfcc1f18be.png)
 
 
-![ip use cause](https://cloud.githubusercontent.com/assets/17382786/17254808/a88262ec-55b6-11e6-969d-bfac41e4dadd.png)
-
-![total](https://cloud.githubusercontent.com/assets/17382786/17976691/d007c3fa-6aee-11e6-90f4-23739dbc7892.png)
-
-
-##Intelligence IP, Domain Providers:
+##Intelligence IP and Domain Providers:
 
 - Shallalist
 - mesdk12 http://squidguard.mesd.k12.or.us/blacklists.tgz
@@ -482,7 +475,9 @@ Yes in the future via GUI should be possible to reconfigure this cage.
 - Virustotal
 - http://urlblacklist.com/
 
-##Privacy testers:
+Where we use it?
+
+##Privacy testers: We used in the browser from the simulated client with windows 10
 
  - https://anonymous-proxy-servers.net/en/help/security_test.html
  - www.iprivacytools.com
@@ -496,73 +491,7 @@ Yes in the future via GUI should be possible to reconfigure this cage.
  - https://www.browserleaks.com/
  - browserspy.dk
 
-##Squid Transparent mode interception with IPtables:
-
- - http://blog.davidvassallo.me/2011/03/22/squid-transparent-ssl-interception/
- - http://wiki.squid-cache.org/SquidFaq/InterceptionProxy
- 
-##Squid CLAMAV Antivirus:
-
- - https://sathisharthars.wordpress.com/2013/07/31/configuring-proxy-server-with-antivirus-squidclamavsquidguarddansguardian/
-
-##Squid ADS :
-
- - https://github.com/jamesmacwhite/squidguard-adblock
- - http://www.squidguard.org/
- - https://calomel.org/squid_adservers.html
- - http://adzapper.sourceforge.net/
- - http://pgl.yoyo.org/adservers/
-
-##Unboudndns ADs:
-
- - https://github.com/jodrell/unbound-block-hosts
-
-##Squid SSL bumping for AV SSL and IPS (intrusion prevention applied to decrypt traffic) :
-
- - https://hitch-tls.org/
- - https://github.com/varnish/hitch
- - https://github.com/dani87/sslbump
- - https://github.com/jpelias/squid3-ssl-bump/blob/master/Install%20Squid%203.4%20with%20ssl%20bump%20on%20Debian%208%20(Jessie)
- - https://github.com/diladele
-
-##Squid Content filter with privacy enhacement:
-
- - https://github.com/e2guardian/e2guardian
- - https://github.com/andybalholm/redwood
-
-##IDS/IPS:
-
- - https://suricata-ids.org
- - https://www.snort.org
- - https://www.bro.org
- - https://github.com/lmco/vortex-ids
- - http://www.ntop.org
- - https://github.com/aircrack-ng/OpenWIPS-n
- - http://www.haka-security.org/hakabana.html
- - https://sourceforge.net/p/flowviewer/wiki/Home/
- - https://github.com/aptivate/pmgraph
- - http://nfdump.sourceforge.net 
-
-##Graphical Interface for IDS/IPS:
-
- - https://github.com/StamusNetworks/scirius
- - http://nfsen.sourceforge.net/
- - https://github.com/jasonish/evebox
- - https://github.com/StamusNetworks/KTS
- - https://www.elastic.co/products/kibana
- - https://github.com/Snorby/snorby
- - https://www.prelude-siem.org/
- - https://github.com/mcholste/elsa
- - http://sguil.net
-
-##Privoxy and Privacy :
-
-![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
-
-
-##Squid tuning conf for Privacy :
-
-If you don’t want to use Privoxy you can still set some options in your squid.conf 
+##Squid tuning conf for Privacy : squid.conf 
 
 	- via off
 	- forwarded_for off
@@ -600,6 +529,59 @@ If you don’t want to use Privoxy you can still set some options in your squid.
 	-   request_header_access From deny all
 	-   request_header_access Referer deny all
 	-   request_header_access User-Agent deny all
+
+##Squid ADS :
+
+ - https://calomel.org/squid_adservers.html
+ - http://adzapper.sourceforge.net/
+ - http://pgl.yoyo.org/adservers/
+
+##Unboudndns implement list of ADs servers to be block:
+
+ - https://github.com/jodrell/unbound-block-hosts
+
+##Squid SSL bumping for AV SSL and IPS (intrusion prevention applied to decrypt traffic) :
+
+ - https://hitch-tls.org/
+ - https://github.com/varnish/hitch
+ - https://github.com/dani87/sslbump
+ - https://github.com/jpelias/squid3-ssl-bump/blob/master/Install%20Squid%203.4%20with%20ssl%20bump%20on%20Debian%208%20(Jessie)
+ - https://github.com/diladele
+
+##Squid Content filter with privacy enhacement:
+
+ - https://github.com/andybalholm/redwood
+
+##IDS/IPS:
+
+ - https://github.com/aircrack-ng/OpenWIPS-n
+ - https://suricata-ids.org
+ - https://www.snort.org
+ - https://www.bro.org
+ - https://github.com/lmco/vortex-ids
+ - 
+##Graphical Interface for IDS/IPS:
+ - https://github.com/StamusNetworks/scirius
+ - https://github.com/jasonish/evebox
+ - https://github.com/StamusNetworks/KTS
+ - https://www.elastic.co/products/kibana
+ - https://github.com/Snorby/snorby
+ - https://www.prelude-siem.org/
+ - https://github.com/mcholste/elsa
+ - http://sguil.net
+ - 
+##Network forensics with netflow
+ - http://www.ntop.org
+ - http://www.haka-security.org/hakabana.html
+ - https://sourceforge.net/p/flowviewer/wiki/Home/
+ - https://github.com/aptivate/pmgraph
+ - http://nfdump.sourceforge.net 
+
+
+
+##Privoxy and Privacy options for TOR traffic:
+
+![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
 
 
 #NETWORK USE CASES
