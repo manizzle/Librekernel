@@ -1,26 +1,5 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
-#***Services are running in Librerouter***
-
-![servicecomparison](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
-
-|App|Decentralized|AnonymInsid|Ncryptclientside|Ncryptservrside|PubPrivF2F|ExposepubIP|
-|:---|:---|:---|:---|:---|:---|:---|
-|OwnCloud|Yes|No|No|Yes|PrivtFederation|Yes|
-|Mailpile|Yes|No|4096DSAelg|No|Private|Yes|
-|Rouncube|Yes|No|4096DSAelg|No|Private|Yes|
-|Diaspora|Yes|No|No|EncFS|Public|Yes|
-|Friendica|yes|not|not|EncFS|Public|yes|
-|YaCy|Yes|No|EncFS|Public|Yes|No|
-|TahoeI2p|Yes|Yes|Yes|owncloud|Public|No|
-|ProsodyTOR|Yes|No|Yes|No|Public|No|
-|RTCio|Yes|No|Partially|No|Public|Yes|
-|TOR|No|Yes|No|May Be|Public|No|
-|I2P|Yes|Yes|No|Yes|Private|Yes|
-|Dovecot|Yes|No|?|Public|Yes|No|
-|Postfix|Yes|No|?|Public|Yes|No|
-|:---|:---|:---|:---|:---|:---|:---|
-
 #Setting up a lab to start to contribute:
 
 First you can use any virtualization software you prefer. Its transparent for us.
