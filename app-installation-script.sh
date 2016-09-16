@@ -9,6 +9,11 @@ EXT_INTERFACE="Not Detected"	# External Interface (Connected to Internet)
 INT_INETRFACE="Not Detected"	# Internal Interface (Connected to local network)
 
 # ----------------------------------------------
+# Env Variables
+# ----------------------------------------------
+export GIT_SSL_NO_VERIFY=true
+
+# ----------------------------------------------
 # This function detects platform.
 #
 # Suitable platform are:
@@ -254,21 +259,21 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-key add jcameron-key.asc 
 
 		# Prepare backports repo (suricata, roundcube)
-		echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list
+#		echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list
 
 		# Prepare bro repo
-		wget http://download.opensuse.org/repositories/network:bro/Debian_8.0/Release.key -O- | apt-key add -
-		echo 'deb http://download.opensuse.org/repositories/network:/bro/Debian_8.0/ /' > /etc/apt/sources.list.d/bro.list
+#		wget http://download.opensuse.org/repositories/network:bro/Debian_8.0/Release.key -O- | apt-key add -
+#		echo 'deb http://download.opensuse.org/repositories/network:/bro/Debian_8.0/ /' > /etc/apt/sources.list.d/bro.list
 
 		# Prepare elastic repo
-		wget https://packages.elastic.co/GPG-KEY-elasticsearch -O- | apt-key add -
-		echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" > /etc/apt/sources.list.d/kibana.list
-		echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" > /etc/apt/sources.list.d/logstash.list
-		echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" > /etc/apt/sources.list.d/elastic.list
+#		wget https://packages.elastic.co/GPG-KEY-elasticsearch -O- | apt-key add -
+#		echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" > /etc/apt/sources.list.d/kibana.list
+#		echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" > /etc/apt/sources.list.d/logstash.list
+#		echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" > /etc/apt/sources.list.d/elastic.list
 
 		# Prepare passenger repo
-		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
-		echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger jessie main" > /etc/apt/sources.list.d/passenger.list
+#		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+#		echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger jessie main" > /etc/apt/sources.list.d/passenger.list
 
 # Preparing repositories for Trisquel GNU/Linux 7.0
 
@@ -412,7 +417,7 @@ configure_bridges()
 # ----------------------------------------------
 # install_packages
 # ----------------------------------------------
-install_packages () 
+install_packages() 
 {
 	echo "Updating repositories packages ... "
 	apt-get update 2>&1 > /tmp/apt-get-update.log
@@ -421,7 +426,8 @@ install_packages ()
 # Installing Packages for Debian 7 GNU/Linux
 
 if [ $PLATFORM = "D7" ]; then
-	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	DEBIAN_FRONTEND=noninteractive 
+	apt-get install -y --force-yes \
 	privoxy nginx php5-common \
 	php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
 	php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
@@ -444,7 +450,8 @@ if [ $PLATFORM = "D7" ]; then
 # Installing Packages for Debian 8 GNU/Linux
 
 elif [ $PLATFORM = "D8" ]; then
-	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	DEBIAN_FRONTEND=noninteractive 
+	apt-get install -y --force-yes \
 	privoxy nginx php5-common \
         php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
         php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
@@ -466,21 +473,22 @@ elif [ $PLATFORM = "D8" ]; then
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
 	flex bison libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
 	libnetfilter-queue-dev libdumbnet-dev autoconf \
-	roundcube roundcube-mysql roundcube-plugins bro ntop libndpi-bin \
+	roundcube roundcube-mysql roundcube-plugins ntop libndpi-bin \
 	argus-server argus-client libnids-dev tinyproxy prosody \
 	flow-tools libfixbuf3 libgd-perl libgd-graph-perl rrdtool \
 	librrd-dev librrds-perl libsqlite3-dev \
 	pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
 	librrd-dev librrds-perl libapache2-mod-php5- \
-	libtool elasticsearch logstash kibana conky \
-	libmysqlclient-dev ruby bundler rails passenger wkhtmltopdf \
-	nginx-extras \
+	libtool elasticsearch conky \
+	libmysqlclient-dev ruby bundler rails  wkhtmltopdf nginx-extras \
 	2>&1 > /tmp/apt-get-install1.log
+        #bro passenger logstash kibana \
 
 # Installing Packages for Trisquel 7.0 GNU/Linux
 
 elif [ $PLATFORM = "T7" ]; then
-	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	DEBIAN_FRONTEND=noninteractive 
+	apt-get install -y --force-yes \
 	privoxy nginx php5-common \
 	php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
 	php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
@@ -503,7 +511,8 @@ elif [ $PLATFORM = "T7" ]; then
 # Installing Packages for Ubuntu 14.04 GNU/Linux
 
 elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
-	DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes \
+	DEBIAN_FRONTEND=noninteractive 
+	apt-get install -y --force-yes \
 	pwgen debconf-utils privoxy nginx php5-common \
 	php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
 	php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
@@ -772,7 +781,10 @@ check_assemblance()
 # Function to install mailpile package
 # ----------------------------------------------
 install_mailpile() {
-	git clone --recursive https://github.com/mailpile/Mailpile.git /opt/Mailpile
+ 	if [ -e /opt/Mailpile ]; then
+                rm -r /opt/Mailpile
+	fi
+        git clone --recursive https://github.com/mailpile/Mailpile.git /opt/Mailpile
 	virtualenv -p /usr/bin/python2.7 --system-site-packages /opt/Mailpile/mailpile-env
 	source /opt/Mailpile/mailpile-env/bin/activate
 	pip install -r /opt/Mailpile/requirements.txt
@@ -1778,12 +1790,12 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_squidclamav	# Install SquidClamav package
 	install_squidguard_bl	# Install Squidguard blacklists
 	install_squidguardmgr	# Install Squidguardmgr (Manager Gui) 
-#	install_e2guardian	# Inatall e2guardian package
 	install_ecapguardian	# Inatall ecapguardian package
-	install_suricata	# Install Suricata package
+#	install_e2guardian	# Inatall e2guardian package
+##	install_suricata	# Install Suricata package
 #	install_scirius		# Install Scirius package
-	install_snort		# Install Snort package
-	install_barnyard	# Install Barnyard package
+##	install_snort		# Install Snort package
+#	install_barnyard	# Install Barnyard package
 #	install_vortex_ids	# Install Vortex-ids package
 #	install_openwips_ng	# Install Openwips-ng package
 #	install_hakabana	# Install hakabana package
@@ -1791,9 +1803,9 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_pmgraph		# Install pmgraph package
 #	install_nfsen		# Install nfsen package
 #	install_evebox		# Install EveBox package
-	install_selks		# Install SELKS GUI
-	install_snorby		# Install Snorby package
-	install_glype		# Install glype proxy
+##	install_selks		# Install SELKS GUI
+##	install_snorby		# Install Snorby package
+#	install_glype		# Install glype proxy
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
