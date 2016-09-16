@@ -7,12 +7,11 @@ First you can use any virtualization software you prefer. Its transparent for us
 Hardware resources:
 //FYI Network Interface = (NIC).
 - Debian 8 version : 2GB RAM, 2 procesor, 2NICs (network interfaces)
-- 		MIC1 will be NAT for Internet Access.
-- 		NIC2 will be a Bridged Adapter to Windows10.
-- 		NIC2 from debian with win 10 will be a private LAN.
+- 		NIC1 will be NAT/bridged to Internet dhcp server.
+- 		NIC2 will be a attached to the other VM Windows10.
+- 		NIC2 from debian to  win 10 will be a private LAN in bridge mode.
  
 - Windows 10 (one network interface) ( install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
-- 		1NIC a Bridged Adapter connected to Debian 8 VM.
 
 As shown in the following figure.
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
