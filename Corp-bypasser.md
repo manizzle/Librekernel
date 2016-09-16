@@ -50,3 +50,6 @@ It can be run from command line in linux and windows. I have a question, whether
 9. I did a some review of the free alternatives of foxyproxy and for now it was failed to find alternative whitch maintain a regular expression. Support service of foxyproxy recommended to use the newest foxyproxy version. But after updating foxyproxy the Tor browser can not be updated because of an error. Perhaps easier to enable foxyproxy extension after updating Top browser with further automation.
 10. Tested Tor broswer  + fox proxy. It was working fine.
     I followed this guide. https://thetinhat.com/tutorials/darknets/i2p-browser-setup-guide.html
+11. Tried to find the HSTS disabling method.
+    The result is to need to add our CA to the broswer's certificate store.
+    Because we need ssl MITM.
