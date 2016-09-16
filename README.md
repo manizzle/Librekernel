@@ -72,9 +72,8 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 - Unbound-dns 
 - If it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
-- If it can not resolved, then we need to ask through TOR 
--
-Further integration will include Bitname,others like DjDNS (this last need maintenance is not workinghttps://github.com/DJDNS/djdns)) 
+- If it can not resolved, then we need to ask through TOR.
+- Further integration will include Bitname,others like DjDNS (this last need maintenance is not workinghttps://github.com/DJDNS/djdns)).
 
 ![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
  
