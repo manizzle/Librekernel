@@ -1634,10 +1634,12 @@ chmod a+rw /usr/var/log/ecapguardian/access.log
 
 # Creating socket directory
 mkdir -p /etc/ecapguardian/ecap
-chmod -R a+rw /etc/ecapguardian/ecap
 
 # Running e2guardian
 ecapguardian &
+
+# Setting sockets permissions 
+chmod -R a+rw /etc/ecapguardian/ecap
 }
 
 
@@ -3114,10 +3116,10 @@ configure_ecapguardian		# Configuring ecapguardian
 configure_postfix		# Configuring postfix mail service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
-configure_suricata		# Configure Suricata service
-configure_kibana		# Configure Kibana service
-configure_snortbarn		# Configure Snort and Barnyard services
-configure_snorby		# Configure Snorby
+#configure_suricata		# Configure Suricata service
+#configure_kibana		# Configure Kibana service
+#configure_snortbarn		# Configure Snort and Barnyard services
+#configure_snorby		# Configure Snorby
 print_services			# Print info about service accessibility
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
