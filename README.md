@@ -430,8 +430,7 @@ Yes in the future via GUI should be possible to reconfigure this cage.
 
 
 #Network use cases
-
-![netflow5](https://cloud.githubusercontent.com/assets/17382786/18273064/c20ec8c4-743b-11e6-8159-bf8d821e77dd.png)
+![network_diagram_2](https://cloud.githubusercontent.com/assets/13025157/18578293/695f395a-7bef-11e6-8d83-82d88b6b0feb.png)
 
 
  -  a) https to onion
@@ -468,6 +467,8 @@ Yes in the future via GUI should be possible to reconfigure this cage.
  -  a2) hsts via browser direct entry for example gmaik push enter key
  -  a3) hsts via browser corrected entry form for example https://www.gmail.com enter key 
 
+#Blocked stuff
+![blocking_diagram_1](https://cloud.githubusercontent.com/assets/13025157/18578310/871cd3b2-7bef-11e6-96d2-6b45fd7662e3.png)
 
 ##Intelligence IP and Domain Providers:
 
