@@ -7,12 +7,12 @@
 ###Asumptions: Tahohe has a public space where no keys are required to acces but just a user and we need to be sure the other users from the grid canT delete those files with unique IDs with the recovery ecryption keys.
 
 ###Posibile scenarios:  
- - Tahoe runs and the user is fresh one Librerouter no recovery required just backup and setup recovery keys in public space
- - Tahoe runs and its a user trying to recover previous Librerouter Tahohe encryption keys. To restore a previous system.
+ - Tahoe runs and the user is fresh Librerouter, no recovery is required, just backup and setup recovery keys in public space
+ - Tahoe runs and it is a user trying to recover previous Librerouter Tahoe encryption keys. A restore to a previous system config and user data.
 
 ##app-installation-script installs all necesary software packages (i2p tor tahoe owncloud)
 ##app-configuration-script configure and runs all necesary software (setup the CRON backup scripts)
-##post-configuration script automatizes the setup of the keys with a password in tahohe spaces and launch a wizards with human interaction to make that process visible to the end user and store/place passwords and keys where the user wishes
+##post-configuration-script automatizes the setup of the keys with a password in tahohe spaces and launch a wizards with human interaction to make that process visible to the end user and store/place passwords and keys where the user wishes
 
 ##post-configuration-script: Functions dedicated to this role:
  - a) Check i2p and tor are setup and test runing proceses.
