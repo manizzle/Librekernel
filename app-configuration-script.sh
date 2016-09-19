@@ -87,10 +87,10 @@ cat << EOF > /etc/hosts
 #<ip-address>   <hostname.domain.org>   <hostname>
 127.0.0.1       localhost.librenet librerouter localhost
 10.0.0.1        librerouter.librenet
-10.0.0.10       webmin.librenet
+10.0.0.245       webmin.librenet
 10.0.0.11       kibana.librenet
 10.0.0.12       snorby.librenet
-10.0.0.13       squidguard.librenet
+10.0.0.246       squidguard.librenet
 10.0.0.250      easyrtc.librenet
 10.0.0.251      yacy.librenet
 10.0.0.252      friendica.librenet
@@ -159,7 +159,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	auto $INT_INTERFACE:5
 	allow-hotplug $INT_INTERFACE:5
 	iface $INT_INTERFACE:5 inet static
-	    address 10.0.0.10
+	    address 10.0.0.245
 	    netmask 255.255.255.0
 	
 	#EasyRTC
@@ -187,7 +187,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         auto $INT_INTERFACE:9
         allow-hotplug $INT_INTERFACE:9
         iface $INT_INTERFACE:8 inet static
-            address 10.0.0.13
+            address 10.0.0.246
             netmask 255.255.255.0
 EOF
 	# Network interfaces configuration for board
@@ -267,7 +267,7 @@ EOF
 #	auto eth1:5
 #	allow-hotplug eth1:5
 #	iface eth1:5 inet static
-#	    address 10.0.0.10
+#	    address 10.0.0.245
 #	    netmask 255.255.255.0
 #
 #	#EasyRTC
@@ -458,10 +458,10 @@ iptables -F
 iptables -t nat -F
 iptables -t filter -F
 
-iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.10 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
-iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.13 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.246 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.250 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.251 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.252 -j ACCEPT
@@ -747,10 +747,10 @@ local-zone: "librenet" static
 local-data: "librerouter.librenet. IN A 10.0.0.1"
 local-data: "i2p.librenet. IN A 10.0.0.1"
 local-data: "tahoe.librenet. IN A 10.0.0.1"
-local-data: "webmin.librenet. IN A 10.0.0.10"
+local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
-local-data: "squidguard.librenet. IN A 10.0.0.13"' > /etc/unbound/unbound.conf
+local-data: "squidguard.librenet. IN A 10.0.0.246"' > /etc/unbound/unbound.conf
 
     for i in $(ls /var/lib/tor/hidden_service/)
     do
@@ -903,10 +903,10 @@ awk {'print "local-data: \"www." $1 " IN A 10.0.0.254\""'} \
 
 # Creating  block domains list configuration file
 cat block_domain.list | \
-awk {'print "local-data: \"" $1 " IN A 10.0.0.10\""'} \
+awk {'print "local-data: \"" $1 " IN A 10.0.0.245\""'} \
 > /etc/unbound/block_domain.list.conf
 cat block_domain.list | \
-awk {'print "local-data: \"www." $1 " IN A 10.0.0.10\""'} \
+awk {'print "local-data: \"www." $1 " IN A 10.0.0.245\""'} \
 >> /etc/unbound/block_domain.list.conf
 
 # Deleting old files
@@ -2320,16 +2320,16 @@ fi
 
 # Creating Webmin virtual host configuration
 echo "
-# Redirect connections from 10.0.0.10 to webmin.librenet
+# Redirect connections from 10.0.0.245 to webmin.librenet
 server {
-        listen 10.0.0.10;
+        listen 10.0.0.245;
         server_name _;
         return 301 https://webmin.librenet;
 }
 
 # Redirect connections to webmin running on 127.0.0.1:10000
 server {
-        listen 10.0.0.10:443 ssl;
+        listen 10.0.0.245:443 ssl;
         server_name webmin.librenet;
 
   ssl on;
@@ -2429,15 +2429,15 @@ server {
 # Configuring squidguard virtual host
 echo "Configuring squidguard virtual host ..."
 echo '
-# Redirect connections from 10.0.0.13 to squidguardmgr.librenet
+# Redirect connections from 10.0.0.246 to squidguardmgr.librenet
 server {
-        listen 10.0.0.13:80;
+        listen 10.0.0.246:80;
         server_name _;
         return 301 http://squidguard.librenet;
 }
 
 server {
-  listen 10.0.0.13:80;
+  listen 10.0.0.246:80;
   server_name squidguard.librenet;
 
   index squidguardmgr.cgi;
@@ -2562,7 +2562,7 @@ cat << EOF > /root/libre_scripts/check_interfaces.sh
 if ip addr show eth1 | grep 'state UP'; then
     if ip addr show eth0 | grep 'state UP'; then
         # Checking virtual interfaces (ethx:1 ethx:2 ethx:3 ethx:4 ethx:5 ethx:6)
-            if ping -c 1 10.0.0.10; then
+            if ping -c 1 10.0.0.245; then
                 if ping -c 1 10.0.0.250; then
                     if ping -c 1 10.0.0.251; then
                         if ping -c 1 10.0.0.252; then
