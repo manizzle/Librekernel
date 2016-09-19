@@ -12,6 +12,7 @@ INT_INETRFACE="Not Detected"	# Internal Interface (Connected to local network)
 # Env Variables
 # ----------------------------------------------
 export GIT_SSL_NO_VERIFY=true
+export INSTALL_HOME=`pwd`
 
 # ----------------------------------------------
 # This function detects platform.
@@ -213,6 +214,16 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		#echo "deb http://ftp.es.debian.org/debian/ jessie main" > /etc/apt/sources.list
 		#echo "deb http://ftp.es.debian.org/debian/ jessie-updates main" >> /etc/apt/sources.list
 		#echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
+		cat << EOF >  /etc/apt/sources.list
+deb http://ftp.debian.org/debian jessie main contrib non-free
+deb http://ftp.debian.org/debian jessie-updates main contrib non-free
+deb http://security.debian.org jessie/updates main contrib non-free
+deb http://ftp.debian.org/debian jessie-backports main contrib non-free
+deb-src http://ftp.debian.org/debian jessie main contrib non-free
+deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free
+deb-src http://security.debian.org jessie/updates main contrib non-free
+deb-src http://ftp.debian.org/debian jessie-backports main contrib non-free
+EOF
 
 		# There is a need to install apt-transport-https 
 		# package before preparing third party repositories
@@ -462,7 +473,7 @@ elif [ $PLATFORM = "D8" ]; then
 	curl macchanger ntpdate tor bc sudo lsb-release dnsutils \
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
-	i2p i2p-keyring yacy virtualenv pwgen gcc g++ make \
+	i2p i2p-keyring yacy virtualenv pwgen gcc g++ make automake \
         killyourtv-keyring i2p-tahoe-lafs \
 	c-icap clamav  clamav-daemon libcurl4-gnutls-dev libicapapi-dev \
 	deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
@@ -780,19 +791,26 @@ check_assemblance()
 # ----------------------------------------------
 # Function to install mailpile package
 # ----------------------------------------------
-install_mailpile() {
- 	if [ -e /opt/Mailpile ]; then
-                rm -r /opt/Mailpile
+install_mailpile() 
+{
+	echo "Installing Mailpile ..."
+ 	if [ ! -e /opt/Mailpile ]; then
+                echo "Downloading mailpile ..." 
+        	git clone --recursive \
+		https://github.com/mailpile/Mailpile.git /opt/Mailpile
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download Mailpile. Exiting ..."
+                        exit 3
+                fi
+
 	fi
-        git clone --recursive https://github.com/mailpile/Mailpile.git /opt/Mailpile
 	virtualenv -p /usr/bin/python2.7 --system-site-packages /opt/Mailpile/mailpile-env
 	source /opt/Mailpile/mailpile-env/bin/activate
 	pip install -r /opt/Mailpile/requirements.txt
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install Mailpile"
+		echo "Error: unable to install Mailpile. Exiting ..."
 		exit 3
 	fi
-	deactivate
 }
 
 
@@ -829,7 +847,7 @@ install_easyrtc()
 		echo "Error: unable to install EasyRTC"
 		exit 3
 	fi
-	cd
+	cd $INSTALL_HOME
 }
 
 
@@ -875,19 +893,20 @@ install_fg-ecap()
 {
         echo "Installing fg-ecap ..."
 
-        if [ ! -e fg-ecap ]; then
+        if [ ! -e fg_ecap ]; then
         echo "Downloading fg-ecap ..."
-        git clone https://github.com/androda/fg_ecap
+        git clone https://github.com/androda/fg_ecap $INSTALL_HOME/fg_ecap
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download fg-ecap"
+                        echo "Error: unable to download fg-ecap. Exitingi ..."
                         exit 3
                 fi
         fi
 
         echo "Building fg-ecap ..."
 
-        cd fg-ecap
+        cd fg_ecap
 
+	chmod +x autogen.sh
         ./autogen.sh
         ./configure 
         make && make install
@@ -1016,10 +1035,8 @@ install_squidguard_bl()
 	mkdir -p /usr/local/squidGuard/db 
 	# Extracting blacklists
         cp blacklists.tgz /usr/local/squidGuard/db
-        gzip -d /usr/local/squidGuard/db/blacklists.tgz \  
-                -c /usr/local/squidGuard/db/
-        tar xfv /usr/local/squidGuard/db/blacklists.tar \
-                -C /usr/local/squidGuard/db/
+        tar xfv /usr/local/squidGuard/db/blacklists.tgz \
+        -C /usr/local/squidGuard/db/
 
 	# Cleanup
         rm -rf /usr/local/squidGuard/db/blacklists.tar
@@ -1122,20 +1139,7 @@ install_ecapguardian()
         sed -i '/AM_INIT_AUTOMAKE/c\AM_INIT_AUTOMAKE([subdir-objects])' configure.ac
 
 	./autogen.sh
-	./configure --prefix=/usr --enable-clamd=yes  \
-                    --with-proxyuser=e2guardian --with-proxygroup=e2guardian \
-                    --sysconfdir=/etc --localstatedir=/var --enable-icap=yes \
-                    --enable-commandline=yes --enable-email=yes \
-                    --enable-ntlm=yes --enable-trickledm=yes \
-                    --mandir=${prefix}/share/man \
-                    --infodir=${prefix}/share/info \
-                    CXXFLAGS=-g -O2 -fstack-protector \
-                    --param=ssp-buffer-size=4 -Wformat \
-                    -Werror=format-security LDFLAGS=-Wl,-z,relro \
-                    CPPFLAGS=-D_FORTIFY_SOURCE=2 CFLAGS=-g -O2 \
-                    -fstack-protector --param=ssp-buffer-size=4 -Wformat \
-                    -Werror=format-security --enable-pcre=yes \
-                    --enable-locallists=yes
+	./configure '--prefix=/usr' '--enable-clamd=yes' '--with-proxyuser=e2guardian' '--with-proxygroup=e2guardian' '--sysconfdir=/etc' '--localstatedir=/var' '--enable-icap=yes' '--enable-commandline=yes' '--enable-email=yes' '--enable-ntlm=yes' '--enable-trickledm=yes' '--mandir=${prefix}/share/man' '--infodir=${prefix}/share/info' 'CXXFLAGS=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security' 'LDFLAGS=-Wl,-z,relro' 'CPPFLAGS=-D_FORTIFY_SOURCE=2' 'CFLAGS=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security' '--enable-pcre=yes' '--enable-locallists=yes' 
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install ecapguardian"
