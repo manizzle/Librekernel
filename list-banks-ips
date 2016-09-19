@@ -1,0 +1,327 @@
+Here's the method I used to find all ips banks. 
+
+1. But before that, I need to find the The banks name over the world, how do I find the banks name?
+-- > I used wikipedia, here's the link of the banks name over the world    "https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)"
+
+2. Then, google the name of the bank to its domain.
+--> For example, www.aareal-bank.com (the first bank name in wikipedia)
+
+3. Then, find the ips block from the banks, how do I find it, I need to find the AS number, how do I know it? paste the domain name on the search box on bgp.he.net website, wait a moment until the website validate my browser.
+--> Click "IP Info" and I got the IP of the bank, 195.34.182.132. Also I got the provider that provide service to the bank, INTERNET AG Global network, and the AS number AS8495, also the IPs block that was used by the Provider 195.34.160.0/19. But, there's no the IP block of the banks, first, I can guess from the IP, usually bank will use /24, sometimes they used more, on this situation I need to scan the ips block "195.34.160.0/19" to find domain related to the bank, there's two options, scan all ips block or scan by separate on each 256 hosts.
+
+4. To scan the ip, I use two tools, first, nmap and the second, metasploit auxiliary DNS modules (auxiliary/gather/dns_reverse_lookup)
+
+5. But, I preferred to used metasploit DNS modules, because it more accurate than nmap reverse command.
+
+6. How do I use the DNS modules?
+--> type msfconsole, until it show like this "msf > "
+--> type search dns_reverse_lookup
+--> then choose "auxiliary/gather/dns_reverse_lookup", there are another dns_reverse_lookup it's use for post exploitation, ensure choose the "auxiliary".
+--> type use auxiliary/gather/dns_reverse_lookup
+--> type show options
+--> it will shown 3 options with one required (mandatory) option, it's a "RANGE" option.
+--> type set RANGE 1.2.3.4/x
+which 1.2.3.4 target IP, /x it's a subnet mask
+--> type run
+--> waiting for the results
+
+7. sometimes to ensure the domain I use website : ipaddress.com & yougetsignal.com
+
++------------------------------------------------------------------------
++ Target : aareal bank (aareal-bank.com)
++ AS Number : AS8495
++ AS Owner : INTERNET AG Global Network
++ Host Name: aareal.de.org., IP Address: 195.34.182.132 (aareal-bank.com)
++ Host Name: test.aareal.de.org., IP Address: 195.34.182.68 (mail exchanger)
++ gb2015.aareal-bank.com (195.34.182.122), found by google-fu with advanced-search command, site:aareal-bank.com. However, when I use with dns_reverse_lookup it was not detect the right subdomain, but rather whp26.fra.inet.de.
++------------------------------------------------------------------------
++------------------------------------------------------------------------
++ Target : Aargauische Kantonalbank (www.akb.ch)
++ AS Number : AS30934
++ AS Owner : Aargauer Kantonalbank
++ IP blocks : 195.65.103.0/24 & 212.243.12.0/24
++ Host Name: www3.akb.ch., IP Address: 195.65.103.139
++ Host Name: www.akb.ch., IP Address: 195.65.103.140
++ Host Name: www3.5trade.ch., IP Address: 195.65.103.142
++ Host Name: 5trade.ch., IP Address: 195.65.103.143
++ Host Name: ebics.akb.ch., IP Address: 195.65.103.144
++ Host Name: ebicst.akb.ch., IP Address: 195.65.103.145
++ Host Name: tmws.akb.ch., IP Address: 195.65.103.146
++ Host Name: sw.akb.ch., IP Address: 195.65.103.148
++ Host Name: secmail.akb.ch., IP Address: 195.65.103.149
++ Host Name: ras.akb.ch., IP Address: 195.65.103.150
++ Host Name: mobile-vpn.akb.ch., IP Address: 195.65.103.151
++ Host Name: webconf.akb.ch., IP Address: 195.65.103.153
++ Host Name: av.akb.ch., IP Address: 195.65.103.154
++ Host Name: ns1.akb.ch., IP Address: 195.65.103.183
++ Host Name: ns2.akb.ch., IP Address: 195.65.103.184
++ Host Name: mailgw01.akb.ch., IP Address: 195.65.103.199
++ Host Name: mailgw02.akb.ch., IP Address: 195.65.103.200
++ eb.akb.ch (193.222.68.86), found by google-fu with advanced-search command, site:akb.ch.
++ mobilebanking.akb.ch (195.65.103.140), found by google-fu with advanced-search command, site:akb.ch.
++ events.akb.ch (195.65.103.140), found by google-fu with  advanced-search command, site:akb.ch.
++------------------------------------------------------------------------
++------------------------------------------------------------------------
++ Target : AB SEB bankas (www.seb.lt) & (seb.ee) & (seb.lv) 
++ AS Number : AS43682
++ AS Owner : AS SEB Eesti Yhispank
++ IP blocks : 78.24.192.0/21
++ AS Number : AS15995
++ AS Owner : AB SEB bankas
++ IP blocks : 185.97.44.0/22
++ AS Number : AS15995
++ AS Owner : Vilnius Bank
++ IP blocks : 194.176.58.0/24
++ AS Number : AS12965
++ AS Owner : AS "SEB banka"
++ IP blocks : 193.178.150.0/23
++ Host Name: rts192-1.seb.ee., IP Address: 78.24.192.1
++ Host Name: rts192-2.seb.ee., IP Address: 78.24.192.2
++ Host Name: rts192-3.seb.ee., IP Address: 78.24.192.3
++ Host Name: rts192-4.seb.ee., IP Address: 78.24.192.4
++ Host Name: gw192-14.seb.ee., IP Address: 78.24.192.14
++ Host Name: br192-15.seb.ee., IP Address: 78.24.192.15
++ Host Name: nw192-16.seb.ee., IP Address: 78.24.192.16
++ Host Name: tg192-17.seb.ee., IP Address: 78.24.192.17
++ Host Name: jmt-g003.seb.ee., IP Address: 78.24.192.18
++ Host Name: jml-g003.seb.ee., IP Address: 78.24.192.19
++ Host Name: cgt-g1.seb.ee., IP Address: 78.24.192.20
++ Host Name: cgt-pr.seb.ee., IP Address: 78.24.192.21
++ Host Name: cgl-g1.seb.ee., IP Address: 78.24.192.22
++ Host Name: tg192-30.seb.ee., IP Address: 78.24.192.30
++ Host Name: br192-31.seb.ee., IP Address: 78.24.192.31
++ Host Name: nw192-32.seb.ee., IP Address: 78.24.192.32
++ Host Name: fox.seb.ee., IP Address: 78.24.192.34
++ Host Name: bee.seb.ee., IP Address: 78.24.192.35
++ Host Name: tg192-46.seb.ee., IP Address: 78.24.192.46
++ Host Name: br192-47.seb.ee., IP Address: 78.24.192.47
++ Host Name: nw192-48.seb.ee., IP Address: 78.24.192.48
++ Host Name: br192-63.seb.ee., IP Address: 78.24.192.63
++ Host Name: nw192-64.seb.ee., IP Address: 78.24.192.64
++ Host Name: br192-79.seb.ee., IP Address: 78.24.192.79
++ Host Name: nw192-80.seb.ee., IP Address: 78.24.192.80
++ Host Name: br192-95.seb.ee., IP Address: 78.24.192.95
++ Host Name: nw192-96.seb.ee., IP Address: 78.24.192.96
++ Host Name: br192-111.seb.ee., IP Address: 78.24.192.111
++ Host Name: nw192-112.seb.ee., IP Address: 78.24.192.112
++ Host Name: br192-127.seb.ee., IP Address: 78.24.192.127
++ Host Name: nw192-128.seb.ee., IP Address: 78.24.192.128
++ Host Name: br192-143.seb.ee., IP Address: 78.24.192.143
++ Host Name: nw192-144.seb.ee., IP Address: 78.24.192.144
++ Host Name: br192-159.seb.ee., IP Address: 78.24.192.159
++ Host Name: nw192-160.seb.ee., IP Address: 78.24.192.160
++ Host Name: br192-175.seb.ee., IP Address: 78.24.192.175
++ Host Name: nw192-176.seb.ee., IP Address: 78.24.192.176
++ Host Name: br192-191.seb.ee., IP Address: 78.24.192.191
++ Host Name: nw192-192.seb.ee., IP Address: 78.24.192.192
++ Host Name: br192-199.seb.ee., IP Address: 78.24.192.199
++ Host Name: nw192-200.seb.ee., IP Address: 78.24.192.200
++ Host Name: br192-207.seb.ee., IP Address: 78.24.192.207
++ Host Name: nw192-208.seb.ee., IP Address: 78.24.192.208
++ Host Name: br192-215.seb.ee., IP Address: 78.24.192.215
++ Host Name: nw192-216.seb.ee., IP Address: 78.24.192.216
++ Host Name: jmt-0.seb.ee., IP Address: 78.24.192.217
++ Host Name: jml-0.seb.ee., IP Address: 78.24.192.218
++ Host Name: n690-el.seb.ee., IP Address: 78.24.192.219
++ Host Name: n690-ma.seb.ee., IP Address: 78.24.192.221
++ Host Name: tg192-222.seb.ee., IP Address: 78.24.192.222
++ Host Name: br192-223.seb.ee., IP Address: 78.24.192.223
++ Host Name: nw192-224.seb.ee., IP Address: 78.24.192.224
++ Host Name: br192-227.seb.ee., IP Address: 78.24.192.227
++ Host Name: nw192-228.seb.ee., IP Address: 78.24.192.228
++ Host Name: br192-231.seb.ee., IP Address: 78.24.192.231
++ Host Name: nw192-232.seb.ee., IP Address: 78.24.192.232
++ Host Name: br192-235.seb.ee., IP Address: 78.24.192.235
++ Host Name: nw192-236.seb.ee., IP Address: 78.24.192.236
++ Host Name: br192-239.seb.ee., IP Address: 78.24.192.239
++ Host Name: nw192-240.seb.ee., IP Address: 78.24.192.240
++ Host Name: jml.seb.ee., IP Address: 78.24.192.242
++ Host Name: br192-243.seb.ee., IP Address: 78.24.192.243
++ Host Name: nw192-244.seb.ee., IP Address: 78.24.192.244
++ Host Name: jml-130.seb.ee., IP Address: 78.24.192.245
++ Host Name: cgl-g0.seb.ee., IP Address: 78.24.192.246
++ Host Name: br192-247.seb.ee., IP Address: 78.24.192.247
++ Host Name: nw192-248.seb.ee., IP Address: 78.24.192.248
++ Host Name: jmt-130.seb.ee., IP Address: 78.24.192.249
++ Host Name: cgt-g0.seb.ee., IP Address: 78.24.192.250
++ Host Name: br192-251.seb.ee., IP Address: 78.24.192.251
++ Host Name: nw192-252.seb.ee., IP Address: 78.24.192.252
++ Host Name: jmt-002.seb.ee., IP Address: 78.24.192.253
++ Host Name: jml-002.seb.ee., IP Address: 78.24.192.254
++ Host Name: tr193-1.seb.ee., IP Address: 78.24.193.1
++ Host Name: tr194-1.seb.ee., IP Address: 78.24.194.1
++ Host Name: tr195-1.seb.ee., IP Address: 78.24.195.1
++ Host Name: tr196-1.seb.ee., IP Address: 78.24.196.1
++ Host Name: tr198-1.seb.ee., IP Address: 78.24.198.1
++ Host Name: tr199-1.seb.ee., IP Address: 78.24.199.1
++ Host Name: www.seb.ee., IP Address: 78.24.199.2
++ Host Name: pildikaart.seb.ee., IP Address: 78.24.199.3
++ Host Name: www.kodupank.ee., IP Address: 78.24.199.4
++ Host Name: sisestus.seb.ee., IP Address: 78.24.199.5
++ Host Name: www.heategevusfond.ee., IP Address: 78.24.199.6
++ Host Name: www.unet.ee., IP Address: 78.24.199.10
++ Host Name: koduvalija.seb.ee., IP Address: 78.24.199.11
++ Host Name: id.seb.ee., IP Address: 78.24.199.17
++ Host Name: m.seb.ee., IP Address: 78.24.199.19
++ Host Name: soto1.seb.ee., IP Address: 78.24.199.25
++ Host Name: soto2.seb.ee., IP Address: 78.24.199.26
++ Host Name: diego.seb.ee., IP Address: 78.24.199.27
++ Host Name: sid.seb.ee., IP Address: 78.24.199.28
++ Host Name: acs1.seb.ee., IP Address: 78.24.199.35
++ Host Name: acs2.seb.ee., IP Address: 78.24.199.36
++ Host Name: acstest.seb.ee., IP Address: 78.24.199.37
++ Host Name: tlv-acs.seb.ee., IP Address: 78.24.199.38
++ Host Name: leela1.seb.ee., IP Address: 78.24.199.41
++ Host Name: leela2.seb.ee., IP Address: 78.24.199.42
++ Host Name: leela.seb.ee., IP Address: 78.24.199.43
++ Host Name: bender.seb.ee., IP Address: 78.24.199.44
++ Host Name: acs1.seb.lv., IP Address: 78.24.199.51
++ Host Name: acs2.seb.lv., IP Address: 78.24.199.52
++ Host Name: acstest.seb.lv., IP Address: 78.24.199.53
++ Host Name: mx3.seb.ee., IP Address: 78.24.199.60
++ Host Name: tt.seb.ee., IP Address: 78.24.199.66
++ Host Name: husky.seb.ee., IP Address: 78.24.199.67
++ Host Name: postipank.seb.ee., IP Address: 78.24.199.74
++ Host Name: oja.seb.ee., IP Address: 78.24.199.75
++ Host Name: gmtato01.seb.ee., IP Address: 78.24.199.81
++ Host Name: gmtato02.seb.ee., IP Address: 78.24.199.82
++ Host Name: iron.seb.ee., IP Address: 78.24.199.83
++ Host Name: copper.seb.ee., IP Address: 78.24.199.84
++ Host Name: tin.seb.ee., IP Address: 78.24.199.85
++ Host Name: ssor.seb.ee., IP Address: 78.24.199.89
++ Host Name: eypson.seb.ee., IP Address: 78.24.199.90
++ Host Name: siil.seb.ee., IP Address: 78.24.199.91
++ Host Name: synen.seb.ee., IP Address: 78.24.199.92
++ Host Name: synenr.seb.ee., IP Address: 78.24.199.93
++ Host Name: kirjak.seb.ee., IP Address: 78.24.199.97
++ Host Name: oak.seb.ee., IP Address: 78.24.199.105
++ Host Name: aspen.seb.ee., IP Address: 78.24.199.106
++ Host Name: mapple.seb.ee., IP Address: 78.24.199.107
++ Host Name: sebpank.seb.ee., IP Address: 78.24.199.115
++ Host Name: robin.seb.ee., IP Address: 78.24.199.242
++ Host Name: wilhelm.seb.ee., IP Address: 78.24.199.249
++ Host Name: www.seb.lt., IP Address: 78.24.199.9
++ e.seb.lt (194.176.58.28), found by google-fu with advanced-search command, site:seb.lt.
++ fin.seb.lt (194.176.58.25), found by google-fu with advanced-search command, site:seb.lt.
++ Host Name: wap33443.sebvb.lt., IP Address: 194.176.58.29
++ Host Name: wap33444.sebvb.lt., IP Address: 194.176.58.30
++ Host Name: access.seb.lt., IP Address: 194.176.58.39
++ Host Name: c-gate.seb.lt., IP Address: 194.176.58.47
++ Host Name: columba.seb.lt., IP Address: 194.176.58.130
++ Host Name: mobile.seb.lt., IP Address: 194.176.58.133
++ Host Name: portal.seb.lt., IP Address: 194.176.58.134
++ Host Name: pegasus.seb.lt., IP Address: 194.176.58.135
++ Host Name: orion.seb.lt., IP Address: 194.176.58.137
++ Host Name: majas.seb.lv., IP Address: 78.24.199.12
++ Host Name: info.seb.lv., IP Address: 78.24.199.13
++ ibanka.seb.lv (193.178.150.150), found by google-fu with advanced-search command, site:seb.lv.
++ Host Name: mazais.unibanka.lv., IP Address: 193.178.150.142
++ Host Name: m.ibanka.lv., IP Address: 193.178.150.146
++ Host Name: ibanka.unibanka.lv., IP Address: 193.178.150.155
++ Host Name: akmens.unibanka.lv., IP Address: 193.178.150.165
++ Host Name: imssmg.dmz.unibanka.lv., IP Address: 193.178.150.180
++ Host Name: nsu1.dmz.unibanka.lv., IP Address: 193.178.150.181
++ Host Name: dmz.unibanka.lv., IP Address: 193.178.150.181
++ Host Name: nsu2.dmz.unibanka.lv., IP Address: 193.178.150.182
++ Host Name: dmz.unibanka.lv., IP Address: 193.178.150.182
++ Host Name: nsucs.dmz.unibanka.lv., IP Address: 193.178.150.183
++ Host Name: dmz.unibanka.lv., IP Address: 193.178.150.183
++ Host Name: funnel.dmz.unibanka.lv., IP Address: 193.178.150.184
++ Host Name: n1bs.unibanka.lv., IP Address: 193.178.150.186
++ Host Name: comarch.unibanka.lv., IP Address: 193.178.150.197
++ Host Name: ebs.unibanka.lv., IP Address: 193.178.150.211
++ Host Name: ns.unibanka.lv., IP Address: 193.178.151.1
++ Host Name: rosme.unibanka.lv., IP Address: 193.178.151.5
++ Host Name: miracle.unibanka.lv., IP Address: 193.178.151.4
++ Host Name: libido.unibanka.lv., IP Address: 193.178.151.6
++ Host Name: 3dt.unibanka.lv., IP Address: 193.178.151.10
++ Host Name: f11.unibanka.lv., IP Address: 193.178.151.11
++ Host Name: nst101.unibanka.lv., IP Address: 193.178.151.15
++ Host Name: ib-test.unibanka.lv., IP Address: 193.178.151.15
++ Host Name: sarg00s8.unibanka.lv., IP Address: 193.178.151.22
++ Host Name: tbtest.unibanka.lv., IP Address: 193.178.151.35
++ Host Name: gunars.unibanka.lv., IP Address: 193.178.151.60
++ Host Name: heavy.unibanka.lv., IP Address: 193.178.151.75
++ Host Name: prime.unibanka.lv., IP Address: 193.178.151.76
++ Host Name: pulsar.seb.lv., IP Address: 193.178.151.87
++ Host Name: tumsa.unibanka.lv., IP Address: 193.178.151.91
++------------------------------------------------------------------------
++------------------------------------------------------------------------
++ Target :  Abanka Vipa (www.abanka.si)
++ AS Number : AS15767
++ AS Owner : Abanka Vipa d.d.
++ IP blocks : 195.35.122.0/24
++ Host Name: hidden-unknown.abanka.si., IP Address: 195.35.122.11
++ Host Name: abvpn01.abanka.si., IP Address: 195.35.122.23
++ Host Name: ns11.abanka.si., IP Address: 195.35.122.40
++ Host Name: ns21.abanka.si., IP Address: 195.35.122.41
++ Host Name: b2bzbst.abanka.si., IP Address: 195.35.122.65
++ Host Name: b2bzbs.abanka.si., IP Address: 195.35.122.66
++ Host Name: kuverta1.abanka.si., IP Address: 195.35.122.77
++ Host Name: kuverta2.abanka.si., IP Address: 195.35.122.78
++ Host Name: mika1.abanka.si., IP Address: 195.35.122.79
++ Host Name: abanet.abanka.si., IP Address: 195.35.122.81
++ Host Name: www.abanka.si., IP Address: 195.35.122.82
++ Host Name: m.abanka.si., IP Address: 195.35.122.83
++ Host Name: epoti.abanka.si., IP Address: 195.35.122.85
++ Host Name: bcnet-test.banka-celje.si., IP Address: 195.35.122.90
++ Host Name: msponka.abanka.si., IP Address: 195.35.122.93
++ Host Name: mtokentest.abanka.si., IP Address: 195.35.122.97
++ Host Name: mtoken.abanka.si., IP Address: 195.35.122.98
++ Host Name: mpotitest.abanka.si., IP Address: 195.35.122.99
++ Host Name: mpoti.abanka.si., IP Address: 195.35.122.100
++ Host Name: sms01.abanka.si., IP Address: 195.35.122.101
++ Host Name: sms02.abanka.si., IP Address: 195.35.122.102
++ Host Name: sms03.abanka.si., IP Address: 195.35.122.104
++ Host Name: sponka.abanka.si., IP Address: 195.35.122.105
++ Host Name: abvpn02.abanka.si., IP Address: 195.35.122.151
++ Host Name: ns12.abanka.si., IP Address: 195.35.122.168
++ Host Name: ns22.abanka.si., IP Address: 195.35.122.169
++------------------------------------------------------------------------
++------------------------------------------------------------------------
++ Target : ABC Banking Corporation (abcbanking.mu)
++ AS Number : AS9009
++ AS Owner : Cyber Host Pro Ltd
++ abcbanking.mu (95.215.227.59) it uses shared server with 114 other domains. I use reverse IP domain check at "www.yougetsignal.com" to know about it.
++ smtp.abcbanking.mu., IP Address: 197.227.1.185
++ mail.abcbanking.mu., IP Address: 197.227.1.186
++ ebanking.abcbanking.mu., IP Address: 197.227.1.187
++------------------------------------------------------------------------
++------------------------------------------------------------------------
++ Target :  ABC International Bank / ABC Islamic Bank
++ AS Number : AS19324
++ AS Owner : Peer 1 Network (USA) Inc. (DOSArrest LTD)
++ bank-abc.com (69.172.200.240) 
++ online.bank-abc.com (69.172.200.244), found by google-fu with advanced-search command, site:bank-abc.com. 
++------------------------------------------------------------------------
++------------------------------------------------------------------------
++ ABI Bank, <Skip>, Domain address not found
++------------------------------------------------------------------------
++------------------------------------------------------------------------
++ Target : ABLV Bank, AS 
++ AS Number : AS12587
++ AS Owner : Aizkraukles Banka AS
++ IP blocks : 195.35.107.0/24
++ ablv.com (195.35.107.182)
++ Host Name: ns.ab.lv., IP Address: 195.35.107.1
++ Host Name: mail5.ablv.com., IP Address: 195.35.107.2
++ Host Name: baikal.ab.lv., IP Address: 195.35.107.5
++ Host Name: zero.ab.lv., IP Address: 195.35.107.6
++ Host Name: wap.ab.lv., IP Address: 195.35.107.8
++ Host Name: mail.ablv.com., IP Address: 195.35.107.7
++ Host Name: ibapptst.ab.lv., IP Address: 195.35.107.10
++ Host Name: rainbow.ab.lv., IP Address: 195.35.107.9
++ Host Name: horizon.ablv.com., IP Address: 195.35.107.18
++ Host Name: vap-view7.ablv.com., IP Address: 195.35.107.20
++ Host Name: antares.ab.lv., IP Address: 195.35.107.36
++ Host Name: mintaka.ab.lv., IP Address: 195.35.107.37
++ Host Name: mail2.ab.lv., IP Address: 195.35.107.103
++ Host Name: mail6.ablv.com., IP Address: 195.35.107.120
++ Host Name: www.ablv.com., IP Address: 195.35.107.182
++ Host Name: ib.ablv.com., IP Address: 195.35.107.183
++ Host Name: connect.ablv.com., IP Address: 195.35.107.187
++ Host Name: lilaste.ab.lv., IP Address: 195.35.107.245
++ Host Name: element.ab.lv., IP Address: 195.35.107.249
++ Host Name: aparat.ab.lv., IP Address: 195.35.107.251
++------------------------------------------------------------------------
++------------------------------------------------------------------------
