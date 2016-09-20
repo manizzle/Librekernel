@@ -13,8 +13,9 @@ INT_INETRFACE="Not Detected"	# Internal Interface (Connected to local network)
 # ----------------------------------------------
 export GIT_SSL_NO_VERIFY=true
 export INSTALL_HOME=`pwd`
+export DEBIAN_FRONTEND=noninteractive
 
-# ----------------------------------------------
+#----------------------------------------------
 # This function detects platform.
 #
 # Suitable platform are:
