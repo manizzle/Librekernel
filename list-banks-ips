@@ -1,10 +1,14 @@
 Here's the method I used to find all ips banks. 
 
 1. But before that, I need to find the The banks name over the world, how do I find the banks name?
--- > I used wikipedia, here's the link of the banks name over the world    "https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)"
+https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)
+https://www.robtex.com/?q=bank
 
-2. Then, google the name of the bank to its domain.
---> For example, www.aareal-bank.com (the first bank name in wikipedia)
+
+2. Then, google the name of the bank 
+www.aareal-bank.com
+
+2.1 Find all subdomains list.
 
 3. Then, find the ips block from the banks, how do I find it, I need to find the AS number, how do I know it? paste the domain name on the search box on bgp.he.net website, wait a moment until the website validate my browser.
 --> Click "IP Info" and I got the IP of the bank, 195.34.182.132. Also I got the provider that provide service to the bank, INTERNET AG Global network, and the AS number AS8495, also the IPs block that was used by the Provider 195.34.160.0/19. But, there's no the IP block of the banks, first, I can guess from the IP, usually bank will use /24, sometimes they used more, on this situation I need to scan the ips block "195.34.160.0/19" to find domain related to the bank, there's two options, scan all ips block or scan by separate on each 256 hosts.
