@@ -790,6 +790,42 @@ check_assemblance()
 
 
 # ----------------------------------------------
+# Function to install libressl
+# ----------------------------------------------
+install_libressl()
+{
+        echo "Installing libressl ..."
+
+        if [ ! -e libressl-2.4.2 ]; then
+        echo "Downloading libressl ..."
+        cd $INSTALL_HOME
+        wget http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.2.tar.gz
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download libressl"
+                        exit 3
+                fi
+        tar -xzf libressl-2.4.2.tar.gz
+        fi
+
+        echo "Building libressl ..."
+        cd $INSTALL_HOME
+
+        cd libressl-2.4.2/
+        ./configure
+        make &&  make install 
+
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install libressl. Exiting ..."
+                exit 3
+        fi
+        cd ../
+
+        # Cleanup
+        rm -rf libressl-2.4.2.tar.gz
+}
+
+
+# ----------------------------------------------
 # Function to install mailpile package
 # ----------------------------------------------
 install_mailpile() 
@@ -1149,7 +1185,7 @@ install_ecapguardian()
 	cd ../
 
 	# Cleanup
-	rm -rf ./ecapguardian
+	# rm -rf ./ecapguardian
 }
 
 
@@ -1787,6 +1823,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
                                 # Physical or Virtual machine
 	configure_repositories	# Prepare and update repositories
 	install_packages       	# Download and install packages	
+#	install_libressl	# Install Libressl package
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
 	install_libecap		# Install libecap package
