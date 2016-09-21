@@ -534,6 +534,9 @@ nohup nodejs /opt/easyrtc/server.js &
 # Running uwsgi
 uwsgi --ini /etc/uwsgi/uwsgi.ini
 
+# Running ecapguardian
+ecapguardian
+
 exit 0
 EOF
 
@@ -1628,9 +1631,12 @@ configure_ecapguardian()
 
 echo "Configuring ecapguardian ..."
 
+# Creating user
+useradd e2guardian
+
 # Creating log file
-touch /usr/var/log/ecapguardian/access.log
-chmod a+rw /usr/var/log/ecapguardian/access.log
+touch /var/log/ecapguardian/access.log
+chmod a+rw /var/log/ecapguardian/access.log
 
 # Creating socket directory
 mkdir -p /etc/ecapguardian/ecap
