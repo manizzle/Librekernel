@@ -1728,6 +1728,36 @@ echo "Starting Mailpile local service ..."
 
 
 # ---------------------------------------------------------
+# Function to configure modsecurity
+# ---------------------------------------------------------
+configure_modsecurity()
+{
+echo "Configuring modsecurity ..."
+cp /usr/src/modsecurity/modsecurity.conf-recommended /etc/nginx/modsecurity.conf
+cp /usr/src/modsecurity/unicode.mapping /etc/nginx/
+
+# Creating new directory for the ModSecurity audit log
+mkdir -p /opt/modsecurity/var/audit/
+chown -R www-data:www-data /opt/modsecurity/var/audit/
+
+# Creating modsecurity configuration
+cat << EOF >> /etc/nginx/modsecurity.conf
+#DefaultAction
+SecDefaultAction "log,deny,phase:1"
+
+#If you want to load single rule /usr/loca/nginx/conf
+#Include base_rules/modsecurity_crs_41_sql_injection_attacks.conf
+
+#Load all Rule
+Include base_rules/*.conf
+
+#Disable rule by ID from error message (for my wordpress)
+SecRuleRemoveById 981172 981173 960032 960034 960017 960010 950117 981004 960015
+EOF
+}
+
+
+# ---------------------------------------------------------
 # Function to configure nginx web server
 # ---------------------------------------------------------
 configure_nginx() 
@@ -3111,6 +3141,7 @@ configure_friendica		# Configuring Friendica local service
 configure_easyrtc		# Configuring EasyRTC local service
 configure_owncloud		# Configuring Owncloud local service
 configure_mailpile		# Configuring Mailpile local service
+configure_modsecurity		# Configuring modsecurity 
 configure_nginx                 # Configuring Nginx web server
 configure_privoxy		# Configuring Privoxy proxy server
 configure_squid			# Configuring squid proxy server
