@@ -99,12 +99,21 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ###HSTS 
 https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+
+Problem: when a use uses the google/bing search by a direct query keyword in the browsers
+The browser enfoces hsts then the certificate from our redirected yacy fails.
+Then we cant inspect the traffic for this big list of domains:
 https://cs.chromium.org/chromium/src/net/http/transport_security_state_static.json
-Problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
+We inspect for protecting the browser against exploitation of bugs and attacks.
+Who can guaranteed this entities are not doing it?
 
-#### Why we try the end user use more fair services than the offered for free (bullshit youll pay entirelife) in internet by some corporations?
+We inspect the HSTS domains with Snort,Suricata BRO and CLamAV via ICAP CCAP and Squid bumping
 
-Because if the user make use of centralized webs like Facebook,Google,Dropbox etc, we cant protect his privacy and he is going to disclosure himself his data.
+The problem is that the redirection we made when the user tries gmail for instance in to local service mailpile fails with multiple browser because hsts.
+
+Why we redirect gmail to mailpile or roundcube? obvious we offer s elfhosted solution better than corporate centralized.
+
+
 
 #### Can the user in the future workaround it:
 
