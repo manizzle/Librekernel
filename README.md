@@ -99,6 +99,7 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ###HSTS 
 https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+https://cs.chromium.org/chromium/src/net/http/transport_security_state_static.json
 Problems when a use uses the google/bing search by a direct query in the browser the browser enfoces hsts then the certificate from our redirected yacy fails.
 
 #### Why we try the end user use more fair services than the offered for free (bullshit youll pay entirelife) in internet by some corporations?
