@@ -840,6 +840,133 @@ install_libressl()
 
 
 # ----------------------------------------------
+# Function to install nginx
+# ----------------------------------------------
+install_nginx()
+{
+        echo "Installing nginx ..."
+
+        if [ ! -e nginx-1.8.0 ]; then
+        echo "Downloading nginx ..."
+        cd $INSTALL_HOME
+        wget http://nginx.org/download/nginx-1.8.0.tar.gz
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download nginx. Exiting ..."
+                        exit 3
+                fi
+        tar -xzf nginx-1.8.0.tar.gz
+        fi
+
+        echo "Building nginx ..."
+        cd $INSTALL_HOME
+
+        cd nginx-1.8.0/
+	./configure \
+	  --prefix=/etc/nginx \
+	  --pid-path=/var/run/nginx.pid \        
+	  --lock-path=/var/run/nginx.lock \
+	  --sbin-path=/usr/sbin/nginx \
+	  --error-log-path=/var/log/nginx/error.log \
+	  --http-log-path=/var/log/nginx/access.log \
+	  --without-http_scgi_module \
+	  --without-http_uwsgi_module \
+	  --without-http_fastcgi_modul \
+	  --with-http_gzip_static_module \
+	  --with-http_stub_status_module \
+	  --user=www-data \
+	  --group=www-data \
+	  --with-debug \
+	  --with-http_ssl_module \
+	  --add-module=/usr/src/modsecurity/nginx/modsecurity
+        make &&  make install
+
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install nginx. Exiting ..."
+                exit 3
+        fi
+        cd ../
+
+        # Cleanup
+        rm -rf nginx-1.8.0.tar.gz 
+
+# systemd script for Nginx
+cat << EOF > /lib/systemd/system/nginx.service
+[Service]
+Type=forking
+ExecStartPre=/usr/local/nginx/sbin/nginx -t -c /usr/local/nginx/conf/nginx.conf
+ExecStart=/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+ExecReload=/usr/local/nginx/sbin/nginx -s reload
+KillStop=/usr/local/nginx/sbin/nginx -s stop
+
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+
+PrivateTmp=true
+LimitNOFILE=200000
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+}
+
+
+# ----------------------------------------------
+# Function to install modsecurity
+# ----------------------------------------------
+install_modsecurity()
+{
+        echo "Installing modsecurity ..."
+
+        if [ ! -e /usr/src/modsecurity ]; then
+        echo "Downloading modsecurity ..."
+	cd /usr/src/
+        git clone https://github.com/SpiderLabs/ModSecurity.git modsecurity
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download modsecurity. Exiting ..."
+                        exit 3
+                fi
+        fi
+
+        echo "Building modsecurity ..."
+        cd /usr/src/modsecurity
+
+        ./autogen.sh
+	./configure --enable-standalone-module --disable-mlogc
+        make 
+
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install modsecurity. Exiting ..."
+                exit 3
+        fi
+
+	# Downloading the OWASP Core Rule Set
+	cd /usr/src/
+	git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git
+	cd owasp-modsecurity-crs
+	cp -R base_rules/ /etc/nginx/
+
+cat << EOF >> /etc/nginx/modsecurity.conf
+#DefaultAction
+SecDefaultAction "log,deny,phase:1"
+
+#If you want to load single rule /usr/loca/nginx/conf
+#Include base_rules/modsecurity_crs_41_sql_injection_attacks.conf
+
+#Load all Rule
+Include base_rules/*.conf
+
+#Disable rule by ID from error message (for my wordpress)
+SecRuleRemoveById 981172 981173 960032 960034 960017 960010 950117 981004 960015
+EOF
+
+cd $INSTALL_HOME
+}
+
+
+# ----------------------------------------------
 # Function to install mailpile package
 # ----------------------------------------------
 install_mailpile() 
@@ -1838,6 +1965,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	configure_repositories	# Prepare and update repositories
 	install_packages       	# Download and install packages	
 #	install_libressl	# Install Libressl package
+#	install_nginx		# Install nginx package
+#	install_modsecurity     # Install modsecurity package
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
 	install_libecap		# Install libecap package
