@@ -1,8 +1,42 @@
 Here's the method I used to find all ips banks. 
 
+---------------- Sept 26, 2016 ----------------
 1. But before that, I need to find the The banks name over the world, how do I find the banks name?
 https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)
 https://www.robtex.com/?q=bank
+https://www.thebankerdatabase.com/index.cfm/banks/all/
+http://www.allbanks.org/main/list/0.html
+http://pugahome.tripod.com/allbanks.htm
+
+
+1a. We should decide which website should we used, as figure on the above.. 
+for example, https://www.thebankerdatabase.com/index.cfm/banks/all/ --> legit bank database (because it's from the financial times)
+just advice to avoid duplicate work.. but it's depend team decision and the owner of the project.
+
+1b. Then, focus on scraping the names banks using automization (script, will find)
+
+1c. Afterwards, focus on domain each of the banks. only main domain, not subdomain, (script, will find)
+
+1d. Afterwards, focus on AS number (IP Block), will scraping from robtex or hurricane(script, will find)
+
+1e. Afterwards, focus on subdomain (script, will find)
+
+---------------- Sept 26, 2016 ----------------
+
+----------------Other notes----------------
+I've try to find the bank names with GoogleScraper python script, it will found the bank names through google, despite it found
+the bank names, it also put the url where on the pages have the "bank text" on it.
+
+But after quite times, it will get an error.. also the output is not good, i've try to export the output to txt, but isn't work
+and still export to it's own extention (.db) database.
+
+I've been trying alot of times with this tool, still difficult to understand..
+----------------Other notes----------------
+
+-
+-
+-
+-
 
 
 2. Then, google the name of the bank 
