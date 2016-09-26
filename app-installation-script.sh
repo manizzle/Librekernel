@@ -82,13 +82,14 @@ configure_repositories ()
 	apt-get update > /dev/null
 	apt-get -y --force-yes install ntpdate > /dev/null
 	
-	# Time synchronization 
+	# Time synchronization
+	/etc/init.d/ntp stop 
  	ntpdate -s ntp.ubuntu.com
 	if [ $? -ne 0 ]; then
         	echo "Error: unable to set time"
                 exit 3
         fi	
-	
+	/etc/init.d/ntp restart
 	echo "Date and time have been set"
 	date	
 	
@@ -478,7 +479,7 @@ if [ $PLATFORM = "D7" ]; then
 elif [ $PLATFORM = "D8" ]; then
 	DEBIAN_FRONTEND=noninteractive 
 	apt-get install -y --force-yes \
-	privoxy nginx php5-common \
+	privoxy php5-common \
         php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
         php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
 	apache2- apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
@@ -507,8 +508,9 @@ elif [ $PLATFORM = "D8" ]; then
 	librrd-dev librrds-perl libapache2-mod-php5- \
 	libtool elasticsearch conky \
 	libmysqlclient-dev ruby bundler rails  wkhtmltopdf nginx-extras \
+	libpcre3 apache2-prefork-dev libcurl4-openssl-dev \
 	2>&1 > /tmp/apt-get-install1.log
-        #bro passenger logstash kibana \
+        #bro passenger logstash kibana nginx \
 
 # Installing Packages for Trisquel 7.0 GNU/Linux
 
@@ -948,21 +950,7 @@ install_modsecurity()
 	cd owasp-modsecurity-crs
 	cp -R base_rules/ /etc/nginx/
 
-cat << EOF >> /etc/nginx/modsecurity.conf
-#DefaultAction
-SecDefaultAction "log,deny,phase:1"
-
-#If you want to load single rule /usr/loca/nginx/conf
-#Include base_rules/modsecurity_crs_41_sql_injection_attacks.conf
-
-#Load all Rule
-Include base_rules/*.conf
-
-#Disable rule by ID from error message (for my wordpress)
-SecRuleRemoveById 981172 981173 960032 960034 960017 960010 950117 981004 960015
-EOF
-
-cd $INSTALL_HOME
+	cd $INSTALL_HOME
 }
 
 
