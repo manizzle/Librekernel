@@ -842,6 +842,45 @@ install_libressl()
 
 
 # ----------------------------------------------
+# Function to install modsecurity
+# ----------------------------------------------
+install_modsecurity()
+{
+        echo "Installing modsecurity ..."
+
+        if [ ! -e /usr/src/modsecurity ]; then
+        echo "Downloading modsecurity ..."
+        cd /usr/src/
+        git clone https://github.com/SpiderLabs/ModSecurity.git modsecurity
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download modsecurity. Exiting ..."
+                        exit 3
+                fi
+        fi
+
+        echo "Building modsecurity ..."
+        cd /usr/src/modsecurity
+
+        ./autogen.sh
+        ./configure --enable-standalone-module --disable-mlogc
+        make
+
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install modsecurity. Exiting ..."
+                exit 3
+        fi
+
+        # Downloading the OWASP Core Rule Set
+        cd /usr/src/
+        git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git
+        cd owasp-modsecurity-crs
+        cp -R base_rules/ /etc/nginx/
+
+        cd $INSTALL_HOME
+}
+
+
+# ----------------------------------------------
 # Function to install nginx
 # ----------------------------------------------
 install_nginx()
@@ -861,18 +900,24 @@ install_nginx()
 
         echo "Building nginx ..."
         cd $INSTALL_HOME
+	
+	mkdir /etc/nginx/
+	mkdir /var/log/nginx
+	touch /var/run/nginx.lock
+	touch /var/run/nginx.pid
+	touch /var/log/nginx/error.log
+	touch /var/log/nginx/access.log
+	touch /etc/nginx/nginx.conf	
 
         cd nginx-1.8.0/
 	./configure \
 	  --prefix=/etc/nginx \
-	  --pid-path=/var/run/nginx.pid \        
+	  --pid-path=/var/run/nginx.pid \
+	  --conf-path=/etc/nginx/nginx.conf \
 	  --lock-path=/var/run/nginx.lock \
 	  --sbin-path=/usr/sbin/nginx \
 	  --error-log-path=/var/log/nginx/error.log \
 	  --http-log-path=/var/log/nginx/access.log \
-	  --without-http_scgi_module \
-	  --without-http_uwsgi_module \
-	  --without-http_fastcgi_modul \
 	  --with-http_gzip_static_module \
 	  --with-http_stub_status_module \
 	  --user=www-data \
@@ -912,45 +957,6 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-}
-
-
-# ----------------------------------------------
-# Function to install modsecurity
-# ----------------------------------------------
-install_modsecurity()
-{
-        echo "Installing modsecurity ..."
-
-        if [ ! -e /usr/src/modsecurity ]; then
-        echo "Downloading modsecurity ..."
-	cd /usr/src/
-        git clone https://github.com/SpiderLabs/ModSecurity.git modsecurity
-                if [ $? -ne 0 ]; then
-                        echo "Error: unable to download modsecurity. Exiting ..."
-                        exit 3
-                fi
-        fi
-
-        echo "Building modsecurity ..."
-        cd /usr/src/modsecurity
-
-        ./autogen.sh
-	./configure --enable-standalone-module --disable-mlogc
-        make 
-
-        if [ $? -ne 0 ]; then
-                echo "Error: unable to install modsecurity. Exiting ..."
-                exit 3
-        fi
-
-	# Downloading the OWASP Core Rule Set
-	cd /usr/src/
-	git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git
-	cd owasp-modsecurity-crs
-	cp -R base_rules/ /etc/nginx/
-
-	cd $INSTALL_HOME
 }
 
 
@@ -1953,8 +1959,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	configure_repositories	# Prepare and update repositories
 	install_packages       	# Download and install packages	
 #	install_libressl	# Install Libressl package
-#	install_nginx		# Install nginx package
-#	install_modsecurity     # Install modsecurity package
+	install_modsecurity     # Install modsecurity package
+	install_nginx		# Install nginx package
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
 	install_libecap		# Install libecap package
