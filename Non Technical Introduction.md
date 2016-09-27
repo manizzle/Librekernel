@@ -228,7 +228,7 @@ Imagine your at home, then you use the services locally (local server, local ser
 From being routed through any Darknet 
 Imagine your at work, then you use the services in your home through Darknets (remote server, remote services in TOR, I2P, and others VPNs) In your company its just https traffic so nobody see insside. You can use your personal storage, socialnetwork and everything with security and obscurity. 
 
-![from outdoor](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/10.png)
+![10](https://cloud.githubusercontent.com/assets/13025157/18872250/c8db5f30-84b9-11e6-8f2f-1e1d7be0b42b.png)
 
 Following diagram shows the current issues, safeguards against them and the open Source components that help us get rid of it. 
 
