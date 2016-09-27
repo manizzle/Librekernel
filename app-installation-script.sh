@@ -508,9 +508,9 @@ elif [ $PLATFORM = "D8" ]; then
 	librrd-dev librrds-perl libapache2-mod-php5- \
 	libtool elasticsearch conky \
 	libmysqlclient-dev ruby bundler rails  wkhtmltopdf nginx-extras \
-	libpcre3 apache2-prefork-dev libcurl4-openssl-dev \
+	libpcre3 apache2-prefork-dev \
 	2>&1 > /tmp/apt-get-install1.log
-        #bro passenger logstash kibana nginx \
+        #bro passenger logstash kibana nginx libcurl4-openssl-dev \
 
 # Installing Packages for Trisquel 7.0 GNU/Linux
 
