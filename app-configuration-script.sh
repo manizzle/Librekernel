@@ -1558,6 +1558,12 @@ configure_squidguard()
 echo "Configuring squidguard ..."
 
 mkdir -p /etc/squidguard
+
+# log file
+touch /var/log/squidguard/squidGuard.log
+chmod a+rw /var/log/squidguard/squidGuard.log
+
+# Coniguration file
 cat << EOF > /etc/squidguard/squidGuard.conf
 #
 # CONFIG FILE FOR SQUIDGUARD
