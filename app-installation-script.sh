@@ -477,40 +477,46 @@ if [ $PLATFORM = "D7" ]; then
 # Installing Packages for Debian 8 GNU/Linux
 
 elif [ $PLATFORM = "D8" ]; then
-	DEBIAN_FRONTEND=noninteractive 
+	DEBIAN_FRONTEND=noninteractive
+ 	
+	# libs and tools
 	apt-get install -y --force-yes \
-	privoxy php5-common \
-        php5-fpm php5-cli php5-json php5-mysql php5-curl php5-intl \
-        php5-mcrypt php5-memcache php-xml-parser php-pear unbound owncloud \
-	apache2- apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
-	apache2.2-common- openjdk-7-jre-headless phpmyadmin php5 \
-	mysql-server php5-gd php5-imap smarty3 git ntpdate macchanger \
-	bridge-utils hostapd isc-dhcp-server hostapd bridge-utils \
-	curl macchanger ntpdate tor bc sudo lsb-release dnsutils \
-	ca-certificates-java openssh-server ssh wireless-tools usbutils \
-	unzip debian-keyring subversion build-essential libncurses5-dev \
-	i2p i2p-keyring yacy virtualenv pwgen gcc g++ make automake \
-        killyourtv-keyring i2p-tahoe-lafs \
-	c-icap clamav  clamav-daemon libcurl4-gnutls-dev libicapapi-dev \
-	deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
+        php5-common php5-fpm php5-cli php5-json php5-mysql \
+        php5-curl php5-intl php5-mcrypt php5-memcache \
+        php-xml-parser php-pear phpmyadmin php5 mailutils \
+        apache2- apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
+        apache2.2-common- openjdk-7-jre-headless uwsgi \
+        php5-gd php5-imap smarty3 git ntpdate macchanger \
+        bridge-utils hostapd hostapd bridge-utils librrd-dev \
+        curl macchanger ntpdate bc sudo lsb-release dnsutils \
+        ca-certificates-java openssh-server ssh wireless-tools usbutils \
+        unzip debian-keyring subversion build-essential libncurses5-dev \
+        i2p-keyring virtualenv pwgen gcc g++ make automake \
+        killyourtv-keyring i2p-tahoe-lafs libcurl4-gnutls-dev \
+        libicapapi-dev libssl-dev perl screen aptitude \
+        deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
-	libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
-        postfix mailutils squidguard uwsgi \
-	libssl-dev perl screen aptitude \
+        libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev \
         libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
-	flex bison libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
-	libnetfilter-queue-dev libdumbnet-dev autoconf \
-	roundcube roundcube-mysql roundcube-plugins ntop libndpi-bin \
-	argus-server argus-client libnids-dev tinyproxy prosody \
-	flow-tools libfixbuf3 libgd-perl libgd-graph-perl rrdtool \
-	librrd-dev librrds-perl libsqlite3-dev \
-	pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
-	librrd-dev librrds-perl libapache2-mod-php5- \
-	libtool elasticsearch conky \
-	libmysqlclient-dev ruby bundler rails  wkhtmltopdf nginx-extras \
-	libpcre3 apache2-prefork-dev \
-	2>&1 > /tmp/apt-get-install1.log
-        #bro passenger logstash kibana nginx libcurl4-openssl-dev \
+        flex bison libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
+        libnetfilter-queue-dev libdumbnet-dev autoconf rails \
+        roundcube-mysql roundcube-plugins ntop libndpi-bin \
+        argus-server argus-client libnids-dev flow-tools libfixbuf3 \
+        libgd-perl libgd-graph-perl rrdtool librrd-dev librrds-perl \
+        libsqlite3-dev libtool elasticsearch conky ruby bundler \
+        pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
+        librrds-perl libapache2-mod-php5- apache2-prefork-dev \
+        libmysqlclient-dev wkhtmltopdf libpcre3 \
+        2>&1 > /tmp/apt-get-install_1.log
+
+	# services
+	apt-get install -y --force-yes \
+        privoxy unbound owncloud mysql-server isc-dhcp-server \
+        yacy c-icap clamav clamav-daemon webmin squidguard postfix \
+        tor i2p roundcube tinyproxy prosody \
+        2>&1 > /tmp/apt-get-install_2.log
+
+        #bro passenger logstash kibana nginx nginx-extras libcurl4-openssl-dev \
 
 # Installing Packages for Trisquel 7.0 GNU/Linux
 
@@ -1908,13 +1914,36 @@ install_glype()
 save_variables()
 {
         echo "Saving variables ..."
-        echo -e \
+	if [ -e /var/box_variables ]; then
+		if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
+ 	               MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
+		       echo -e \
+"Platform: $PLATFORM\n\
+Hardware: $HARDWARE\n\
+Processor: $PROCESSOR\n\
+Ext_interface: $EXT_INTERFACE\n\
+Int_interface: $INT_INTERFACE\n\
+DB_PASS: $MYSQL_PASS" \
+		 > /var/box_variables
+		else
+	               echo -e \
 "Platform: $PLATFORM\n\
 Hardware: $HARDWARE\n\
 Processor: $PROCESSOR\n\
 Ext_interface: $EXT_INTERFACE\n\
 Int_interface: $INT_INTERFACE" \
                  > /var/box_variables
+		fi
+	else
+		touch /var/box_variables	
+        	echo -e \
+"Platform: $PLATFORM\n\
+Hardware: $HARDWARE\n\
+Processor: $PROCESSOR\n\
+Ext_interface: $EXT_INTERFACE\n\
+Int_interface: $INT_INTERFACE" \
+                 > /var/box_variables
+	fi
 }
 
 
