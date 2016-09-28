@@ -1,5 +1,28 @@
 Here's the method I used to find all ips banks. 
 
+---------------- Sept 28, 2016 ----------------
+
+As I mention before.. first step is to find the bank names..
+here the step I wrap the name from the website..
+
+1a. wget https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
+...>> I Also wget until the last pages which is "letter=Z"
+
+1b. Then, "cat index.html\r?letter=A | grep "<strong style=" > Aa.txt
+...>> Got the result of the bank names with the first letter A, but still ugly.
+
+1c. then, grep -Po '(?<=title=")[^"]*' Aa.txt > A.txt
+...>> better result
+
+1d. repeat the step until letter Z.
+
+The result will update later.. need to combine in one file and random check to the website.
+
+---------------- Sept 28, 2016 ----------------
+-
+-
+-
+-
 ---------------- Sept 26, 2016 ----------------
 1. But before that, I need to find the The banks name over the world, how do I find the banks name?
 https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)
