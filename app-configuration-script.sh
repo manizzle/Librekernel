@@ -1250,9 +1250,9 @@ icap_service icap_service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/s
 loadable_modules /usr/local/lib/libreqmod.so
 loadable_modules /usr/local/lib/librespmod.so
 ecap_enable on
-ecap_service ecap_service_req reqmod_precache ecap://filtergizmo.com/ecapguardian/reqmod ecapguardian_listen_socket=/etc/ecapguardian/ecap/reqmod
+ecap_service ecap_service_req reqmod_precache bypass=on ecap://filtergizmo.com/ecapguardian/reqmod ecapguardian_listen_socket=/etc/ecapguardian/ecap/reqmod
 adaptation_access ecap_service_req allow all
-ecap_service ecap_service_resp respmod_precache ecap://filtergizmo.com/ecapguardian/respmod ecapguardian_listen_socket=/etc/ecapguardian/ecap/respmod
+ecap_service ecap_service_resp respmod_precache bypass=on ecap://filtergizmo.com/ecapguardian/respmod ecapguardian_listen_socket=/etc/ecapguardian/ecap/respmod
 #adaptation_access ecap_service_resp allow all
 
 adaptation_service_chain myChain ecap_service_resp icap_service_resp
@@ -1770,7 +1770,86 @@ configure_nginx()
 {
 echo "Configuring Nginx ..."
 mkdir -p /etc/ssl/nginx/
+mkdir -p /etc/nginx/sites-enabled/
 
+# Creating configuration file
+cat << EOF > /etc/nginx/nginx.conf
+user www-data;
+worker_processes 4;
+pid /run/nginx.pid;
+
+events {
+        worker_connections 768;
+        # multi_accept on;
+}
+
+http {
+
+        ##
+        # Basic Settings
+        ##
+
+        sendfile on;
+        tcp_nopush on;
+        tcp_nodelay on;
+        keepalive_timeout 65;
+        types_hash_max_size 2048;
+        # server_tokens off;
+
+        # server_names_hash_bucket_size 64;
+        # server_name_in_redirect off;
+
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        ##
+        # Logging Settings
+        ##
+
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        ##
+        # Gzip Settings
+        ##
+
+        gzip on;
+        gzip_disable "msie6";
+
+        # gzip_vary on;
+        # gzip_proxied any;
+        # gzip_comp_level 6;
+        # gzip_buffers 16 8k;
+        # gzip_http_version 1.1;
+        # gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+        ##
+        # nginx-naxsi config
+        ##
+        # Uncomment it if you installed nginx-naxsi
+        ##
+
+        #include /etc/nginx/naxsi_core.rules;
+
+        ##
+        # nginx-passenger config
+        ##
+        # Uncomment it if you installed nginx-passenger
+        ##
+
+        #passenger_root /usr;
+        #passenger_ruby /usr/bin/ruby;
+
+        ##
+        # Virtual Host Configs
+        ##
+
+        include /etc/nginx/conf.d/*.conf;
+        include /etc/nginx/sites-enabled/*;
+}
+EOF
+
+# Creating virtual hosts
 echo "upstream php-handler {
   server 127.0.0.1:9000;
   #server unix:/var/run/php5-fpm.sock;
