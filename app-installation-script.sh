@@ -506,12 +506,13 @@ elif [ $PLATFORM = "D8" ]; then
         libsqlite3-dev libtool elasticsearch conky ruby bundler \
         pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
         librrds-perl libapache2-mod-php5- apache2-prefork-dev \
-        libmysqlclient-dev wkhtmltopdf libpcre3 \
+        libmysqlclient-dev wkhtmltopdf libpcre3 mysql-server \
+	mysql-client-5.5 \
         2>&1 > /tmp/apt-get-install_1.log
 
 	# services
 	apt-get install -y --force-yes \
-        privoxy unbound owncloud mysql-server isc-dhcp-server \
+        privoxy unbound owncloud isc-dhcp-server \
         yacy c-icap clamav clamav-daemon webmin squidguard postfix \
         tor i2p roundcube tinyproxy prosody \
         2>&1 > /tmp/apt-get-install_2.log
