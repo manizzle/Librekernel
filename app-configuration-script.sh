@@ -534,8 +534,8 @@ nohup nodejs /opt/easyrtc/server.js &
 # Running uwsgi
 uwsgi --ini /etc/uwsgi/uwsgi.ini &
 
-# Running ecapguardian
-ecapguardian &
+# Time sync
+ntpdate -s ntp.ubuntu.com
 
 exit 0
 EOF
@@ -1652,6 +1652,25 @@ ecapguardian &
 
 # Setting sockets permissions 
 chmod -R a+rw /etc/ecapguardian/ecap
+
+# Preparing files 
+rm -rf /root/libre_scripts/
+mkdir /root/libre_scripts/
+touch /root/libre_scripts/ecapguardian.sh
+chmod +x /root/libre_scripts/ecapguardian.sh
+
+cat << EOF > /root/libre_scripts/ecapguardian.sh
+#!/bin/bash
+sleep 60
+/usr/sbin/ecapguardian &
+sleep 10
+chmod -R a+rwx /etc/ecapguardian/ecap
+EOF
+
+# Creating cron job
+rm -rf /root/libre_scripts/cron_jobs
+echo "@reboot /root/libre_scripts/ecapguardian.sh" > /root/libre_scripts/cron_jobs
+crontab /root/libre_scripts/cron_jobs
 }
 
 
@@ -1848,6 +1867,78 @@ http {
         include /etc/nginx/sites-enabled/*;
 }
 EOF
+
+# Creating init script
+cat << EOF > /etc/init.d/nginx
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          nginx
+# Required-Start:    \$all
+# Required-Stop:     \$all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the nginx web server
+# Description:       starts nginx using start-stop-daemon
+### END INIT INFO
+
+PATH=/opt/bin:/opt/sbin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/sbin/nginx
+NAME=nginx
+DESC=nginx
+
+test -x \$DAEMON || exit 0
+
+# Include nginx defaults if available
+if [ -f /etc/default/nginx ] ; then
+        . /etc/default/nginx
+fi
+
+set -e
+
+case "\$1" in
+  start)
+        echo -n "Starting \$DESC: "
+        start-stop-daemon --start --quiet --pidfile /var/run/nginx.pid \
+                --exec \$DAEMON -- \$DAEMON_OPTS
+        echo "\$NAME."
+        ;;
+  stop)
+        echo -n "Stopping \$DESC: "
+        start-stop-daemon --stop --quiet --pidfile /var/run/nginx.pid \
+                --exec \$DAEMON
+        echo "\$NAME."
+        ;;
+  restart|force-reload)
+        echo -n "Restarting \$DESC: "
+        start-stop-daemon --stop --quiet --pidfile \
+                /var/run/nginx.pid --exec \$DAEMON
+        sleep 1
+        start-stop-daemon --start --quiet --pidfile \
+                /var/run/nginx.pid --exec \$DAEMON -- \$DAEMON_OPTS
+        echo "\$NAME."
+        ;;
+  reload)
+      echo -n "Reloading \$DESC configuration: "
+      start-stop-daemon --stop --signal HUP --quiet --pidfile /var/run/nginx.pid \
+          --exec \$DAEMON
+      echo "\$NAME."
+      ;;
+  *)
+        N=/etc/init.d/\$NAME
+        echo "Usage: \$N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
+EOF
+
+# Setting init file permission
+chmod +x /etc/init.d/nginx
+
+# Systemctl reload
+systemctl daemon-reload
 
 # Creating virtual hosts
 echo "upstream php-handler {
@@ -2661,7 +2752,7 @@ location / {
 echo "Restarting nginx ..."
 service yacy restart
 service php5-fpm restart
-service nginx restart
+/etc/init.d/nginx restart
 }
 
 # ---------------------------------------------------------
@@ -2670,8 +2761,6 @@ service nginx restart
 check_interfaces()
 {
 # Preparing script file
-rm -rf /root/libre_scripts/
-mkdir /root/libre_scripts/
 touch /root/libre_scripts/check_interfaces.sh
 chmod +x /root/libre_scripts/check_interfaces.sh
 
@@ -2742,8 +2831,7 @@ EOF
 
 
 # Creating cron job
-rm -rf /root/libre_scripts/cron_jobs
-echo "@reboot sleep 20 && /root/libre_scripts/check_interfaces.sh" > /root/libre_scripts/cron_jobs
+echo "@reboot sleep 20 && /root/libre_scripts/check_interfaces.sh" >> /root/libre_scripts/cron_jobs
 crontab /root/libre_scripts/cron_jobs
 }
 
