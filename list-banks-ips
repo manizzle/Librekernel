@@ -1,9 +1,6 @@
-Here's the method I used to find all ips banks. 
+The Target of this document is to explain how to obtain the all banks WW for not enrouting this traffic via SQUID by an exception in iptables.
+Then the Banks traffic wont be bumped for security reasons.
 
----------------- Sept 28, 2016 ----------------
-
-As I mention before.. first step is to find the bank names..
-here the step I wrap the name from the website..
 
 1a. wget https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
 ...>> I Also wget until the last pages which is "letter=Z"
