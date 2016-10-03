@@ -595,26 +595,32 @@ CookieAuthFile /var/run/tor/control.authcookie
 
 Log notice file /var/log/tor/log
 
+# ----- Hidden services ----- #
+
 HiddenServiceDir /var/lib/tor/hidden_service/yacy
-HiddenServicePort 80 127.0.0.1:8090
+HiddenServicePort 80 10.0.0.251:80
 
 HiddenServiceDir /var/lib/tor/hidden_service/owncloud
-HiddenServicePort 80 127.0.0.1:7070
-HiddenServicePort 443 127.0.0.1:443
+HiddenServicePort 80 10.0.0.253:80
+HiddenServicePort 443 10.0.0.253:443
 
 #HiddenServiceDir /var/lib/tor/hidden_service/prosody
 #HiddenServicePort 5222 127.0.0.1:5222
 #HiddenServicePort 5269 127.0.0.1:5269
 
 HiddenServiceDir /var/lib/tor/hidden_service/friendica
-HiddenServicePort 80 127.0.0.1:8181
-HiddenServicePort 443 127.0.0.1:443
+HiddenServicePort 80 10.0.0.252:80
+HiddenServicePort 443 10.0.0.252:443 
 
 HiddenServiceDir /var/lib/tor/hidden_service/mailpile
-HiddenServicePort 33411 127.0.0.1:33411
-
+HiddenServicePort 80 10.0.0.254:80
+HiddenServicePort 443 10.0.0.254:443
+    
 HiddenServiceDir /var/lib/tor/hidden_service/easyrtc
-HiddenServicePort 80 127.0.0.1:8080
+HiddenServicePort 80 10.0.0.250:80
+HiddenServicePort 443 10.0.0.250:443
+
+# ----- Tor DNS ----- #
 
 DNSPort   127.0.0.1:9053
 VirtualAddrNetworkIPv4 10.0.0.0/8
