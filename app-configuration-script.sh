@@ -642,7 +642,7 @@ do
    sleep 1
    LOOP_N=$((LOOP_N + 1))
  fi
- # Wail up to 30 s for tor hidden services to become available
+ # Wail up to 60 s for tor hidden services to become available
  if [ $LOOP_N -eq 60 ]; then
    echo "Error: Unable to configure tor. Exiting ..."
    exit 1 
@@ -661,7 +661,437 @@ echo "Configuring i2p services ..."
 # waitakey
 # $EDITOR /etc/default/i2p
 sed "s~RUN_DAEMON=.*~RUN_DAEMON=\"true\"~g" -i /etc/default/i2p
+
+# i2p hidden services
+cat << EOF > /var/lib/i2p/i2p-config/i2ptunnel.config
+# NOTE: This I2P config file must use UTF-8 encoding
+tunnel.0.description=HTTP proxy for browsing eepsites and the web
+tunnel.0.i2cpHost=127.0.0.1
+tunnel.0.i2cpPort=7654
+tunnel.0.interface=127.0.0.1
+tunnel.0.listenPort=4444
+tunnel.0.name=I2P HTTP Proxy
+tunnel.0.option.i2cp.destination.sigType=ECDSA_SHA256_P256
+tunnel.0.option.i2cp.reduceIdleTime=900000
+tunnel.0.option.i2cp.reduceOnIdle=true
+tunnel.0.option.i2cp.reduceQuantity=1
+tunnel.0.option.i2p.streaming.connectDelay=1000
+tunnel.0.option.i2ptunnel.httpclient.SSLOutproxies=false.i2p
+tunnel.0.option.inbound.length=3
+tunnel.0.option.inbound.lengthVariance=0
+tunnel.0.option.inbound.nickname=shared clients
+tunnel.0.option.outbound.length=3
+tunnel.0.option.outbound.lengthVariance=0
+tunnel.0.option.outbound.nickname=shared clients
+tunnel.0.option.outbound.priority=10
+tunnel.0.proxyList=false.i2p
+tunnel.0.sharedClient=true
+tunnel.0.startOnLoad=true
+tunnel.0.type=httpclient
+tunnel.1.description=IRC tunnel to access the Irc2P network
+tunnel.1.i2cpHost=127.0.0.1
+tunnel.1.i2cpPort=7654
+tunnel.1.interface=127.0.0.1
+tunnel.1.listenPort=6668
+tunnel.1.name=Irc2P
+tunnel.1.option.crypto.lowTagThreshold=14
+tunnel.1.option.crypto.tagsToSend=20
+tunnel.1.option.i2cp.closeIdleTime=1200000
+tunnel.1.option.i2cp.closeOnIdle=true
+tunnel.1.option.i2cp.delayOpen=true
+tunnel.1.option.i2cp.destination.sigType=ECDSA_SHA256_P256
+tunnel.1.option.i2cp.newDestOnResume=false
+tunnel.1.option.i2cp.reduceIdleTime=600000
+tunnel.1.option.i2cp.reduceOnIdle=true
+tunnel.1.option.i2cp.reduceQuantity=1
+tunnel.1.option.i2p.streaming.connectDelay=1000
+tunnel.1.option.i2p.streaming.maxWindowSize=16
+tunnel.1.option.inbound.length=3
+tunnel.1.option.inbound.lengthVariance=0
+tunnel.1.option.inbound.nickname=Irc2P
+tunnel.1.option.outbound.length=3
+tunnel.1.option.outbound.lengthVariance=0
+tunnel.1.option.outbound.nickname=Irc2P
+tunnel.1.option.outbound.priority=15
+tunnel.1.sharedClient=false
+tunnel.1.startOnLoad=true
+tunnel.1.targetDestination=irc.dg.i2p:6667,irc.postman.i2p:6667,irc.echelon.i2p:6667
+tunnel.1.type=ircclient
+tunnel.2.description=I2P Monotone Server
+tunnel.2.i2cpHost=127.0.0.1
+tunnel.2.i2cpPort=7654
+tunnel.2.interface=127.0.0.1
+tunnel.2.listenPort=8998
+tunnel.2.name=mtn.i2p-projekt.i2p
+tunnel.2.option.i2cp.destination.sigType=ECDSA_SHA256_P256
+tunnel.2.option.i2cp.reduceIdleTime=900000
+tunnel.2.option.i2cp.reduceOnIdle=true
+tunnel.2.option.i2cp.reduceQuantity=1
+tunnel.2.option.inbound.length=3
+tunnel.2.option.inbound.lengthVariance=0
+tunnel.2.option.inbound.nickname=shared clients
+tunnel.2.option.outbound.length=3
+tunnel.2.option.outbound.lengthVariance=0
+tunnel.2.option.outbound.nickname=shared clients
+tunnel.2.sharedClient=true
+tunnel.2.startOnLoad=false
+tunnel.2.targetDestination=mtn.i2p-projekt.i2p:4691
+tunnel.2.type=client
+tunnel.3.description=My eepsite
+tunnel.3.i2cpHost=127.0.0.1
+tunnel.3.i2cpPort=7654
+tunnel.3.name=I2P webserver
+tunnel.3.option.i2cp.destination.sigType=ECDSA_SHA256_P256
+tunnel.3.option.inbound.length=3
+tunnel.3.option.inbound.lengthVariance=0
+tunnel.3.option.inbound.nickname=eepsite
+tunnel.3.option.outbound.length=3
+tunnel.3.option.outbound.lengthVariance=0
+tunnel.3.option.outbound.nickname=eepsite
+tunnel.3.option.shouldBundleReplyInfo=false
+tunnel.3.privKeyFile=eepsite/eepPriv.dat
+tunnel.3.spoofedHost=mysite.i2p
+tunnel.3.startOnLoad=false
+tunnel.3.targetHost=127.0.0.1
+tunnel.3.targetPort=7658
+tunnel.3.type=httpserver
+tunnel.3.description=My eepsite
+tunnel.3.i2cpHost=127.0.0.1
+tunnel.3.i2cpPort=7654
+tunnel.3.name=I2P webserver
+tunnel.3.option.i2cp.destination.sigType=ECDSA_SHA256_P256
+tunnel.3.option.inbound.length=3
+tunnel.3.option.inbound.lengthVariance=0
+tunnel.3.option.inbound.nickname=eepsite
+tunnel.3.option.outbound.length=3
+tunnel.3.option.outbound.lengthVariance=0
+tunnel.3.option.outbound.nickname=eepsite
+tunnel.3.option.shouldBundleReplyInfo=false
+tunnel.3.privKeyFile=eepsite/eepPriv.dat
+tunnel.3.spoofedHost=mysite.i2p
+tunnel.3.startOnLoad=false
+tunnel.3.targetHost=127.0.0.1
+tunnel.3.targetPort=7658
+tunnel.3.type=httpserver
+tunnel.4.description=smtp server
+tunnel.4.i2cpHost=127.0.0.1
+tunnel.4.i2cpPort=7654
+tunnel.4.interface=127.0.0.1
+tunnel.4.listenPort=7659
+tunnel.4.name=smtp.postman.i2p
+tunnel.4.option.i2cp.destination.sigType=ECDSA_SHA256_P256
+tunnel.4.option.i2cp.reduceIdleTime=900000
+tunnel.4.option.i2cp.reduceOnIdle=true
+tunnel.4.option.i2cp.reduceQuantity=1
+tunnel.4.option.inbound.length=3
+tunnel.4.option.inbound.lengthVariance=0
+tunnel.4.option.inbound.nickname=shared clients
+tunnel.4.option.outbound.length=3
+tunnel.4.option.outbound.lengthVariance=0
+tunnel.4.option.outbound.nickname=shared clients
+tunnel.4.sharedClient=true
+tunnel.4.startOnLoad=true
+tunnel.4.targetDestination=smtp.postman.i2p:25
+tunnel.4.type=client
+tunnel.5.description=pop3 server
+tunnel.5.i2cpHost=127.0.0.1
+tunnel.5.i2cpPort=7654
+tunnel.5.interface=127.0.0.1
+tunnel.5.listenPort=7660
+tunnel.5.name=pop3.postman.i2p
+tunnel.5.option.i2cp.destination.sigType=ECDSA_SHA256_P256
+tunnel.5.option.i2cp.reduceIdleTime=900000
+tunnel.5.option.i2cp.reduceOnIdle=true
+tunnel.5.option.i2cp.reduceQuantity=1
+tunnel.5.option.i2p.streaming.connectDelay=1000
+tunnel.5.option.inbound.length=3
+tunnel.5.option.inbound.lengthVariance=0
+tunnel.5.option.inbound.nickname=shared clients
+tunnel.5.option.outbound.length=3
+tunnel.5.option.outbound.lengthVariance=0
+tunnel.5.option.outbound.nickname=shared clients
+tunnel.5.sharedClient=true
+tunnel.5.startOnLoad=true
+tunnel.5.targetDestination=pop.postman.i2p:110
+tunnel.5.type=client
+tunnel.6.description=HTTPS proxy for browsing eepsites and the web
+tunnel.6.i2cpHost=127.0.0.1
+tunnel.6.i2cpPort=7654
+tunnel.6.interface=127.0.0.1
+tunnel.6.listenPort=4445
+tunnel.6.name=I2P HTTPS Proxy
+tunnel.6.option.i2cp.reduceIdleTime=900000
+tunnel.6.option.i2cp.reduceOnIdle=true
+tunnel.6.option.i2cp.reduceQuantity=1
+tunnel.6.option.i2p.streaming.connectDelay=1000
+tunnel.6.option.inbound.length=3
+tunnel.6.option.inbound.lengthVariance=0
+tunnel.6.option.inbound.nickname=shared clients
+tunnel.6.option.outbound.length=3
+tunnel.6.option.outbound.lengthVariance=0
+tunnel.6.option.outbound.nickname=shared clients
+tunnel.6.proxyList=outproxy-tor.meeh.i2p
+tunnel.6.sharedClient=true
+tunnel.6.startOnLoad=true
+tunnel.6.type=connectclient
+tunnel.7.description=easyrtc
+tunnel.7.name=easyrtc server
+tunnel.7.option.enableUniqueLocal=false
+tunnel.7.option.i2cp.destination.sigType=1
+tunnel.7.option.i2cp.enableAccessList=false
+tunnel.7.option.i2cp.enableBlackList=false
+tunnel.7.option.i2cp.encryptLeaseSet=false
+tunnel.7.option.i2cp.reduceIdleTime=1200000
+tunnel.7.option.i2cp.reduceOnIdle=false
+tunnel.7.option.i2cp.reduceQuantity=1
+tunnel.7.option.i2p.streaming.connectDelay=0
+tunnel.7.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.7.option.i2p.streaming.maxConnsPerDay=0
+tunnel.7.option.i2p.streaming.maxConnsPerHour=0
+tunnel.7.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.7.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.7.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.7.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.7.option.inbound.backupQuantity=0
+tunnel.7.option.inbound.length=3
+tunnel.7.option.inbound.lengthVariance=0
+tunnel.7.option.inbound.nickname=easyrtc server
+tunnel.7.option.inbound.quantity=2
+tunnel.7.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.7.option.maxPosts=0
+tunnel.7.option.maxTotalPosts=0
+tunnel.7.option.outbound.backupQuantity=0
+tunnel.7.option.outbound.length=3
+tunnel.7.option.outbound.lengthVariance=0
+tunnel.7.option.outbound.nickname=easyrtc server
+tunnel.7.option.outbound.quantity=2
+tunnel.7.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.7.option.postBanTime=1800
+tunnel.7.option.postCheckTime=300
+tunnel.7.option.postTotalBanTime=600
+tunnel.7.option.rejectInproxy=false
+tunnel.7.option.rejectReferer=false
+tunnel.7.option.rejectUserAgents=false
+tunnel.7.option.shouldBundleReplyInfo=false
+tunnel.7.option.useSSL=false
+tunnel.7.privKeyFile=i2ptunnel7-privKeys.dat
+tunnel.7.spoofedHost=easyrtc.i2p
+tunnel.7.startOnLoad=true
+tunnel.7.targetHost=10.0.0.250
+tunnel.7.targetPort=80
+tunnel.7.type=httpserver
+tunnel.8.description=yacy
+tunnel.8.name=yacy server
+tunnel.8.option.enableUniqueLocal=false
+tunnel.8.option.i2cp.destination.sigType=1
+tunnel.8.option.i2cp.enableAccessList=false
+tunnel.8.option.i2cp.enableBlackList=false
+tunnel.8.option.i2cp.encryptLeaseSet=false
+tunnel.8.option.i2cp.reduceIdleTime=1200000
+tunnel.8.option.i2cp.reduceOnIdle=false
+tunnel.8.option.i2cp.reduceQuantity=1
+tunnel.8.option.i2p.streaming.connectDelay=0
+tunnel.8.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.8.option.i2p.streaming.maxConnsPerDay=0
+tunnel.8.option.i2p.streaming.maxConnsPerHour=0
+tunnel.8.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.8.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.8.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.8.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.8.option.inbound.backupQuantity=0
+tunnel.8.option.inbound.length=3
+tunnel.8.option.inbound.lengthVariance=0
+tunnel.8.option.inbound.nickname=yacy server
+tunnel.8.option.inbound.quantity=2
+tunnel.8.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.8.option.maxPosts=0
+tunnel.8.option.maxTotalPosts=0
+tunnel.8.option.outbound.backupQuantity=0
+tunnel.8.option.outbound.length=3
+tunnel.8.option.outbound.lengthVariance=0
+tunnel.8.option.outbound.nickname=yacy server
+tunnel.8.option.outbound.quantity=2
+tunnel.8.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.8.option.postBanTime=1800
+tunnel.8.option.postCheckTime=300
+tunnel.8.option.postTotalBanTime=600
+tunnel.8.option.rejectInproxy=false
+tunnel.8.option.rejectReferer=false
+tunnel.8.option.rejectUserAgents=false
+tunnel.8.option.shouldBundleReplyInfo=false
+tunnel.8.option.useSSL=false
+tunnel.8.privKeyFile=i2ptunnel8-privKeys.dat
+tunnel.8.spoofedHost=yacy.i2p
+tunnel.8.startOnLoad=true
+tunnel.8.targetHost=10.0.0.251
+tunnel.8.targetPort=80
+tunnel.8.type=httpserver
+tunnel.9.description=friendica
+tunnel.9.name=friendica server
+tunnel.9.option.enableUniqueLocal=false
+tunnel.9.option.i2cp.destination.sigType=1
+tunnel.9.option.i2cp.enableAccessList=false
+tunnel.9.option.i2cp.enableBlackList=false
+tunnel.9.option.i2cp.encryptLeaseSet=false
+tunnel.9.option.i2cp.reduceIdleTime=1200000
+tunnel.9.option.i2cp.reduceOnIdle=false
+tunnel.9.option.i2cp.reduceQuantity=1
+tunnel.9.option.i2p.streaming.connectDelay=0
+tunnel.9.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.9.option.i2p.streaming.maxConnsPerDay=0
+tunnel.9.option.i2p.streaming.maxConnsPerHour=0
+tunnel.9.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.9.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.9.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.9.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.9.option.inbound.backupQuantity=0
+tunnel.9.option.inbound.length=3
+tunnel.9.option.inbound.lengthVariance=0
+tunnel.9.option.inbound.nickname=friendica server
+tunnel.9.option.inbound.quantity=2
+tunnel.9.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.9.option.maxPosts=0
+tunnel.9.option.maxTotalPosts=0
+tunnel.9.option.outbound.backupQuantity=0
+tunnel.9.option.outbound.length=3
+tunnel.9.option.outbound.lengthVariance=0
+tunnel.9.option.outbound.nickname=friendica server
+tunnel.9.option.outbound.quantity=2
+tunnel.9.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.9.option.postBanTime=1800
+tunnel.9.option.postCheckTime=300
+tunnel.9.option.postTotalBanTime=600
+tunnel.9.option.rejectInproxy=false
+tunnel.9.option.rejectReferer=false
+tunnel.9.option.rejectUserAgents=false
+tunnel.9.option.shouldBundleReplyInfo=false
+tunnel.9.option.useSSL=false
+tunnel.9.privKeyFile=i2ptunnel9-privKeys.dat
+tunnel.9.spoofedHost=friendica.i2p
+tunnel.9.startOnLoad=true
+tunnel.9.targetHost=10.0.0.252
+tunnel.9.targetPort=80
+tunnel.9.type=httpserver
+tunnel.10.description=owncloud
+tunnel.10.name=owncloud server
+tunnel.10.option.enableUniqueLocal=false
+tunnel.10.option.i2cp.destination.sigType=1
+tunnel.10.option.i2cp.enableAccessList=false
+tunnel.10.option.i2cp.enableBlackList=false
+tunnel.10.option.i2cp.encryptLeaseSet=false
+tunnel.10.option.i2cp.reduceIdleTime=1200000
+tunnel.10.option.i2cp.reduceOnIdle=false
+tunnel.10.option.i2cp.reduceQuantity=1
+tunnel.10.option.i2p.streaming.connectDelay=0
+tunnel.10.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.10.option.i2p.streaming.maxConnsPerDay=0
+tunnel.10.option.i2p.streaming.maxConnsPerHour=0
+tunnel.10.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.10.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.10.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.10.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.10.option.inbound.backupQuantity=0
+tunnel.10.option.inbound.length=3
+tunnel.10.option.inbound.lengthVariance=0
+tunnel.10.option.inbound.nickname=owncloud server
+tunnel.10.option.inbound.quantity=2
+tunnel.10.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.10.option.maxPosts=0
+tunnel.10.option.maxTotalPosts=0
+tunnel.10.option.outbound.backupQuantity=0
+tunnel.10.option.outbound.length=3
+tunnel.10.option.outbound.lengthVariance=0
+tunnel.10.option.outbound.nickname=owncloud server
+tunnel.10.option.outbound.quantity=2
+tunnel.10.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.10.option.postBanTime=1800
+tunnel.10.option.postCheckTime=300
+tunnel.10.option.postTotalBanTime=600
+tunnel.10.option.rejectInproxy=false
+tunnel.10.option.rejectReferer=false
+tunnel.10.option.rejectUserAgents=false
+tunnel.10.option.shouldBundleReplyInfo=false
+tunnel.10.option.useSSL=false
+tunnel.10.privKeyFile=i2ptunnel10-privKeys.dat
+tunnel.10.spoofedHost=owncloud.i2p
+tunnel.10.startOnLoad=true
+tunnel.10.targetHost=10.0.0.253
+tunnel.10.targetPort=80
+tunnel.10.type=httpserver
+tunnel.11.description=mailpile
+tunnel.11.name=mailpile server
+tunnel.11.option.enableUniqueLocal=false
+tunnel.11.option.i2cp.destination.sigType=1
+tunnel.11.option.i2cp.enableAccessList=false
+tunnel.11.option.i2cp.enableBlackList=false
+tunnel.11.option.i2cp.encryptLeaseSet=false
+tunnel.11.option.i2cp.reduceIdleTime=1200000
+tunnel.11.option.i2cp.reduceOnIdle=false
+tunnel.11.option.i2cp.reduceQuantity=1
+tunnel.11.option.i2p.streaming.connectDelay=0
+tunnel.11.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.11.option.i2p.streaming.maxConnsPerDay=0
+tunnel.11.option.i2p.streaming.maxConnsPerHour=0
+tunnel.11.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.11.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.11.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.11.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.11.option.inbound.backupQuantity=0
+tunnel.11.option.inbound.length=3
+tunnel.11.option.inbound.lengthVariance=0
+tunnel.11.option.inbound.nickname=mailpile server
+tunnel.11.option.inbound.quantity=2
+tunnel.11.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.11.option.maxPosts=0
+tunnel.11.option.maxTotalPosts=0
+tunnel.11.option.outbound.backupQuantity=0
+tunnel.11.option.outbound.length=3
+tunnel.11.option.outbound.lengthVariance=0
+tunnel.11.option.outbound.nickname=mailpile server
+tunnel.11.option.outbound.quantity=2
+tunnel.11.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.11.option.postBanTime=1800
+tunnel.11.option.postCheckTime=300
+tunnel.11.option.postTotalBanTime=600
+tunnel.11.option.rejectInproxy=false
+tunnel.11.option.rejectReferer=false
+tunnel.11.option.rejectUserAgents=false
+tunnel.11.option.shouldBundleReplyInfo=false
+tunnel.11.option.useSSL=false
+tunnel.11.privKeyFile=i2ptunnel11-privKeys.dat
+tunnel.11.spoofedHost=mailpile.i2p
+tunnel.11.startOnLoad=true
+tunnel.11.targetHost=10.0.0.254
+tunnel.11.targetPort=80
+tunnel.11.type=httpserver
+EOF
+
+# Setting permissions
+chown i2psvc:i2psvc /var/lib/i2p/i2p-config/i2ptunnel.config
+chmod 600 /var/lib/i2p/i2p-config/i2ptunnel.config
+
+# Restarting i2p
 service i2p restart
+
+LOOP_S=0
+LOOP_N=0
+echo "Configuring i2p hidden services ..."
+while [ $LOOP_S -lt 1 ]
+do
+ if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | wc -l` -eq 6 ]; then
+   echo "i2p successfully configured"
+   LOOP_S=1
+ else
+   sleep 1
+   LOOP_N=$((LOOP_N + 1))
+ fi
+ # Wail up to 120 s for tor hidden services to become available
+ if [ $LOOP_N -eq 120 ]; then
+   echo "Error: Unable to configure i2p. Exiting ..."
+   exit 1
+ fi
+done
+
 }
 
 
@@ -3259,6 +3689,7 @@ EOF
 # ---------------------------------------------------------
 print_services()
 {
+rm -rf /var/box_services
 touch /var/box_services
 echo "Printing local services info ..."
 echo ""
@@ -3291,8 +3722,66 @@ for i in $(ls /var/lib/tor/hidden_service/)
  done
 echo "------------------------------------------------------------------------------" \
 | tee -a /var/box_services
+
+# Print i2p
+echo "" | tee -a /var/box_services
+echo "----------------------------------------------------------------------------" | tee -a /var/box_services
+echo "| Service   |                         i2p domain                           |" | tee -a /var/box_services
+echo "----------------------------------------------------------------------------" | tee -a /var/box_services
+echo -n "| easyrtc   | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '2!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo -n "| yacy      | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '3!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo -n "| friendica | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '4!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo -n "| owncloud  | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '5!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo -n "| mailpile  | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '6!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo "----------------------------------------------------------------------------" | tee -a /var/box_services
+
+# Create services command
+cat << EOF > /usr/sbin/services
+#!/bin/bash
+cat /var/box_services
+EOF
+
+chmod +x /usr/sbin/services
+
+echo "You can print local services info by \"services\" command"
+sleep 2
 }
 	
+
+# ---------------------------------------------------------
+# Function to reboot librerouter
+# ---------------------------------------------------------
+do_reboot()
+{
+echo "Configuration finished !!!"
+echo "Librerouter needs to restart. Do restart now? [Y/N]"
+LOOP_N=0
+while [ $LOOP_N -eq 0 ]; do
+read ANSWER
+if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ]; then
+  LOOP_N=1
+  echo "Restarting ..."
+  reboot
+elif [ "$ANSWER" = "N" -o "$ANSWER" = "n" ]; then
+  LOOP_N=1
+  echo "Exiting ..."
+else
+  LOOP_N=0
+  echo "Please type \"Y\" or \"N\""
+fi
+done
+}
+
 
 # ---------------------------------------------------------
 # ************************ MAIN ***************************
@@ -3337,6 +3826,7 @@ check_services			# Checking services
 #configure_snortbarn		# Configure Snort and Barnyard services
 #configure_snorby		# Configure Snorby
 print_services			# Print info about service accessibility
+do_reboot                       # Function to reboot librerouter
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
 
