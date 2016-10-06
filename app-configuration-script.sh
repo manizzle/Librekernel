@@ -1514,26 +1514,17 @@ fi
 chown -R www-data /var/www/owncloud
 
 # owncloud configuration
-cp /var/www/owncloud/config/config.php owncloud.config.php
-echo "<?php" > /var/www/owncloud/config/config.php
-awk '/php/{flag=1;next}/trusted_domains/{flag=0}flag' owncloud.config.php >> /var/www/owncloud/config/config.php
-cat << EOF >> /var/www/owncloud/config/config.php
-  'trusted_domains' =>
+cat << EOF > /var/www/owncloud/config/config.php 
+<?php
+\$CONFIG = array (
+  'trusted_domains' => 
   array (
-    'owncloud.librenet',
-    '$SERVER_OWNCLOUD',
-    '$SERVER_OWNCLOUD.to',
+    0 => 'owncloud.librenet',
+    1 => '$SERVER_OWNCLOUD',
+    2 => '$SERVER_OWNCLOUD.to',
   ),
-EOF
-cat << EOF >> /var/www/owncloud/config/config.php
-  'datadirectory' => '/var/www/owncloud/data',
-EOF
-awk '/datadirectory/{flag=1;next}/installed/{flag=0}flag' owncloud.config.php >> /var/www/owncloud/config/config.php
-cat << EOF >> /var/www/owncloud/config/config.php
-  'installed' => true,
 );
 EOF
-
 }
 
 
@@ -2062,7 +2053,7 @@ dest suspect {
 acl {
         default {
                 pass !ads !proxy !spyware !redirector !suspect all
-                redirect http://localhost/block.html
+                redirect http://librerouter.librenet/squidguard_warning_page.html
         }
  }
 EOF
@@ -3717,6 +3708,96 @@ EOF
 
 
 # ---------------------------------------------------------
+# Function to add warning pages for clamav and squidguard
+# ---------------------------------------------------------
+add_warning_pages()
+{
+echo "Configuring warning pages ..."
+# Warning page for clamav
+cat << EOF > /var/www/html/virus_warning_page.html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div.container {
+    width: 100%;
+    border: 1px solid red;
+}
+header, footer {
+    padding: 1em;
+    color: white;
+    background-color: red;
+    clear: left;
+    text-align: center;
+}
+article {
+    margin-left: 170px;
+    border-left: 1px solid red;
+    padding: 1em;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+   <h1>WARNING !!!</h1>
+</header>
+<article>
+  <h1>Visiting this site may harm your computer</h1>
+  <p>The website you are visiting appears to host malware - software that can hurt your computer or otherwise operate without your consent.</p>
+  <p>Just visiting a site that contains malware can infect your computer.</p>
+</article>
+<footer>LibreRouter</footer>
+</div>
+</body>
+</html>
+EOF
+
+# Warning page for squidguard
+cat << EOF > /var/www/html/squidguard_warning_page.html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div.container {
+    width: 100%;
+    border: 1px solid red;
+}
+header, footer {
+    padding: 1em;
+    color: white;
+    background-color: red;
+    clear: left;
+    text-align: center;
+}
+article {
+    margin-left: 170px;
+    border-left: 1px solid red;
+    padding: 1em;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+   <h1>WARNING !!!</h1>
+</header>
+<article>
+  <h1>Security risk blocked for your protection</h1>
+  <p>The website category is filtered.</p>
+  <p>Access to the web page you were trying to visit has been blocked in accordance with security policy.</p>
+</article>
+<footer>LibreRouter</footer>
+</div>
+</body>
+</html>
+EOF
+}
+
+
+# ---------------------------------------------------------
 # Function to print info about services accessibility
 # ---------------------------------------------------------
 print_services()
@@ -3857,6 +3938,7 @@ check_services			# Checking services
 #configure_kibana		# Configure Kibana service
 #configure_snortbarn		# Configure Snort and Barnyard services
 #configure_snorby		# Configure Snorby
+add_warning_pages		# Added warning pages for clamav and squidguard
 print_services			# Print info about service accessibility
 do_reboot                       # Function to reboot librerouter
 
