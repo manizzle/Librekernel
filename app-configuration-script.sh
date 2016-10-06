@@ -537,6 +537,9 @@ uwsgi --ini /etc/uwsgi/uwsgi.ini &
 # Time sync
 ntpdate -s ntp.ubuntu.com
 
+# Start nginx
+/etc/init.d/nginx start
+
 exit 0
 EOF
 
@@ -551,7 +554,7 @@ chmod +x /etc/rc.local
 # ---------------------------------------------------------
 configure_tor()
 {
-echo "Configuring Tor server"
+echo "Configuring Tor server ..."
 tordir=/var/lib/tor/hidden_service
 for i in yacy owncloud friendica mailpile easyrtc 
 do
@@ -656,7 +659,7 @@ done
 # ---------------------------------------------------------
 configure_i2p()
 {
-echo "Configuring i2p services ..."
+echo "Configuring i2p server ..."
 # echo "Changeing RUN_DAEMON ..."
 # waitakey
 # $EDITOR /etc/default/i2p
@@ -1390,19 +1393,20 @@ fi
 configure_friendica()
 {
 echo "Configuring Friendica local service ..."
-if [ ! -e  /var/lib/mysql/frndcdb ]; then
+if [ ! -e  /var/lib/mysql/frnd ]; then
 
   # Defining MySQL user and password variables
 # MYSQL_PASS="librerouter"
   MYSQL_USER="root"
 
-  # Creating MySQL database frndc for friendica local service
-  echo "CREATE DATABASE frndcdb;" \
+  # Creating MySQL database frnd for friendica local service
+  echo "CREATE DATABASE frnd;" \
   | mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" 
 fi
 
   # Inserting friendica database
-  mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" frndcdb < /var/www/friendica/database.sql
+  sed -i  s/utf8mb4/utf8/g /var/www/friendica/database.sql
+  mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" frnd < /var/www/friendica/database.sql
 
 if [ -z "$(grep "friendica/include/poller" /etc/crontab)" ]; then
     echo '*/10 * * * * /usr/bin/php /var/www/friendica/include/poller.php' >> /etc/crontab
@@ -1415,7 +1419,7 @@ echo "
 \$db_host = 'localhost';
 \$db_user = 'root';
 \$db_pass = '$MYSQL_PASS';
-\$db_data = 'frndcdb';
+\$db_data = 'frnd';
 
 \$a->path = '';
 \$default_timezone = 'America/Los_Angeles';
@@ -1508,6 +1512,27 @@ if [ ! -e  /var/www/owncloud ]; then
 fi
 
 chown -R www-data /var/www/owncloud
+
+# owncloud configuration
+cp /var/www/owncloud/config/config.php owncloud.config.php
+echo "<?php" > /var/www/owncloud/config/config.php
+awk '/php/{flag=1;next}/trusted_domains/{flag=0}flag' owncloud.config.php >> /var/www/owncloud/config/config.php
+cat << EOF >> /var/www/owncloud/config/config.php
+  'trusted_domains' =>
+  array (
+    'owncloud.librenet',
+    '$SERVER_OWNCLOUD',
+    '$SERVER_OWNCLOUD.to',
+  ),
+EOF
+cat << EOF >> /var/www/owncloud/config/config.php
+  'datadirectory' => '/var/www/owncloud/data',
+EOF
+awk '/datadirectory/{flag=1;next}/installed/{flag=0}flag' owncloud.config.php >> /var/www/owncloud/config/config.php
+cat << EOF >> /var/www/owncloud/config/config.php
+  'installed' => true,
+);
+EOF
 
 }
 
@@ -2512,12 +2537,12 @@ fi
 
 # Creating friendica virtual host configuration
 echo "
-# Redirect connections from port 8181 to Tor hidden service friendica port 80
-server {
-  listen 8181;
-  server_name $SERVER_FRIENDICA;
-  return 301 http://$SERVER_FRIENDICA;
-}
+## Redirect connections from port 8181 to Tor hidden service friendica port 80
+#server {
+#  listen 8181;
+#  server_name $SERVER_FRIENDICA;
+#  return 301 http://$SERVER_FRIENDICA;
+#}
 
 # Redirect connections from 10.0.0.252 to Tor hidden service friendica
 server {
@@ -2537,28 +2562,29 @@ server {
 #  }
 
 # Main server for Tor hidden service friendica
-server {
-  listen 10.0.0.252:80;
-  server_name $SERVER_FRIENDICA;
-
-  index index.php;
-  root /var/www/friendica;
-  rewrite ^ https://$SERVER_FRIENDICA\$request_uri? permanent;
-}
+#server {
+#  listen 10.0.0.252:80;
+#  server_name $SERVER_FRIENDICA;
+#
+#  index index.php;
+#  root /var/www/friendica;
+#  rewrite ^ https://$SERVER_FRIENDICA\$request_uri? permanent;
+#}
 
 # Configure Friendica with SSL
 
 server {
   listen 10.0.0.252:80;
+  listen 10.0.0.252:443 ssl;
   server_name friendica.librenet;
 
-#  ssl on;
-#  ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
-#  ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
-#  ssl_session_timeout 5m;
-#  ssl_protocols SSLv3 TLSv1;
-#  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-#  ssl_prefer_server_ciphers on;
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
+  ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
+  ssl_session_timeout 5m;
+  ssl_protocols SSLv3 TLSv1;
+  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+  ssl_prefer_server_ciphers on;
 
   index index.php;
   charset utf-8;
@@ -2572,7 +2598,7 @@ server {
     rewrite ^/(.*) /index.php?q=\$uri&\$args last;
   }
 
-  # make sure webfinger and other well known services aren't blocked
+  # make sure webfinger and other well known services arent blocked
   # by denying dot files and rewrite request to the front controller
   location ^~ /.well-known/ {
     allow all;
@@ -2617,6 +2643,7 @@ server {
 }
 
 server {
+  listen 10.0.0.252:80;
   listen 10.0.0.252:443 ssl;
   server_name $SERVER_FRIENDICA;
 
@@ -2640,7 +2667,7 @@ server {
     rewrite ^/(.*) /index.php?q=\$uri&\$args last;
   }
 
-  # make sure webfinger and other well known services aren't blocked
+  # make sure webfinger and other well known services arent blocked
   # by denying dot files and rewrite request to the front controller
   location ^~ /.well-known/ {
     allow all;
@@ -3125,15 +3152,17 @@ echo "
 server {
         listen 10.0.0.250;
         server_name _;
-        return 301 https://easyrtc.librenet/demos/;
+        return 301 https://easyrtc.librenet/demos/demo_multiparty.html;
 }
 
 # easyrtc https server 
 server {
+        listen 10.0.0.250:80;
         listen 10.0.0.250:443 ssl;
         server_name easyrtc.librenet;
         ssl_certificate /etc/ssl/nginx/easyrtc.crt;
         ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
+        rewrite ^/$ /demos/demo_multiparty.html permanent;
   location / {
     proxy_pass       https://127.0.0.1:8443;
     proxy_set_header Host      \$host;
@@ -3142,10 +3171,12 @@ server {
 }
 
 server {
+        listen 10.0.0.250:80;
         listen 10.0.0.250:443 ssl;
         server_name $SERVER_EASYRTC;
         ssl_certificate /etc/ssl/nginx/easyrtc.crt;
         ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
+        rewrite ^/$ /demos/demo_multiparty.html permanent;
   location / {
     proxy_pass       https://127.0.0.1:8443;
     proxy_set_header Host      \$host;
@@ -3188,8 +3219,9 @@ location / {
 echo "Restarting nginx ..."
 service yacy restart
 service php5-fpm restart
-/etc/init.d/nginx restart
+/etc/init.d/nginx start
 }
+
 
 # ---------------------------------------------------------
 # Function to check interfaces
