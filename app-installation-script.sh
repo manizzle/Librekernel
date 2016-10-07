@@ -1210,12 +1210,30 @@ install_squidguard_bl()
 	if [ ! -e blacklists.tgz ]; then
 	wget http://squidguard.mesd.k12.or.us/blacklists.tgz
 	fi
+	# Getting ads blacklists
+        if [ ! -e serverlist.php ]; then
+        wget https://pgl.yoyo.org/as/serverlist.php
+	fi
+	# Getting urlblacklist blacklists
+	if [ ! -e urlblacklist ]; then
+	wget http://urlblacklist.com/cgi-bin/commercialdownload.pl?type=download\\&file=bigblacklist -O urlblacklist.tar.gz
+	rm -rf blacklistdomains
+	mkdir blacklistdomains
+	cd blacklistdomains
+	tar xvzf urlblacklist.tar.gz
+	cd ../
+        fi
+       
 	# Making squidGuard blacklists directory
 	mkdir -p /usr/local/squidGuard/db 
 	# Extracting blacklists
         cp blacklists.tgz /usr/local/squidGuard/db
         tar xfv /usr/local/squidGuard/db/blacklists.tgz \
         -C /usr/local/squidGuard/db/
+        # ads blacklists
+        sed -n '57,2418p' < serverlist.php > /usr/local/squidGuard/db/blacklists/ads/domains
+        # urlblacklist blacklists
+        cat blacklistdomains/blacklists/ads/domains >> /usr/local/squidGuard/db/blacklists/ads/domains 
 
 	# Cleanup
         rm -rf /usr/local/squidGuard/db/blacklists.tar
