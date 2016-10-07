@@ -315,78 +315,85 @@ service isc-dhcp-server restart
 # ---------------------------------------------------------
 configre_blacklists()
 {
-mkdir -p /etc/blacklists
-cd /etc/blacklists
+#mkdir -p /etc/blacklists
+#cd /etc/blacklists
+#
+#cat << EOF > /etc/blacklists/update-blacklists.sh
+##!/bin/bash
+#
+##squidguard DB
+#mkdir -p /etc/blacklists/shallalist/tmp 
+#cd /etc/blacklists/shallalist/tmp
+#wget http://www.shallalist.de/Downloads/shallalist.tar.gz
+#tar xvzf shallalist.tar.gz ; res=\$?
+#rm -f shallalist.tar.gz
+#if [ "\$res" = 0 ]; then
+# rm -fr /etc/blacklists/shallalist/ok
+# mv /etc/blacklists/shallalist/tmp /etc/blacklists/shallalist/ok
+#else
+# rm -fr /etc/blacklists/shallalist/tmp 
+#fi
+#
+#mkdir -p /etc/blacklists/urlblacklist/tmp
+#cd /etc/blacklists/urlblacklist/tmp
+#wget http://urlblacklist.com/cgi-bin/commercialdownload.pl?type=download\\&file=bigblacklist -O urlblacklist.tar.gz
+#tar xvzf urlblacklist.tar.gz ; res=\$?
+#rm -f urlblacklist.tar.gz
+#if [ "\$res" = 0 ]; then
+# rm -fr /etc/blacklists/urlblacklist/ok
+# mv /etc/blacklists/urlblacklist/tmp /etc/blacklists/urlblacklist/ok
+#else
+# rm -fr /etc/blacklists/urlblacklist/tmp 
+#fi
+#
+#mkdir -p /etc/blacklists/mesdk12/tmp
+#cd /etc/blacklists/mesdk12/tmp
+#wget http://squidguard.mesd.k12.or.us/blacklists.tgz
+#tar xvzf blacklists.tgz ; res=\$?
+#rm -f blacklists.tgz
+#if [ "\$res" = 0 ]; then
+# rm -fr /etc/blacklists/mesdk12/ok
+# mv /etc/blacklists/mesdk12/tmp /etc/blacklists/mesdk12/ok
+#else
+# rm -fr /etc/blacklists/mesdk12/tmp 
+#fi
+#
+#mkdir -p /etc/blacklists/capitole/tmp
+#cd /etc/blacklists/capitole/tmp
+#wget ftp://ftp.ut-capitole.fr/pub/reseau/cache/squidguard_contrib/publicite.tar.gz
+#tar xvzf publicite.tar.gz ; res=\$?
+#rm -f publicite.tar.gz
+#if [ "\$res" = 0 ]; then
+# rm -fr /etc/blacklists/capitole/ok
+# mv /etc/blacklists/capitole/tmp /etc/blacklists/capitole/ok
+#else
+# rm -fr /etc/blacklists/capitole/tmp 
+#fi
+#
+#
+## chown proxy:proxy -R /etc/blacklists/*
+#
+#EOF
+#
+#chmod +x /etc/blacklists/update-blacklists.sh
+#/etc/blacklists/update-blacklists.sh
+#
+#cat << EOF > /etc/blacklists/blacklists-iptables.sh
+##ipset implementation for nat
+#for i in \$(grep -iv [A-Z] /etc/blacklists/shallalist/ok/BL/adv/domains)
+#do
+#  iptables -t nat -I PREROUTING -i br1 -s 10.0.0.0/16 -p tcp -d \$i -j DNAT --to-destination 5.5.5.5
+#done
+#EOF
+#
+#chmod +x /etc/blacklists/blacklists-iptables.sh
 
-cat << EOF > /etc/blacklists/update-blacklists.sh
-#!/bin/bash
-
-#squidguard DB
-mkdir -p /etc/blacklists/shallalist/tmp 
-cd /etc/blacklists/shallalist/tmp
-wget http://www.shallalist.de/Downloads/shallalist.tar.gz
-tar xvzf shallalist.tar.gz ; res=\$?
-rm -f shallalist.tar.gz
-if [ "\$res" = 0 ]; then
- rm -fr /etc/blacklists/shallalist/ok
- mv /etc/blacklists/shallalist/tmp /etc/blacklists/shallalist/ok
-else
- rm -fr /etc/blacklists/shallalist/tmp 
-fi
-
-mkdir -p /etc/blacklists/urlblacklist/tmp
-cd /etc/blacklists/urlblacklist/tmp
-wget http://urlblacklist.com/cgi-bin/commercialdownload.pl?type=download\\&file=bigblacklist -O urlblacklist.tar.gz
-tar xvzf urlblacklist.tar.gz ; res=\$?
-rm -f urlblacklist.tar.gz
-if [ "\$res" = 0 ]; then
- rm -fr /etc/blacklists/urlblacklist/ok
- mv /etc/blacklists/urlblacklist/tmp /etc/blacklists/urlblacklist/ok
-else
- rm -fr /etc/blacklists/urlblacklist/tmp 
-fi
-
-mkdir -p /etc/blacklists/mesdk12/tmp
-cd /etc/blacklists/mesdk12/tmp
-wget http://squidguard.mesd.k12.or.us/blacklists.tgz
-tar xvzf blacklists.tgz ; res=\$?
-rm -f blacklists.tgz
-if [ "\$res" = 0 ]; then
- rm -fr /etc/blacklists/mesdk12/ok
- mv /etc/blacklists/mesdk12/tmp /etc/blacklists/mesdk12/ok
-else
- rm -fr /etc/blacklists/mesdk12/tmp 
-fi
-
-mkdir -p /etc/blacklists/capitole/tmp
-cd /etc/blacklists/capitole/tmp
-wget ftp://ftp.ut-capitole.fr/pub/reseau/cache/squidguard_contrib/publicite.tar.gz
-tar xvzf publicite.tar.gz ; res=\$?
-rm -f publicite.tar.gz
-if [ "\$res" = 0 ]; then
- rm -fr /etc/blacklists/capitole/ok
- mv /etc/blacklists/capitole/tmp /etc/blacklists/capitole/ok
-else
- rm -fr /etc/blacklists/capitole/tmp 
-fi
-
-
-# chown proxy:proxy -R /etc/blacklists/*
-
-EOF
-
-chmod +x /etc/blacklists/update-blacklists.sh
-/etc/blacklists/update-blacklists.sh
-
-cat << EOF > /etc/blacklists/blacklists-iptables.sh
-#ipset implementation for nat
-for i in \$(grep -iv [A-Z] /etc/blacklists/shallalist/ok/BL/adv/domains)
+cat /etc/unbound/block_domain.list.conf | awk -F '"' '{print $2}' | awk '{print $1}' > ads_domains
+for i in `cat ads_domains`
 do
-  iptables -t nat -I PREROUTING -i br1 -s 10.0.0.0/16 -p tcp -d \$i -j DNAT --to-destination 5.5.5.5
+	iptables -t nat -I PREROUTING -p tcp -s 10.0.0.0/24 -d $i -j DNAT --to-destination 10.0.0.1
 done
-EOF
 
-chmod +x /etc/blacklists/blacklists-iptables.sh
 }
 
 
@@ -1986,7 +1993,7 @@ configure_squidclamav()
 echo "Configuring squidclamav ..."
 echo "
 maxsize 5000000
-redirect http://localhost/virus_warning_page
+redirect http://librerouter.librenet/virus_warning_page.html
 clamd_local /var/run/clamav/clamd.ctl
 #clamd_ip 10.0.0.1,127.0.0.1
 #clamd_port 3310
