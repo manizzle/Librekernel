@@ -1,0 +1,152 @@
+-----------LibreRouter Testing Instructions-----------#
+
+[0. Preparation]
+
+0.1 Run app-installation-script.sh. 
+if 0.1 successed
+0.2 Run app-configuration-script.sh
+of 0.2 successed
+0.3 Accept reboot at the end of configuration script or do restart
+manully.
+
+[1. Testing http]
+
+This step is for http testing.
+Just open any http web page to see if http works.
+
+for example http://ebay.com
+
+
+[2. Testing https(NON HSTS)]
+
+This spet is for https testing for non HSTS web pages.
+Please open any https (NON HSTS) web page to see if https works.
+
+for example https://way.com/
+
+
+[3. Testing https(HSTS)]
+
+This step is for https testing for HSTS web pages.
+Please open any https (HSTS) web page to see if https works.
+
+for example https://owncloud.org/
+
+
+[4. Testing antivirus]
+
+This step is for testing if virus detection works.
+Please go to http://www.eicar.org/85-0-Download.html
+and try to download virus test files (with http and SSL). 
+
+Direct links for downloading.
+http://www.eicar.org/download/eicar.com
+https://secure.eicar.org/eicar.com
+
+If virus detection works, you should be redirected to virus warning page.
+
+
+[5. Testing content filtering]
+
+This step is for testing if web page's content filtering works.
+Please open any porn web page to see if it works.
+
+For example http://www.xxx.com/
+
+If content filtering works, you should be redirected to ecapguardian warning page.
+
+
+[6. Testing Services]
+
+This step is for testing if local services works.
+Local services should be tested for
+6.1 Direct access
+6.2 Redirection from related domains(i.e. google.com -> yacy.librenet)
+6.3 Access from tor network (Please see point 7)
+6.4 Access from i2p network (Please see point 8)
+
+6.1 Direct access testing
+Please go to this web pages 
+yacy.librenet
+owncloud.librenet
+mailpile.librenet
+friendica.librenet
+easyrtc.librenet
+webmin.librenet
+
+6.2 Redirection testing
+(Please note that you need to disable HSTS checking in your browser 
+or use browser with disabled HSTS, for example seamonkey)
+
+Here is how it should work  
+google.com -> redirected to -> yacy.librenet
+dropbox.com -> redirected to -> owncloud.librenet
+skype.com -> redirected to -> easyrtc.librenet
+facebook.com -> redirected to -> friendica.librenet
+gmail.com -> redirected to -> mailpile.librenet
+
+
+[7. Testing Tor]
+This step is for testing
+7.1 Tor network access
+7.2 Hor hidden services
+
+7.1 Testing tor network access
+Please open any .onion domain to see if tor network is accessible.
+
+for example http://3g2upl4pq6kufc4m.onion/
+
+7.2 Testing tor hidden services
+Please run "services" command in your terminal(in LibreRouter) to see 
+local services info. Find column "Tor domain" and get .onion urls 
+from output and try to open them.
+(Please Note that you need to do this testing (7.2) from other computer 
+connected to tor network. (not your LibreRouter or any client machine 
+connected to LibreRouter))
+
+[8. Testing i2p]
+
+This step is for testing
+8.1 i2p network access
+8.2 i2p hidden services
+
+8.1 Testing i2p network access
+Please open any .i2p domain to see if tor network is accessible.
+
+for example http://stats.i2p/
+
+8.2 Testing i2p hidden services
+Please run "services" command in your terminal(in LibreRouter) to see 
+local services info. Find column "i2p domain" and get .i2p urls 
+from output and try to open them.
+(Please Note that you need to do this testing (8.2) from other computer 
+connected to i2p network. (not your LibreRouter or any client machine 
+connected to LibreRouter))
+
+
+[9. Tecting banks access]
+
+This step is for testing backs web pages access. 
+Please open bank web page to see if its accessible directly
+
+for example https://www.caixabank.com/
+
+
+[10. Testing ads blocking]
+
+This step is for testing advertisement blocking
+Please open any web page with advertisements to see if ads have been 
+blocked.
+
+For example:
+http://thestir.cafemom.com/entertainment/158359/glee_changes_already_under_way?utm_medium=sem2&utm_campaign=prism&utm_source=outbrain&utm_content=0
+http://searchengineland.com/too-many-ads-above-the-fold-now-penalized-by-googles-page-layout-algo-108613
+http://www.theonion.com/blogpost/please-click-on-our-websites-banner-ads-30513
+http://ads-blocker.com/testing/
+
+Tips:
+Open web page without LibreRouter connected to see ads banners
+Then Connect LibreRouter and open the same page.
+Try to Find ads banners in same place. If no banners then ads
+blocking works.
+
