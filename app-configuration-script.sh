@@ -1532,6 +1532,7 @@ cat << EOF > /var/www/owncloud/config/config.php
   ),
 );
 EOF
+chmod -R a+rw /var/www/owncloud/config/
 }
 
 
@@ -3715,6 +3716,31 @@ EOF
 
 
 # ---------------------------------------------------------
+# Function to redirect yacy and prosody traffic to tor
+# ---------------------------------------------------------
+services_to_tor()
+{
+# Define a control group for the net_cls controller
+mkdir /sys/fs/cgroup/net_cls/new_route
+#cd /sys/fs/cgroup/net_cls/new_route
+echo 0x00110011 > /sys/fs/cgroup/net_cls/new_route/net_cls.classid
+
+# Use iptables to fwmark packets
+iptables -t mangle -A OUTPUT -m cgroup --cgroup 0x00110011 -j MARK --set-mark 1
+
+# Declare an additional routing table for policy routing
+echo 11 new_route >> /etc/iproute2/rt_tables 
+ip rule add fwmark 11 table new_route
+ip route add default via 10.0.10.58 table new_route
+
+# Find PID of Yacy 
+YACY_PID=ps aux | grep yacy | grep /usr/bin/java | awk '{print $2}'
+#cd /sys/fs/cgroup/net_cls/new_route
+echo $YACY_PID > /sys/fs/cgroup/net_cls/new_route/tasks
+}
+
+
+# ---------------------------------------------------------
 # Function to add warning pages for clamav and squidguard
 # ---------------------------------------------------------
 add_warning_pages()
@@ -3945,6 +3971,7 @@ check_services			# Checking services
 #configure_kibana		# Configure Kibana service
 #configure_snortbarn		# Configure Snort and Barnyard services
 #configure_snorby		# Configure Snorby
+#services_to_tor                # Redirect yacy and prosody traffic to tor
 add_warning_pages		# Added warning pages for clamav and squidguard
 print_services			# Print info about service accessibility
 do_reboot                       # Function to reboot librerouter
