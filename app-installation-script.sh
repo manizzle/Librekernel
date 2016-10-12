@@ -1234,7 +1234,9 @@ install_squidguard_bl()
         sed -n '57,2418p' < serverlist.php > /usr/local/squidGuard/db/blacklists/ads/domains
         # urlblacklist blacklists
         cat blacklistdomains/blacklists/ads/domains >> /usr/local/squidGuard/db/blacklists/ads/domains 
-
+	# Shalalist domains
+        cat BL/adv/domains >> /usr/local/squidGuard/db/blacklists/ads/domains
+        cat BL/adv/urls >> /usr/local/squidGuard/db/blacklists/ads/urls
 	# Cleanup
         rm -rf /usr/local/squidGuard/db/blacklists.tar
 #	rm -rf squidguard-adblock
