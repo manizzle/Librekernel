@@ -1356,22 +1356,32 @@ install_ecapguardian()
 # ----------------------------------------------
 install_suricata()
 {
-	echo "Installing suricata ..."
+        echo "Installing suricata ..."
 
-	apt-get install -y -t jessie-backports suricata
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to install suricata"
-		exit 3
-	fi
+        # Installing dependencies
+        apt-get install -y --force-yes ethtool oinkmaster
 
-	echo "Downloading rules ..."
-	echo "url = https://rules.emergingthreats.net/open/suricata-3.1/emerging.rules.tar.gz" \
-		>> /etc/oinkmaster.conf
-	oinkmaster -C /etc/oinkmaster.conf -o /etc/suricata/rules
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to install suricata rules"
-		exit 3
-	fi
+        apt-get install -y -t jessie-backports ethtool suricata
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install suricata. Exiting ..."
+                exit 3
+        fi
+
+        echo "Downloading rules ..."
+
+        # Creating oinkmaster configuration
+        echo "
+skipfile local.rules
+skipfile deleted.rules
+skipfile snort.conf 
+        " > /etc/oinkmaster.conf
+        echo "url = https://rules.emergingthreats.net/open/suricata-3.1/emerging.rules.tar.gz" \
+        >> /etc/oinkmaster.conf 
+        oinkmaster -C /etc/oinkmaster.conf -o /etc/suricata/rules
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install suricata rules. Exiting ..."
+                exit 3
+        fi
 }
 
 
