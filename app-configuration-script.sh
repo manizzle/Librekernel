@@ -3412,6 +3412,10 @@ configure_suricata()
 {
 	echo "Configuring Suricata ..."
 
+        #prepare network interface to work with suricata
+        echo "peparing the network interfaces ..."
+        ethtool -K $INT_INTERFACE rx off tso off gso off sg off gro off lro off
+
 	# Suricata configuration
 	sed -i -e '/#HOME_NET:/d' /etc/suricata/suricata.yaml
 	sed -i -e 's@HOME_NET:.*$@HOME_NET: "[10.0.0.0/24]"@g' /etc/suricata/suricata.yaml
