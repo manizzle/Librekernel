@@ -15,12 +15,6 @@ Then the Banks traffic wont be bumped for security reasons.
 
 The result will update later.. need to combine in one file and random check to the website.
 
----------------- Sept 28, 2016 ----------------
--
--
--
--
----------------- Sept 26, 2016 ----------------
 1. But before that, I need to find the The banks name over the world, how do I find the banks name?
 https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)
 https://www.robtex.com/?q=bank
@@ -41,22 +35,12 @@ just advice to avoid duplicate work.. but it's depend team decision and the owne
 
 1e. Afterwards, focus on subdomain (script, will find)
 
----------------- Sept 26, 2016 ----------------
 
-----------------Other notes----------------
 I've try to find the bank names with GoogleScraper python script, it will found the bank names through google, despite it found
 the bank names, it also put the url where on the pages have the "bank text" on it.
 
 But after quite times, it will get an error.. also the output is not good, i've try to export the output to txt, but isn't work
 and still export to it's own extention (.db) database.
-
-I've been trying alot of times with this tool, still difficult to understand..
-----------------Other notes----------------
-
--
--
--
--
 
 
 2. Then, google the name of the bank 
