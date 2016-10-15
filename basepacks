@@ -1,24 +1,24 @@
-apt-transport-https 
-bridge-utils
-ntp
-lighttpd
-acpi
-acpid
-acpi-support-base
-acpitool
-adduser
-and
-apt
-at
-attr
-aufs-tools
-base-files
-base-passwd
-bash
-bash-completion
-bc
-beep
-bidiv
+apt-transport-https   # Required by installation script for apt to contact ssl enabled repos.
+bridge-utils          # Required for creating/configuring bridged connection
+ntp                   # Listed at installation script ( do we need to run a local instance of ntp? )
+lighttpd              # Required to run the Web UI files "GUI.md" - Missing: cgi handler for cgi-bin scripts
+acpi                  # Required (base packages - acpi command to get battery life - not sure if needed for Pipo X8) 
+acpid                 # Required (base packages - acpi deamon for power management events)
+acpi-support-base     # Required (base packages - acpi-base)
+acpitool              # Required (base packages - acpi)
+adduser               # Required (base packages - critical)
+and                   # Not requred - TODO: remove
+apt                   # Required (base packages - critical)
+at                    # Not requred - TODO: remove
+attr                  # Not requred - TODO: remove
+aufs-tools            # Required (base packages - live systems require AUFS enabled kernel with aufs-tools)
+base-files            # Required (base packages - critical)
+base-passwd           # Required (base packages - critical)
+bash                  # Required (base packages - critical)
+bash-completion       # Good to have
+bc                    # Required by installer env. and many other scripts
+beep                  # Not requred - TODO: remove
+bidiv                 # Not requred - TODO: remove
 binfmt-support
 binutils
 bsdmainutils
