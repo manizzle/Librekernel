@@ -1,0 +1,83 @@
+Draft 1
+
+Big Picture Of Things
+Liberrouter router is a router except that it’s a router bigger in physical size and capable of running an entire operating system (Ubuntu like flavors such as Debian).
+
+Why did we need to make this specialized router and run an operating system on it?
+The routers made usually have certain hardware designs that make it possible for people to hack them and listen to the traffic flowing
+through it they are using a specialized hardware under FOSH which does not have any of these shady designs. The operatings systems we
+usually run (like normal linux flavors of Debain, Ubuntu and Windows in general) have certain installed programs which can not be 
+analyzed by a forensic expert for determining their function. These programs could act as softwares noting down our activity on the
+system and send them to third parties such as advertising agencies, big data collectors, governments and hackers.
+
+The linux version (Librerouter) that they run on their specialized router is free of all these shady softwares. In addition, it comes 
+with its own application suite of social networking applications, cloud storage applications, video chat applications and email applications. 
+These applications are built in a way (decentralized) such that it becomes very difficult for third parties to sniff data out of them 
+something that is not the case with our usual equivalents such as Facebook, Google Cloud storage, Gmail, etc.
+
+So if we are interested in protecting our privacy, we would connect to this router so that all our traffic to-and-fro the Internet goes
+through this router it would ensure that any sniffing/shady softwares running on our network do not get through to the internet. It 
+would also anonymize us so that no one on the internet knows that where the traffic is coming and what exactly is the content of the
+traffic.
+
+
+Question Based On GUI.md
+
+Q1. In diagram 1
+
+  a. what does drill in "click & drill" mean?
+    
+    i. Is it relevant for me to know what OPTION A and "more suboptions" are in Fig.1.
+
+  b. Should I also know at the moment what the slider on/off button actually switches on/off?
+
+  c. What window follows this first window?
+
+Q2. Could you confirm if most of the configurations required by the GUIs are located in the file app-configuration-script.sh?
+
+Q3. I understand that the firewall GUI would have to change different options or  a combination of options to set up a given configuration. 
+For instance, consider the following scenario:
+Enable WAN over cable. On this connection, have an anonymous decentralized email and a webmail, an email server, Zeronet ETL , XMPP and
+advance monitoring (preferably only DPI). In this case, would you provide me with a matrix of configurations through which I can 
+programmatically work out the overall configuration combinations for a required scenario?
+Another thing is that certain configurations can not be enabled/disabled in isolation. For instance, If we need to run Advance Monitoring
+in the above example, we would have to enable DPI and possibly a few other IDS. So when the user selects Advance Monitoring, should we
+automatically enable/disable all the dependent configurations and notify the user?
+
+Q4. Can you exactly specify the configurations needed for the different options in WAN and Wireless WAN settings?
+
+Q5. In the Apps Wizard, certain options span multiple individual options, e.g. Advanced Security, Advanced Monitoring. Can these be 
+configured individually or would they have to configured as a collective?
+
+Q6. Where do we go from Categories Firewall Wizard window? Do you know the subsequent configurations that follow given a specific
+category selection?
+
+Q7. What do the different boxes on the "Main Menu after Wizard" window represent? Are they buttons? If so, what does each button do?
+It is not clear what labels such as "Are  you sure?" refer to. Could you clarify?
+
+Q8. For the window titled "After Wizard Privacy Firewall"
+  
+  a. Are the different boxes representing input buttons or status boxes?
+  b. Say I want to enable JS and Adobe. How do I achieve this? I can’t find any relevant scripts in app-configuration-script.sh.
+  
+Q9. Where does app-configuration-script.sh reside? On librerouter? If so, where do TOR etc reside? Traffic seems to be routed to them
+via iptables and they seem to have local IPs. The impression one gets is that they are running on some other local machine connected
+over the LAN. Is this true?
+
+Q10. Are IPs in the range 10.0.0.0/24 and 192.0.0.0/8 taken to be internal (LAN)?
+
+Q11. For this project, would I need to setup librerouter/librekernel locally on my setup?
+
+Q12. app-installation-script.sh carries out a bunch of different installations. Who is supposed to run these installations? 
+At the time the Firewall GUI starts, should I assume these installations to have taken place, or should the GUI check for relevant 
+modules and return in case of failure?
+
+Q13. Are the GUI windows given GUI.md the only GUI interfaces that the firewall is to have?
+If not, could you specify all the windows to be included in the firewall GUI along with their order of occurrence, or possibly a FLOW CHART
+covering all different possible scenarios.
+
+
+
+
+
+
