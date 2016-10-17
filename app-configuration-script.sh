@@ -547,6 +547,9 @@ ntpdate -s ntp.ubuntu.com
 # Start nginx
 /etc/init.d/nginx start
 
+# Start suricata
+suricata -D -c /etc/suricata/suricata.yaml -i lo
+
 exit 0
 EOF
 
@@ -2248,6 +2251,11 @@ EOF
 configure_nginx() 
 {
 echo "Configuring Nginx ..."
+
+# Stop and change apache configuration
+/etc/init.d/apache2 stop
+sed -i s/*:80/*:88/g  /etc/apache2/sites-enabled/000-default.conf
+
 mkdir -p /etc/ssl/nginx/
 mkdir -p /etc/nginx/sites-enabled/
 
@@ -3414,14 +3422,15 @@ configure_suricata()
 
         #prepare network interface to work with suricata
         echo "peparing the network interfaces ..."
-        ethtool -K $INT_INTERFACE rx off tso off gso off sg off gro off lro off
+        ethtool -K lo rx off tso off gso off sg off gro off lro off
+	ifconfig lo mtu 1400
 
 	# Suricata configuration
 	sed -i -e '/#HOME_NET:/d' /etc/suricata/suricata.yaml
 	sed -i -e 's@HOME_NET:.*$@HOME_NET: "[10.0.0.0/24]"@g' /etc/suricata/suricata.yaml
 	sed -i -e 's@  windows: \[.*\]@  windows: []@g' /etc/suricata/suricata.yaml
 	sed -i -e 's@  linux: \[.*\]@  linux: [0.0.0.0]@g' /etc/suricata/suricata.yaml
-	sed -i -e "s@  - interface: eth0@  - interface: $INT_INTERFACE@g" /etc/suricata/suricata.yaml
+	sed -i -e "s@  - interface: eth0@  - interface: lo@g" /etc/suricata/suricata.yaml
 
 	# Suricata logs
 	touch /var/log/suricata/eve.json
@@ -3447,7 +3456,7 @@ SURCONF=/etc/suricata/suricata.yaml
 LISTENMODE=af-packet
 
 # Interface to listen on (for pcap mode)
-IFACE=$INT_INTERFACE
+IFACE=lo
 
 # Queue number to listen on (for nfqueue mode)
 NFQUEUE=0
@@ -3457,7 +3466,29 @@ PIDFILE=/var/run/suricata.pid
 EOF
 	echo "Restarting suricata ..."
 	update-rc.d suricata defaults
-	service suricata restart
+	service suricata stop
+
+	# Starting suricata in loopback 
+        kill -9 `cat /var/run/suricata.pid`
+        rm -rf /var/run/suricata.pid
+	suricata -D -c /etc/suricata/suricata.yaml -i lo 
+
+	# checking for ethernet card configuration
+	sleep 20
+	if grep "ethtool" /var/log/suricata/suricata.log; then 
+
+		# Getting ethtools parameters
+		PARAMS=`cat /var/log/suricata/suricata.log \
+		| grep ethtool  | awk -F 'ethtool' '{print $2}'`
+
+		# Configuring ethernet card
+		ethtool $PARAMS
+
+		# kill suricata process and run it again
+		kill -9 `cat /var/run/suricata.pid`
+                rm -rf /var/run/suricata.pid
+		suricata -D -c /etc/suricata/suricata.yaml -i lo
+	fi
 }
 
 
