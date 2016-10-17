@@ -1931,6 +1931,28 @@ install_glype()
 }
 
 
+# ---------------------------------------------------------
+# Function to install gitlab package
+# ---------------------------------------------------------
+install_gitlab()
+{
+	echo "Installing gitlab ..."
+
+	# Install and configure the necessary dependencies
+	apt-get install -y --force-yes curl openssh-server ca-certificates postfix
+
+	# Add the GitLab package server
+	curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+
+	# Install the package
+        apt-get install -y --force-yes gitlab-ce	
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install gitlab. Exiting ..."
+                exit 3
+        fi 	
+}
+
+
 # ----------------------------------------------
 # This function saves variables in file, so
 # parametization script can read and use these 
@@ -2031,7 +2053,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_squidguardmgr	# Install Squidguardmgr (Manager Gui) 
 	install_ecapguardian	# Inatall ecapguardian package
 #	install_e2guardian	# Inatall e2guardian package
-##	install_suricata	# Install Suricata package
+	install_suricata	# Install Suricata package
 #	install_scirius		# Install Scirius package
 ##	install_snort		# Install Snort package
 #	install_barnyard	# Install Barnyard package
@@ -2045,6 +2067,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 ##	install_selks		# Install SELKS GUI
 ##	install_snorby		# Install Snorby package
 #	install_glype		# Install glype proxy
+	install_gitlab		# Install gitlab packae
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
