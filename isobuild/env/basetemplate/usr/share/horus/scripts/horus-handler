@@ -1,0 +1,484 @@
+#! /bin/bash
+
+function chkRoot()
+{
+	[[ -n "$1" ]] && return 255
+	testroot="`whoami`"
+	if [ "$testroot" != "root" ]
+	then
+		return 1
+	fi
+}
+
+function setParmFile()
+{
+	[[ -n "$2" ]] && return 255
+
+	if [[ -z "$1" ]]
+	then
+		PARMFILE="/var/cache/horus/backend.parm"
+	else
+		PARMFILE="$1"
+	fi
+
+	if [[ ! -s "$PARMFILE" ]] || [[ ! -f "$PARMFILE" ]]
+	then
+		PARMFILE=""
+		return 2
+	fi
+}
+
+function chkPid()
+{
+	[[ -n "$1" ]] && return 255
+	pid=`head -n1 /var/run/horus.pid 2> /dev/null | cut -f1 -d ' '`
+	if [[ ! -z $pid ]]
+	then
+		return 3
+	fi
+}
+
+function getAvTZ()
+{
+	[[ -n "$1" ]] && return 255
+	TZLIST=`cat /usr/share/zoneinfo/zone.tab | awk '{print $3}' | grep '/' | sort`
+}
+
+function getParms()
+{
+	[[ -n "$1" ]] && return 255
+
+	if [[ ! -s "$PARMFILE" ]] || [[ ! -f "$PARMFILE" ]] || [[ -z "$PARMFILE" ]]
+	then
+		PARMFILE=""
+		return 2
+	fi
+
+	parmcont=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d'`
+
+	vars=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -E "[-,a-z,A-Z,_,0-9]*( )*=( )*" | awk -F '=' '{print $1}' | sort | uniq | tr '\n' ' '`
+	varsused=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "[$][-,a-z,A-Z,_,0-9]*" | tr -d '$' | sort | uniq | tr '\n' ' '`
+
+	OLDIFS="$IFS"
+	IFS=$(echo -en " ")
+
+	for i in $vars
+	do
+		val=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -E "^$i*( )*=( )*" | awk -F '=' '{print $2}' | tr '\n' ' ' | tr -d '"' | tr -d "'"`
+		parmcont=`echo "$parmcont" | sed -e 's,$'$i','"$val"',g'`
+	done
+
+	parmcont=`echo "$parmcont" | sed '/=/d'`
+
+	if [[ "$vars" != "$varsused" ]]
+	then
+		for i in $varsused
+		do
+			if [[ -z `echo $vars | grep -wEo "($i)"` ]]
+			then
+				echo "[WARN]: Variable '$i' in '$PARMFILE' was not set, will ignore it."
+				parmcont=`echo "$parmcont" | sed -e 's,$'"$i"',,g'`
+			fi
+		done
+
+		for i in $vars
+		do
+			if [[ -z `echo $varsused | grep -wEo "($i)"` ]]
+			then
+				echo "[WARN]: Variable '$i' has been set but has never been used anywhere in '$PARMFILE'."
+			fi
+		done
+	fi
+
+	IFS="$OLDIFS"
+
+	OLDIFS="$IFS"
+	IFS=$(echo -en ";")
+
+	for i in $parmcont
+	do
+		parm=`echo $i | awk -F ":" '{print $1}' | tr -d '\n' | sed -e 's/ $//g'`
+		value=`echo $i | awk -F ":" '{print $2}' | tr -d '\n' | sed -e 's/ $//g'`
+
+		case $parm in
+		"rootpart")
+			TARGETPART="$value"
+			FSTYPE="ext4"
+			;;
+		"swappart")
+			SWAP="$value"
+			;;
+		"homepart")
+			HOMEPART="$value"
+			;;
+		"homefsformat")
+			HFSTYPE="$value"
+			;;
+		"uname")
+			TARGETUSER="$value"
+			;;
+		"ufullname")
+			TARGETUSERFULLNAME="$value"
+			;;
+		"hostname")
+			TARGETHOSTNAME="$value"
+			;;
+		"upass")
+			TARGETPASS="$value"
+			;;
+		"rpass")
+			TARGETROOTPASS="$value"
+			;;
+		"grubloc")
+			GRUBLOC="$value"
+			;;
+		"timezone")
+			ZONESINFO="$value"
+			;;
+		"removepacks")
+			RMPACKSLIST="$value"
+			;;
+		"installpacks")
+			INSTPACKSLIST=`echo "$value" | sed -e 's/[+,_][-,_,0-9,a-z,A-Z]*//g'`
+			;;
+		*)
+			return 4
+			;;
+		esac
+	done
+
+	IFS="$OLDIFS"
+	RETCONT="$parmcont"
+	return 0
+}
+
+function setRTPart()
+{
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	NEWTARGETPART="$1"
+	if [[ -z $NEWTARGETPART ]] || [[ ! -b $NEWTARGETPART ]] || [[ -z `echo $NEWTARGETPART | grep "[0-9]$"` ]]
+	then
+		return 5
+	else
+		chkPartSize $NEWTARGETPART || return $?
+		getParms
+		sed -i -e 's,rootpart:[[:graph:], ]*;,rootpart:'"$NEWTARGETPART"';,g' "$PARMFILE"
+	fi
+}
+
+function chkPartSize()
+{
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	part="$1"
+	disk=`echo $part | tr -d "[[:digit:]]"`
+	partnum=`echo $part | grep -o "[[:digit:]]" | tr -d '\n'`
+	partSize=`parted -s $disk unit MB print | grep -E "^( )*$partnum " | awk '{print $4}' | tr -d ' ' | tr -d 'MB'`
+	rfsSize=`cat /var/cache/horus/horus.conf | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "reqspace( )*:( )*[0-9]*( )*;" | awk -F ':' '{print $2}' | tr -d ';' | tr -d ' ' | tr -d '\n'` || return 6
+
+	if [[ "$partSize" -le "$rfsSize" ]]
+	then
+		return 6
+	fi
+}
+
+function setSwap()
+{
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	NEWSWAP="$1"
+	if [[ -z $NEWSWAP ]] || [[ ! -b $NEWSWAP ]] || [[ -z `echo $NEWSWAP | grep "[0-9]$"` ]]
+	then
+		return 7
+	else
+		getParms || return $?
+		sed -i -e 's,swappart:[[:graph:], ]*;,swappart:'"$NEWSWAP"';,g' "$PARMFILE"
+	fi
+}
+
+function setHome()
+{
+	[[ -n "$3" ]] && return 255
+
+	NEWHOME="$1"
+	NEWHFSTYPE="$2"
+	if [[ -z $NEWHOME ]] || [[ "$NEWHOME" == "root" ]] || [[ -z `echo $NEWHOME | grep "[0-9]$"` ]]
+	then
+		NEWHOME="root"
+		NEWHFSTYPE="noformat"
+	else
+		if [[ ! -b $NEWHOME ]] && [[ "$NEWHOME" != "root" ]]
+		then
+			return 8
+		else
+			if [[ -z $NEWHFSTYPE ]]
+			then
+				NEWHFSTYPE="noformat"
+			else
+				if [[ "$NEWHFSTYPE" != "ext4" ]] && [[ "$NEWHFSTYPE" != "ext3" ]] && [[ "$NEWHFSTYPE" != "ext2" ]] && [[ "$NEWHFSTYPE" != "noformat" ]]
+				then
+					return 9
+				fi
+			fi
+		fi
+		getParms || return $?
+		sed -i -e 's,homepart:[[:graph:], ]*;,homepart:'"$NEWHOME"';,g' "$PARMFILE"
+		sed -i -e 's,homefsformat:[[:graph:], ]*;,homefsformat:'"$NEWHFSTYPE"';,g' "$PARMFILE"
+	fi
+}
+
+function setUser()
+{
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	NEWTUSER="$1"
+	if [[ -z $NEWTUSER ]]
+	then
+		return 10
+	fi
+
+	if [ -n "$(echo "$NEWTUSER" | tr -d '[A-Za-z0-9-_]/')" ]
+	then
+		return 11
+	fi
+
+	for i in `cat /etc/passwd | awk -F ':' '{print $1}'`
+	do
+		if [[ "$NEWTUSER" == "$i" ]]
+		then
+			return 12
+		fi
+	done
+
+	getParms || return $?
+	sed -i -e 's,uname:[[:graph:], ]*;,uname:'"$NEWTUSER"';,g' "$PARMFILE"
+}
+
+function setUFName()
+{
+	[[ -n "$2" ]] && return 255
+
+	NEWUFNAME="$1"
+	if [[ -z $NEWUFNAME ]]
+	then
+		NEWUFNAME=$NEWTUSER
+	else
+		if [ -n "$(echo "$NEWUFNAME" | tr -d '[A-Za-z0-9-_ ,.]/')" ]
+		then
+			return 13
+		else
+			getParms || return $?
+			sed -i -e 's,ufullname:[[:graph:], ]*;,ufullname:'"$NEWUFNAME"';,g' "$PARMFILE"
+		fi
+	fi
+}
+
+function setHostname()
+{
+	[[ -n "$2" ]] && return 255
+
+	NEWHSTNM="$1"
+	if [[ -z $NEWHSTNM ]]
+	then
+		NEWHSTNM=$NEWTUSER-"PC"
+	else
+		if [ -n "$(echo "$NEWHSTNM" | tr -d '[A-Za-z0-9-_.]/')" ]
+		then
+			return 14
+		else
+			getParms || return $?
+			sed -i -e 's,hostname:[[:graph:], ]*;,hostname:'"$NEWHSTNM"';,g' "$PARMFILE"
+		fi
+	fi
+}
+
+function setUPass()
+{
+	[[ -z "$2" ]] && return 255
+	[[ -n "$3" ]] && return 255
+
+	NEWUPASS="$1"
+	CNFRMUPASS="$2"
+	if [[ -z $NEWUPASS ]]
+	then
+		return 15
+	elif [[ "$NEWUPASS" != "$CNFRMUPASS" ]]
+	then
+		return 16
+	else
+		if [ -n "$(echo "$NEWUPASS" | tr -d '[[:graph:]]')" ]
+		then
+			return 17
+		else
+			getParms || return $?
+			sed -i -e 's,upass:[[:graph:], ]*;,upass:'"$NEWUPASS"';,g' "$PARMFILE"
+		fi
+	fi
+}
+
+function setRootPass()
+{
+	[[ -z "$2" ]] && return 255
+	[[ -n "$3" ]] && return 255
+
+	NEWRTPASS="$1"
+	CNFRMRTPASS="$2"
+	if [[ -z $NEWRTPASS ]]
+	then
+		return 18
+	elif [[ "$NEWRTPASS" != "$CNFRMRTPASS" ]]
+	then
+		return 19
+	else
+		if [ -n "$(echo "$NEWRTPASS" | tr -d '[[:graph:]]')" ]
+		then
+			return 20
+		else
+			getParms || return $?
+			sed -i -e 's,rpass:[[:graph:], ]*;,rpass:'"$NEWRTPASS"';,g' "$PARMFILE"
+		fi
+	fi
+}
+
+function setGrubLoc()
+{
+	[[ -n "$2" ]] && return 255
+
+	NEWGRUBLOC="$1"
+	if [[ -z $NEWGRUBLOC ]]
+	then
+		NEWGRUBLOC="MBR"
+	else
+		if [[ $NEWGRUBLOC != "MBR" ]] && [[ $NEWGRUBLOC != "root" ]]
+		then
+			return 21
+		else
+			getParms || return $?
+			sed -i -e 's,grubloc:[[:graph:], ]*;,grubloc:'"$NEWGRUBLOC"';,g' "$PARMFILE"
+		fi
+	fi
+}
+
+function setTZ()
+{
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	NEWTZ="$1"
+	[[ -z "$TZLIST" ]] && getAvTZ
+	if [ -z "$(echo $TZLIST | grep -wEo "$NEWTZ")" ]
+	then
+		return 22
+	else
+		sed -i -e 's,timezone:[[:graph:], ]*;,timezone:'"$NEWTZ"';,g' "$PARMFILE"
+	fi
+}
+
+function setRemovePacks()
+{
+	[[ -n "$2" ]] && return 255
+
+	NEWRMPACKLST="$1"
+	if [[ -n "$NEWRMPACKLST" ]]
+	then
+		OLDIFS="$IFS"
+		IFS=$(echo -en " ")
+		for i in $NEWRMPACKLST
+		do
+			(dpkg-query -l $i > /dev/null 2>&1) || exitcode="21"
+		done
+		IFS="$OLDIFS"
+		if [[ -n "$exitcode" ]]
+		then
+			exitcode=""
+			return 23
+		else
+			getParms || return $?
+			sed -i -e 's,removepacks:[[:graph:], ]*;,removepacks:'"$NEWRMPACKLST"';,g' "$PARMFILE"
+		fi
+	fi
+}
+
+function setInstallPacks()
+{
+	[[ -n "$2" ]] && return 255
+
+	NEWINPACKLST="$1"
+	if [[ -n "$NEWINPACKLST" ]]
+	then
+		if [[ -z `ls /lib/live/mount/medium/install/packages/*.deb 2> /dev/null` ]] || [[ -z `ls /lib/live/mount/medium/install/packages/Packages.{gz,bz2,bz} 2> /dev/null` ]]
+		then
+			return 24
+		fi
+
+		apt-get update > /dev/null 2>&1
+
+		OLDIFS="$IFS"
+		IFS=$(echo -en " ")
+		for i in $NEWINPACKLST
+		do
+			(apt-cache show `echo $i | tr -d '_' | tr -d '+'` > /dev/null 2>&1) || exitcode="25"
+		done
+		IFS="$OLDIFS"
+		if [[ -n "$exitcode" ]]
+		then
+			exitcode=""
+			return 25
+		else
+			getParms || return $?
+			sed -i -e 's,installpacks:[[:graph:], ]*;,installpacks:'"$NEWINPACKLST"';,g' "$PARMFILE"
+		fi
+	fi
+}
+
+function chkPower()
+{
+	[[ -n "$1" ]] && return 255
+
+	if [[ -z `acpi 2> /dev/null | grep Discharging` ]]
+	then
+		return 0
+	else
+		return 26
+	fi
+}
+
+function ejectCD()
+{
+	[[ -n "$1" ]] && return 255
+
+	dev=`df | grep /lib/live/mount/medium | awk '{ print $1 }'`
+	live-toram > /dev/null 2>&1
+	eject $dev > /dev/null 2>&1
+}
+
+function setReboot()
+{
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	case "$1" in
+	"1")
+		touch /tmp/horus-will-reboot 2> /dev/null
+		;;
+	"0")
+		rm -f /tmp/horus-will-reboot 2> /dev/null
+		;;
+	*)
+		return 255
+		;;
+	esac
+}
+
+function chkComplete()
+{
+	[[ -n "$1" ]] && return 255
+	exitcode=`head -n1 /var/run/horus.status 2> /dev/null | cut -f1 -d ' '`
+	[[ -n "$exitcode" ]] && return exitcode
+	return 0
+}

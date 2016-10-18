@@ -1,0 +1,237 @@
+#!/bin/bash
+
+cd /tmp
+rm -rf /home/build 2> /dev/null
+rm /etc/blkid.tab.old 2> /dev/null
+rm /root/* 2> /dev/null
+rm /root/.* 2> /dev/null
+updatedb
+. /etc/remastersys/remastersys.version
+. /etc/remastersys.conf
+
+if [ "$LIVEUSER" = "" ]
+then
+	LIVEUSER="live"
+fi
+
+LIVEUSER="`echo $LIVEUSER | awk '{print tolower ($0)}'`"
+SHOWICON="`echo $SHOWICON | awk '{print tolower ($0)}'`"
+
+if [ "$WORKDIR" = "" ]
+then
+	WORKDIR="/home/remastersys/remastersys"
+	BASEWORKDIR="/home/remastersys"
+else
+	BASEWORKDIR="$WORKDIR"
+	WORKDIR="$WORKDIR/remastersys"
+fi
+
+if [ "$LIVECDLABEL" = "" ]
+then
+	LIVECDLABEL="StdBaseFS"
+fi
+
+if [ "$ISOBOOT" != "GRUB" ]
+then
+	ISOBOOT="ISOLINUX"
+fi
+
+
+function cdfs ()
+{
+	if [ -d "$WORKDIR" ]
+	then
+		rm -rf $WORKDIR/dummysys/var/*
+		rm -rf $WORKDIR/dummysys/etc/*
+	else
+		mkdir -p $WORKDIR/ISOTMP/live
+		mkdir -p $WORKDIR/ISOTMP/install
+		cp -rf /etc/remastersys/install/* $WORKDIR/ISOTMP/install/
+		mkdir -p $WORKDIR/dummysys/dev
+		mkdir -p $WORKDIR/dummysys/etc/live
+		mkdir -p $WORKDIR/dummysys/proc
+		mkdir -p $WORKDIR/dummysys/tmp
+		mkdir -p $WORKDIR/dummysys/sys
+		mkdir -p $WORKDIR/dummysys/mnt
+		mkdir -p $WORKDIR/dummysys/media
+		mkdir -p $WORKDIR/dummysys/run
+		mkdir -p $WORKDIR/dummysys/var
+		chmod ug+rwx,o+rwt $WORKDIR/dummysys/tmp
+	fi
+
+	if [ "$EXCLUDES" != "" ]
+	then
+		for addvar in $EXCLUDES
+		do
+			VAREXCLUDES="$VAREXCLUDES --exclude='$addvar' "
+		done
+	fi
+
+	rsync --exclude='*.log.*' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' $VAREXCLUDES-a /var/. $WORKDIR/dummysys/var/. 2> /dev/null
+	rsync $VAREXCLUDES-a /etc/. $WORKDIR/dummysys/etc/. 2> /dev/null
+
+	rm -f $WORKDIR/dummysys/etc/X11/xorg.conf
+	rm -f $WORKDIR/dummysys/etc/resolv.conf
+	rm -f $WORKDIR/dummysys/etc/hosts
+	rm -f $WORKDIR/dummysys/etc/hostname
+	rm -rf $WORKDIR/dummysys/etc/remastersys/
+	rm -rf $WORKDIR/dummysys/etc/remastersys.conf
+	rm -rf $WORKDIR/dummysys/sys/*
+	rm -rf $WORKDIR/dummysys/run/*
+	rm -rf $WORKDIR/dummysys/var/run/*
+	rm -rf $WORKDIR/dummysys/tmp/*
+	rm -rf $WORKDIR/dummysys/var/tmp/*
+	rm -rf $WORKDIR/dummysys/proc/*
+	rm -rf $WORKDIR/dummysys/dev/*
+	rm -rf $WORKDIR/dummysys/var/log/*
+	rm -rf $WORKDIR/dummysys/var/cache/debconf/*-old
+	rm -rf $WORKDIR/dummysys/var/lib/apt/lists/*
+	rm -rf $WORKDIR/dummysys/var/lib/dpkg/*-old
+	rm -f $WORKDIR/dummysys/etc/mtab
+	rm -f $WORKDIR/dummysys/etc/fstab
+	rm -f $WORKDIR/dummysys/etc/udev/rules.d/70-persistent*
+	rm -f $WORKDIR/dummysys/etc/group
+	rm -f $WORKDIR/dummysys/etc/group-
+	rm -f $WORKDIR/dummysys/etc/passwd
+	rm -f $WORKDIR/dummysys/etc/passwd-
+	rm -f $WORKDIR/dummysys/etc/shadow
+	rm -f $WORKDIR/dummysys/etc/shadow-
+	rm -f $WORKDIR/dummysys/etc/gshadow
+	rm -f $WORKDIR/dummysys/etc/gshadow-
+	rm -f $WORKDIR/dummysys/etc/wicd/wired-settings.conf
+	rm -f $WORKDIR/dummysys/etc/wicd/wireless-settings.conf
+	rm -rf $WORKDIR/dummysys/etc/NetworkManager/system-connections/*
+	rm -f $WORKDIR/dummysys/etc/printcap
+	rm -f $WORKDIR/dummysys/etc/cups/printers.conf
+	rm -rf $WORKDIR/dummysys/var/cache/gdm/*
+	rm -rf $WORKDIR/dummysys/var/lib/sudo/*
+	rm -rf $WORKDIR/dummysys/var/run/console/*
+	rm -f $WORKDIR/dummysys/var/lib/kdm/kdmsts
+	rm -f $WORKDIR/dummysys/var/lib/AccountsService/users/*
+	rm -f $WORKDIR/dummysys/etc/gdm/gdm.conf-custom
+	rm -f $WORKDIR/dummysys/etc/gdm/custom.conf
+	rm -f $WORKDIR/dummysys/etc/cups/ssl/server.crt
+	rm -f $WORKDIR/dummysys/etc/cups/ssl/server.key
+	rm -f $WORKDIR/dummysys/etc/ssh/ssh_host_rsa_key
+	rm -f $WORKDIR/dummysys/etc/ssh/ssh_host_dsa_key.pub
+	rm -f $WORKDIR/dummysys/etc/ssh/ssh_host_dsa_key
+	rm -f $WORKDIR/dummysys/etc/ssh/ssh_host_rsa_key.pub
+
+	find $WORKDIR/dummysys/var/run $WORKDIR/dummysys/var/log $WORKDIR/dummysys/var/mail $WORKDIR/dummysys/var/spool $WORKDIR/dummysys/var/lock $WORKDIR/dummysys/var/backups $WORKDIR/dummysys/var/tmp -type f -exec rm '{}' \;
+	rm -rf $WORKDIR/dummysys/var/cache/gdm/*
+	rm -rf $WORKDIR/dummysys/var/tmp/kdecache*
+	rm -rf $WORKDIR/dummysys/var/spool/gfax/*
+	rm -rf $WORKDIR/dummysys/var/run/gdm3/*
+	rm -rf $WORKDIR/dummysys/var/lib/sudo/*
+	rm -rf $WORKDIR/dummysys/var/lib/polkit-1/localauthority/10-vendor.d/10-live-cd.pkla
+	rm -rf $WORKDIR/dummysys/var/lib/live/config/*
+
+	grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print "/usr/sbin/userdel -f",$1}'> $WORKDIR/cleantmpusers
+	. $WORKDIR/cleantmpusers
+
+	grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+	grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+	grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+	grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd >> $WORKDIR/dummysys/etc/passwd
+	grep '^[^:]*:[^:]*:[0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+	grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+	grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+	grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group >> $WORKDIR/dummysys/etc/group
+	grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
+	grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
+	grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
+	cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
+
+	cat $WORKDIR/tmpusers | while read LINE
+	do
+		echo $LINE | xargs -i sed -e 's/,{}//g' $WORKDIR/dummysys/etc/group > $WORKDIR/dummysys/etc/group.new1
+		echo $LINE | xargs -i sed -e 's/{},//g' $WORKDIR/dummysys/etc/group.new1 > $WORKDIR/dummysys/etc/group.new2
+		echo $LINE | xargs -i sed -e 's/{}//g' $WORKDIR/dummysys/etc/group.new2 > $WORKDIR/dummysys/etc/group
+		rm -rf $WORKDIR/dummysys/etc/group.new1 $WORKDIR/dummysys/etc/group.new2
+	done
+
+	if [ "$ISOBOOT" = "GRUB" ]
+	then
+		cp /etc/remastersys/isolinux/memtest.bin $WORKDIR/ISOTMP/memtest.bin
+
+		mkdir -p $WORKDIR/ISOTMP/boot/grub
+		mkdir -p $WORKDIR/ISOTMP/usr/share/grub
+		cp -a /boot/grub/* $WORKDIR/ISOTMP/boot/grub/
+		cp -a /usr/share/grub/* $WORKDIR/ISOTMP/usr/share/grub/
+		cp /etc/remastersys/grub/grub.cfg $WORKDIR/ISOTMP/boot/grub/grub.cfg
+		cp /etc/remastersys/grub.png $WORKDIR/ISOTMP/boot/grub/grub.png
+		sed -i -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' $WORKDIR/ISOTMP/boot/grub/grub.cfg
+	else
+		mkdir -p $WORKDIR/ISOTMP/isolinux
+		if [ `ls /etc/remastersys/customisolinux` ]
+		then
+			cp /etc/remastersys/customisolinux/* $WORKDIR/ISOTMP/isolinux/
+		else
+			cp /etc/remastersys/isolinux/* $WORKDIR/ISOTMP/isolinux/
+			sed -i -e 's/__LIVECDLABEL__/'"$LIVECDLABEL"'/g' $WORKDIR/ISOTMP/isolinux/menu.cfg
+		fi
+	fi
+
+	if [ ! -d /etc/live ]
+	then
+		mkdir -p /etc/live
+	fi
+
+	echo "export LIVE_USERNAME=\"$LIVEUSER\"" > /etc/live/config.conf
+	echo "export LIVE_USER_FULLNAME=\"Live session user\"" >> /etc/live/config.conf
+	echo "export LIVE_HOSTNAME=\"$LIVEUSER\"" >> /etc/live/config.conf
+	echo "export LIVE_NOCONFIGS=\"xscreensaver,xfce4-panel,policykit,ssl-cert,update-notifier,anacron,xserver-xorg,openssh-server,gdm3,kdm,lightdm,lxdm,nodm,slim,xinit,gnome-panel-data,gnome-power-manager,gnome-screensaver,kde-services,debian-installer-launcher,login,kaboom\"" >> /etc/live/config.conf
+	cp /etc/live/config.conf $WORKDIR/dummysys/etc/live/
+	update-initramfs -t -c -k all
+	cp /boot/vmlinuz-* $WORKDIR/ISOTMP/live/vmlinuz
+	cp /tmp/initrd.img $WORKDIR/ISOTMP/live/initrd.img
+
+	if [ -f $WORKDIR/ISOTMP/live/filesystem.squashfs ]
+	then
+		rm -f $WORKDIR/ISOTMP/live/filesystem.squashfs
+	fi
+
+	if [ "$SQUASHFSOPTS" = "" ]
+	then
+		SQUASHFSOPTS="-no-recovery -always-use-fragments -b 1M"
+	fi
+
+	REALFOLDERS=""
+
+	for d in `ls -d $WORKDIR/dummysys/*`
+	do
+		REALFOLDERS="$REALFOLDERS $d"
+	done
+
+	for d in `ls / | grep -v etc | grep -v run | grep -v tmp | grep -v sys | grep -v var | grep -v dev | grep -v media | grep -v mnt | grep -v lost+found | grep -v proc | grep -v home`
+	do
+		REALFOLDERS="$REALFOLDERS /$d"
+	done
+#	sed -i 's/\/sbin\/agetty/\/sbin\/agetty --autologin live/g' /etc/systemd/system/getty.target.wants/getty@tty1.service
+#	sed -i 's/\/sbin\/agetty/\/sbin\/agetty --autologin live/g' /lib/systemd/system/getty@.service
+	mksquashfs $REALFOLDERS $WORKDIR/ISOTMP/live/filesystem.squashfs -no-duplicates $SQUASHFSOPTS -e root/.thumbnails root/.cache root/.bash_history root/.lesshst root/.nano_history boot/grub $BASEWORKDIR $EXCLUDES
+	SQUASHFSSIZE=`ls -s $WORKDIR/ISOTMP/live/filesystem.squashfs | awk -F " " '{print $1}'`
+}
+
+function iso ()
+{
+	CREATEISO="`which mkisofs`"
+	if [ "$CREATEISO" = "" ]; then
+		CREATEISO="`which genisoimage`"
+	fi
+
+	if [ "$ISOBOOT" = "GRUB" ]
+	then
+		grub-mkrescue -o $WORKDIR/$CUSTOMISO $WORKDIR/ISOTMP/
+	else
+		$CREATEISO -quiet -r -V "$LIVECDLABEL" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o $WORKDIR/$CUSTOMISO "$WORKDIR/ISOTMP"
+		./isohybrid $WORKDIR/$CUSTOMISO
+	fi
+
+	cd $WORKDIR
+	md5sum $CUSTOMISO > $CUSTOMISO.md5
+	ls -hs $WORKDIR/$CUSTOMISO
+}
+
+cdfs $@
+iso $@

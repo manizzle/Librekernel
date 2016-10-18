@@ -1,0 +1,11 @@
+#! /bin/bash
+
+rm -f /etc/X11/xorg.conf 2>&1
+rm -f /etc/apt/apt.conf.d/99zhorus 2>&1
+rm -f /root/.bashrc > /dev/null 2>&1
+rm -f /root/.xinitrc > /dev/null 2>&1
+rm -f /etc/profile.d/zz-live-config_xinit.sh > /dev/null 2>&1
+
+
+chown -R man:root /var/cache/man 2>&1
+

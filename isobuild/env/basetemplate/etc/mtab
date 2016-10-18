@@ -1,0 +1,10 @@
+rootfs / rootfs rw 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+udev /dev devtmpfs rw,relatime,size=10240k,nr_inodes=217135,mode=755 0 0
+devpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
+tmpfs /run tmpfs rw,nosuid,noexec,relatime,size=203112k,mode=755 0 0
+pstore /sys/fs/pstore pstore rw,relatime 0 0
+fusectl /sys/fs/fuse/connections fusectl rw,relatime 0 0
+none /sys/fs/cgroup tmpfs rw,relatime,size=4k,mode=755 0 0
+binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,noexec,nosuid,nodev 0 0

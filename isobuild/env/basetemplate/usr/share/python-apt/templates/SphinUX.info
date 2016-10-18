@@ -1,0 +1,22 @@
+Suite: o2pax
+RepositoryType: deb
+BaseURI: ftp://www.sphinux.org/repos/
+MatchURI: www[0-9]*\.([a-z]*\.){0,1}sphinux\.org
+MirrorsFile: SphinUX.mirrors
+Description: SphinUX BaseFS 1.2 'o2pax'
+Component: main
+CompDescription: Officially supported
+Component: contrib
+CompDescription: DFSG-compatible Software with Non-Free Dependencies
+Component: non-free
+CompDescription: Non-DFSG-compatible Software
+Component: port
+CompDescription: Upstream updated Software
+Component: yuck
+CompDescription: Embarrasing Software
+Component: basefs
+CompDescription: Backward compatible with 1.1
+Component: games
+CompDescription: Games from playdeb
+Component: apps
+CompDescription: Apps from getdeb

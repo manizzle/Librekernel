@@ -1,0 +1,4 @@
+#!/bin/sh
+#THIS IS A GRUB PROXY SCRIPT
+'/etc/grub.d/proxifiedScripts/linux_xen' | /etc/grub.d/bin/grubcfg_proxy "-*
+"

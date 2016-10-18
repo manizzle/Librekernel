@@ -1,0 +1,864 @@
+#!/bin/bash
+
+STEP=0
+
+function printabout()
+{
+	echo ""
+	echo "Horus Backend - Horus Installer backend."
+	echo "You shouldn't run this directly unless you know what you are doing."
+	echo ""
+	echo "Synopsis:"
+	echo -e "\t`echo $0 | awk -F '/' '{print $NF}'` [Parameters file] ..."
+	echo ""
+	echo -e "\t-v,--verbose\t\tVerbose output."
+	echo -e "\t-f,--fix=<partition>\tFix installation."
+	echo -e "\t-h,--help\t\tPrint usage information 'this message'."
+	echo ""
+	echo "License:"
+	echo -e "\tCopyright (c) 2014 SphinUX Community, Alexandria, Egypt."
+	echo ""
+	echo -e "\tLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>."
+	echo -e "\tThis is free software: you are free to change and redistribute it.  There is NO WARRANTY, to the extent permitted by law."
+	echo ""
+}
+
+function fatalerr()
+{
+	errmessage="$1"
+	exitcode="$2"
+
+	echo -e "$errmessage" >&2
+	echo "Exit code: #$exitcode" >&2
+	rm -f /var/run/horus.pid > /dev/null 2>&1
+	pids=`lsof /TARGET/ 2> /dev/null | awk '{print $2}' | grep -o "^[0-9]*$" | uniq | sort`
+	[[ -n `echo $pids | grep "[0-9]*"` ]] && kill -9 $pids > /dev/null/ 2>&1
+	cat /proc/mounts | awk '{print $2}' | grep "^/TARGET" | sort -r | xargs umount 2> /dev/null
+	rm -f /TARGET > /dev/null 2>&1
+	echo $exitcode > /var/run/horus.status
+	exit $exitcode
+}
+
+function getparm()
+{
+	parmcont=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d'`
+
+	vars=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -E "[-,a-z,A-Z,_,0-9]*( )*=( )*" | awk -F '=' '{print $1}' | sort | uniq | tr '\n' ' '`
+	varsused=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "[$][-,a-z,A-Z,_,0-9]*" | tr -d '$' | sort | uniq | tr '\n' ' '`
+
+	OLDIFS="$IFS"
+	IFS=$(echo -en " ")
+
+	for i in $vars
+	do
+		val=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -E "^$i*( )*=( )*" | awk -F '=' '{print $2}' | tr '\n' ' ' | tr -d '"' | tr -d "'"`
+		parmcont=`echo "$parmcont" | sed -e 's,$'$i','"$val"',g'`
+	done
+
+	parmcont=`echo "$parmcont" | sed '/=/d'`
+
+	if [[ "$vars" != "$varsused" ]]
+	then
+		for i in $varsused
+		do
+			if [[ -z `echo $vars | grep -wEo "($i)"` ]]
+			then
+				echo "[WARN]: Variable '$i' in '$PARMFILE' was not set, will ignore it."
+				parmcont=`echo "$parmcont" | sed -e 's,$'"$i"',,g'`
+			fi
+		done
+
+		for i in $vars
+		do
+			if [[ -z `echo $varsused | grep -wEo "($i)"` ]]
+			then
+				echo "[WARN]: Variable '$i' has been set but has never been used anywhere in '$PARMFILE'."
+			fi
+		done
+	fi
+
+	IFS="$OLDIFS"
+
+	OLDIFS="$IFS"
+	IFS=$(echo -en ";")
+
+	for i in $parmcont
+	do
+		parm=`echo $i | awk -F ":" '{print $1}' | tr -d '\n' | sed -e 's/ $//g'`
+		value=`echo $i | awk -F ":" '{print $2}' | tr -d '\n' | sed -e 's/ $//g'`
+
+		case $parm in
+		"rootpart")
+			TARGETPART="$value"
+			FSTYPE="ext4"
+			;;
+		"swappart")
+			SWAP="$value"
+			;;
+		"homepart")
+			HOMEPART="$value"
+			;;
+		"homefsformat")
+			HFSTYPE="$value"
+			;;
+		"uname")
+			TARGETUSER="$value"
+			;;
+		"ufullname")
+			TARGETUSERFULLNAME="$value"
+			;;
+		"hostname")
+			TARGETHOSTNAME="$value"
+			;;
+		"upass")
+			TARGETPASS="$value"
+			;;
+		"rpass")
+			TARGETROOTPASS="$value"
+			;;
+		"grubloc")
+			GRUBLOC="$value"
+			;;
+		"timezone")
+			ZONESINFO="$value"
+			;;
+		"removepacks")
+			RMPACKSLIST="$value"
+			;;
+		"installpacks")
+			INSTPACKSLIST=`echo "$value" | sed -e 's/[+,_][-,_,0-9,a-z,A-Z]* //g'`
+			;;
+		*)
+			err="[FATAL]: Invalid Identifier '$parm' in parameters file: $PARMFILE.\nWill quit the installation process !"
+			exitcode="4"
+			fatalerr "$err" "$exitcode"
+			;;
+		esac
+	done
+
+	IFS="$OLDIFS"
+}
+
+function chkPower()
+{
+	if [[ -z `acpi | grep Discharging` ]]
+	then
+		return 0
+	else
+		echo "[WARN]: Power cord is not connected, running out of battery charge will interrupt the installation process."
+	fi
+}
+
+function chkPartSpace()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Checking for enough disk space.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	part="$1"
+	disk=`echo $part | tr -d "[[:digit:]]"`
+	partnum=`echo $part | grep -o "[[:digit:]]" | tr -d '\n'`
+	partSize=`parted -s $disk unit MB print | grep -E "^( )*$partnum " | awk '{print $4}' | tr -d ' ' | tr -d 'MB'`
+	rfsSize=`cat /var/cache/horus/horus.conf | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "reqspace( )*:( )*[0-9]*( )*;" | awk -F ':' '{print $2}' | tr -d ';' | tr -d ' ' | tr -d '\n'` || return 6
+
+
+	if [[ "$partSize" -le "$rfsSize" ]]
+	then
+		err="[FATAL]: Not enough space in partition '$part', need at least ($rfsSize MB) but only ($partSize MB) was available.\nWill quit the installation process !"
+		exitcode="6"
+		fatalerr "$err" "$exitcode"
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function chkparm()
+{
+	chkPower
+
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Checking root partition exists.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [[ -z $TARGETPART ]] || [[ ! -b $TARGETPART ]]
+	then
+		err="[FATAL]: Bad or missing target partition $TARGETPART, Will quit the installation process !"
+		exitcode="5"
+		fatalerr "$err" "$exitcode"
+	else
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+		chkPartSpace $TARGETPART
+	fi
+
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Checking swap partition exists.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [[ -z $SWAP ]] || [[ ! -b $SWAP ]] || [[ "$SWAP" == "$TARGETPART" ]]
+	then
+		err="[FATAL]: Bad or missing swap partition $SWAP, Will quit the installation process !"
+		exitcode="7"
+		fatalerr "$err" "$exitcode"
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+
+	if [[ -z $HOMEPART ]] || [[ "$HOMEPART" == "root" ]]
+	then
+		HOMEPART="root"
+		HFSTYPE="noformat"
+	else
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Checking home partition exists.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		if [[ ! -b $HOMEPART ]] && [[ "$HOMEPART" != "root" ]]
+		then
+			err="[FATAL]: Cannot find specified home partition ($HOMEPART), Will quit the installation process !"
+			exitcode="8"
+			fatalerr "$err" "$exitcode"
+		else
+			if [[ -z $HFSTYPE ]]
+			then
+				HFSTYPE="noformat"
+			else
+				if [[ "$HFSTYPE" != "ext4" ]] && [[ "$HFSTYPE" != "ext3" ]] && [[ "$HFSTYPE" != "ext2" ]] && [[ "$HFSTYPE" != "noformat" ]]
+				then
+					err="[FATAL]: Bad home partition filesystem type ($HFSTYPE), only ext2,3,4 are allowed.\nWill quit the installation process !"
+					exitcode="9"
+					fatalerr "$err" "$exitcode"
+				fi
+			fi
+		fi
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	STEP=$((STEP+1))
+	echo -ne "[ $STEP ]: Checking username is set.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [[ -z $TARGETUSER ]]
+	then
+		err="[FATAL]: Missing username, Will quit the installation process !"
+		exitcode="10"
+		fatalerr "$err" "$exitcode"
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Validating specified username.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [ -n "$(echo $TARGETUSER | tr -d '[A-Za-z0-9-_]/')" ]
+	then
+		err="[FATAL]: Bad username, only English characters, numbers, dashes and underscores are allowed.\nWill quit the installation process !"
+		exitcode="11"
+		fatalerr "$err" "$exitcode"
+	fi
+
+	for i in `cat /etc/passwd | awk -F ':' '{print $1}'`
+	do
+		if [[ "$TARGETUSER" == "$i" ]]
+		then
+			err="[FATAL]: Bad username, username '$i' is system reserved.\nWill quit the installation process !"
+			exitcode="12"
+			fatalerr "$err" "$exitcode"
+		fi
+	done
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+
+	if [[ -z $TARGETUSERFULLNAME ]]
+	then
+		TARGETUSERFULLNAME=$TARGETUSER
+		echo "[INFO]: Setting Full username to '$TARGETUSERFULLNAME'."
+	else
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Validating Full username.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		if [ -n "$(echo $TARGETUSERFULLNAME | tr -d '[A-Za-z0-9-_ ,.]/')" ]
+		then
+			err="[FATAL]: Bad Full username, only English characters, numbers, dashes, underscores, spaces, commas and dots are allowed.\nWill quit the installation process !"
+			exitcode="13"
+			fatalerr "$err" "$exitcode"
+		fi
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	if [[ -z $TARGETHOSTNAME ]]
+	then
+		TARGETHOSTNAME=$TARGETUSER-"PC"
+		echo "[INFO]: Setting hostname to '$TARGETHOSTNAME'."
+	else
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Validating specified hostname.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		if [ -n "$(echo $TARGETHOSTNAME | tr -d '[A-Za-z0-9-_.]/')" ]
+		then
+			err="FATAL: Bad hostname, only English characters, numbers, dashes and underscores are allowed.\nWill quit the installation process !"
+			exitcode="14"
+			fatalerr "$err" "$exitcode"
+		fi
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Validating user password.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [[ -z $TARGETPASS ]]
+	then
+		err="[FATAL]: Missing password, Will quit the installation process !"
+		exitcode="15"
+		fatalerr "$err" "$exitcode"
+	else
+		if [ -n "$(echo $TARGETPASS | tr -d '[[:graph:]]')" ]
+		then
+			err="[FATAL]: Bad password, non-ASCII characters are not allowed.\nWill quit the installation process !"
+			exitcode="16"
+			fatalerr "$err" "$exitcode"
+		fi
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Validating root password.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [[ -z $TARGETROOTPASS ]]
+	then
+		err="[FATAL]: Missing root password, Will quit the installation process !"
+		exitcode="17"
+		fatalerr "$err" "$exitcode"
+	else
+		if [ -n "$(echo $TARGETROOTPASS | tr -d '[[:graph:]]')" ]
+		then
+			err="[FATAL]: Bad root password, non-ASCII characters are not allowed.\nWill quit the installation process !"
+			exitcode="18"
+			fatalerr "$err" "$exitcode"
+		fi
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+
+	if [[ -z $GRUBLOC ]]
+	then
+		GRUBLOC="MBR"
+		echo "[INFO]: Setting GRUB location to MBR."
+	else
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Validating GRUB location.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		if [[ $GRUBLOC != "MBR" ]] && [[ $GRUBLOC != "root" ]]
+		then
+			err="[FATAL]: Unrecognized option '$GRUBLOC' for grub location, values can either be 'MBR' or 'root'.\nWill quit the installation process !"
+			exitcode="19"
+			fatalerr "$err" "$exitcode"
+		fi
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Validating specified Timezone.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	TZLIST=`cat /usr/share/zoneinfo/zone.tab | awk '{print $3}' | grep '/' | sort`
+	if [ -z "$(echo $TZLIST | grep -wEo "$ZONESINFO")" ]
+	then
+		err="[FATAL]: Unrecognized timezone $ZONESINFO.\nWill quit the installation process !"
+		exitcode="20"
+		fatalerr "$err" "$exitcode"
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+
+	if [[ -n "$RMPACKSLIST" ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Checking packages to remove exist.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		IFS=$(echo -en " ")
+		for i in $RMPACKSLIST
+		do
+			(dpkg-query -l $i > /dev/null 2>&1) || exitcode="21"
+			if [[ -n "$exitcode" ]]
+			then
+				err="[FATAL]: Package '$i' is not installed.\nWill quit the installation process !"
+				fatalerr "$err" "$exitcode"
+			fi
+		done
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	if [[ -n "$INSTPACKSLIST" ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Checking packages to install exist.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		if [[ -z `ls /lib/live/mount/medium/install/packages/*.deb 2> /dev/null` ]] || [[ -z `ls /lib/live/mount/medium/install/packages/Packages.{gz,bz2,bz} 2> /dev/null` ]]
+		then
+			err="[FATAL]: Cannot find any packages on installation medium.\nWill quit the installation process !"
+			exitcode="22"
+			fatalerr "$err" "$exitcode"
+		fi
+
+		apt-get update > /dev/null 2>&1
+
+		IFS=$(echo -en " ")
+		for i in $INSTPACKSLIST
+		do
+			(apt-cache show $i > /dev/null 2>&1) || exitcode="23"
+			if [[ -n "$exitcode" ]]
+			then
+				err="[FATAL]: Package '$i' is not installable.\nWill quit the installation process !"
+				fatalerr "$err" "$exitcode"
+			fi
+		done
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+}
+
+function setTZ()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Setting timezone.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	echo "$ZONESINFO" > /etc/timezone
+	cp /usr/share/zoneinfo/$ZONESINFO /etc/localtime
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function prepareDisk()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Preparing disk.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [ "`mount | grep $TARGETPART`" ]
+	then
+		umount $TARGETPART > /dev/null 2>&1
+	fi
+
+	mkswap $SWAP > /dev/null 2>&1
+	swapon $SWAP > /dev/null 2>&1
+	mke2fs -t ext4 $TARGETPART > /dev/null 2>&1
+	mkdir -p /TARGET > /dev/null 2>&1
+	mount $TARGETPART /TARGET -o rw > /dev/null 2>&1
+	tune2fs -c 0 -i 0 $TARGETPART > /dev/null 2>&1
+	rm -rf /TARGET/lost+found > /dev/null 2>&1
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function prepareHome()
+{
+	if [ "$HOMEPART" != "root" ]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Preparing home.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		if [ "$HFSTYPE" != "noformat" ]
+		then
+			mke2fs -t $HFSTYPE $HOMEPART > /dev/null 2>&1
+		fi
+
+		mkdir -p /TARGET/home > /dev/null 2>&1
+		mount $HOMEPART /TARGET/home -o rw > /dev/null 2>&1
+		tune2fs -c 0 -i 0 $HOMEPART > /dev/null 2>&1
+		rm -rf /TARGET/home/lost+found > /dev/null 2>&1
+		TARGETHOMEUUID=`blkid -s UUID $HOMEPART | awk '{print $2}' | awk -F '"' '{print $2}'`
+		HFSTYPE=`blkid -s TYPE $HOMEPART | awk '{print $2}' | awk -F '"' '{print $2}'`
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+}
+
+function getfstabVars()
+{
+	TARGETPARTUUID=`blkid -s UUID $TARGETPART | awk -F '"' '{print $2}'`
+	TARGETSWAPUUID=`blkid -s UUID $SWAP | awk -F '"' '{print $2}'`
+	TARGETCDROM=/dev/`cat /proc/sys/dev/cdrom/info | grep "drive name:" | awk '{print $3}'`
+}
+
+function copyFS()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Copying files.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	rsync -a -l / /TARGET --exclude=/{TARGET,live,cdrom,lib/live/mount,mnt,proc,sys,media}
+	mkdir -p /TARGET/{proc,mnt,sys,media/cdrom,media/usb}
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function mountBind()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Mounting virtual filesystems.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	mount -o bind /proc /TARGET/proc
+	mount -o bind /dev /TARGET/dev
+	mount -o bind /dev/pts /TARGET/dev/pts
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function mkfstab()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Creating fstab file.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	rm -rf /TARGET/etc/fstab
+
+	if [ "$HOMEPART" == "root" ]
+	then
+		cat > /TARGET/etc/fstab <<-EOF
+		# /etc/fstab: static file system information.
+		#
+		# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+
+		proc /proc proc defaults 0 0
+		# $TARGETPART
+		UUID=$TARGETPARTUUID / $FSTYPE relatime,errors=remount-ro 0 1
+		# $SWAP
+		UUID=$TARGETSWAPUUID none swap sw 0 0
+		# cdrom
+		$TARGETCDROM /media/cdrom udf,iso9660 user,noauto,exec,utf8 0 0
+
+		EOF
+	else
+
+		cat > /TARGET/etc/fstab <<-EOF
+		# /etc/fstab: static file system information.
+		#
+		# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+
+		proc /proc proc defaults 0 0
+		# $TARGETPART
+		UUID=$TARGETPARTUUID / $FSTYPE relatime,errors=remount-ro 0 1
+		# $HOMEPART home
+		UUID=$TARGETHOMEUUID /home $HFSTYPE relatime 0 0
+		# $SWAP
+		UUID=$TARGETSWAPUUID none swap sw 0 0
+		# cdrom
+		$TARGETCDROM /media/cdrom udf,iso9660 user,noauto,exec,utf8 0 0
+
+		EOF
+
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function cpExtra()
+{
+	if [[ -n `ls -A /lib/live/mount/medium/install/sysconf/*.squashfs 2> /dev/null` ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "[ $STEP ]: Copying custom system wide configuration files.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		for i in `ls /lib/live/mount/medium/install/sysconf/*.squashfs`
+		do
+			unsquashfs -f -x -d /TARGET/etc $i > /dev/null 2>&1
+		done
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	if [[ -n `ls -A /lib/live/mount/medium/install/userconf/*.squashfs 2> /dev/null` ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Copying custom user specific configuration files.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		for i in `ls /lib/live/mount/medium/install/userconf/*.squashfs`
+		do
+			unsquashfs -f -x -d /TARGET/etc/skel $i > /dev/null 2>&1
+		done
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	if [[ -n `ls -A /lib/live/mount/medium/install/rootfs/main/*.squashfs 2> /dev/null` ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "[ $STEP ]: Copying custom rootfs files.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		for i in `ls /lib/live/mount/medium/install/rootfs/main/*.squashfs`
+		do
+			unsquashfs -f -x -d /TARGET $i > /dev/null 2>&1
+		done
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+}
+
+function cpPost()
+{
+	if [[ -n `ls -A /lib/live/mount/medium/install/rootfs/post/*.squashfs 2> /dev/null` ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "[ $STEP ]: Copying post installation custom rootfs files.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		for i in `ls /lib/live/mount/medium/install/rootfs/post/*.squashfs`
+		do
+			unsquashfs -f -x -d /TARGET $i > /dev/null 2>&1
+		done
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+}
+
+function revokeEnv()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Resetting environment for installed system.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [ -f /TARGET/usr/sbin/update-initramfs.orig.initramfs-tools ]
+	then
+		mv /TARGET/usr/sbin/update-initramfs.orig.initramfs-tools /TARGET/usr/sbin/update-initramfs > /dev/null 2>&1
+	fi
+
+	cp /TARGET/usr/share/sysvinit/inittab /TARGET/etc/inittab > /dev/null 2>&1
+	rm /TARGET/etc/profile.d/horus.sh > /dev/null 2>&1
+	rm -f /TARGET/etc/kernel-img.conf > /dev/null 2>&1
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function setupEnv()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Preparing environment for installed system.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	echo "$TARGETHOSTNAME" > /TARGET/etc/hostname
+	echo "127.0.0.1 localhost" > /TARGET/etc/hosts
+	echo "127.0.0.1 $TARGETHOSTNAME" >> /TARGET/etc/hosts
+	touch /TARGET/etc/resolv.conf
+
+	if [ "$DEFAULTGROUPS" == "" ]
+	then
+		DEFAULTGROUPS="audio,cdrom,dialout,floppy,video,plugdev,netdev"
+	fi
+
+	cat > /TARGET/bin/tempinstallerscript <<-FOO
+	#!/bin/bash
+
+	echo -e "$TARGETROOTPASS\n$TARGETROOTPASS\n" | passwd root
+	userdel -f -r $LIVE_USERNAME 2> /dev/null
+	sed -i '/$LIVE_USERNAME/d' /etc/sudoers
+	groupadd -g 1000 $TARGETUSER
+	useradd -u 1000 -g 1000 -c "$TARGETUSERFULLNAME,,," -G $DEFAULTGROUPS -s /bin/bash -m $TARGETUSER
+	echo -e "$TARGETPASS\n$TARGETPASS\n" | passwd $TARGETUSER
+	update-initramfs -utk all 2> /dev/null
+	shadowconfig on
+
+	FOO
+
+	echo "$TARGETUSER	ALL=(ALL) ALL" >> /TARGET/etc/sudoers
+	echo "%$TARGETUSER	ALL = NOPASSWD: /sbin/agetty" >> /TARGET/etc/sudoers
+
+
+	chmod 755 /TARGET/bin/tempinstallerscript > /dev/null 2>&1
+	chroot /TARGET /bin/tempinstallerscript > /dev/null 2>&1
+	rm /TARGET/bin/tempinstallerscript > /dev/null 2>&1
+	chmod 777 /TARGET/var/tmp > /dev/null 2>&1
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function installgrub()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Installing GRUB bootloader.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	if [[ -f "/lib/live/mount/medium/isolinux/grub.jpg" ]]
+	then
+		cp /lib/live/mount/medium/isolinux/grub.jpg /TARGET/etc/grub.jpg > /dev/null 2>&1
+		chmod 644 /TARGET/etc/grub.jpg > /dev/null 2>&1
+	fi
+
+	if [[ "$GRUBLOC" == "root" ]]
+	then
+		/usr/share/horus/scripts/horus-grubconfig /TARGET $GRUBLOC
+	else
+		SHORTPART=`echo "$TARGETPART" | sed -e 's/\/dev//g'`
+		mkdir /mnt$SHORTPART > /dev/null 2>&1
+		mount $TARGETPART /mnt$SHORTPART > /dev/null 2>&1
+		/usr/share/horus/scripts/horus-grubconfig /mnt$SHORTPART
+		umount /mnt$SHORTPART > /dev/null 2>&1
+		rm -rf /mnt$SHORTPART > /dev/null 2>&1
+	fi
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function removePacks()
+{
+	if [[ -n "$RMPACKSLIST" ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Removing specified packages from installed system.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		chroot /TARGET apt-get -qy --force-yes purge $RMPACKSLIST
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+}
+
+function installPacks()
+{
+	if [[ -n "$INSTPACKSLIST" ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Installing specified packages into installed system.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		mkdir -p /TARGET/lib/live/mount/medium/install/packages > /dev/null 2>&1
+		mount -o bind /lib/live/mount/medium/install/packages /TARGET/lib/live/mount/medium/install/packages > /dev/null 2>&1
+		echo 'export DEBIAN_FRONTEND=noninteractive' > /TARGET/root/.bashrc
+		echo 'echo debconf debconf/frontend string noninteractive | debconf-set-selections' >> /TARGET/root/.bashrc
+		chroot /TARGET apt-get update
+		(chroot /TARGET apt-get -qy --force-yes -o Dpkg::Options::="--force-all" -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install $INSTPACKSLIST) > /var/log/horus/packs.log 2>&1 &
+		pid=$!
+		while kill -0 $pid 2> /dev/null
+		do
+			newtot=`cat /var/log/horus/packs.log | grep -o ", [0-9]* newly installed" | grep -o "[0-9]*"`
+			newupg=`cat /var/log/horus/packs.log | grep -o "^[0-9]* upgraded," | grep -o "[0-9]*"`
+			total=$((newupg+newtot))
+			unpacked=`cat /var/log/horus/packs.log | grep -c "^Unpacking "`
+			installed=`cat /var/log/horus/packs.log | grep -c "^Setting up "`
+
+			if [[ "$installed" == "0" ]] && [[ "$unpacked" == "0" ]] || [[ "$total" == "0" ]]
+			then
+				echo -ne "Installing packages.\n=> Calculating, Please wait ...\r"
+			elif [[ "$unpacked" != "0" ]] && [[ "$unpacked" -lt "$total" ]]
+			then
+				perc=`bc <<< "scale=2; $unpacked*100/$total" | sed 's/^\./0./' | cut -d '.' -f1`
+				echo -ne "Installing packages.\n=> Unpacking package [$unpacked/$total] ... $perc%\r"
+			elif [[ "$installed" != "0" ]] && [[ "$unpacked" == "$total" ]]
+			then
+				perc=`bc <<< "scale=2; $installed*100/$total" | sed 's/^\./0./' | cut -d '.' -f1`
+				echo -ne "Installing packages.\n=> Configuring package [$installed/$total] ... $perc%\r"
+			fi
+			sleep 1
+		done
+		umount /TARGET/lib/live/mount/medium/install/packages > /dev/null 2>&1
+		rm -rf /TARGET/lib/live/mount/ > /dev/null 2>&1
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	cp -f /lib/live/mount/medium/install/sources.list /TARGET/etc/apt/sources.list
+	if [[ -n `ls /lib/live/mount/medium/install/apt-keys/*.gpg 2> /dev/null` ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Adding authentication keys for software repository.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		mkdir -p /TARGET/tmp/keys > /dev/null 2>&1
+		cp /lib/live/mount/medium/install/apt-keys/*.gpg /TARGET/tmp/keys > /dev/null 2>&1
+		for i in `ls /TARGET/tmp/keys/*.gpg | sed -e 's/\/TARGET//g'`
+		do
+			chroot /TARGET apt-key add $i > /dev/null 2>&1
+		done
+		rm -rf /TARGET/tmp/keys > /dev/null 2>&1
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+}
+
+function execScripts()
+{
+	if [[ -n `ls -A /lib/live/mount/medium/install/scripts/live` ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Executing custom scripts in live system.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		mkdir -p /tmp/live/scripts > /dev/null 2>&1
+		cp /lib/live/mount/medium/install/scripts/live/*.exec /tmp/live/scripts/ > /dev/null 2>&1
+		chmod 755 /tmp/live/scripts/*.exec > /dev/null 2>&1
+
+		for i in /tmp/live/scripts/*.exec
+		do
+			$i || echo "[WARN]: Script '$i' exited with code '$?'"
+		done
+
+		rm -rf /tmp/live/ > /dev/null 2>&1
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+
+	if [[ -n `ls -A /lib/live/mount/medium/install/scripts/host` ]]
+	then
+		STEP=$((STEP+1))
+		echo -ne "\n[ $STEP ]: Executing custom scripts in installed system.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+		mkdir -p /TARGET/tmp/live/scripts > /dev/null 2>&1
+		cp /lib/live/mount/medium/install/scripts/host/*.exec /TARGET/tmp/live/scripts/ > /dev/null 2>&1
+		chmod 755 /TARGET/tmp/live/scripts/*.exec > /dev/null 2>&1
+
+		for i in /TARGET/tmp/live/scripts/*.exec
+		do
+			script=`echo $i | awk -F '/TARGET' '{print $2}'`
+			chroot /TARGET $script
+		done
+
+		rm -rf /TARGET/tmp/live/ > /dev/null 2>&1
+		echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+	fi
+}
+
+function cleanup()
+{
+	STEP=$((STEP+1))
+	echo -ne "\n[ $STEP ]: Cleaning up.\n\t\t\t\t\t\t\t\t[WAIT]\r"
+	cp /var/log/horus/backend.log /TARGET/var/log/horus/backend.log > /dev/null 2>&1
+	cp /var/log/horus/packs.log /TARGET/var/log/horus/packs.log > /dev/null 2>&1
+	rm -f /TARGET/root/.bashrc > /dev/null 2>&1
+	rm -f /TARGET/X11/xorg.conf > /dev/null 2>&1
+	sed -i -e "s/upass:[[:graph:]]*/upass:;/g" /TARGET$PARMFILE
+	sed -i -e "s/rpass:[[:graph:]]*/rpass:;/g" /TARGET$PARMFILE
+	pids=`lsof /TARGET/ 2> /dev/null | awk '{print $2}' | grep -o "^[0-9]*$" | uniq | sort`
+	[[ -n `echo $pids | grep "[0-9]*"` ]] && kill -9 $pids > /dev/null/ 2>&1
+	cat /proc/mounts | awk '{print $2}' | grep "^/TARGET" | sort -r | xargs umount > /dev/null 2>&1
+
+	sync
+	sleep 5
+
+	rm -f /var/run/horus.pid > /dev/null 2>&1
+	rm -f /TARGET > /dev/null 2>&1
+	echo 0 > /var/run/horus.status
+	echo -ne "\t\t\t\t\t\t\t\t[DONE]\r\r"
+}
+
+function const()
+{
+	(getparm && chkparm && setTZ && prepareDisk && prepareHome && getfstabVars && copyFS && mountBind && mkfstab && revokeEnv && cpExtra && setupEnv && removePacks && installPacks && execScripts && cpPost && installgrub && cleanup)
+}
+
+function main()
+{
+	start=$(date +%s)
+	stdver=`cat /var/cache/horus/horus.conf | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "stdbasever( )*:( )*[[:print:]]*;" | awk -F ':' '{print $2}' | tr -d ';' | tr -d ' ' | tr -d '\n'`
+	[[ -z "$stdver" ]] && stdver="1.2"
+	testroot="`whoami`"
+	pid=`head -n1 /var/run/horus.pid 2> /dev/null | cut -f1 -d ' '`
+
+	if [ "$testroot" != "root" ]
+	then
+		err="[FATAL]: Must be root, will quit the installation process !"
+		exitcode="1"
+		fatalerr "$err" "$exitcode"
+	fi
+
+	if [[ -z "$1" ]]
+	then
+		PARMFILE="/var/cache/horus/backend.parm"
+	else
+		PARMFILE="$1"
+	fi
+
+	if [[ ! -s "$PARMFILE" ]]
+	then
+		err="[FATAL]: Cannot find Parameters file, see /var/cache/horus/backend.parm for an example, will quit the installation process !"
+		exitcode="2"
+		fatalerr "$err" "$exitcode"
+	else
+		chmod 400 "$PARMFILE"
+	fi
+
+	if [[ ! -z $pid ]]
+	then
+		err="[FATAL]: Another instance of the installer is already running, will quit the installation process !"
+		exitcode="3"
+		fatalerr "$err" "$exitcode"
+	else
+		echo $$ > /var/run/horus.pid
+		mkdir -p /var/log/horus
+		echo "[`date`]: StdBaseFS v$stdver installation process started ..." | tee -a /var/log/horus/backend.log
+	fi
+
+	. /etc/live/config.conf
+
+	echo -e ""
+	if [[ "$VERBOSE" != "1" ]]
+	then
+		const >> /var/log/horus/backend.log 2>&1
+	else
+		echo "[INFO]: Using verbose mode:"
+		const 2>&1 | tee -a /var/log/horus/backend.log
+	fi
+
+	status=`head -n1 /var/run/horus.status 2> /dev/null | cut -f1 -d ' '`
+	rm -f /var/run/horus.status
+	rm -f /var/run/horus.pid 2> /dev/null
+
+	if [[ "$status" == "0" ]]
+	then
+		echo -e "[`date`]: Installation finished." | tee -a /var/log/horus/backend.log
+		elapsed=`echo $(($(date +%s)-start)) | awk '{printf "%d Hours %02d Minutes %02d Seconds", $1/3600, ($1/60)%60, $1%60}'`
+		echo "Elapsed time: $elapsed." | tee -a /var/log/horus/backend.log
+		return 0
+	else
+		echo "[`date`]: Installation interrupted.\nCheck the log file at '/var/log/horus/backend.log'." >&2 | tee -a /var/log/horus/backend.log
+		return $status
+	fi
+}
+
+case $1 in
+"-h" | "--help")
+	printabout
+	exit 0
+	;;
+
+"-v" | "--verbose")
+	export VERBOSE="1"
+	main "$2"
+	;;
+
+"-f" | "--fix")
+	export VERBOSE="1"
+	export FIX="1"
+	main "$2"
+	;;
+
+*)
+	main "$1"
+	;;
+
+esac

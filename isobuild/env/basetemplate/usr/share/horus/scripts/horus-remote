@@ -1,0 +1,585 @@
+#! /bin/bash
+
+REPLY=""
+RETCONT=""
+IFACES=""
+IFACE=""
+
+function clrVars()
+{
+	[[ -n "$1" ]] && return 255
+	RETCONT=""
+	REPLY=""
+}
+
+function getIfaces()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	IFACES=`ifconfig -a | grep "^[a-z,0-9]" | grep "Link encap" | sed '/lo/d' | awk '{print $1}' | tr '\n' ';'`
+	if [[ -z "$IFACES" ]]
+	then
+		REPLY=""
+		RETCONT=""
+		IFACES=""
+		return 27
+	fi
+
+	RETCONT="$IFACES"
+}
+
+function setIface()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+	[[ -z "$1" ]] && return 255
+
+	if [[ -z "$IFACES" ]]
+	then
+		getIfaces || return $?
+	fi
+
+	if [[ -z `echo "$IFACES" | grep "$1;"` ]]
+	then
+		REPLY="ERROR [INTERNAL]: Selected interface doesn't exist."
+		RETCONT=""
+		IFACES=""
+		return 2
+	fi
+
+	IFACE="$1"
+	setNet
+	RETCONT="$IFACE"
+}
+
+function getRemote()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	remote=`cat /var/cache/horus/horus.conf 2> /dev/null | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "remote( )*:( )*(on|off)( )*;" | awk -F ':' '{print $2}' | tr -d ';' | tr -d ' ' | tr -d '\n'`
+	[[ -z "$remote" ]] && remote="off"
+	if [[ "$remote" != "on" ]] && [[ "$remote" != "off" ]]
+	then
+		REPLY="ERROR [INTERNAL]: Error in horus configuration file '/var/cache/horus/horus.conf', parameter 'remote' value can either be 'on' or 'off'."
+		RETCONT=""
+		return 6
+	fi
+	[[ "$remote" == "on" ]] && setRemote on || return $?
+	RETCONT="$remote"
+}
+
+function setRemote()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+	[[ -z "$1" ]] && return 255
+
+	if [[ "$1" != "on" ]] && [[ "$1" != "off" ]]
+	then
+		REPLY="ERROR [INTERNAL]: Argument for 'setRemote' can either be 'on' or 'off'"
+		RETCONT=""
+		return 7
+	fi
+
+	getRemote || return $?
+	remote=`cat /var/cache/horus/horus.conf | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "remote( )*:( )*(on|off)( )*;"`
+	sed -i -e 's,'"$remote"',remote: '$1';,g' /var/cache/horus/horus.conf
+	[[ "$1" == "on" ]] && setNet || return $?
+	RETCONT="$1"
+}
+
+function setNet()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	if [[ ! -f "/etc/network/interfaces.bak" ]]
+	then
+		mv /etc/network/interfaces /etc/network/interfaces.bak 2> /dev/null
+		cp /etc/default/interfaces /etc/network/interfaces 2> /dev/null
+	fi
+
+	getIfaces || return $?
+	getRemote || return $?
+	[[ "$RETCONT" != "on" ]] && setRemote on || return $?
+
+	OLDIFS="$IFS"
+	IFS=$(echo -en ';')
+	for i in $IFACES
+	do
+		getMode "$i"
+	done
+	ifup lo > /dev/null 2>&1
+	/etc/init.d/networking restart > /dev/null 2>&1
+	IFS="$OLDIFS"
+	IFACE=""
+	RETCONT="$IFACES"
+}
+
+function resetNet()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	getIfaces || return $?
+	for i in `echo $IFACES | tr ';' ' '`
+	do
+		ifconfig $i down
+	done
+
+	mv /etc/network/interfaces.bak /etc/network/interfaces 2> /dev/null
+	rm /etc/network/interfaces.d/* 2> /dev/null
+
+
+	ifup lo > /dev/null 2>&1
+	REPLY=""
+	RETCONT=""
+	IFACES=""
+	IFACE=""
+}
+
+function getMode()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+
+	if [[ -n "$1" ]]
+	then
+		setIface $1 || return $?
+	elif [[ -z "$IFACE" ]] && [[ -z "$1" ]]
+	then
+		return 255
+	fi
+
+	ifaceln=""
+	ifaceln=`cat /etc/network/interfaces.d/$IFACE 2> /dev/null | grep -E "iface $IFACE inet (dhcp|static)"`
+	[[ -n "$ifaceln" ]] && RETCONT=`echo $ifaceln | awk '{print $4}' | tr -d '\n'`
+	if [[ -z "$ifaceln" ]]
+	then
+		echo "auto $IFACE" > /etc/network/interfaces.d/$IFACE
+		echo "allow-hotplug $IFACE" >> /etc/network/interfaces.d/$IFACE
+		echo "iface $IFACE inet dhcp" >> /etc/network/interfaces.d/$IFACE
+		ifaceln=`cat /etc/network/interfaces.d/$IFACE 2> /dev/null | grep -E "iface $IFACE inet (dhcp|static)"`
+		RETCONT=`echo $ifaceln | awk '{print $4}' | tr -d '\n'`
+	fi
+}
+
+function setMode()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+	[[ -z "$1" ]] && return 255
+
+	if [[ -z "$IFACES" ]]
+	then
+		getIfaces || return $?
+	fi
+
+	if [[ -z "$IFACE" ]]
+	then
+		REPLY="ERROR [INTERNAL]: Invoking this function requires invoking 'setIface()' first."
+		RETCONT=""
+		return 3
+	fi
+
+	if [[ "$1" != "dhcp" ]] && [[ "$1" != "static" ]]
+	then
+		REPLY="ERROR [INTERNAL]: Mode can either be 'dhcp' or 'static'."
+		RETCONT=""
+		return 4
+	fi
+
+	getMode $IFACE || return $?
+
+	ifaceln=`cat /etc/network/interfaces.d/$IFACE | grep -E "^allow-hotplug $IFACE$" | awk '{print $1}'`
+	if [[ -n `cat /etc/network/interfaces.d/$IFACE | grep -E "^allow-hotplug $IFACE"` ]] && [[ "$1" == "static" ]]
+	then
+		sed -i '/allow-hotplug/d' /etc/network/interfaces.d/$IFACE
+	elif [[ -z `cat /etc/network/interfaces.d/$IFACE | grep -Eo "^allow-hotplug $IFACE"` ]] && [[ "$1" == "dhcp" ]]
+	then
+		echo "auto $IFACE" > /etc/network/interfaces.d/$IFACE
+		echo "allow-hotplug $IFACE" >> /etc/network/interfaces.d/$IFACE
+		echo "iface $IFACE inet dhcp" >> /etc/network/interfaces.d/$IFACE
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ -n "$RETCONT" ]]
+	then
+		sed -i 's,iface '$IFACE' inet '$RETCONT',iface '$IFACE' inet '$1',g' /etc/network/interfaces.d/$IFACE
+	else
+		echo "iface $IFACE inet $1" >> /etc/network/interfaces.d/$IFACE
+	fi
+	getMode $IFACE || return $?
+}
+
+function getGW()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+
+	if [[ -n "$1" ]]
+	then
+		setIface $1 || return $?
+	elif [[ -z "$IFACE" ]] && [[ -z "$1" ]]
+	then
+		return 255
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	gwaddr=`cat /etc/network/interfaces.d/$IFACE | tr '\n' ';' | tr -s '[ \t]' ':' | grep -m1 -Eo 'gateway:([0-9]{1,3}.){4}' | tail -n1 | awk -F ':' '{print $2}' | tr -d ';' | tr -d '\n'`
+	RETCONT="$gwaddr"
+}
+
+function getNetmask()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+
+	if [[ -n "$1" ]]
+	then
+		setIface $1 || return $?
+	elif [[ -z "$IFACE" ]] && [[ -z "$1" ]]
+	then
+		return 255
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	nmaddr=`cat /etc/network/interfaces.d/$IFACE | tr '\n' ';' | tr -s '[ \t]' ':' | grep -m1 -Eo 'netmask:([0-9]{1,3}.){4}' | tail -n1 | awk -F ':' '{print $2}' | tr -d ';' | tr -d '\n'`
+	RETCONT="$nmaddr"
+}
+
+function getAddr()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+
+	if [[ -n "$1" ]]
+	then
+		setIface $1 || return $?
+	elif [[ -z "$IFACE" ]] && [[ -z "$1" ]]
+	then
+		return 255
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	ifaddr=`cat /etc/network/interfaces.d/$IFACE | tr '\n' ';' | tr -s '[ \t]' ':' | grep -m1 -Eo 'address:([0-9]{1,3}.){4}' | tail -n1 | awk -F ':' '{print $2}' | tr -d ';' | tr -d '\n'`
+	RETCONT="$ifaddr"
+}
+
+function getBrdcast()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+
+	if [[ -n "$1" ]]
+	then
+		setIface $1 || return $?
+	elif [[ -z "$IFACE" ]] && [[ -z "$1" ]]
+	then
+		return 255
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	ifaddr=`cat /etc/network/interfaces.d/$IFACE | tr '\n' ';' | tr -s '[ \t]' ':' | grep -m1 -Eo 'broadcast:([0-9]{1,3}.){4}' | tail -n1 | awk -F ':' '{print $2}' | tr -d ';' | tr -d '\n'`
+	RETCONT="$ifaddr"
+}
+
+function setGW()
+{
+	clrVars
+	[[ -n "$3" ]] && return 255
+	[[ -z "$1" ]] && return 255
+
+	if [[ -n "$2" ]]
+	then
+		setIface $1 || return $?
+		setaddr="$2"
+	elif [[ -z "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		return 255
+	elif [[ -n "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		setaddr="$1"
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	if [[ -z `echo $setaddr | grep -Eo "^([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))$"` ]]
+	then
+		REPLY=""
+		RETCONT=""
+		return 28
+	fi
+
+	getGW $IFACE || return $?
+
+	if [[ -z "$RETCONT" ]]
+	then
+		echo -e "\tgateway $setaddr" >> /etc/network/interfaces.d/$IFACE
+	else
+		sed -i 's,gateway '$RETCONT',gateway '$setaddr',g' /etc/network/interfaces.d/$IFACE
+	fi
+}
+
+function setNetmask()
+{
+	clrVars
+	[[ -n "$3" ]] && return 255
+	[[ -z "$1" ]] && return 255
+
+	if [[ -n "$2" ]]
+	then
+		setIface $1 || return $?
+		setaddr="$2"
+	elif [[ -z "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		return 255
+	elif [[ -n "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		setaddr="$1"
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	if [[ -z `echo $setaddr | grep -Eo "^([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))$"` ]]
+	then
+		REPLY=""
+		RETCONT=""
+		return 28
+	fi
+
+	getNetmask $IFACE || return $?
+
+	if [[ -z "$RETCONT" ]]
+	then
+		echo -e "\tnetmask $setaddr" >> /etc/network/interfaces.d/$IFACE
+	else
+		sed -i 's,netmask '$RETCONT',netmask '$setaddr',g' /etc/network/interfaces.d/$IFACE
+	fi
+}
+
+function setAddr()
+{
+	clrVars
+	[[ -n "$3" ]] && return 255
+	[[ -z "$1" ]] && return 255
+
+	if [[ -n "$2" ]]
+	then
+		setIface $1 || return $?
+		setaddr="$2"
+	elif [[ -z "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		return 255
+	elif [[ -n "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		setaddr="$1"
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	if [[ -z `echo $setaddr | grep -Eo "^([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))$"` ]]
+	then
+		REPLY=""
+		RETCONT=""
+		return 28
+	fi
+
+	getAddr $IFACE || return $?
+
+	if [[ -z "$RETCONT" ]]
+	then
+		echo -e "\taddress $setaddr" >> /etc/network/interfaces.d/$IFACE
+	else
+		sed -i 's,address '$RETCONT',address '$setaddr',g' /etc/network/interfaces.d/$IFACE
+	fi
+}
+
+function setBrdcast()
+{
+	clrVars
+	[[ -n "$3" ]] && return 255
+	[[ -z "$1" ]] && return 255
+
+	if [[ -n "$2" ]]
+	then
+		setIface $1 || return $?
+		setaddr="$2"
+	elif [[ -z "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		return 255
+	elif [[ -n "$IFACE" ]] && [[ -z "$2" ]]
+	then
+		setaddr="$1"
+	fi
+
+	getMode $IFACE || return $?
+
+	if [[ "$RETCONT" != "static" ]]
+	then
+		setMode static || return $?
+	fi
+
+	if [[ -z `echo $setaddr | grep -Eo "^([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))$"` ]]
+	then
+		REPLY=""
+		RETCONT=""
+		return 28
+	fi
+
+	getBrdcast $IFACE || return $?
+
+	if [[ -z "$RETCONT" ]]
+	then
+		echo -e "\tbroadcast $setaddr" >> /etc/network/interfaces.d/$IFACE
+	else
+		sed -i 's,broadcast '$RETCONT',broadcast '$setaddr',g' /etc/network/interfaces.d/$IFACE
+	fi
+}
+
+function getNameservers()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	touch /etc/resolv.conf
+	RETCONT=`cat /etc/resolv.conf | grep "^nameserver" | awk '{print $2}' | tr '\n' ' ' | sed -e 's/ $//g'`
+}
+
+function setNameservers()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+
+	touch /etc/resolv.conf
+
+	if [[ -z "$1" ]]
+	then
+		return 0
+	else
+		getNameservers || return $?
+		for i in $1
+		do
+			if [[ -z `echo $i | grep -Eo "^([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))\.([0-9]|[1-9][0-9]|1([0-9][0-9])|2([0-4][0-9]|5[0-5]))$"` ]]
+			then
+				REPLY=""
+				RETCONT=""
+				return 28
+			else
+				if [[ -z `echo $RETCONT | grep "$i"` ]]
+				then
+					echo "nameserver $i" >> /etc/resolv.conf
+				else
+					continue
+				fi
+			fi
+		done
+		for i in $RETCONT
+		do
+			if [[ -z `echo $1 | grep $i` ]]
+			then
+				sed -i -e "s,nameserver *""$i"',,g' /etc/resolv.conf
+				sed -i -e "/^$/d" /etc/resolv.conf
+			else
+				continue
+			fi
+		done
+	fi
+
+	getNameservers || return $?
+}
+
+function rndmPass()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	livepass=`openssl rand -hex 3`
+	echo -e "$livepass\n$livepass\n" | passwd live  2> /dev/null
+	RETCONT="$livepass"
+}
+
+function setSSH()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	if [[ -z `ls /var/cache/horus/archives/openssh-server*.deb 2> /dev/null` ]] || [[ -z `ls /var/cache/horus/archives/openssh-sftp-server*.deb 2> /dev/null` ]] || [[ -z `ls /var/cache/horus/archives/libwrap0*.deb 2> /dev/null` ]]
+	then
+		REPLY="ERROR [INTERNAL]: Cannot find ssh servers' packages."
+		RETCONT=""
+		return 8
+	fi
+
+	rndmPass
+
+	dpkg -i /var/cache/horus/archives/libwrap0*.deb
+	dpkg -i /var/cache/horus/archives/openssh-sftp-server*.deb
+	dpkg -i /var/cache/horus/archives/openssh-server*.deb
+}
+
+function applyConf()
+{
+	clrVars
+	[[ -n "$2" ]] && return 255
+
+	if [[ -n "$1" ]]
+	then
+		setIface $1 || return $?
+	elif [[ -z "$IFACE" ]] && [[ -z "$1" ]]
+	then
+		return 255
+	fi
+
+	getMode $IFACE || return $?
+
+	setNameservers || return $?
+
+	cp /etc/default/interfaces /etc/network/interfaces
+	(for i in `ls /etc/network/interfaces.d/`; do cat /etc/network/interfaces.d/$i && echo -e ''; done) >> /etc/network/interfaces
+	ifdown $IFACE > /dev/null 2>&1
+	ifup $IFACE > /dev/null 2>&1
+	return 0
+}

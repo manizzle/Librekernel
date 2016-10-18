@@ -1,0 +1,54 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          utscd
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# X-Start-Before:    kdm gdm3 xdm lightdm
+# X-Stop-After:      kdm gdm3 xdm lightdm
+# Default-Start:     2 3 4 5
+# Default-Stop:      
+# Short-Description: Start the uts_namespace() comaptibility daemon
+# Description:       Changes the kernel uts_namespace() at runtime
+#                    using the /proc/sys/kernel filesystem
+### END INIT INFO
+
+set -e
+
+UTSCD="/sbin/utscd"
+
+# Check for daemon presence
+[ -x "$UTSCD" ] || exit 0
+
+OPTIONS=""
+
+# Get lsb functions
+. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+    log_begin_msg "Starting UTSC Daemon ..."
+    start-stop-daemon --start --quiet --oknodo --exec "$UTSCD"
+    log_end_msg $?
+    ;;
+  stop)
+    log_begin_msg "Stopping UTSC Daemon ..."
+    start-stop-daemon --stop --quiet --oknodo --retry 2 --pidfile /run/utscd.pid
+    log_end_msg $?
+    ;;
+  restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+  reload|force-reload) 
+    log_begin_msg "Reloading UTSC Daemon ..."
+    start-stop-daemon --stop --signal 1 --exec "$UTSCD"
+    log_end_msg $?
+    ;;
+  status)
+    status_of_proc "$UTSCD" utscd
+    ;;
+  *)
+    log_success_msg "Usage: /etc/init.d/utscd {start|stop|restart|reload|force-reload|status}"
+    exit 1
+esac

@@ -1,0 +1,5 @@
+#! /bin/bash
+cd /usr/src/rtlwifi_new/
+make
+make install
+/sbin/depmod -a

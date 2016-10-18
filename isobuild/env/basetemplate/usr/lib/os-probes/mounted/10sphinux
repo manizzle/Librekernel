@@ -1,0 +1,29 @@
+#!/bin/sh
+# Test for SphinUX OS.
+set -e
+
+. /usr/share/os-prober/common.sh
+
+partition="$1"
+dir="$2"
+type="$3"
+
+if (ls "$dir"/etc/sphinux-info ) >/dev/null 2>/dev/null; then
+	# Detect SphinUX OS if exists somewhere.
+        if [ -e "$dir/etc/debian_version" ] && [ -e "$dir/etc/sphinux-info" ] && [ -e "$dir/etc/os-release" ]; then
+		NAME=`cat $dir/etc/os-release | grep "^NAME=" | cut -d '=' -f2 | tr -d '"'`
+		VERSION=`cat $dir/etc/os-release | grep "^VERSION=" | cut -d '=' -f2 | tr -d '"'`
+
+                short="SphinUX"
+                long="$(printf "$NAME $VERSION")"
+        else
+                short="SphinUX"
+                long="Unknown SphinUX edition"
+        fi
+        label="SphinUX OS"
+	result "$partition:$long:$label:$short"
+	exit 0
+else
+	exit 1
+fi
+

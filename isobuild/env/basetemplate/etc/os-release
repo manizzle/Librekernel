@@ -1,0 +1,9 @@
+PRETTY_NAME="SphinUX 1.2 O2"
+NAME="SphinUX"
+VERSION_ID="1.2"
+VERSION="O2 (1.2)"
+ID=SphinUX
+ANSI_COLOR="1;31"
+HOME_URL="https://www.sphinux.org/"
+SUPPORT_URL="https://www.sphinux.org/"
+BUG_REPORT_URL="bugs@sphinux.org"

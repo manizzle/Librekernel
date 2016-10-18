@@ -1,0 +1,153 @@
+#! /bin/bash
+
+APPDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DBFILE=""
+LANGS=""
+LANGID=""
+
+function clrVars()
+{
+	[[ -n "$1" ]] && return 255
+	RETCONT=""
+	REPLY=""
+}
+
+function setDB()
+{
+	clrVars
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	DBFILE="$1"
+
+	if [[ ! -s "$DBFILE" ]] || [[ ! -f "$DBFILE" ]]
+	then
+		DBFILE=""
+		REPLY="FATAL [INTERNAL]: Language DB file doesn't exist."
+		return 1
+	else
+		DBFILE="$1"
+		return 0
+	fi
+}
+
+function getLangs()
+{
+	clrVars
+	[[ -n "$1" ]] && return 255
+
+	LANGS=`ls -d $APPDIR/dict/*/dict.db | sort -r | awk -F '/' '{print $(NF-1)}' | tr '\n' ' '`
+
+	if [[ -z "$LANGS" ]]
+	then
+		REPLY="FATAL [INTERNAL]: Missing Strings DB files, corrupt installation."
+		return 2
+	else
+		for i in $LANGS
+		do
+			langname=`bidiv $APPDIR/dict/$i/dict.db 2> /dev/null | grep -E "langname( )*=( )*" | head -n1 | sed -E 's/langname( )*=( )*//g' | tr -d '"' | tr -d "'" | tr -d ';'`
+			[[ -z "$langname" ]] && continue
+			RETCONT="$RETCONT;$i:$langname"
+		done
+	fi
+}
+
+function setLang()
+{
+	clrVars
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	if [[ -z "$LANGS" ]]
+	then
+		REPLY="FATAL [INTERNAL]: Invoking this function requires invoking 'getLangs()' first."
+		return 3
+	else
+		LANGID="$1"
+		if [[ -n `echo $LANGS | grep " $LANGID "` ]]
+		then
+			REPLY="FATAL [INTERNAL]: Language doesn't exist or has a corrupt file."
+			return 4
+		fi
+
+		setDB $APPDIR/dict/$LANGID/dict.db
+	fi
+}
+
+function resolvStr()
+{
+	clrVars
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	if [[ -z "$DBFILE" ]]
+	then
+		REPLY="FATAL [INTERNAL]: Invoking this function requires invoking 'setLang()' first."
+		return 5
+	else
+		retval="$1"
+		REPLY=`bidiv $DBFILE | grep "^$retval *= *" | awk -F '=' '{print $2}' | tr -d '"' | tr -d "'"`
+		return $retval
+	fi
+}
+
+function getParmVal()
+{
+	clrVars
+	[[ -z "$1" ]] && return 255
+	[[ -n "$2" ]] && return 255
+
+	if [[ -z "$PARMFILE" ]]
+	then
+		REPLY="FATAL [INTERNAL]: Invoking this function requires invoking 'setParmFile()' first."
+		return 6
+	else
+		fieldid="$1"
+		if [[ -z `cat "$PARMFILE" | grep "^$fieldid:"` ]]
+		then
+			REPLY="FATAL [INTERNAL]: Field doesn't exist in parameters file."
+			return 7
+		fi
+
+		parmcont=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d'`
+
+		vars=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -E "[-,a-z,A-Z,_,0-9]*( )*=( )*" | awk -F '=' '{print $1}' | sort | uniq | tr '\n' ' '`
+		varsused=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -Eo "[$][-,a-z,A-Z,_,0-9]*" | tr -d '$' | sort | uniq | tr '\n' ' '`
+
+		OLDIFS="$IFS"
+		IFS=$(echo -en " ")
+
+		for i in $vars
+		do
+			val=`cat $PARMFILE | tr -d '\t' | cut -f1 -d '#' | sed '/^\s*$/d' | grep -E "^$i*( )*=( )*" | awk -F '=' '{print $2}' | tr '\n' ' ' | tr -d '"' | tr -d "'"`
+			parmcont=`echo "$parmcont" | sed -e 's,$'$i','"$val"',g'`
+		done
+
+		parmcont=`echo "$parmcont" | sed '/=/d'`
+
+		if [[ "$vars" != "$varsused" ]]
+		then
+			for i in $varsused
+			do
+				if [[ -z `echo $vars | grep -wEo "($i)"` ]]
+				then
+					echo "[WARN]: Variable '$i' in '$PARMFILE' was not set, will ignore it."
+					parmcont=`echo "$parmcont" | sed -e 's,$'"$i"',,g'`
+				fi
+			done
+
+			for i in $vars
+			do
+				if [[ -z `echo $varsused | grep -wEo "($i)"` ]]
+				then
+					echo "[WARN]: Variable '$i' has been set but has never been used anywhere in '$PARMFILE'."
+				fi
+			done
+		fi
+
+		IFS="$OLDIFS"
+
+		fieldval=`echo "$parmcont" | grep "^$fieldid:" | awk -F ':' '{print $2}' | tr -d ';' | tr -d '\n'`
+		RETCONT="$fieldval"
+	fi
+}
