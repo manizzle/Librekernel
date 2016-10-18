@@ -2,17 +2,15 @@ This directory contains the build environment including the buildscript for the 
 
 Structure:
 
-librebuild	-	# Build script that does all the magic of producing the isofs (takes one argument of environment directory path, example: ./librebuild ./env)
-env 		-	# environment directory path.
-		|
-		|--	config		-	# Configuration file for the iso filesystem ... available configs. are commented inside the file.
-		|--	basepacks	-	# This file contains pre-installed packages from the official debian repository only used by debootstrap to create chrooted env.
-		|--	template.7z	- 	# Compressed 7z archive contains backup of basetemplate dir to ease the download of basetemplate directory (created if missing).
-		|--	bastemplate	-	# Directory that contains extra files to be added to the root of the isofs.
-					|
-					|--	tmp
-						|
-						|--	build	-			# Second step of build process, does the actual creation of the isofs, runs in the chroot.
-						|--	01-app-installation-script.exec	# Installation script of the LibreRouter system, runs in the chroot.
+librebuild # Build script that does all the magic of producing the isofs (takes one argument of environment directory path, example: ./librebuild ./env)
+env        # environment directory path.
+ |+ config       # Configuration file for the iso filesystem ... available configs. are commented inside the file.
+ |+ basepacks    # This file contains pre-installed packages from the official debian repository only used by debootstrap to create chrooted env.
+ |+ template.7z  # Compressed 7z archive contains backup of basetemplate dir to ease the download of basetemplate directory (created if missing).
+ |+ bastemplate  # Directory that contains extra files to be added to the root of the isofs.
+         |
+         |+ tmp
+         |+ build # Second step of build process, does the actual creation of the isofs, runs in the chroot.
+         |+ 01-app-installation-script.exec # Installation script of the LibreRouter system, runs in the chroot.
 
 -- For more information about the installer and the base system refer to this Document from SphinUX Community (ftp://www.sphinux.org/basefs/docs/horus-docs.pdf)
