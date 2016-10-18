@@ -315,7 +315,8 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 
 ####Rules Description
 
-$NT_INTERFACE - is internal network interface
+$INT_INTERFACE - is internal network interface
+
 $EXT_INTERFACE - is external network interface
 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
