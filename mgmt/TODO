@@ -5,3 +5,5 @@
 5- Do a research on full disk encryption and report on the limitations and the best implementation methods to be conducted.
 6- Define the Wizard's UI screens in sequence (requires deeper understanding of the config ... propably postpone it until I can form a better understanding)
 7- Install gitlab (Handled by David)
+8- Implement opendpi or l7filter
+9- Document the iptables part of Librekernel into readme
