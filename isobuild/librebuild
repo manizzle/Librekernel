@@ -118,70 +118,77 @@ chroot $tmpdir wget https://pkg.bunsenlabs.org/debian/pool/main/y/yad/yad_0.37.0
 chroot $tmpdir dpkg -i yad_0.37.0-1_i386.deb
 chroot $tmpdir apt-get -yq --force-yes install -f
 
-cat << EOF >  $tmpdir/etc/apt/sources.list
-deb http://ftp.debian.org/debian jessie main contrib non-free
-deb http://ftp.debian.org/debian jessie-updates main contrib non-free
-deb http://security.debian.org jessie/updates main contrib non-free
-deb http://ftp.debian.org/debian jessie-backports main contrib non-free
-deb-src http://ftp.debian.org/debian jessie main contrib non-free
-deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free
-deb-src http://security.debian.org jessie/updates main contrib non-free
-deb-src http://ftp.debian.org/debian jessie-backports main contrib non-free
-EOF
+#cat << EOF >  $tmpdir/etc/apt/sources.list
+#deb http://ftp.debian.org/debian jessie main contrib non-free
+#deb http://ftp.debian.org/debian jessie-updates main contrib non-free
+#deb http://security.debian.org jessie/updates main contrib non-free
+#deb http://ftp.debian.org/debian jessie-backports main contrib non-free
+#deb-src http://ftp.debian.org/debian jessie main contrib non-free
+#deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free
+#deb-src http://security.debian.org jessie/updates main contrib non-free
+#deb-src http://ftp.debian.org/debian jessie-backports main contrib non-free
+#EOF
 
-echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/ /' > $tmpdir/etc/apt/sources.list.d/owncloud.list
-echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > $tmpdir/etc/apt/sources.list.d/tahoei2p.list
-echo 'deb http://debian.yacy.net ./' > $tmpdir/etc/apt/sources.list.d/yacy.list
-echo 'deb http://deb.i2p2.no/ stable main' > $tmpdir/etc/apt/sources.list.d/i2p.list
-echo 'deb http://deb.torproject.org/torproject.org jessie main' > $tmpdir/etc/apt/sources.list.d/tor.list
-echo 'deb http://download.webmin.com/download/repository sarge contrib' > $tmpdir/etc/apt/sources.list.d/webmin.list
-chroot $tmpdir wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/Release.key -O- | chroot $tmpdir apt-key add -
-chroot $tmpdir apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
-chroot $tmpdir wget --no-check-certificate https://geti2p.net/_static/i2p-debian-repo.key.asc -O- | chroot $tmpdir apt-key add -
-chroot $tmpdir gpg --keyserver pgp.net.nz --recv 886DDD89
-chroot $tmpdir gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | chroot $tmpdir apt-key add -
-chroot $tmpdir wget http://www.webmin.com/jcameron-key.asc
-chroot $tmpdir apt-key add jcameron-key.asc
-chroot $tmpdir rm -f jcameron-key.asc
+#echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/ /' > $tmpdir/etc/apt/sources.list.d/owncloud.list
+#echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > $tmpdir/etc/apt/sources.list.d/tahoei2p.list
+#echo 'deb http://debian.yacy.net ./' > $tmpdir/etc/apt/sources.list.d/yacy.list
+#echo 'deb http://deb.i2p2.no/ stable main' > $tmpdir/etc/apt/sources.list.d/i2p.list
+#echo 'deb http://deb.torproject.org/torproject.org jessie main' > $tmpdir/etc/apt/sources.list.d/tor.list
+#echo 'deb http://download.webmin.com/download/repository sarge contrib' > $tmpdir/etc/apt/sources.list.d/webmin.list
+#chroot $tmpdir wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/Release.key -O- | chroot $tmpdir apt-key add -
+#chroot $tmpdir apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
+#chroot $tmpdir wget --no-check-certificate https://geti2p.net/_static/i2p-debian-repo.key.asc -O- | chroot $tmpdir apt-key add -
+#chroot $tmpdir gpg --keyserver pgp.net.nz --recv 886DDD89
+#chroot $tmpdir gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | chroot $tmpdir apt-key add -
+#chroot $tmpdir wget http://www.webmin.com/jcameron-key.asc
+#chroot $tmpdir apt-key add jcameron-key.asc
+#chroot $tmpdir rm -f jcameron-key.asc
 
-echo "
-Acquire::https::dl.dropboxusercontent.com::Verify-Peer \"false\";
-Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
-        " > $tmpdir/etc/apt/apt.conf.d/apt.conf
+#echo "
+#Acquire::https::dl.dropboxusercontent.com::Verify-Peer \"false\";
+#Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
+#        " > $tmpdir/etc/apt/apt.conf.d/apt.conf
 
-echo 'export DEBIAN_FRONTEND=noninteractive' > $tmpdir/root/.bashrc
-echo 'echo debconf debconf/frontend string noninteractive | debconf-set-selections' >> $tmpdir/root/.bashrc
+#echo 'export DEBIAN_FRONTEND=noninteractive' > $tmpdir/root/.bashrc
+#echo 'echo debconf debconf/frontend string noninteractive | debconf-set-selections' >> $tmpdir/root/.bashrc
 
-chroot $tmpdir apt-get update
+#chroot $tmpdir apt-get update
 
-chroot $tmpdir bash -c 'DEBIAN_FRONTEND=noninteractive apt-get -qy --force-yes -o Dpkg::Options::="--force-all" \
--o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install \
-smarty3 macchanger librrd-dev \
-i2p-keyring virtualenv pwgen gcc g++ make automake \
-killyourtv-keyring i2p-tahoe-lafs libcurl4-gnutls-dev \
-libicapapi-dev libssl-dev perl \
-deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
-gnupg python-virtualenv python-pip python-lxml git \
-libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev \
-libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
-flex libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
-libnetfilter-queue-dev libdumbnet-dev autoconf rails \
-roundcube-mysql roundcube-plugins ntop libndpi-bin \
-argus-server argus-client libnids-dev flow-tools libfixbuf3 \
-libgd-perl libgd-graph-perl rrdtool librrd-dev librrds-perl \
-libsqlite3-dev libtool elasticsearch conky ruby bundler \
-pmacct tomcat7 dpkg-dev devscripts javahelper \
-librrds-perl apache2-prefork-dev \
-apache2- apache2-mpm-prefork- apache2-utils- apache2.2-bin- apache2.2-common- \
-libmysqlclient-dev wkhtmltopdf'
+#chroot $tmpdir bash -c 'DEBIAN_FRONTEND=noninteractive apt-get -qy --force-yes -o Dpkg::Options::="--force-all" \
+#-o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install \
+#smarty3 macchanger librrd-dev \
+#i2p-keyring virtualenv pwgen gcc g++ make automake \
+#killyourtv-keyring i2p-tahoe-lafs libcurl4-gnutls-dev \
+#libicapapi-dev libssl-dev perl \
+#deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
+#gnupg python-virtualenv python-pip python-lxml git \
+#libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev \
+#libxml2-dev libxslt1-dev python-jinja2 python-pgpdump spambayes \
+#flex libpcap-dev libnet1-dev libpcre3-dev iptables-dev \
+#libnetfilter-queue-dev libdumbnet-dev autoconf rails \
+#roundcube-mysql roundcube-plugins ntop libndpi-bin \
+#argus-server argus-client libnids-dev flow-tools libfixbuf3 \
+#libgd-perl libgd-graph-perl rrdtool librrd-dev librrds-perl \
+#libsqlite3-dev libtool elasticsearch conky ruby bundler \
+#pmacct tomcat7 dpkg-dev devscripts javahelper \
+#librrds-perl apache2-prefork-dev \
+#apache2- apache2-mpm-prefork- apache2-utils- apache2.2-bin- apache2.2-common- \
+#libmysqlclient-dev wkhtmltopdf'
 
-chroot $tmpdir apt-get -qy --force-yes purge apache2 apache2.2-bin apache2-utils apache2.2-common apache2-common apache2-bin
+#chroot $tmpdir apt-get -qy --force-yes purge apache2 apache2.2-bin apache2-utils apache2.2-common apache2-common apache2-bin
 
-chroot $tmpdir bash -c 'DEBIAN_FRONTEND=noninteractive apt-get -qy --force-yes -o Dpkg::Options::="--force-all" \
--o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install \
-privoxy unbound owncloud isc-dhcp-server \
-yacy c-icap clamav clamav-daemon webmin squidguard postfix \
-tor i2p roundcube tinyproxy prosody'
+#chroot $tmpdir bash -c 'DEBIAN_FRONTEND=noninteractive apt-get -qy --force-yes -o Dpkg::Options::="--force-all" \
+#-o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install \
+#privoxy unbound owncloud isc-dhcp-server \
+#yacy c-icap clamav clamav-daemon webmin squidguard postfix \
+#tor i2p roundcube tinyproxy prosody'
+
+wget -O $tmpdir/tmp/01-app-installation-script.exec https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/01-app-installation-script.sh
+
+chmod +x $tmpdir/tmp/01-app-installation-script.exec
+chroot $tmpdir /tmp/01-app-installation-script.exec
+chroot $tmpdir
+
 
 # Clean unwanted kaka and m3eez (Kaka = shit / m3eez = goats) :D
 umount $tmpdir/proc/
