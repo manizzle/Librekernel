@@ -1796,19 +1796,22 @@ install_nfsen()
 # ----------------------------------------------
 install_evebox()
 {
-	echo "Installing EveBox ..."
+        echo "Installing EveBox ..."
 
-	URL="https://github.com/jasonish/evebox/releases/download/0.5.0"
-	PKG="evebox_0.5.0_amd64.deb"
-	wget -P /tmp/ $URL/$PKG
-	dpkg -i /tmp/$PKG && apt-get install -y -f
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to install evebox"
-		exit 3
-	fi
+        if [ ! -e evebox-0.6.0dev-linux-amd64 ]; then
+        echo "Downloading EveBox ..."
+        wget --no-check-certificat \
+        https://bintray.com/jasonish/evebox-development/download_file?file_path=evebox-latest-linux-amd64.zip
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download EveBox. Exiting ..."
+                        exit 3
+                fi
+        mv download_file?file_path=evebox-latest-linux-amd64.zip evebox-latest-linux-amd64.zip
+        unzip evebox-latest-linux-amd64.zip
+        fi
 
-	# Cleanup
-	rm -rf /tmp/$PKG
+        # Cleanup
+        rm -rf evebox-latest-linux-amd64.zip
 }
 
 
@@ -1938,18 +1941,28 @@ install_gitlab()
 {
 	echo "Installing gitlab ..."
 
-	# Install and configure the necessary dependencies
+	# Install the necessary dependencies
 	apt-get install -y --force-yes curl openssh-server ca-certificates postfix
 
-	# Add the GitLab package server
-	curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
-
-	# Install the package
-        apt-get install -y --force-yes gitlab-ce	
+        if [ ! -e gitlab-ce_8.12.7-ce.0_amd64.deb ]; then
+        echo "Downloading Gitlab ..."
+        wget --no-check-certificat \
+        https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download Gitlab. Exiting ..."
+                        exit 3
+                fi
+        fi
+        
+	# Install gitlab 
+	dpkg -i gitlab-ce_8.12.7-ce.0_amd64.deb
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install gitlab. Exiting ..."
+                echo "Error: unable to install Gitlab. Exiting ..."
                 exit 3
-        fi 	
+        fi
+ 	
+	# Configure gitlab
+	gitlab-ctl reconfigure
 }
 
 
