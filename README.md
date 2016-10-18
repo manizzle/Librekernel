@@ -313,6 +313,76 @@ Tor dns configuration is implemented by configure_tor() function. (lines 411-474
 
 ###Iptables configuration.
 
+####Rules Description
+
+$INT_INTERFACE - is internal network interface
+
+$EXT_INTERFACE - is external network interface
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.245 which is webmin ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.11 which is kibana ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.12 which is snorby ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.246 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.246 which is squidguard ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.250 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.250 which is easyrtc ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.251 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.251 which is yacy ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.252 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.252 which is friendica ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.253 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.253 which is owncloud ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.254 -j ACCEPT
+ - accepts all of the tcp traffic on interface 10.0.0.254 which is mailpile ip of librerouter service
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 22 -j REDIRECT --to-ports 22
+ - avoids NATing 22 port for an external ssh access
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p udp -d 10.0.0.1 --dport 53 -j REDIRECT --to-ports 53
+ - avoids NATing 53 port for an external DNS access
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 80 -j REDIRECT --to-ports 80
+ - avoids NATing 80 port for an external HTTP access
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 443 -j REDIRECT --to-ports 443
+ - avoids NATing 443 port for an external HTTPS access
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 7000 -j REDIRECT --to-ports 7000
+ - avoids NATing 7000 port for an external access
+
+iptables -t nat -A OUTPUT     -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
+ - redirects all output tcp traffic to destanation http port and destanation address 10.191.0.1 to squid-i2p service port
+
+iptables -t nat -A PREROUTING -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
+ - redirects all tcp traffic to destanation http and destanation address 10.191.0.1 to squid-i2p service port
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m tcp --sport 80 -d 10.191.0.1 -j REDIRECT --to-ports 3128
+ - redirects all tcp traffic with source http port and destanation address  10.191.0.1 to squid-i2p service port
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --to 10.0.0.1:3129
+ - redirects all tcp traffic from internal interface to 10.0.0.0/8 network to squid-tor service port
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 80 -j DNAT --to 10.0.0.1:3130
+ - redirects http traffic from internal interface to squid-http service port
+
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 443 -j REDIRECT --to-ports 3131
+ - redirects https traffic from internal interface to squid-https service port
+
+iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE 
+ - rule for NATing traffic from internal to extarnal interface
+
+
 ###X further service configuration.
 
 ### Suricata configuration.
