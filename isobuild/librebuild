@@ -34,7 +34,7 @@ tmpdir=${CONFDIR}/tmp/`makepasswd --chars=9`
 packs=`debootstrap --print-debs --verbose --keep-debootstrap-dir --components=main,contrib,non-free jessie $tmpdir 2> /dev/null | tr ' ' '\n'`
 
 # Now read the maintainer's required packages
-basepacks=`cat $workdir/tmp/basepacks`
+basepacks=`cat $workdir/tmp/basepacks | cut -f1 -d '#' | sed '/^\s*$/d' | sort`
 
 # Diff packs and basepacks to get extra included packages and extra packages to remove
 include=`for i in $basepacks; do echo "$packs" | grep -Eq "^$i$" || echo $i; done | tr '\n' ' '`

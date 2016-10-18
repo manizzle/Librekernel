@@ -45,9 +45,9 @@ ruby
 python-pip
 npm
 apt-transport-https 
-bridge-utils
+bridge-utils				# Needed to create the bridge connection.
 ntp
-lighttpd
+lighttpd				# Needed webserver to run the Web UI.
 acpi
 acpid
 acpi-support-base
