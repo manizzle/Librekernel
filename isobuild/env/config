@@ -1,9 +1,9 @@
-name='LibreRouter'				# Name of the distribution
+name='Debian'					# Name of the distribution
 base='LibreRouter'				# Name of the OS (basesystem)
-ver='1.2'					# Version of the OS (basesystem)
+ver='8.6'					# Version of the OS (basesystem)
 stage='a'					# Development Stage (a: alpha, b: beta, rc: release candidate, s: stable)
-step='03'					# Step of the development stage (3 is 3rd step of the current stage)
-codename='LibreRouter'				# Codename to be returned by lsb_release
+step='01'					# Step of the development stage (3 is 3rd step of the current stage)
+codename='jessie'				# Codename to be returned by lsb_release
 kver='3.16.0-4-586'				# Kernel version to be installed (should be available in the repository)
 website=''					# Website of the distributor
 mail='dev@sphinux.org'				# Development Email address of the distributor

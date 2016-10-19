@@ -55,6 +55,8 @@ echo "Vendor: $name" > $workdir/etc/dpkg/origins/default
 echo "Vendor-URL: https://$website/" >> $workdir/etc/dpkg/origins/default
 echo "Bugs: debbugs://$website" >> $workdir/etc/dpkg/origins/default
 cp $workdir/etc/dpkg/origins/default $workdir/etc/dpkg/origins/debian 2> /dev/null
+echo "$name (StdBaseFS 1.2)" > $workdir/etc/issue
+echo "$name (StdBaseFS 1.2)" > $workdir/etc/issue.net
 echo "DITRIB_ID=$name" > $workdir/etc/lsb-release
 echo "DISTRIB_RELEASE=$ver" >> $workdir/etc/lsb-release
 echo "DISTRIB_CODENAME=$codename" >> $workdir/etc/lsb-release
