@@ -1,5 +1,5 @@
-1- Document the DevOps system and the architecture to be used for the automation of the build process and how it integrates with the installation scripts.
-2- Test mailinabox and evaluate it if it's worth integrating into the project, use parts of it or go on on a separate path with a normal roundcube/postfix/dovecot/opendkim/clamav
+[DONE] 1- Document the DevOps system and the architecture to be used for the automation of the build process and how it integrates with the installation scripts.
+[DONE] 2- Test mailinabox and evaluate it if it's worth integrating into the project, use parts of it or go on on a separate path with a normal roundcube/postfix/dovecot/opendkim/clamav
 3- Test mailpile and see if it's worth moving to roundcube, verify that roundcube fulfills the pgp encryption requirement.
 4- Test installed services by the script and provide a feedback as a normal user.
 5- Do a research on full disk encryption and report on the limitations and the best implementation methods to be conducted.
@@ -7,3 +7,4 @@
 7- Install gitlab (Handled by David)
 8- Implement opendpi or l7filter
 9- Document the iptables part of Librekernel into readme
+10- Create underlying cgi engine to execute configuration scripts for WEB UI
