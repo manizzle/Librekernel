@@ -2062,21 +2062,21 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         configure_bridges       # Configure bridge interfacers
                                 # Physical or Virtual machine
 	configure_repositories	# Prepare and update repositories
-	#install_packages       	# Download and install packages	
+	install_packages       	# Download and install packages	
 #	install_libressl	# Install Libressl package
-	#install_modsecurity     # Install modsecurity package
-	#install_nginx		# Install nginx package
-	#install_mailpile	# Install Mailpile package
+	install_modsecurity     # Install modsecurity package
+	install_nginx		# Install nginx package
+	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
-	#install_libecap		# Install libecap package
-	#install_fg-ecap		# Install fg-ecap package
-	#install_squid		# Install squid package
-	#install_squidclamav	# Install SquidClamav package
-	#install_squidguard_bl	# Install Squidguard blacklists
-	#install_squidguardmgr	# Install Squidguardmgr (Manager Gui) 
-	#install_ecapguardian	# Inatall ecapguardian package
+	install_libecap		# Install libecap package
+	install_fg-ecap		# Install fg-ecap package
+	install_squid		# Install squid package
+	install_squidclamav	# Install SquidClamav package
+	install_squidguard_bl	# Install Squidguard blacklists
+	install_squidguardmgr	# Install Squidguardmgr (Manager Gui) 
+	install_ecapguardian	# Inatall ecapguardian package
 #	install_e2guardian	# Inatall e2guardian package
-	#install_suricata	# Install Suricata package
+	install_suricata	# Install Suricata package
 #	install_scirius		# Install Scirius package
 ##	install_snort		# Install Snort package
 #	install_barnyard	# Install Barnyard package
