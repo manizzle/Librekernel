@@ -527,7 +527,7 @@ kill -9 \`ps aux | grep dnsmasq | awk {'print \$2'} | sed -n '1p'\` \
 service unbound restart
 
 # Starting easyrtc
-nohup nodejs /opt/easyrtc/server.js &
+nohup nodejs /opt/easyrtc/server_example/server.js &
 
 # Starting Mailpile
 /usr/bin/screen -dmS mailpile_init /opt/Mailpile/mp
@@ -1456,41 +1456,82 @@ echo "
 configure_easyrtc()
 {
 echo "Starting EasyRTC local service ..."
-if [ ! -e /opt/easyrtc/server.js ]; then
-    echo "Can not find EasyRTC server in /opt/eastrtc directory. Exiting ..."
+if [ ! -e /opt/easyrtc/server_example/server.js ]; then
+    echo "Can not find EasyRTC server confiugration. Exiting ..."
     exit 4
 fi
 
-cat << EOF > /opt/easyrtc/server.js 
-    // Load required modules
-    var https   = require("https");     // https server core module
-    var fs      = require("fs");        // file system core module
-    var express = require("express");   // web framework external module
-    var io      = require("socket.io"); // web socket external module
-    var easyrtc = require("easyrtc");   // EasyRTC external module
+cat << EOF > /opt/easyrtc/server_example/server.js 
+// Load required modules
+var https    = require("https");              // http server core module
+var express = require("express");           // web framework external module
+var serveStatic = require('serve-static');  // serve static files
+var socketIo = require("socket.io");        // web socket external module
+var easyrtc = require("../");               // EasyRTC external module
+var fs = require("fs");
 
-    // Setup and configure Express http server. Expect a subfolder called "static" to be the web root.
-    var httpApp = express();
-    httpApp.use(express.static(__dirname + "/static/"));
+// Set process name
+process.title = "node-easyrtc";
 
-    // Start Express https server on port 8443
-    var webServer = https.createServer(
-    {
+// Setup and configure Express http server. Expect a subfolder called "static" to be the web root.
+var app = express();
+app.use(serveStatic('static', {'index': ['index.html']}));
+
+// Start Express http server on port 8443
+var webServer = https.createServer(
+{
         key:  fs.readFileSync("/etc/ssl/nginx/easyrtc.key"),
         cert: fs.readFileSync("/etc/ssl/nginx/easyrtc.crt")
-    },
-    httpApp).listen(8443);
+},
+app).listen(8443);
 
-    // Start Socket.io so it attaches itself to Express server
-    var socketServer = io.listen(webServer, {"log level":1});
+// Start Socket.io so it attaches itself to Express server
+var socketServer = socketIo.listen(webServer, {"log level":1});
 
-    // Start EasyRTC server
-    var rtc = easyrtc.listen(httpApp, socketServer);
+easyrtc.setOption("logLevel", "debug");
+
+// Overriding the default easyrtcAuth listener, only so we can directly access its callback
+easyrtc.events.on("easyrtcAuth", function(socket, easyrtcid, msg, socketCallback, callback) {
+    easyrtc.events.defaultListeners.easyrtcAuth(socket, easyrtcid, msg, socketCallback, function(err, connectionObj){
+        if (err || !msg.msgData || !msg.msgData.credential || !connectionObj) {
+            callback(err, connectionObj);
+            return;
+        }
+
+        connectionObj.setField("credential", msg.msgData.credential, {"isShared":false});
+
+        console.log("["+easyrtcid+"] Credential saved!", connectionObj.getFieldValueSync("credential"));
+
+        callback(err, connectionObj);
+    });
+});
+
+// To test, lets print the credential to the console for every room join!
+easyrtc.events.on("roomJoin", function(connectionObj, roomName, roomParameter, callback) {
+    console.log("["+connectionObj.getEasyrtcid()+"] Credential retrieved!", connectionObj.getFieldValueSync("credential"));
+    easyrtc.events.defaultListeners.roomJoin(connectionObj, roomName, roomParameter, callback);
+});
+
+// Start EasyRTC server
+var rtc = easyrtc.listen(app, socketServer, null, function(err, rtcRef) {
+    console.log("Initiated");
+
+    rtcRef.events.on("roomCreate", function(appObj, creatorConnectionObj, roomName, roomOptions, callback) {
+        console.log("roomCreate fired! Trying to create: " + roomName);
+
+        appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback);
+    });
+});
+
+//listen on port 8443
+webServer.listen(8443, function () {
+    console.log('listening on http://localhost:8443');
+});
 EOF
 
 sed -i '/function connect() {/a easyrtc.setSocketUrl(":8443");' /opt/easyrtc/node_modules/easyrtc/demos/js/*.js
 
-cd /opt/easyrtc
+cd /opt/easyrtc/server_example
 
 # Starting EasyRTC server
 nohup nodejs server &
@@ -2255,6 +2296,7 @@ echo "Configuring Nginx ..."
 # Stop and change apache configuration
 /etc/init.d/apache2 stop
 sed -i s/*:80/*:88/g  /etc/apache2/sites-enabled/000-default.conf
+sed -i s/80/88/g  /etc/apache2/ports.conf
 
 mkdir -p /etc/ssl/nginx/
 mkdir -p /etc/nginx/sites-enabled/
