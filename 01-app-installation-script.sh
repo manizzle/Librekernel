@@ -391,53 +391,53 @@ configure_bridges()
         if [ $? -ne 0 ]; then
 		echo "Error: Unable to install bridge-utils"
 		exit 8
-#	else
+	else
 
-#	EXT_BR_INT=`echo $EXT_INTERFACE | tail -c 2`
-#       	INT_BR_INT=`echo $INT_INTERFACE | tail -c 2`
+	EXT_BR_INT=`echo $EXT_INTERFACE | tail -c 2`
+       	INT_BR_INT=`echo $INT_INTERFACE | tail -c 2`
 
-#	echo "Configuring bridge interfaces..."
-#	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-#	echo "auto lo" >> /etc/network/interfaces
-#	echo "iface lo inet loopback" >> /etc/network/interfaces
+	echo "Configuring bridge interfaces..."
+	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+	echo "auto lo" >> /etc/network/interfaces
+	echo "iface lo inet loopback" >> /etc/network/interfaces
 
 	# Configuring bridge interfaces
 
-#	echo "#External network interface" >> /etc/network/interfaces
-#	echo "auto $EXT_INTERFACE" >> /etc/network/interfaces
-#	echo "allow-hotplug $EXT_INTERFACE" >> /etc/network/interfaces
-#	echo "iface $EXT_INTERFACE inet dhcp" >> /etc/network/interfaces
+	echo "#External network interface" >> /etc/network/interfaces
+	echo "auto $EXT_INTERFACE" >> /etc/network/interfaces
+	echo "allow-hotplug $EXT_INTERFACE" >> /etc/network/interfaces
+	echo "iface $EXT_INTERFACE inet dhcp" >> /etc/network/interfaces
 
-#	echo "#External network interface" >> /etc/network/interfaces
-#	echo "auto wlan$EXT_BR_INT" >> /etc/network/interfaces
-#	echo "allow-hotplug wlan$EXT_BR_INT" >> /etc/network/interfaces
-#	echo "iface wlan$EXT_BR_INT inet manual" >> /etc/network/interfaces
+	echo "#External network interface" >> /etc/network/interfaces
+	echo "auto wlan$EXT_BR_INT" >> /etc/network/interfaces
+	echo "allow-hotplug wlan$EXT_BR_INT" >> /etc/network/interfaces
+	echo "iface wlan$EXT_BR_INT inet manual" >> /etc/network/interfaces
 
-#	echo "##External Network Bridge " >> /etc/network/interfaces
-#	echo "#auto br$EXT_BR_INT" >> /etc/network/interfaces
-#	echo "#allow-hotplug br$EXT_BR_INT" >> /etc/network/interfaces
-#	echo "#iface br$EXT_BR_INT inet dhcp" >> /etc/network/interfaces   
-#	echo "#bridge_ports eth$EXT_BR_INT wlan$EXT_BR_INT" >> /etc/network/interfaces
+	echo "##External Network Bridge " >> /etc/network/interfaces
+	echo "#auto br$EXT_BR_INT" >> /etc/network/interfaces
+	echo "#allow-hotplug br$EXT_BR_INT" >> /etc/network/interfaces
+	echo "#iface br$EXT_BR_INT inet dhcp" >> /etc/network/interfaces   
+	echo "#bridge_ports eth$EXT_BR_INT wlan$EXT_BR_INT" >> /etc/network/interfaces
 	
-#	echo "#Internal network interface" >> /etc/network/interfaces
-#	echo "auto $INT_INTERFACE" >> /etc/network/interfaces
-#	echo "allow-hotplug $INT_INTERFACE" >> /etc/network/interfaces
-#	echo "iface $INT_INTERFACE inet manual" >> /etc/network/interfaces
+	echo "#Internal network interface" >> /etc/network/interfaces
+	echo "auto $INT_INTERFACE" >> /etc/network/interfaces
+	echo "allow-hotplug $INT_INTERFACE" >> /etc/network/interfaces
+	echo "iface $INT_INTERFACE inet manual" >> /etc/network/interfaces
 	
-#	echo "#Internal network interface" >> /etc/network/interfaces
-#	echo "auto wlan$INT_BR_INT" >> /etc/network/interfaces
-#	echo "allow-hotplug wlan$INT_BR_INT" >> /etc/network/interfaces
-#	echo "iface wlan$INT_BR_INT inet manual" >> /etc/network/interfaces
+	echo "#Internal network interface" >> /etc/network/interfaces
+	echo "auto wlan$INT_BR_INT" >> /etc/network/interfaces
+	echo "allow-hotplug wlan$INT_BR_INT" >> /etc/network/interfaces
+	echo "iface wlan$INT_BR_INT inet manual" >> /etc/network/interfaces
 
-#	echo "# Internal network Bridge" >> /etc/network/interfaces
-#	echo "auto br$INT_BR_INT" >> /etc/network/interfaces
-#	echo "allow-hotplug br$INT_BR_INT" >> /etc/network/interfaces
-#	echo "# Setup bridge" >> /etc/network/interfaces
-#	echo "iface br$INT_BR_INT inet static" >> /etc/network/interfaces
-#	echo "    bridge_ports eth$INT_BR_INT wlan$INT_BR_INT" >> /etc/network/interfaces
-#	echo "    address 10.0.0.1" >> /etc/network/interfaces
-#	echo "    netmask 255.255.255.0" >> /etc/network/interfaces
-#	echo "    network 10.0.0.0" >> /etc/network/interfaces
+	echo "# Internal network Bridge" >> /etc/network/interfaces
+	echo "auto br$INT_BR_INT" >> /etc/network/interfaces
+	echo "allow-hotplug br$INT_BR_INT" >> /etc/network/interfaces
+	echo "# Setup bridge" >> /etc/network/interfaces
+	echo "iface br$INT_BR_INT inet static" >> /etc/network/interfaces
+	echo "    bridge_ports eth$INT_BR_INT wlan$INT_BR_INT" >> /etc/network/interfaces
+	echo "    address 10.0.0.1" >> /etc/network/interfaces
+	echo "    netmask 255.255.255.0" >> /etc/network/interfaces
+	echo "    network 10.0.0.0" >> /etc/network/interfaces
 	fi
 
 }
@@ -509,15 +509,15 @@ elif [ $PLATFORM = "D8" ]; then
         pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
         librrds-perl libapache2-mod-php5- apache2-prefork-dev \
         libmysqlclient-dev wkhtmltopdf libpcre3 mysql-server \
-	mysql-client-5.5 \
-        2>&1 > /tmp/apt-get-install_1.log
+	mysql-client-5.5
+#        2>&1 > /tmp/apt-get-install_1.log
 
 	# services
 	apt-get install -y --force-yes \
         privoxy unbound owncloud isc-dhcp-server \
         yacy c-icap clamav clamav-daemon webmin squidguard postfix \
-        tor i2p roundcube tinyproxy prosody \
-        2>&1 > /tmp/apt-get-install_2.log
+        tor i2p roundcube tinyproxy prosody
+#        2>&1 > /tmp/apt-get-install_2.log
 
 	# Fix for missing directories
 	mkdir -p /var/lib/i2p
