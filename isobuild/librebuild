@@ -187,8 +187,11 @@ wget -O $tmpdir/tmp/01-app-installation-script.exec https://raw.githubuserconten
 
 chmod +x $tmpdir/tmp/01-app-installation-script.exec
 chroot $tmpdir /tmp/01-app-installation-script.exec
-chroot $tmpdir
-
+mkdir -p $tmpdir/var/lib/i2p
+mkdir -p $tmpdir/var/log/mysql
+chown mysql:mysql $tmpdir/var/log/mysql
+mkdir -p $tmpdir/var/log/ntop
+chown ntop:ntop $tmpdir/var/log/ntop
 
 # Clean unwanted kaka and m3eez (Kaka = shit / m3eez = goats) :D
 umount $tmpdir/proc/

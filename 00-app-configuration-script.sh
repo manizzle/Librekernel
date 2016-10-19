@@ -25,7 +25,7 @@ get_platform()
                 PLATFORM="D7"
         elif cat $FILE | grep "Debian GNU/Linux 8" > /dev/null; then
                 PLATFORM="D8"
-        elif cat $FILE | grep "LibreRouter (StdBaseFS 1.2)" > /dev/null; then
+        elif cat $FILE | grep "Debian (StdBaseFS 1.2)" > /dev/null; then
                 PLATFORM="D8"
         elif cat $FILE | grep "Trisquel GNU/Linux 7.0" > /dev/null; then
                 PLATFORM="T7"
