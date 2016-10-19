@@ -1,0 +1,11 @@
+- https://datsi.fi.upm.es/~frosal/sources/shc.html
+- shc is a tool to compile a script, it's an encryption method to provide an encrypted version of the string to be added into
+a C Code to be compiled and ran on the shell.
+- you can download and install it on debian by the command: sudo apt-get install shc
+- you can encrypt a shell script by the following command:
+    shc -r -f ./script
+  this will produce two files:
+    script.x -------> Compiled encrypted version of the script
+    script.x.c -------> C code of the encrypted version of the script
+
+- See: man shc for more information and options.
