@@ -184,6 +184,8 @@ chroot $tmpdir apt-get -yq --force-yes install -f
 #tor i2p roundcube tinyproxy prosody'
 
 wget -O $tmpdir/tmp/01-app-installation-script.exec https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/01-app-installation-script.sh
+wget -O $tmpdir/sbin/librerouter-configure https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/00-app-configuration-script.sh
+chmod +x $tmpdir/sbin/librerouter-configure
 
 chmod +x $tmpdir/tmp/01-app-installation-script.exec
 chroot $tmpdir /tmp/01-app-installation-script.exec
@@ -192,6 +194,9 @@ mkdir -p $tmpdir/var/log/mysql
 chown mysql:mysql $tmpdir/var/log/mysql
 mkdir -p $tmpdir/var/log/ntop
 chown ntop:ntop $tmpdir/var/log/ntop
+
+#chroot $tmpdir
+
 
 # Clean unwanted kaka and m3eez (Kaka = shit / m3eez = goats) :D
 umount $tmpdir/proc/
