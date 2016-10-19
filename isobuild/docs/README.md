@@ -74,4 +74,4 @@
 </ul>
 <p>Structure:</p>
 <p><img src="snapshot122.png" alt="" /></p>
-<h3>-- For more information about the installer and the base system refer to this Document from SphinUX Community (ftp://www.sphinux.org/basefs/docs/horus-docs.pdf)</h3>
+<h3>-- For more information about the installer and the base system refer to horus-docs.pdf file.</h3>
