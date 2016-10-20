@@ -1956,8 +1956,9 @@ install_gitlab()
 
         if [ ! -e gitlab-ce_8.12.7-ce.0_amd64.deb ]; then
         echo "Downloading Gitlab ..."
-        wget --no-check-certificat \
-        https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb
+        wget --no-check-certificat -O gitlab-ce_8.12.7-ce.0_amd64.deb \
+	https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb/download 
+
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download Gitlab. Exiting ..."
                         exit 3
