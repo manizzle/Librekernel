@@ -6,10 +6,10 @@ First of all you should install Debian 8 version: 2GB RAM, 2 procesor, 2NICs (ne
 
 Hardware resources:
 
-//FYI Network Interface = (NIC). 
 - NIC1 will be NAT/bridged to Internet dhcp server.
 - NIC2 will be a attached to the other VM Windows10. From debian to win 10 will be a private LAN in bridge mode.
--Windows 10 (one network interface) ( install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
+
+On Windows 10 VM (one network interface) You should  install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun.
 
 You can use any virtualization software you prefer. Its transparent for us.
 
