@@ -70,8 +70,3 @@ Tahoe generated new keys after first run but would not be needed to backup if th
     Script restart tahoe and connect via TOR and I2P
 
 14. Scripts restore all like magic and reboot system
-
-Question1:  There is  first requirement for the computer in the Readme file: at least 2 network interfaces NICS. Does it mean that pc should have at least 2 separate network card ? Or lan and wlan(wi-fi) is ok ? We want use laptop for this goal.
-
-Answer: virtual machines. Phisically the machine should have 1 internet exit, and another interface for doing a internal vlan betwen win and linux 
-internet--------ethx-----debian---eth2-------virtual lan virtual switch-------windows 10 with office 2016 and all browsers
