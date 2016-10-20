@@ -1,16 +1,15 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
 #Setting up a lab to start to contribute:
-
-First you can use any virtualization software you prefer. Its transparent for us.
+First of all you should install Debian 8 version: 2GB RAM, 2 procesor, 2NICs (network interfaces) and Win 10  as VMs on your computer. Phisically the machine should have 1 internet exit and another interface for doing a internal vlan betwen win(installed on the virtual machine) and linux other words one NIC for internet connection and other for connection  with other VM.
 
 Hardware resources:
 //FYI Network Interface = (NIC). 
-- Debian 8 version : 2GB RAM, 2 procesor, 2NICs (network interfaces). Phisically the machine should have 1 internet exit and another interface for doing a internal vlan betwen win(installed on the virtual machine) and linux
 - NIC1 will be NAT/bridged to Internet dhcp server.
 - NIC2 will be a attached to the other VM Windows10. From debian to win 10 will be a private LAN in bridge mode.
- 
-- Windows 10 (one network interface) ( install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
+-Windows 10 (one network interface) ( install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun)
+
+You can use any virtualization software you prefer. Its transparent for us.
 
 As shown in the following figure.
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
