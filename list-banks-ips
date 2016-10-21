@@ -56,6 +56,94 @@ https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=%22autonomous+syste
 Reverse DNs entriy adding the information to the IPs retrieved from AS and from others
 http://www.dnspython.org/
 
+******************
+Implementation:
+******************
+
+Final Form:
+bankname    bankcompletedomain      ip x.x.x.x    reversedns
+
+Bank Name Generator:
+- wget/pars
+-- https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
+-- https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)
+-- https://www.thebankerdatabase.com/index.cfm/banks/all/
+-- http://www.allbanks.org/main/list/0.html
+-- http://pugahome.tripod.com/allbanks.htm
+
+BGP AS Database
+- http://www.bgplookingglass.com/list-of-autonomous-system-numbers
+- http://www.bgplookingglass.com/list-of-autonomous-system-numbers-2
+- https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=bgp
+- https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=%22autonomous+system%22
+
+Reverse Domain Name Generator
+- dig
+- nslookup
+- shodan
+- http://www.dnspython.org/
+
+Domain Generator
+- Google + ?
+- http://openaccess.dialog.com/ip/
+- http://www.ldap.verisignlabs.com/
+- http://www.yougetsignal.com/tools/web-sites-on-web-server/
+-- http://www.yougetsignal.com/list-of-domain-names/
+- https://www.robtex.com/
+
+Sub-Domain Generator
+- https://github.com/guelfoweb/knock
+- https://github.com/aboul3la/Sublist3r
+- https://github.com/rbsec/dnscan
+- https://github.com/TheRook/subbrute
+- https://github.com/jhaddix/domain
+- https://github.com/tomsteele/blacksheepwall
+- https://code.google.com/archive/p/gxfr/
+- https://github.com/OJ/gobuster
+- https://bitbucket.org/LaNMaSteR53/recon-ng
+- http://tools.kali.org/information-gathering/dnsrecon
+- https://github.com/infosec-au/altdns
+- https://github.com/Cleveridge/cleveridge-subdomain-scanner
+
+IP Generator
+- dig, nslookup
+
+
+                 +---------------------+
+                 | Bank Name Generator +---------------------+
+                 +-----------+---------+                     |
+                             |                               v
+                             |
+                             |                        +-------------------+
+                             |                        | Domain Generator  |
+                             |                        +-----------+-------+
+                             |                                    |
+                             v                                    |
+                                                                  |
+                  +--------------------+                          |
++---------------> |  BGP AS Database   |                          |
+|                 +------------+-------+                          |
+|                              |                                  |                  +-----------------------+                        +---------------------+
+|                              |                                  +-------------->   | Sub|Domain Generator  +-------------------->   |  IP Generator(DNS)  |
+|                              |                                                     +-----------------------+                        +-------+-------------+
+|                              |                                                                                                              |
+|                              |                                                                  ^                                           |
+|                              |                                                                  |                                           |
+|                              v                                                                  |                                           |
+|                                                                                                 |                                           |
+|            +---------------------------------+                                                  |                                           |
+|            |                                 |                                                  |                                           |
+|            | Reverse Domain Generator (rDNS) +--------------------------------------------------+                                           |
+|            |                                 |                                                                                              |
+|            +---------------------------------+                                                                                              |
+|                                                                                                                                             |
+|                                                                                                                                             |
+|                                                                                                                                             |
+|                                                                                                                                             |
+|                                                                                                                                             |
+|                                                                                                                                             |
++---------------------------------------------------------------------------------------------------------------------------------------------+
+                                                 Check IPs in BGP AS List to find unknown AS that contain Bank IPs
 
 
 
