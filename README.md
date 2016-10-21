@@ -7,7 +7,7 @@ ESXi,VirtualBox,other vitrual lab:
 Internet Router<-----eth0----Debian64----eth1---Virtual Lan vswitch<---eth---Windows10
 
 
-DHCPserver--eth0---Debian-----eth1--(Debian will start a dhcpserver internally)--------Win10
+DHCPserver--eth0---sameDebian64-----eth1--(Debian will start a dhcpserver internally)--------Win10
 
 First of all you should install latest Debian version in a virtual machine:
 - 2GB RAM, 2 procesor, 2NICs (network interfaces)
