@@ -548,7 +548,16 @@ ntpdate -s ntp.ubuntu.com
 /etc/init.d/nginx start
 
 # Start suricata
-suricata -D -c /etc/suricata/suricata.yaml -i lo
+suricata -D -c /etc/suricata/suricata.yaml -i lo &
+
+# Start logstash
+/opt/logstash/bin/logstash -f /etc/logstash/conf.d/logstash.conf &
+
+# Start Evebox
+evebox -e http://localhost:9200 &
+
+# Start elasticsearch
+/etc/init.d/elasticsearch start
 
 exit 0
 EOF
@@ -3480,6 +3489,7 @@ configure_suricata()
 	touch /var/log/suricata/stats.log
 	touch /var/log/suricata/suricata.log
 	chmod 644 /var/log/suricata/*.log
+	chmod -R 666 /var/log/suricata 
 
 	# Suricata service
 	cat << EOF > /etc/default/suricata
@@ -3535,6 +3545,76 @@ EOF
 
 
 # ---------------------------------------------------------
+# Function to configure logstash
+# ---------------------------------------------------------
+configure_logstash()
+{
+
+	echo "Conifgureing logstash ..."
+
+	# Creating configuration file
+	mkdir -p /etc/logstash/conf.d
+	touch /etc/logstash/conf.d/logstash.conf
+	chmod a+rw /etc/logstash/conf.d/logstash.conf
+
+	# Logstash configuration
+	cat << EOF > /etc/logstash/conf.d/logstash.conf
+input {
+    file {
+        path => "/var/log/suricata/eve.json"
+        start_position => beginning
+        ignore_older => 0
+        sincedb_path => ["/var/lib/logstash/sincedb"]
+        codec =>   json
+        type => "SuricataIDPS"
+    }
+}
+filter {
+  if [type] == "SuricataIDPS" {
+    date {
+      match => [ "timestamp", "ISO8601" ]
+    }
+    ruby {
+      code => "if event['event_type'] == 'fileinfo'; event['fileinfo']['type']=event['fileinfo']['magic'].to_s.split(',')[0]; end;"
+    }
+  }
+  if [src_ip]  {
+    geoip {
+      source => "src_ip"
+      target => "geoip"
+      #database => "/opt/logstash/vendor/geoip/GeoLiteCity.dat"
+      add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+      add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
+    }
+    mutate {
+      convert => [ "[geoip][coordinates]", "float" ]
+    }
+    if ![geoip.ip] {
+      if [dest_ip]  {
+        geoip {
+          source => "dest_ip"
+          target => "geoip"
+          #database => "/opt/logstash/vendor/geoip/GeoLiteCity.dat"
+          add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+          add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
+        }
+        mutate {
+          convert => [ "[geoip][coordinates]", "float" ]
+        }
+      }
+    }
+  }
+}
+output {
+    elasticsearch {
+        hosts => [ "localhost:9200" ]
+    }
+}
+EOF
+}
+
+
+# ---------------------------------------------------------
 # Function to configure Kibana
 # ---------------------------------------------------------
 configure_kibana()
@@ -3576,6 +3656,11 @@ ES_JAVA_OPTS=-server
 # The number of seconds to wait before checking if Elasticsearch started successfully as a daemon process
 ES_STARTUP_SLEEP_TIME=15
 EOF
+
+	# Elasticsearch configuration
+	sed -i -e 's/cluster.name.*/cluster.name: "LibreRouter"/g' /etc/elasticsearch/elasticsearch.yml
+
+	
 	# Fix logstash permissions
 	sed -i -e 's/LS_GROUP=.*/LS_GROUP=root/g' /etc/init.d/logstash
 	systemctl daemon-reload
@@ -4045,6 +4130,7 @@ configure_postfix		# Configuring postfix mail service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
 #configure_suricata		# Configure Suricata service
+#configure_logstash		# Configure logstash
 #configure_kibana		# Configure Kibana service
 #configure_snortbarn		# Configure Snort and Barnyard services
 #configure_snorby		# Configure Snorby
