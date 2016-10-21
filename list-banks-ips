@@ -40,10 +40,11 @@ https://github.com/infosec-au/altdns
 https://github.com/Cleveridge/cleveridge-subdomain-scanner
 
 
-3. We going to use finder for AS numbers for the banks. bgp.he.net website, wait a moment until the website validate my browser.
---> Click "IP Info" and I got the IP of the bank, 195.34.182.132. Also I got the provider that provide service to the bank, INTERNET AG Global network, and the AS number AS8495, also the IPs block that was used by the Provider 195.34.160.0/19. But, there's no the IP block of the banks, first, I can guess from the IP, usually bank will use /24, sometimes they used more, on this situation I need to scan the ips block "195.34.160.0/19" to find domain related to the bank, there's two options, scan all ips block or scan by separate on each 256 hosts. metasploit auxiliary DNS modules (auxiliary/gather/dns_reverse_lookup)
+bgp info retrieval bgp.he.net 
+https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=bgp
+https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=%22autonomous+system%22
 
-3.5 the output of the number 2 and 2.1 we just need resolve the domain in to IP.
+
 
 6. How do I use the DNS modules?
 --> type msfconsole, until it show like this "msf > "
