@@ -7,30 +7,23 @@ Source for the bank names:
 wget & parse 
 https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
 https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)
-https://www.robtex.com/?q=bank
 https://www.thebankerdatabase.com/index.cfm/banks/all/
 http://www.allbanks.org/main/list/0.html
 http://pugahome.tripod.com/allbanks.htm
 
-
-1a. We should decide which website should we used, as figure on the above.. 
-for example, https://www.thebankerdatabase.com/index.cfm/banks/all/ --> legit bank database (because it's from the financial times)
-just advice to avoid duplicate work.. but it's depend team decision and the owner of the project.
-
-1b. Then, focus on scraping the names banks using automization (script, will find)
-
-1c. Afterwards, focus on domain each of the banks. only main domain, not subdomain, (script, will find)
-
-1d. Afterwards, focus on AS number (IP Block), will scraping from robtex or hurricane(script, will find)
-
-1e. Afterwards, focus on subdomain (script, will find)
+Combine and clear repeated.
+Shodan and www.robtex.com/?q=bank
+are special because provide additional valuable info about reverse entries and diferent records.
+Not clear how to  scrap organized infor from there.
 
 
-I've try to find the bank names with GoogleScraper python script, it will found the bank names through google, despite it found
-the bank names, it also put the url where on the pages have the "bank text" on it.
+After that
 
-But after quite times, it will get an error.. also the output is not good, i've try to export the output to txt, but isn't work
-and still export to it's own extention (.db) database.
+a)Search IP block via BGP AS that belongs to bank
+b)take the bank names and serach for domains of them
+c)same for subdomains.
+d)same for reverse dns entries
+
 
 
 2. Then, google the name of the bank 
