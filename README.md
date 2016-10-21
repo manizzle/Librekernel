@@ -11,17 +11,20 @@ DHCPserver--eth0---Debian-----eth1--(Debian will start a dhcpserver internally)-
 
 First of all you should install latest Debian version in a virtual machine:
 - 2GB RAM, 2 procesor, 2NICs (network interfaces)
-Second a non privacy friendly OS like Win 10. 
+
+
+Second a non privacy friendly OS like Win 10:
 - VM requirements in microsoft
 - Office 2016
-- All possible browsers.
+- All possible browsers.dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun.
 
 Hardware resources:
 
-- NIC1 will be NAT/bridged to Internet dhcp server.
-- NIC2 will be a attached to the other VM Windows10. From debian to win 10 will be a private LAN in bridge mode.
+- NIC1 will be NAT/bridged to your Internet dhcp server router.
+- NIC2 will be a attached  via virtual switch or vlan to the other VM Windows10. 
+From debian to win 10 will be a private LAN in bridge mode. (would require promiscous because arp request from client to server)
 
-On Windows 10 VM (one network interface) You should  install: microsoft office, openoffice, dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun.
+ 
 
 You can use any virtualization software you prefer. Its transparent for us.
 
