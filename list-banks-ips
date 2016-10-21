@@ -1,21 +1,11 @@
 The Target of this document is to explain how to obtain the all banks WW for not enrouting this traffic via SQUID by an exception in iptables.
 Then the Banks traffic wont be bumped for security reasons.
+The requested list is and file with
+bankname    bankcompletedomain      ip x.x.x.x    reversedns
 
-
-1a. wget https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
-...>> I Also wget until the last pages which is "letter=Z"
-
-1b. Then, "cat index.html\r?letter=A | grep "<strong style=" > Aa.txt
-...>> Got the result of the bank names with the first letter A, but still ugly.
-
-1c. then, grep -Po '(?<=title=")[^"]*' Aa.txt > A.txt
-...>> better result
-
-1d. repeat the step until letter Z.
-
-The result will update later.. need to combine in one file and random check to the website.
-
-1. But before that, I need to find the The banks name over the world, how do I find the banks name?
+Source for the bank names:
+wget & parse 
+https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
 https://en.wikipedia.org/wiki/List_of_banks_(alphabetically)
 https://www.robtex.com/?q=bank
 https://www.thebankerdatabase.com/index.cfm/banks/all/
