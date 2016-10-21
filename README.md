@@ -48,6 +48,12 @@ Resume of steps:
 - sudo chmod 777 app-installation-script.sh
 - ./app-installation-script.sh
 
+Lab done!
+
+Try to navigate normally from the windows 10
+Report us problems
+Investigate and play while we continue developing it.
+New version of the instalaltion-configuration scripts,ISOs and OVA virtual machine export will be upcoming.
 
 #***Networking in Librerouter:
 There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
