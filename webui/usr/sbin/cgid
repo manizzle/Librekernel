@@ -1,0 +1,30 @@
+#! /bin/bash
+
+outpipe=/tmp/cgi.out
+inpipe=/tmp/cgi.in
+export UIPATH="/opt/librerouter/webui"
+trap "rm -f $outpipe" EXIT
+
+[[ ! -p "$outpipe" ]] && mkfifo "$outpipe"
+if [[ ! -p "$inpipe" ]]
+then
+	echo "Error: Failed to find input pipe, Exiting."
+	exit
+fi
+
+while true
+do
+	if read line <"$inpipe"
+	then
+		input=`echo "${line}" | tr -d '$,(,),{,},\`,|,/,<,>,%,#,@,!'`
+		module=`echo "${input}" | awk -F '::' '{print $1}' | tr -d ' '`
+		parms=`echo "${input}" | awk -F '::' '{print $2}'`
+		cd "$UIPATH"/sh/"${module}"/
+		if [[ ! -e "./main.exec" ]]
+		then
+			echo "1 :: Error: Module main execution failed - missing main script." > "${outpipe}"
+		else
+			./main.exec "${parms}" > "${outpipe}"
+		fi
+	fi
+done
