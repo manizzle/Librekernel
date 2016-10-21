@@ -24,24 +24,26 @@ Hardware resources:
 - NIC2 will be a attached  via virtual switch or vlan to the other VM Windows10. 
 From debian to win 10 will be a private LAN in bridge mode. (would require promiscous because arp request from client to server)
 
- 
-
 You can use any virtualization software you prefer. Its transparent for us.
 
 As shown in the following figure.
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
 
-- In the Debian do a Snapshot in the Virtual machine just after being provisioned and before!, you test/install any the Librerouter Script.
-- In the Windows 10 please conect to the internal interface of the Debian VM Librerouter using a :-
-	- Bridged Adapter in Virtual Machine Network Interface(NIC) of Windows 10 VM.
-	- [Remember]: Windows 10 does not have direct access to outside network or internet using any NAT or other NIC
+Resume of steps:
+
+a) In the Debian please do a Snapshot in the Virtual machine just after being install.
+b) execute app-installation-script.
+
+wget –no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/app-installation-script.sh
+
+c) execute app-installation-script.sh
+
+wget –no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/app-configuration-script.sh
 
 #***Networking in Librerouter:
-
-- There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
+There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
 	
 1. External area red bridge acting as WAN (2 nics): cable or wireless interface as DHCP client of your internet router.
-
 2. Internal area gren bridge acting as LAN (2 nics): cable or wireless interface as an AP for being DHCP server for your new secure LAN.
 
 - Four possible PHySICAL scenarios:
