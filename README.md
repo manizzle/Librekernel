@@ -2,7 +2,17 @@
 
 #Setting up a lab to start to contribute:
 
-First of all you should install Debian 8 version: 2GB RAM, 2 procesor, 2NICs (network interfaces) and Win 10  as VMs on your computer. Phisically the machine should have 1 internet exit and another interface for doing a internal vlan betwen win(installed on the virtual machine) and linux other words first NIC for internet connection and second for connection  with other VM.
+ESXi,VirtualBox,other vitrual lab:
+
+Internet Router<-----eth0----Debian64----eth1---Virtual Lan vswitch<---eth---Windows10
+DHCPserver--eth0---Debian-----eth1--(Debian will start a dhcpserver internally)--------Win10
+
+First of all you should install latest Debian version in a virtual machine:
+- 2GB RAM, 2 procesor, 2NICs (network interfaces)
+Second a non privacy friendly OS like Win 10. 
+- VM requirements in microsoft
+- Office 2016
+- All possible browsers.
 
 Hardware resources:
 
