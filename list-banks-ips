@@ -24,12 +24,16 @@ b)take the bank names and serach for domains of them
 c)same for subdomains.
 d)same for reverse dns entries
 
+Tools for finding subdomains:
+https://github.com/guelfoweb/knock
+https://github.com/aboul3la/Sublist3r
+https://github.com/rbsec/dnscan
+https://github.com/TheRook/subbrute
+https://github.com/jhaddix/domain
+https://github.com/tomsteele/blacksheepwall
+https://code.google.com/archive/p/gxfr/
 
 
-2. Then, google the name of the bank 
-www.aareal-bank.com
-
-2.1 Find all subdomains list.
 
 3. We going to use finder for AS numbers for the banks. bgp.he.net website, wait a moment until the website validate my browser.
 --> Click "IP Info" and I got the IP of the bank, 195.34.182.132. Also I got the provider that provide service to the bank, INTERNET AG Global network, and the AS number AS8495, also the IPs block that was used by the Provider 195.34.160.0/19. But, there's no the IP block of the banks, first, I can guess from the IP, usually bank will use /24, sometimes they used more, on this situation I need to scan the ips block "195.34.160.0/19" to find domain related to the bank, there's two options, scan all ips block or scan by separate on each 256 hosts. metasploit auxiliary DNS modules (auxiliary/gather/dns_reverse_lookup)
