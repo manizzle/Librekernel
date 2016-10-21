@@ -285,6 +285,15 @@ EOF
 		wget http://www.webmin.com/jcameron-key.asc
 		apt-key add jcameron-key.asc 
 
+		# Prepare kibaba repo
+		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+		echo "deb https://packages.elastic.co/kibana/4.6/debian stable main" | sudo tee -a /etc/apt/sources.list.d/kibana.list
+
+		# Prepare lohstash repo
+		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+		echo "deb https://packages.elastic.co/logstash/2.4/debian stable main" | sudo tee -a /etc/apt/sources.list
+
+	
 		# Prepare backports repo (suricata, roundcube)
 #		echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list
 
@@ -1395,6 +1404,30 @@ skipfile snort.conf
 }
 
 
+# -----------------------------------------------
+# Install kibana, elasticsearch and logstash
+# -----------------------------------------------
+install_kibana()
+{
+	echo "Installing kibana ..."
+	apt-get install -y --force-yes kibana elasticsearch logstash \
+        2>&1 > /dev/null
+	if [ $? -ne 0 ]; then
+                echo "Error: unable to install kibaba. Exiting ..."
+                exit 3
+        fi
+
+	# Enabling kibana daemon
+	/bin/systemctl daemon-reload
+	/bin/systemctl enable kibana.service
+
+	# installing plugins
+	/usr/share/elasticsearch/bin/plugin install license
+	/usr/share/elasticsearch/bin/plugin install marvel-agent
+	/opt/kibana/bin/kibana plugin --install elasticsearch/marvel/latest
+}
+
+
 # ----------------------------------------------
 # Function to install scirius package
 # ----------------------------------------------
@@ -1820,6 +1853,9 @@ install_evebox()
         unzip evebox-latest-linux-amd64.zip
         fi
 
+	# Moving bin 
+	sudo mv evebox-0.6.0dev-linux-amd64/evebox /sbin/
+
         # Cleanup
         rm -rf evebox-latest-linux-amd64.zip
 }
@@ -2078,8 +2114,9 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_ecapguardian	# Inatall ecapguardian package
 #	install_e2guardian	# Inatall e2guardian package
 	install_suricata	# Install Suricata package
+ #	install_kibana		# Install Kibana,elasticsearch,logstash packages
 #	install_scirius		# Install Scirius package
-##	install_snort		# Install Snort package
+#	install_snort		# Install Snort package
 #	install_barnyard	# Install Barnyard package
 #	install_vortex_ids	# Install Vortex-ids package
 #	install_openwips_ng	# Install Openwips-ng package
@@ -2088,8 +2125,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_pmgraph		# Install pmgraph package
 #	install_nfsen		# Install nfsen package
 #	install_evebox		# Install EveBox package
-##	install_selks		# Install SELKS GUI
-##	install_snorby		# Install Snorby package
+#	install_selks		# Install SELKS GUI
+#	install_snorby		# Install Snorby package
 #	install_glype		# Install glype proxy
 	install_gitlab		# Install gitlab packae
 	save_variables	        # Save detected variables
