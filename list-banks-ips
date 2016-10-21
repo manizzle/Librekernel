@@ -38,24 +38,24 @@ https://bitbucket.org/LaNMaSteR53/recon-ng
 http://tools.kali.org/information-gathering/dnsrecon
 https://github.com/infosec-au/altdns
 https://github.com/Cleveridge/cleveridge-subdomain-scanner
-
-
-bgp info retrieval bgp.he.net 
-https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=bgp
-https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=%22autonomous+system%22
-
-
-
-6. How do I use the DNS modules?
+Additionally from Metasploit:
 --> type msfconsole, until it show like this "msf > "
 --> type search dns_reverse_lookup
 --> then choose "auxiliary/gather/dns_reverse_lookup", there are another dns_reverse_lookup it's use for post exploitation, ensure choose the "auxiliary".
 --> type use auxiliary/gather/dns_reverse_lookup
 --> type show options
 --> it will shown 3 options with one required (mandatory) option, it's a "RANGE" option.
---> type set RANGE 1.2.3.4/x
-which 1.2.3.4 target IP, /x it's a subnet mask
+--> type set RANGE 1.2.3.4/x which 1.2.3.4 target IP, /x it's a subnet mask
 --> type run
 --> waiting for the results
 
-7. Webscapping: ipaddress.comyougetsignal.com
+bgp info retrieval bgp.he.net 
+https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=bgp
+https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=%22autonomous+system%22
+
+Reverse DNs entriy adding the information to the IPs retrieved from AS and from others
+http://www.dnspython.org/
+
+
+
+
