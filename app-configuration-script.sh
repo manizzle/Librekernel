@@ -48,12 +48,14 @@ get_variables()
 		PLATFORM=`cat /var/box_variables | grep "Platform" | awk {'print $2'}`
 		HARDWARE=`cat /var/box_variables | grep "Hardware" | awk {'print $2'}`
 		PROCESSOR=`cat /var/box_variables | grep "Processor" | awk {'print $2'}`
+		ARCH=`cat /var/box_variables | grep "Architecture" | awk {'print $2'}`
 		EXT_INTERFACE=`cat /var/box_variables | grep "Ext_int" | awk {'print $2'}`
 		INT_INTERFACE=`cat /var/box_variables | grep "Int_int" | awk {'print $2'}`
 
 #	touch "/tmp/variables.log"
 
-		if [ -z "$PLATFORM" -o -z "$HARDWARE" -o -z "$PROCESSOR" \
+		if [ -z "$PLATFORM" -o -z "$HARDWARE" \
+		     -o -z "$PROCESSOR" -o -z "$ARCH" \
 		     -o -z "$EXT_INTERFACE" -o -z "$INT_INTERFACE" ]; then
 			echo "Error: Can not detect variables. Exiting"
 			exit 5
@@ -61,6 +63,7 @@ get_variables()
 			echo "Platform:      $PLATFORM"
 			echo "Hardware:      $HARDWARE"
 			echo "Processor:     $PROCESSOR"
+			echo "Architecture:  $ARCH"
 			echo "Ext Interface: $EXT_INTERFACE"
 			echo "Int Interface: $INT_INTERFACE"
 		fi 
@@ -300,8 +303,8 @@ default-lease-time 600;
 max-lease-time 7200;
 authoritative;
 subnet 10.0.0.0 netmask 255.255.255.0 {
-  range 10.0.0.100 10.0.0.200;
-  option routers 10.0.0.1;
+range 10.0.0.100 10.0.0.200;
+option routers 10.0.0.1;
 }
 " > /etc/dhcp/dhcpd.conf
 
@@ -391,7 +394,7 @@ configre_blacklists()
 cat /etc/unbound/block_domain.list.conf | awk -F '"' '{print $2}' | awk '{print $1}' > ads_domains
 for i in `cat ads_domains`
 do
-	iptables -t nat -I PREROUTING -p tcp -s 10.0.0.0/24 -d $i -j DNAT --to-destination 10.0.0.1
+iptables -t nat -I PREROUTING -p tcp -s 10.0.0.0/24 -d $i -j DNAT --to-destination 10.0.0.1
 done
 
 }
@@ -402,16 +405,16 @@ done
 # ---------------------------------------------------------
 configure_mysql()
 {
-        echo "Configuring MySQL ..."
-        # Getting MySQL password
-        if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
-                MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
-        else
-                MYSQL_PASS=`pwgen 10 1`
-                echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
-                # Setting password
-                mysqladmin -u root password $MYSQL_PASS
-        fi
+echo "Configuring MySQL ..."
+# Getting MySQL password
+if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
+	MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
+else
+	MYSQL_PASS=`pwgen 10 1`
+	echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
+	# Setting password
+	mysqladmin -u root password $MYSQL_PASS
+fi
 }
 
 
@@ -637,7 +640,7 @@ HiddenServicePort 443 10.0.0.252:443
 HiddenServiceDir /var/lib/tor/hidden_service/mailpile
 HiddenServicePort 80 10.0.0.254:80
 HiddenServicePort 443 10.0.0.254:443
-    
+
 HiddenServiceDir /var/lib/tor/hidden_service/easyrtc
 HiddenServicePort 80 10.0.0.250:80
 HiddenServicePort 443 10.0.0.250:443
@@ -657,18 +660,18 @@ LOOP_S=0
 LOOP_N=0
 while [ $LOOP_S -lt 1 ]
 do
- if [ -e "/var/lib/tor/hidden_service/yacy/hostname" ]; then
-   echo "Tor successfully configured"
-   LOOP_S=1
- else
-   sleep 1
-   LOOP_N=$((LOOP_N + 1))
- fi
- # Wail up to 60 s for tor hidden services to become available
- if [ $LOOP_N -eq 60 ]; then
-   echo "Error: Unable to configure tor. Exiting ..."
-   exit 1 
- fi 
+if [ -e "/var/lib/tor/hidden_service/yacy/hostname" ]; then
+echo "Tor successfully configured"
+LOOP_S=1
+else
+sleep 1
+LOOP_N=$((LOOP_N + 1))
+fi
+# Wail up to 60 s for tor hidden services to become available
+if [ $LOOP_N -eq 60 ]; then
+echo "Error: Unable to configure tor. Exiting ..."
+exit 1 
+fi 
 done
 }
 
@@ -1100,18 +1103,18 @@ LOOP_N=0
 echo "Configuring i2p hidden services ..."
 while [ $LOOP_S -lt 1 ]
 do
- if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | wc -l` -eq 6 ]; then
-   echo "i2p successfully configured"
-   LOOP_S=1
- else
-   sleep 1
-   LOOP_N=$((LOOP_N + 1))
- fi
- # Wail up to 120 s for tor hidden services to become available
- if [ $LOOP_N -eq 120 ]; then
-   echo "Error: Unable to configure i2p. Exiting ..."
-   exit 1
- fi
+if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | wc -l` -eq 6 ]; then
+echo "i2p successfully configured"
+LOOP_S=1
+else
+sleep 1
+LOOP_N=$((LOOP_N + 1))
+fi
+# Wail up to 120 s for tor hidden services to become available
+if [ $LOOP_N -eq 120 ]; then
+echo "Error: Unable to configure i2p. Exiting ..."
+exit 1
+fi
 done
 
 }
@@ -1130,79 +1133,79 @@ echo '# Unbound configuration file for Debian.
 # reference config file.
 
 server:
-    # The following line will configure unbound to perform cryptographic
-    # DNSSEC validation using the root trust anchor.
-   
-    # Specify the interface to answer queries from by ip address.
-    interface: 10.0.0.1
+# The following line will configure unbound to perform cryptographic
+# DNSSEC validation using the root trust anchor.
 
-    # Port to answer queries
-    port: 53
+# Specify the interface to answer queries from by ip address.
+interface: 10.0.0.1
 
-    # Serve ipv4 requests
-    do-ip4: yes
+# Port to answer queries
+port: 53
 
-    # Serve ipv6 requests
-    do-ip6: no
+# Serve ipv4 requests
+do-ip4: yes
 
-    # Enable UDP
-    do-udp: yes
+# Serve ipv6 requests
+do-ip6: no
 
-    # Enable TCP
-    do-tcp: yes
+# Enable UDP
+do-udp: yes
 
-    # Not to answer id.server and hostname.bind queries
-    hide-identity: yes
+# Enable TCP
+do-tcp: yes
 
-    # Not to answer version.server and version.bind queries
-    hide-version: yes
+# Not to answer id.server and hostname.bind queries
+hide-identity: yes
 
-    # Use 0x20-encoded random bits in the query 
-    use-caps-for-id: yes
+# Not to answer version.server and version.bind queries
+hide-version: yes
 
-    # Cache minimum time to live
-    Cache-min-ttl: 3600
+# Use 0x20-encoded random bits in the query 
+use-caps-for-id: yes
 
-    # Cache maximum time to live
-    cache-max-ttl: 86400
+# Cache minimum time to live
+Cache-min-ttl: 3600
 
-    # Perform prefetching
-    prefetch: yes
+# Cache maximum time to live
+cache-max-ttl: 86400
 
-    # Number of threads 
-    num-threads: 2
+# Perform prefetching
+prefetch: yes
 
-    ## Unbound optimization ##
+# Number of threads 
+num-threads: 2
 
-    # Number od slabs
-    msg-cache-slabs: 4
-    rrset-cache-slabs: 4
-    infra-cache-slabs: 4
-    key-cache-slabs: 4
+## Unbound optimization ##
 
-    # Size pf cache memory
-    rrset-cache-size: 128m
-    msg-cache-size: 64m
+# Number od slabs
+msg-cache-slabs: 4
+rrset-cache-slabs: 4
+infra-cache-slabs: 4
+key-cache-slabs: 4
 
-    # Buffer size for UDP port 53
-    so-rcvbuf: 1m
+# Size pf cache memory
+rrset-cache-size: 128m
+msg-cache-size: 64m
 
-    # Unwanted replies maximum number
-    unwanted-reply-threshold: 10000
+# Buffer size for UDP port 53
+so-rcvbuf: 1m
 
-    # Define which network ips are allowed to make queries to this server.
-    access-control: 10.0.0.0/8 allow
-    access-control: 127.0.0.1/8 allow
-    access-control: 0.0.0.0/0 refuse
+# Unwanted replies maximum number
+unwanted-reply-threshold: 10000
 
-    # Configure DNSSEC validation
-    # librenet, onion and i2p domains are not checked for DNSSEC validation
+# Define which network ips are allowed to make queries to this server.
+access-control: 10.0.0.0/8 allow
+access-control: 127.0.0.1/8 allow
+access-control: 0.0.0.0/0 refuse
+
+# Configure DNSSEC validation
+# librenet, onion and i2p domains are not checked for DNSSEC validation
 #    auto-trust-anchor-file: "/var/lib/unbound/root.key"
-    do-not-query-localhost: no
+do-not-query-localhost: no
 #    domain-insecure: "librenet"
 #    domain-insecure: "onion"
 #    domain-insecure: "i2p"
-    
+
 #Local destinations
 local-zone: "librenet" static
 local-data: "librerouter.librenet. IN A 10.0.0.1"
@@ -1213,52 +1216,52 @@ local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
 local-data: "squidguard.librenet. IN A 10.0.0.246"' > /etc/unbound/unbound.conf
 
-    for i in $(ls /var/lib/tor/hidden_service/)
-    do
-    if [ $i == "easyrtc" ]; then
-      echo "local-data: \"$i.librenet. IN A 10.0.0.250\"" \
-      >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "yacy" ]; then
-      echo "local-data: \"$i.librenet. IN A 10.0.0.251\"" \
-      >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "friendica" ]; then
-      echo "local-data: \"$i.librenet. IN A 10.0.0.252\"" \
-      >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "owncloud" ]; then
-      echo "local-data: \"$i.librenet. IN A 10.0.0.253\"" \
-      >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "mailpile" ]; then
-      echo "local-data: \"$i.librenet. IN A 10.0.0.254\"" \
-      >> /etc/unbound/unbound.conf
-    fi
-    done
+for i in $(ls /var/lib/tor/hidden_service/)
+do
+if [ $i == "easyrtc" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.250\"" \
+>> /etc/unbound/unbound.conf
+fi
+if [ $i == "yacy" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.251\"" \
+>> /etc/unbound/unbound.conf
+fi
+if [ $i == "friendica" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.252\"" \
+>> /etc/unbound/unbound.conf
+fi
+if [ $i == "owncloud" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.253\"" \
+>> /etc/unbound/unbound.conf
+fi
+if [ $i == "mailpile" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.254\"" \
+>> /etc/unbound/unbound.conf
+fi
+done
 
 for i in $(ls /var/lib/tor/hidden_service/)
-  do
-  hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
-  if [ -n "$hn" ]; then
-    echo "local-zone: \"$hn.\" static" >> /etc/unbound/unbound.conf
-    if [ $i == "easyrtc" ]; then
-      echo "local-data: \"$hn. IN A 10.0.0.250\"" >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "yacy" ]; then
-      echo "local-data: \"$hn. IN A 10.0.0.251\"" >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "friendica" ]; then
-      echo "local-data: \"$hn. IN A 10.0.0.252\"" >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "owncloud" ]; then
-      echo "local-data: \"$hn. IN A 10.0.0.253\"" >> /etc/unbound/unbound.conf
-    fi
-    if [ $i == "mailpile" ]; then
-      echo "local-data: \"$hn. IN A 10.0.0.254\"" >> /etc/unbound/unbound.conf
-    fi
-  fi
-  done
+do
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+if [ -n "$hn" ]; then
+echo "local-zone: \"$hn.\" static" >> /etc/unbound/unbound.conf
+if [ $i == "easyrtc" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.250\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "yacy" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.251\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "friendica" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.252\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "owncloud" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.253\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "mailpile" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.254\"" >> /etc/unbound/unbound.conf
+fi
+fi
+done
 
 echo '
 # I2P domains will be resolved us 10.191.0.1 
@@ -1282,16 +1285,16 @@ include: /etc/unbound/storage_domain.list.conf
 
 # Include block domains list configuration
 include: /etc/unbound/block_domain.list.conf
- 
+
 # .ounin domains will be resolved by TOR DNS 
 forward-zone:
-    name: "onion"
-    forward-addr: 127.0.0.1@9053
+name: "onion"
+forward-addr: 127.0.0.1@9053
 
 # Forward rest of zones to DjDNS
 forward-zone:
-    name: "."
-    forward-addr: 8.8.8.8@53
+name: "."
+forward-addr: 8.8.8.8@53
 
 ' >> /etc/unbound/unbound.conf
 
@@ -1299,8 +1302,8 @@ forward-zone:
 echo "Extracting files ..."
 tar -xf shallalist.tar.gz
 if [ $? -ne 0 ]; then
-	echo "Error: Unable to extract domains list. Exithing"
-	exit 6
+echo "Error: Unable to extract domains list. Exithing"
+exit 6
 fi
 
 # Configuring social network domains list
@@ -1384,7 +1387,7 @@ unbound-anchor -a "/var/lib/unbound/root.key"
 # There is a need to stop dnsmasq before starting unbound
 echo "Stoping dnsmasq ..."
 if ps aux | grep -w "dnsmasq" | grep -v "grep" > /dev/null;   then
-	kill -9 `ps aux | grep dnsmasq | awk {'print $2'} | sed -n '1p'`
+kill -9 `ps aux | grep dnsmasq | awk {'print $2'} | sed -n '1p'`
 fi
 
 #     echo "
@@ -1398,10 +1401,10 @@ fi
 echo "Starting Unbound DNS server ..."
 service unbound restart
 if ps aux | grep -w "unbound" | grep -v "grep" > /dev/null; then
-	echo "Unbound DNS server successfully started."
+echo "Unbound DNS server successfully started."
 else
-	echo "Error: Unable to start unbound DNS server. Exiting"
-	exit 3
+echo "Error: Unable to start unbound DNS server. Exiting"
+exit 3
 fi
 }
 
@@ -1414,21 +1417,21 @@ configure_friendica()
 echo "Configuring Friendica local service ..."
 if [ ! -e  /var/lib/mysql/frnd ]; then
 
-  # Defining MySQL user and password variables
+# Defining MySQL user and password variables
 # MYSQL_PASS="librerouter"
-  MYSQL_USER="root"
+MYSQL_USER="root"
 
-  # Creating MySQL database frnd for friendica local service
-  echo "CREATE DATABASE frnd;" \
-  | mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" 
+# Creating MySQL database frnd for friendica local service
+echo "CREATE DATABASE frnd;" \
+| mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" 
 fi
 
-  # Inserting friendica database
-  sed -i  s/utf8mb4/utf8/g /var/www/friendica/database.sql
-  mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" frnd < /var/www/friendica/database.sql
+# Inserting friendica database
+sed -i  s/utf8mb4/utf8/g /var/www/friendica/database.sql
+mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" frnd < /var/www/friendica/database.sql
 
 if [ -z "$(grep "friendica/include/poller" /etc/crontab)" ]; then
-    echo '*/10 * * * * /usr/bin/php /var/www/friendica/include/poller.php' >> /etc/crontab
+echo '*/10 * * * * /usr/bin/php /var/www/friendica/include/poller.php' >> /etc/crontab
 fi
 
 # Creating friendica configuration
@@ -1466,8 +1469,8 @@ configure_easyrtc()
 {
 echo "Starting EasyRTC local service ..."
 if [ ! -e /opt/easyrtc/server_example/server.js ]; then
-    echo "Can not find EasyRTC server confiugration. Exiting ..."
-    exit 4
+echo "Can not find EasyRTC server confiugration. Exiting ..."
+exit 4
 fi
 
 cat << EOF > /opt/easyrtc/server_example/server.js 
@@ -1489,8 +1492,8 @@ app.use(serveStatic('static', {'index': ['index.html']}));
 // Start Express http server on port 8443
 var webServer = https.createServer(
 {
-        key:  fs.readFileSync("/etc/ssl/nginx/easyrtc.key"),
-        cert: fs.readFileSync("/etc/ssl/nginx/easyrtc.crt")
+key:  fs.readFileSync("/etc/ssl/nginx/easyrtc.key"),
+cert: fs.readFileSync("/etc/ssl/nginx/easyrtc.crt")
 },
 app).listen(8443);
 
@@ -1501,40 +1504,40 @@ easyrtc.setOption("logLevel", "debug");
 
 // Overriding the default easyrtcAuth listener, only so we can directly access its callback
 easyrtc.events.on("easyrtcAuth", function(socket, easyrtcid, msg, socketCallback, callback) {
-    easyrtc.events.defaultListeners.easyrtcAuth(socket, easyrtcid, msg, socketCallback, function(err, connectionObj){
-        if (err || !msg.msgData || !msg.msgData.credential || !connectionObj) {
-            callback(err, connectionObj);
-            return;
-        }
+easyrtc.events.defaultListeners.easyrtcAuth(socket, easyrtcid, msg, socketCallback, function(err, connectionObj){
+if (err || !msg.msgData || !msg.msgData.credential || !connectionObj) {
+    callback(err, connectionObj);
+    return;
+}
 
-        connectionObj.setField("credential", msg.msgData.credential, {"isShared":false});
+connectionObj.setField("credential", msg.msgData.credential, {"isShared":false});
 
-        console.log("["+easyrtcid+"] Credential saved!", connectionObj.getFieldValueSync("credential"));
+console.log("["+easyrtcid+"] Credential saved!", connectionObj.getFieldValueSync("credential"));
 
-        callback(err, connectionObj);
-    });
+callback(err, connectionObj);
+});
 });
 
 // To test, lets print the credential to the console for every room join!
 easyrtc.events.on("roomJoin", function(connectionObj, roomName, roomParameter, callback) {
-    console.log("["+connectionObj.getEasyrtcid()+"] Credential retrieved!", connectionObj.getFieldValueSync("credential"));
-    easyrtc.events.defaultListeners.roomJoin(connectionObj, roomName, roomParameter, callback);
+console.log("["+connectionObj.getEasyrtcid()+"] Credential retrieved!", connectionObj.getFieldValueSync("credential"));
+easyrtc.events.defaultListeners.roomJoin(connectionObj, roomName, roomParameter, callback);
 });
 
 // Start EasyRTC server
 var rtc = easyrtc.listen(app, socketServer, null, function(err, rtcRef) {
-    console.log("Initiated");
+console.log("Initiated");
 
-    rtcRef.events.on("roomCreate", function(appObj, creatorConnectionObj, roomName, roomOptions, callback) {
-        console.log("roomCreate fired! Trying to create: " + roomName);
+rtcRef.events.on("roomCreate", function(appObj, creatorConnectionObj, roomName, roomOptions, callback) {
+console.log("roomCreate fired! Trying to create: " + roomName);
 
-        appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback);
-    });
+appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback);
+});
 });
 
 //listen on port 8443
 webServer.listen(8443, function () {
-    console.log('listening on http://localhost:8443');
+console.log('listening on http://localhost:8443');
 });
 EOF
 
@@ -1562,13 +1565,13 @@ SERVER_OWNCLOUD="$(cat /var/lib/tor/hidden_service/owncloud/hostname 2>/dev/null
 
 # Getting owncloud files in web server root directory
 if [ ! -e  /var/www/owncloud ]; then
- if [ -e /ush/share/owncloud ]; then
-   cp -r /usr/share/owncloud /var/www/owncloud
- else
-   if [ -e /opt/owncloud ]; then
-     cp -r /opt/owncloud /var/www/owncloud
-   fi
- fi
+if [ -e /ush/share/owncloud ]; then
+cp -r /usr/share/owncloud /var/www/owncloud
+else
+if [ -e /opt/owncloud ]; then
+cp -r /opt/owncloud /var/www/owncloud
+fi
+fi
 fi
 
 chown -R www-data /var/www/owncloud
@@ -1577,12 +1580,12 @@ chown -R www-data /var/www/owncloud
 cat << EOF > /var/www/owncloud/config/config.php 
 <?php
 \$CONFIG = array (
-  'trusted_domains' => 
-  array (
-    0 => 'owncloud.librenet',
-    1 => '$SERVER_OWNCLOUD',
-    2 => '$SERVER_OWNCLOUD.to',
-  ),
+'trusted_domains' => 
+array (
+0 => 'owncloud.librenet',
+1 => '$SERVER_OWNCLOUD',
+2 => '$SERVER_OWNCLOUD.to',
+),
 );
 EOF
 chmod -R a+rw /var/www/owncloud/config/
@@ -1675,8 +1678,8 @@ echo "Generating certificates ..."
 if [ ! -e /etc/squid/ssl_cert ]; then
 mkdir /etc/squid/ssl_cert
 openssl req -new -newkey rsa:2048 -days 365 -nodes -x509  \
-	-keyout /etc/squid/ssl_cert/squid.key \
-        -out /etc/squid/ssl_cert/squid.crt -batch
+-keyout /etc/squid/ssl_cert/squid.key \
+-out /etc/squid/ssl_cert/squid.crt -batch
 chown -R proxy:proxy /etc/squid/ssl_cert
 chmod -R 777 /etc/squid/ssl_cert
 fi
@@ -1689,7 +1692,7 @@ chmod -R 777 /var/log/squid
 echo "Calling Squid to create swap directories and initialize cert cache dir..."
 squid -z
 if [ -d "/var/cache/squid/ssl_db" ]; then
-	rm -rf /var/cache/squid/ssl_db
+rm -rf /var/cache/squid/ssl_db
 fi
 /lib/squid/ssl_crtd -c -s /var/cache/squid/ssl_db
 chown -R proxy:proxy /var/cache/squid/ssl_db
@@ -1774,21 +1777,21 @@ adaptation_access myChain allow all
 
 echo "Configuring squid startup file ..."
 if [ ! -e /etc/squid/squid3.rc ]; then
-        echo "Could not find squid srartup script. Exiting ..."
-        exit 8
+echo "Could not find squid srartup script. Exiting ..."
+exit 8
 else
-	rm -rf /etc/init.d/squid*
-        cp /etc/squid/squid3.rc /etc/init.d/squid
-	sed "s~Provides:.*~Provides:          squid~g" -i  /etc/init.d/squid
-	sed "s~NAME=.*~NAME=squid~g" -i  /etc/init.d/squid
-	sed "s~DAEMON=.*~DAEMON=/usr/sbin/squid~g" -i  /etc/init.d/squid
-	sed "s~PIDFILE=.*~PIDFILE=/var/run/squid.pid~g" \
-	-i  /etc/init.d/squid
-	sed "s~CONFIG=.*~CONFIG=/etc/squid/squid.conf~g" \
-	-i /etc/init.d/squid
-	chmod +x /etc/init.d/squid
+rm -rf /etc/init.d/squid*
+cp /etc/squid/squid3.rc /etc/init.d/squid
+sed "s~Provides:.*~Provides:          squid~g" -i  /etc/init.d/squid
+sed "s~NAME=.*~NAME=squid~g" -i  /etc/init.d/squid
+sed "s~DAEMON=.*~DAEMON=/usr/sbin/squid~g" -i  /etc/init.d/squid
+sed "s~PIDFILE=.*~PIDFILE=/var/run/squid.pid~g" \
+-i  /etc/init.d/squid
+sed "s~CONFIG=.*~CONFIG=/etc/squid/squid.conf~g" \
+-i /etc/init.d/squid
+chmod +x /etc/init.d/squid
 fi
-	
+
 update-rc.d squid start defaults
 echo "Restarting squid server ..."
 service squid restart
@@ -2086,37 +2089,37 @@ dbhome /usr/local/squidGuard/db/blacklists
 logdir /usr/local/squidGuard/logs
 
 dest ads {
-        domainlist ads/domains
-        urllist ads/urls
-        }
+domainlist ads/domains
+urllist ads/urls
+}
 
 dest proxy {
-        domainlist proxy/domains
-        urllist proxy/urls
-        }
+domainlist proxy/domains
+urllist proxy/urls
+}
 
 dest spyware {
-        domainlist spyware/domains
-        urllist spyware/urls
-        }
+domainlist spyware/domains
+urllist spyware/urls
+}
 
 dest redirector {
-        domainlist redirector/domains
-        urllist redirector/urls
-        }
+domainlist redirector/domains
+urllist redirector/urls
+}
 
 dest suspect {
-        domainlist suspect/domains
-        urllist suspect/urls
-        }
+domainlist suspect/domains
+urllist suspect/urls
+}
 
 # Access control 
 acl {
-        default {
-                pass !ads !proxy !spyware !redirector !suspect all
-                redirect http://librerouter.librenet/squidguard_warning_page.html
-        }
- }
+default {
+	pass !ads !proxy !spyware !redirector !suspect all
+	redirect http://librerouter.librenet/squidguard_warning_page.html
+}
+}
 EOF
 
 squidGuard -C all
@@ -2231,8 +2234,8 @@ configure_mailpile()
 echo "Configuring Mailpile local service ..."
 export MAILPILE_HOME=.local/share/Mailpile
 if [ -e $MAILPIEL_HOME/default/mailpile.cfg ]; then
-  echo "Configuration file does not exist. Exiting ..."
-  exit 6
+echo "Configuration file does not exist. Exiting ..."
+exit 6
 fi
 
 # Make Mailpile a service with upstart
@@ -2245,21 +2248,21 @@ stop on shutdown
 
 script
 
-    echo \$\$ > /var/run/mailpile.pid
-    exec /usr/bin/screen -dmS mailpile_init /var/Mailpile/mp
+echo \$\$ > /var/run/mailpile.pid
+exec /usr/bin/screen -dmS mailpile_init /var/Mailpile/mp
 
 end script
 
 pre-start script
-    echo \"[\`date\`] Mailpile Starting\" >> /var/log/mailpile.log
+echo \"[\`date\`] Mailpile Starting\" >> /var/log/mailpile.log
 end script
 
 pre-stop script
-    rm /var/run/mailpile.pid
-    echo \"[\`date\`] Mailpile Stopping\" >> /var/log/mailpile.log
+rm /var/run/mailpile.pid
+echo \"[\`date\`] Mailpile Stopping\" >> /var/log/mailpile.log
 end script
 " > /etc/init/mailpile.conf
- 
+
 echo "Starting Mailpile local service ..."
 /usr/bin/screen -dmS mailpile_init /opt/Mailpile/mp
 }
@@ -2317,73 +2320,73 @@ worker_processes 4;
 pid /run/nginx.pid;
 
 events {
-        worker_connections 768;
-        # multi_accept on;
+worker_connections 768;
+# multi_accept on;
 }
 
 http {
 
-        ##
-        # Basic Settings
-        ##
+##
+# Basic Settings
+##
 
-        sendfile on;
-        tcp_nopush on;
-        tcp_nodelay on;
-        keepalive_timeout 65;
-        types_hash_max_size 2048;
-        # server_tokens off;
+sendfile on;
+tcp_nopush on;
+tcp_nodelay on;
+keepalive_timeout 65;
+types_hash_max_size 2048;
+# server_tokens off;
 
-        # server_names_hash_bucket_size 64;
-        # server_name_in_redirect off;
+# server_names_hash_bucket_size 64;
+# server_name_in_redirect off;
 
-        include /etc/nginx/mime.types;
-        default_type application/octet-stream;
+include /etc/nginx/mime.types;
+default_type application/octet-stream;
 
-        ##
-        # Logging Settings
-        ##
+##
+# Logging Settings
+##
 
-        access_log /var/log/nginx/access.log;
-        error_log /var/log/nginx/error.log;
+access_log /var/log/nginx/access.log;
+error_log /var/log/nginx/error.log;
 
-        ##
-        # Gzip Settings
-        ##
+##
+# Gzip Settings
+##
 
-        gzip on;
-        gzip_disable "msie6";
+gzip on;
+gzip_disable "msie6";
 
-        # gzip_vary on;
-        # gzip_proxied any;
-        # gzip_comp_level 6;
-        # gzip_buffers 16 8k;
-        # gzip_http_version 1.1;
-        # gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+# gzip_vary on;
+# gzip_proxied any;
+# gzip_comp_level 6;
+# gzip_buffers 16 8k;
+# gzip_http_version 1.1;
+# gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
 
-        ##
-        # nginx-naxsi config
-        ##
-        # Uncomment it if you installed nginx-naxsi
-        ##
+##
+# nginx-naxsi config
+##
+# Uncomment it if you installed nginx-naxsi
+##
 
-        #include /etc/nginx/naxsi_core.rules;
+#include /etc/nginx/naxsi_core.rules;
 
-        ##
-        # nginx-passenger config
-        ##
-        # Uncomment it if you installed nginx-passenger
-        ##
+##
+# nginx-passenger config
+##
+# Uncomment it if you installed nginx-passenger
+##
 
-        #passenger_root /usr;
-        #passenger_ruby /usr/bin/ruby;
+#passenger_root /usr;
+#passenger_ruby /usr/bin/ruby;
 
-        ##
-        # Virtual Host Configs
-        ##
+##
+# Virtual Host Configs
+##
 
-        include /etc/nginx/conf.d/*.conf;
-        include /etc/nginx/sites-enabled/*;
+include /etc/nginx/conf.d/*.conf;
+include /etc/nginx/sites-enabled/*;
 }
 EOF
 
@@ -2410,44 +2413,44 @@ test -x \$DAEMON || exit 0
 
 # Include nginx defaults if available
 if [ -f /etc/default/nginx ] ; then
-        . /etc/default/nginx
+. /etc/default/nginx
 fi
 
 set -e
 
 case "\$1" in
-  start)
-        echo -n "Starting \$DESC: "
-        start-stop-daemon --start --quiet --pidfile /var/run/nginx.pid \
-                --exec \$DAEMON -- \$DAEMON_OPTS
-        echo "\$NAME."
-        ;;
-  stop)
-        echo -n "Stopping \$DESC: "
-        start-stop-daemon --stop --quiet --pidfile /var/run/nginx.pid \
-                --exec \$DAEMON
-        echo "\$NAME."
-        ;;
-  restart|force-reload)
-        echo -n "Restarting \$DESC: "
-        start-stop-daemon --stop --quiet --pidfile \
-                /var/run/nginx.pid --exec \$DAEMON
-        sleep 1
-        start-stop-daemon --start --quiet --pidfile \
-                /var/run/nginx.pid --exec \$DAEMON -- \$DAEMON_OPTS
-        echo "\$NAME."
-        ;;
-  reload)
-      echo -n "Reloading \$DESC configuration: "
-      start-stop-daemon --stop --signal HUP --quiet --pidfile /var/run/nginx.pid \
-          --exec \$DAEMON
-      echo "\$NAME."
-      ;;
-  *)
-        N=/etc/init.d/\$NAME
-        echo "Usage: \$N {start|stop|restart|force-reload}" >&2
-        exit 1
-        ;;
+start)
+echo -n "Starting \$DESC: "
+start-stop-daemon --start --quiet --pidfile /var/run/nginx.pid \
+	--exec \$DAEMON -- \$DAEMON_OPTS
+echo "\$NAME."
+;;
+stop)
+echo -n "Stopping \$DESC: "
+start-stop-daemon --stop --quiet --pidfile /var/run/nginx.pid \
+	--exec \$DAEMON
+echo "\$NAME."
+;;
+restart|force-reload)
+echo -n "Restarting \$DESC: "
+start-stop-daemon --stop --quiet --pidfile \
+	/var/run/nginx.pid --exec \$DAEMON
+sleep 1
+start-stop-daemon --start --quiet --pidfile \
+	/var/run/nginx.pid --exec \$DAEMON -- \$DAEMON_OPTS
+echo "\$NAME."
+;;
+reload)
+echo -n "Reloading \$DESC configuration: "
+start-stop-daemon --stop --signal HUP --quiet --pidfile /var/run/nginx.pid \
+  --exec \$DAEMON
+echo "\$NAME."
+;;
+*)
+N=/etc/init.d/\$NAME
+echo "Usage: \$N {start|stop|restart|force-reload}" >&2
+exit 1
+;;
 esac
 
 exit 0
@@ -2461,47 +2464,47 @@ systemctl daemon-reload
 
 # Creating virtual hosts
 echo "upstream php-handler {
-  server 127.0.0.1:9000;
-  #server unix:/var/run/php5-fpm.sock;
-  }
+server 127.0.0.1:9000;
+#server unix:/var/run/php5-fpm.sock;
+}
 " > /etc/nginx/sites-enabled/php-fpm
 
 echo "server {
-  listen 80 default_server;
-  return 301 http://librerouter.librenet;
+listen 80 default_server;
+return 301 http://librerouter.librenet;
 }
 
 server {
-  listen 80;
-  server_name box.librenet;
-  return 301 http://librerouter.librenet;
+listen 80;
+server_name box.librenet;
+return 301 http://librerouter.librenet;
 }
 " > /etc/nginx/sites-enabled/default
 
 echo "server {
-  listen 10.0.0.1:80;
-  server_name librerouter.librenet;
-  root /var/www/html;
-  index index.html;
+listen 10.0.0.1:80;
+server_name librerouter.librenet;
+root /var/www/html;
+index index.html;
 
-        location /phpmyadmin {
-               root /usr/share/;
-               index index.php index.html index.htm;
-               location ~ ^/phpmyadmin/(.+\.php)$ {
-                       try_files \$uri =404;
-                       root /usr/share/;
-                       fastcgi_pass unix:/var/run/php5-fpm.sock;
-                       fastcgi_index index.php;
-                       fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-                       include /etc/nginx/fastcgi_params;
-               }
-               location ~* ^/phpmyadmin/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
-                       root /usr/share/;
-               }
-        }
-        location /phpMyAdmin {
-               rewrite ^/* /phpmyadmin last;
-        }
+location /phpmyadmin {
+       root /usr/share/;
+       index index.php index.html index.htm;
+       location ~ ^/phpmyadmin/(.+\.php)$ {
+	       try_files \$uri =404;
+	       root /usr/share/;
+	       fastcgi_pass unix:/var/run/php5-fpm.sock;
+	       fastcgi_index index.php;
+	       fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+	       include /etc/nginx/fastcgi_params;
+       }
+       location ~* ^/phpmyadmin/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
+	       root /usr/share/;
+       }
+}
+location /phpMyAdmin {
+       rewrite ^/* /phpmyadmin last;
+}
 }
 " > /etc/nginx/sites-enabled/librerouter
 
@@ -2514,32 +2517,32 @@ SERVER_YACY="$(cat /var/lib/tor/hidden_service/yacy/hostname 2>/dev/null)"
 # Generating keys and certificates for https connection
 echo "Generating keys and certificates for Yacy ..."
 if [ ! -e /etc/ssl/nginx/$SERVER_YACY.key -o ! -e /etc/ssl/nginx/$SERVER_YACY.csr -o ! -e  /etc/ssl/nginx/$SERVER_YACY.crt ]; then
-    openssl genrsa -out /etc/ssl/nginx/$SERVER_YACY.key 2048 -batch
-    openssl req -new -key /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.csr -subj '/CN=librerouter' -batch
-    cp /etc/ssl/nginx/$SERVER_YACY.key /etc/ssl/nginx/$SERVER_YACY.key.org 
-    openssl rsa -in /etc/ssl/nginx/$SERVER_YACY.key.org -out /etc/ssl/nginx/$SERVER_YACY.key 
-    openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_YACY.csr -signkey /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.crt 
+openssl genrsa -out /etc/ssl/nginx/$SERVER_YACY.key 2048 -batch
+openssl req -new -key /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.csr -subj '/CN=librerouter' -batch
+cp /etc/ssl/nginx/$SERVER_YACY.key /etc/ssl/nginx/$SERVER_YACY.key.org 
+openssl rsa -in /etc/ssl/nginx/$SERVER_YACY.key.org -out /etc/ssl/nginx/$SERVER_YACY.key 
+openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_YACY.csr -signkey /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.crt 
 fi
 
 # Creating Yacy virtual host configuration
 echo "
 # Redirect yacy.librenet to Tor hidden service yacy
 server {
-        listen 10.0.0.251:80;
-        server_name yacy.librenet;
-	rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
+listen 10.0.0.251:80;
+server_name yacy.librenet;
+rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
 location / {
-    proxy_pass       http://127.0.0.1:8090;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
+proxy_pass       http://127.0.0.1:8090;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
 }
 
 # Redirect connections from 10.0.0.251 to Tor hidden service yacy
 server {
-        listen 10.0.0.251;
-        server_name _;
-        return 301 http://yacy.librenet;
+listen 10.0.0.251;
+server_name _;
+return 301 http://yacy.librenet;
 }
 
 # Redirect connections to yacy running on 127.0.0.1:8090
@@ -2563,17 +2566,17 @@ server {
 #        return 301 http://$SERVER_YACY;
 #}
 server {
-        listen 10.0.0.251:443 ssl;
-        server_name yacy.librenet;
-        ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
-        ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
-        rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
+listen 10.0.0.251:443 ssl;
+server_name yacy.librenet;
+ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
+ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
+rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
 
 location / {
-    proxy_pass       http://127.0.0.1:8090;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
+proxy_pass       http://127.0.0.1:8090;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
 }
 " > /etc/nginx/sites-enabled/yacy
 
@@ -2586,11 +2589,11 @@ SERVER_FRIENDICA="$(cat /var/lib/tor/hidden_service/friendica/hostname 2>/dev/nu
 # Generating keys and certificates for https connection
 echo "Generating keys and certificates for Friendica ..."
 if [ ! -e /etc/ssl/nginx/$SERVER_FRIENDICA.key -o ! -e /etc/ssl/nginx/$SERVER_FRIENDICA.csr -o ! -e  /etc/ssl/nginx/$SERVER_FRIENDICA.crt ]; then
-    openssl genrsa -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 2048 -batch
-    openssl req -new -key /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.csr -subj '/CN=librerouter' -batch
-    cp /etc/ssl/nginx/$SERVER_FRIENDICA.key /etc/ssl/nginx/$SERVER_FRIENDICA.key.org 
-    openssl rsa -in /etc/ssl/nginx/$SERVER_FRIENDICA.key.org -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 
-    openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_FRIENDICA.csr -signkey /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.crt 
+openssl genrsa -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 2048 -batch
+openssl req -new -key /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.csr -subj '/CN=librerouter' -batch
+cp /etc/ssl/nginx/$SERVER_FRIENDICA.key /etc/ssl/nginx/$SERVER_FRIENDICA.key.org 
+openssl rsa -in /etc/ssl/nginx/$SERVER_FRIENDICA.key.org -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 
+openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_FRIENDICA.csr -signkey /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.crt 
 fi
 
 # Creating friendica virtual host configuration
@@ -2604,11 +2607,11 @@ echo "
 
 # Redirect connections from 10.0.0.252 to Tor hidden service friendica
 server {
-        listen 10.0.0.252:80;
-        server_name _;
-        return 301 http://friendica.librenet;
+listen 10.0.0.252:80;
+server_name _;
+return 301 http://friendica.librenet;
 }
-  
+
 # Redirect connections from http to https
 #server {
 #  listen 10.0.0.252:80;
@@ -2632,141 +2635,141 @@ server {
 # Configure Friendica with SSL
 
 server {
-  listen 10.0.0.252:80;
-  listen 10.0.0.252:443 ssl;
-  server_name friendica.librenet;
+listen 10.0.0.252:80;
+listen 10.0.0.252:443 ssl;
+server_name friendica.librenet;
 
-  ssl on;
-  ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
-  ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
-  ssl_session_timeout 5m;
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
+ssl on;
+ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
+ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
+ssl_session_timeout 5m;
+ssl_protocols SSLv3 TLSv1;
+ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+ssl_prefer_server_ciphers on;
 
-  index index.php;
-  charset utf-8;
-  root /var/www/friendica;
-  access_log /var/log/nginx/friendica.log;
-  # allow uploads up to 20MB in size
-  client_max_body_size 20m;
-  client_body_buffer_size 128k;
-  # rewrite to front controller as default rule
-  location / {
-    rewrite ^/(.*) /index.php?q=\$uri&\$args last;
-  }
+index index.php;
+charset utf-8;
+root /var/www/friendica;
+access_log /var/log/nginx/friendica.log;
+# allow uploads up to 20MB in size
+client_max_body_size 20m;
+client_body_buffer_size 128k;
+# rewrite to front controller as default rule
+location / {
+rewrite ^/(.*) /index.php?q=\$uri&\$args last;
+}
 
-  # make sure webfinger and other well known services arent blocked
-  # by denying dot files and rewrite request to the front controller
-  location ^~ /.well-known/ {
-    allow all;
-    rewrite ^/(.*) /index.php?q=\$uri&\$args last;
-  }
+# make sure webfinger and other well known services arent blocked
+# by denying dot files and rewrite request to the front controller
+location ^~ /.well-known/ {
+allow all;
+rewrite ^/(.*) /index.php?q=\$uri&\$args last;
+}
 
-  # statically serve these file types when possible
-  # otherwise fall back to front controller
-  # allow browser to cache them
-  # added .htm for advanced source code editor library
-  location ~* \.(jpg|jpeg|gif|png|ico|css|js|htm|html|ttf|woff|svg)$ {
-    expires 30d;
-    try_files \$uri /index.php?q=\$uri&\$args;
-  }
-  # block these file types
-  location ~* \.(tpl|md|tgz|log|out)$ {
-    deny all;
-  }
+# statically serve these file types when possible
+# otherwise fall back to front controller
+# allow browser to cache them
+# added .htm for advanced source code editor library
+location ~* \.(jpg|jpeg|gif|png|ico|css|js|htm|html|ttf|woff|svg)$ {
+expires 30d;
+try_files \$uri /index.php?q=\$uri&\$args;
+}
+# block these file types
+location ~* \.(tpl|md|tgz|log|out)$ {
+deny all;
+}
 
-  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-  # or a unix socket
-  location ~* \.php$ {
-    try_files \$uri =404;
+# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+# or a unix socket
+location ~* \.php$ {
+try_files \$uri =404;
 
-    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+fastcgi_split_path_info ^(.+\.php)(/.+)$;
 
-    # With php5-cgi alone:
-    # fastcgi_pass 127.0.0.1:9000;
+# With php5-cgi alone:
+# fastcgi_pass 127.0.0.1:9000;
 
-    # With php5-fpm:
-    fastcgi_pass unix:/var/run/php5-fpm.sock;
+# With php5-fpm:
+fastcgi_pass unix:/var/run/php5-fpm.sock;
 
-    include fastcgi_params;
-    fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-  }
+include fastcgi_params;
+fastcgi_index index.php;
+fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+}
 
-  # deny access to all dot files
-  location ~ /\. {
-    deny all;
-  }
+# deny access to all dot files
+location ~ /\. {
+deny all;
+}
 }
 
 server {
-  listen 10.0.0.252:80;
-  listen 10.0.0.252:443 ssl;
-  server_name $SERVER_FRIENDICA;
+listen 10.0.0.252:80;
+listen 10.0.0.252:443 ssl;
+server_name $SERVER_FRIENDICA;
 
-  ssl on;
-  ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
-  ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
-  ssl_session_timeout 5m;
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
+ssl on;
+ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
+ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
+ssl_session_timeout 5m;
+ssl_protocols SSLv3 TLSv1;
+ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+ssl_prefer_server_ciphers on;
 
-  index index.php;
-  charset utf-8;
-  root /var/www/friendica;
-  access_log /var/log/nginx/friendica.log;
-  # allow uploads up to 20MB in size
-  client_max_body_size 20m;
-  client_body_buffer_size 128k;
-  # rewrite to front controller as default rule
-  location / {
-    rewrite ^/(.*) /index.php?q=\$uri&\$args last;
-  }
+index index.php;
+charset utf-8;
+root /var/www/friendica;
+access_log /var/log/nginx/friendica.log;
+# allow uploads up to 20MB in size
+client_max_body_size 20m;
+client_body_buffer_size 128k;
+# rewrite to front controller as default rule
+location / {
+rewrite ^/(.*) /index.php?q=\$uri&\$args last;
+}
 
-  # make sure webfinger and other well known services arent blocked
-  # by denying dot files and rewrite request to the front controller
-  location ^~ /.well-known/ {
-    allow all;
-    rewrite ^/(.*) /index.php?q=\$uri&\$args last;
-  }
+# make sure webfinger and other well known services arent blocked
+# by denying dot files and rewrite request to the front controller
+location ^~ /.well-known/ {
+allow all;
+rewrite ^/(.*) /index.php?q=\$uri&\$args last;
+}
 
-  # statically serve these file types when possible
-  # otherwise fall back to front controller
-  # allow browser to cache them
-  # added .htm for advanced source code editor library
-  location ~* \.(jpg|jpeg|gif|png|ico|css|js|htm|html|ttf|woff|svg)$ {
-    expires 30d;
-    try_files \$uri /index.php?q=\$uri&\$args;
-  }
-  # block these file types
-  location ~* \.(tpl|md|tgz|log|out)$ {
-    deny all;
-  }
+# statically serve these file types when possible
+# otherwise fall back to front controller
+# allow browser to cache them
+# added .htm for advanced source code editor library
+location ~* \.(jpg|jpeg|gif|png|ico|css|js|htm|html|ttf|woff|svg)$ {
+expires 30d;
+try_files \$uri /index.php?q=\$uri&\$args;
+}
+# block these file types
+location ~* \.(tpl|md|tgz|log|out)$ {
+deny all;
+}
 
-  # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-  # or a unix socket
-  location ~* \.php$ {
-    try_files \$uri =404;
+# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+# or a unix socket
+location ~* \.php$ {
+try_files \$uri =404;
 
-    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+fastcgi_split_path_info ^(.+\.php)(/.+)$;
 
-    # With php5-cgi alone:
-    # fastcgi_pass 127.0.0.1:9000;
+# With php5-cgi alone:
+# fastcgi_pass 127.0.0.1:9000;
 
-    # With php5-fpm:
-    fastcgi_pass unix:/var/run/php5-fpm.sock;
+# With php5-fpm:
+fastcgi_pass unix:/var/run/php5-fpm.sock;
 
-    include fastcgi_params;
-    fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-  }
+include fastcgi_params;
+fastcgi_index index.php;
+fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+}
 
-  # deny access to all dot files
-  location ~ /\. {
-    deny all;
-  }
+# deny access to all dot files
+location ~ /\. {
+deny all;
+}
 }
 
 " > /etc/nginx/sites-enabled/friendica 
@@ -2783,104 +2786,104 @@ rm -rf /etc/ssl/nginx/owncloud.key
 rm -rf /etc/ssl/nginx/owncloud.csr
 rm -rf /etc/ssl/nginx/owncloud.crt
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-	-keyout /etc/ssl/nginx/owncloud.key \
-	-out /etc/ssl/nginx/owncloud.crt -subj '/CN=librerouter' -batch
+-keyout /etc/ssl/nginx/owncloud.key \
+-out /etc/ssl/nginx/owncloud.crt -subj '/CN=librerouter' -batch
 
 # Creating Owncloud virtual host configuration
 echo "
 # Redirect connections from port 7070 to Tor hidden service owncloud port 80
 server {
-  listen 10.0.0.253:7070;
-  server_name $SERVER_OWNCLOUD;
-  return 301 https://$SERVER_OWNCLOUD;
+listen 10.0.0.253:7070;
+server_name $SERVER_OWNCLOUD;
+return 301 https://$SERVER_OWNCLOUD;
 }
 
 # Redirect connections from 10.0.0.253 to owncloud with https
 server {
-        listen 10.0.0.253:80;
-        server_name _;
-        return 301 https://owncloud.librenet;
+listen 10.0.0.253:80;
+server_name _;
+return 301 https://owncloud.librenet;
 }
-  
+
 # Redirect connections from owncloud.librenet to Tor hidden service owncloud
 server {
-  listen 10.0.0.253:443 ssl;
-  ssl_certificate      /etc/ssl/nginx/owncloud.crt;
-  ssl_certificate_key  /etc/ssl/nginx/owncloud.key;
-  server_name owncloud.librenet;
-  index index.php;
-  root /var/www/owncloud;
+listen 10.0.0.253:443 ssl;
+ssl_certificate      /etc/ssl/nginx/owncloud.crt;
+ssl_certificate_key  /etc/ssl/nginx/owncloud.key;
+server_name owncloud.librenet;
+index index.php;
+root /var/www/owncloud;
 
-  # set max upload size
-  client_max_body_size 10G;
-  fastcgi_buffers 64 4K;
+# set max upload size
+client_max_body_size 10G;
+fastcgi_buffers 64 4K;
 
-  # rewrite rules
-  rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
-  rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
-  rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
+# rewrite rules
+rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
+rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
+rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
 
-  # error pages paths
-  error_page 403 /core/templates/403.php;
-  error_page 404 /core/templates/404.php;
+# error pages paths
+error_page 403 /core/templates/403.php;
+error_page 404 /core/templates/404.php;
 
-  location ~ \.php(?:\$|/) {
-   fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-   include fastcgi_params;
-   fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-   fastcgi_param PATH_INFO \$fastcgi_path_info;
-   fastcgi_param HTTPS on;
-   fastcgi_pass unix:/var/run/php5-fpm.sock;
-   }
+location ~ \.php(?:\$|/) {
+fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+include fastcgi_params;
+fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+fastcgi_param PATH_INFO \$fastcgi_path_info;
+fastcgi_param HTTPS on;
+fastcgi_pass unix:/var/run/php5-fpm.sock;
+}
 
 
-  location = /robots.txt {
-    allow all;
-    log_not_found off;
-    access_log off;
-    }
+location = /robots.txt {
+allow all;
+log_not_found off;
+access_log off;
+}
 
-  location ~ ^/(?:\.htaccess|data|config|db_structure\.xml|README){
-    deny all;
-    }
+location ~ ^/(?:\.htaccess|data|config|db_structure\.xml|README){
+deny all;
+}
 
-  location / {
-   # The following 2 rules are only needed with webfinger
-   rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
-   rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
+location / {
+# The following 2 rules are only needed with webfinger
+rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
 
-   rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
-   rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
+rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
+rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
 
-   rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
+rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
 
-   try_files \$uri \$uri/ /index.php;
-   }
+try_files \$uri \$uri/ /index.php;
+}
 
-   # Optional: set long EXPIRES header on static assets
-   location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
-       expires 30d;
-       # Optional: Dont log access to assets
-         access_log off;
-   }
+# Optional: set long EXPIRES header on static assets
+location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
+expires 30d;
+# Optional: Dont log access to assets
+ access_log off;
+}
 
 }
 
 # Main server for Tor hidden service owncloud
 server {
-  listen 10.0.0.253:80;
-  server_name $SERVER_OWNCLOUD;
-  index index.php;
-  root /var/www/owncloud;
+listen 10.0.0.253:80;
+server_name $SERVER_OWNCLOUD;
+index index.php;
+root /var/www/owncloud;
 
-  # php5-fpm configuration
-  location ~ \.php$ {
-  fastcgi_split_path_info ^(.+\.php)(/.+)$;
-  fastcgi_pass unix:/var/run/php5-fpm.sock;
-  fastcgi_index index.php;
-  fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-  include fastcgi_params;
-  }
+# php5-fpm configuration
+location ~ \.php$ {
+fastcgi_split_path_info ^(.+\.php)(/.+)$;
+fastcgi_pass unix:/var/run/php5-fpm.sock;
+fastcgi_index index.php;
+fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+include fastcgi_params;
+}
 }
 " > /etc/nginx/sites-enabled/owncloud
 
@@ -2987,57 +2990,57 @@ fi
 echo "
 # Redirect connections from 10.0.0.254 to Tor hidden service mailpile
 server {
-        listen 10.0.0.254;
-        server_name _;
-        return 301 http://mailpile.librenet;
+listen 10.0.0.254;
+server_name _;
+return 301 http://mailpile.librenet;
 }   
 
 # Redirect connections from mailpile.librenet to Tor hidden service mailpile
 server {
-    # Mailpile Domain
-    server_name mailpile.librenet;
-    client_max_body_size 20m;
+# Mailpile Domain
+server_name mailpile.librenet;
+client_max_body_size 20m;
 
-    # Nginx port 80 and 443
-    listen 10.0.0.254:80;
-    listen 10.0.0.254:443 ssl;
+# Nginx port 80 and 443
+listen 10.0.0.254:80;
+listen 10.0.0.254:443 ssl;
 
-    # SSL Certificate File
-    ssl_certificate      /etc/ssl/nginx/$SERVER_MAILPILE.crt;
-    ssl_certificate_key  /etc/ssl/nginx/$SERVER_MAILPILE.key;
-    # Nginx Poroxy pass for mailpile
-    location / {
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header Host \$http_host;
-        proxy_set_header X-NginX-Proxy true;
-        proxy_pass http://127.0.0.1:33411;
-        proxy_read_timeout  90;
-    }
+# SSL Certificate File
+ssl_certificate      /etc/ssl/nginx/$SERVER_MAILPILE.crt;
+ssl_certificate_key  /etc/ssl/nginx/$SERVER_MAILPILE.key;
+# Nginx Poroxy pass for mailpile
+location / {
+proxy_set_header X-Real-IP \$remote_addr;
+proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+proxy_set_header Host \$http_host;
+proxy_set_header X-NginX-Proxy true;
+proxy_pass http://127.0.0.1:33411;
+proxy_read_timeout  90;
+}
 } 
 
 server {
 
-    # Mailpile Domain
-    server_name $SERVER_MAILPILE;
-    client_max_body_size 20m;
+# Mailpile Domain
+server_name $SERVER_MAILPILE;
+client_max_body_size 20m;
 
-    # Nginx port 80 and 443
-    listen 10.0.0.254:80;
-    listen 10.0.0.254:443 ssl;
+# Nginx port 80 and 443
+listen 10.0.0.254:80;
+listen 10.0.0.254:443 ssl;
 
-    # SSL Certificate File
-    ssl_certificate      /etc/ssl/nginx/$SERVER_MAILPILE.crt;
-    ssl_certificate_key  /etc/ssl/nginx/$SERVER_MAILPILE.key;
-    # Nginx Poroxy pass for mailpile
-    location / {
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header Host \$http_host;
-        proxy_set_header X-NginX-Proxy true;
-        proxy_pass http://127.0.0.1:33411;
-        proxy_read_timeout  90;
-    }
+# SSL Certificate File
+ssl_certificate      /etc/ssl/nginx/$SERVER_MAILPILE.crt;
+ssl_certificate_key  /etc/ssl/nginx/$SERVER_MAILPILE.key;
+# Nginx Poroxy pass for mailpile
+location / {
+proxy_set_header X-Real-IP \$remote_addr;
+proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+proxy_set_header Host \$http_host;
+proxy_set_header X-NginX-Proxy true;
+proxy_pass http://127.0.0.1:33411;
+proxy_read_timeout  90;
+}
 }
 " > /etc/nginx/sites-enabled/mailpile
 
@@ -3055,29 +3058,29 @@ fi
 echo "
 # Redirect connections from 10.0.0.245 to webmin.librenet
 server {
-        listen 10.0.0.245;
-        server_name _;
-        return 301 https://webmin.librenet;
+listen 10.0.0.245;
+server_name _;
+return 301 https://webmin.librenet;
 }
 
 # Redirect connections to webmin running on 127.0.0.1:10000
 server {
-        listen 10.0.0.245:443 ssl;
-        server_name webmin.librenet;
+listen 10.0.0.245:443 ssl;
+server_name webmin.librenet;
 
-  ssl on;
-  ssl_certificate /etc/ssl/nginx/webmin.crt;
-  ssl_certificate_key /etc/ssl/nginx/webmin.key;
-  ssl_session_timeout 5m;
-  ssl_protocols SSLv3 TLSv1;
-  ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-  ssl_prefer_server_ciphers on;
+ssl on;
+ssl_certificate /etc/ssl/nginx/webmin.crt;
+ssl_certificate_key /etc/ssl/nginx/webmin.key;
+ssl_session_timeout 5m;
+ssl_protocols SSLv3 TLSv1;
+ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+ssl_prefer_server_ciphers on;
 
 location / {
-    proxy_pass       https://127.0.0.1:10000;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
+proxy_pass       https://127.0.0.1:10000;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
 
 }
 " > /etc/nginx/sites-enabled/webmin
@@ -3094,32 +3097,32 @@ fi
 # Creating Kibana virtual host configuration
 echo '
 server {
-	listen 10.0.0.11;
-	server_name _;
-	return 301 https://kibana.librenet;
-	}
+listen 10.0.0.11;
+server_name _;
+return 301 https://kibana.librenet;
+}
 
 server {
-	listen 80;
-	listen 443 ssl;
-	server_name kibana.librenet;
+listen 80;
+listen 443 ssl;
+server_name kibana.librenet;
 
-	ssl on;
-	ssl_certificate /etc/ssl/nginx/kibana.crt;
-	ssl_certificate_key /etc/ssl/nginx/kibana.key;
-	ssl_session_timeout 5m;
-	ssl_protocols SSLv3 TLSv1;
-	ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-	ssl_prefer_server_ciphers on;
-	access_log /var/log/nginx/kibana.access.log;
-	error_log /var/log/nginx/kibana.error.log;
+ssl on;
+ssl_certificate /etc/ssl/nginx/kibana.crt;
+ssl_certificate_key /etc/ssl/nginx/kibana.key;
+ssl_session_timeout 5m;
+ssl_protocols SSLv3 TLSv1;
+ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+ssl_prefer_server_ciphers on;
+access_log /var/log/nginx/kibana.access.log;
+error_log /var/log/nginx/kibana.error.log;
 
-	location / {
-		proxy_pass       http://127.0.0.1:5601;
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Host $host;
-		proxy_cache_bypass $http_upgrade;
-	}
+location / {
+	proxy_pass       http://127.0.0.1:5601;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Host $host;
+	proxy_cache_bypass $http_upgrade;
+}
 }
 ' > /etc/nginx/sites-enabled/kibana
 
@@ -3127,35 +3130,35 @@ server {
 echo "Configuring Snorby virtual host ..."
 echo '
 server {
-	listen 10.0.0.12:80;
-	server_name snorby.librenet;
+listen 10.0.0.12:80;
+server_name snorby.librenet;
 #	passenger_enabled on;
 #	passenger_ruby /usr/bin/ruby2.1;
 #	passenger_user  root;
 #	passenger_group root;
 
-	access_log /var/log/nginx/snorby.log;
-	root /var/www/snorby/public;
-	index index.html;
-	
-	location /snorby {
-		root /usr/www/snorby/public;
-		index index.html;
-		location ~ \.cgi$ {
-			try_files $uri =404;
-			include fastcgi_params;
-			fastcgi_pass unix:/var/run/fcgiwrap/fcgiwrap.sock;
-			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-			fastcgi_param REMOTE_USER $remote_user;
-		}
+access_log /var/log/nginx/snorby.log;
+root /var/www/snorby/public;
+index index.html;
 
-		location ~ \.php$ {
-			try_files $uri =404;
-			include fastcgi_params;
-			fastcgi_pass 127.0.0.1:9000;
-			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		}
+location /snorby {
+	root /usr/www/snorby/public;
+	index index.html;
+	location ~ \.cgi$ {
+		try_files $uri =404;
+		include fastcgi_params;
+		fastcgi_pass unix:/var/run/fcgiwrap/fcgiwrap.sock;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		fastcgi_param REMOTE_USER $remote_user;
 	}
+
+	location ~ \.php$ {
+		try_files $uri =404;
+		include fastcgi_params;
+		fastcgi_pass 127.0.0.1:9000;
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	}
+}
 }
 ' > /etc/nginx/sites-enabled/snorby
 
@@ -3164,25 +3167,25 @@ echo "Configuring squidguard virtual host ..."
 echo '
 # Redirect connections from 10.0.0.246 to squidguardmgr.librenet
 server {
-        listen 10.0.0.246:80;
-        server_name _;
-        return 301 http://squidguard.librenet;
+listen 10.0.0.246:80;
+server_name _;
+return 301 http://squidguard.librenet;
 }
 
 server {
-  listen 10.0.0.246:80;
-  server_name squidguard.librenet;
+listen 10.0.0.246:80;
+server_name squidguard.librenet;
 
-  index squidguardmgr.cgi;
-  charset utf-8;
-  root /var/www/squidguardmgr;
-  access_log /var/log/nginx/squidguardmgr.log;
+index squidguardmgr.cgi;
+charset utf-8;
+root /var/www/squidguardmgr;
+access_log /var/log/nginx/squidguardmgr.log;
 
-  location ~ .cgi\$ {
-    include uwsgi_params;
-    uwsgi_modifier1 9;
-    uwsgi_pass 127.0.0.1:9000;
-  }
+location ~ .cgi\$ {
+include uwsgi_params;
+uwsgi_modifier1 9;
+uwsgi_pass 127.0.0.1:9000;
+}
 }
 ' > /etc/nginx/sites-enabled/squidguard
 
@@ -3201,45 +3204,45 @@ rm -rf /etc/ssl/nginx/easyrtc.key
 rm -rf /etc/ssl/nginx/easyrtc.csr
 rm -rf /etc/ssl/nginx/easyrtc.crt
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout /etc/ssl/nginx/easyrtc.key \
-        -out /etc/ssl/nginx/easyrtc.crt -subj '/CN=librerouter' -batch
+-keyout /etc/ssl/nginx/easyrtc.key \
+-out /etc/ssl/nginx/easyrtc.crt -subj '/CN=librerouter' -batch
 
 # Creating EasyRTC virtual host configuration
 echo "
 # Redirect connections from 10.0.0.250 to EasyTRC https 
 server {
-        listen 10.0.0.250;
-        server_name _;
-        return 301 https://easyrtc.librenet/demos/demo_multiparty.html;
+listen 10.0.0.250;
+server_name _;
+return 301 https://easyrtc.librenet/demos/demo_multiparty.html;
 }
 
 # easyrtc https server 
 server {
-        listen 10.0.0.250:80;
-        listen 10.0.0.250:443 ssl;
-        server_name easyrtc.librenet;
-        ssl_certificate /etc/ssl/nginx/easyrtc.crt;
-        ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
-        rewrite ^/$ /demos/demo_multiparty.html permanent;
-  location / {
-    proxy_pass       https://127.0.0.1:8443;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
+listen 10.0.0.250:80;
+listen 10.0.0.250:443 ssl;
+server_name easyrtc.librenet;
+ssl_certificate /etc/ssl/nginx/easyrtc.crt;
+ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
+rewrite ^/$ /demos/demo_multiparty.html permanent;
+location / {
+proxy_pass       https://127.0.0.1:8443;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
 }
 
 server {
-        listen 10.0.0.250:80;
-        listen 10.0.0.250:443 ssl;
-        server_name $SERVER_EASYRTC;
-        ssl_certificate /etc/ssl/nginx/easyrtc.crt;
-        ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
-        rewrite ^/$ /demos/demo_multiparty.html permanent;
-  location / {
-    proxy_pass       https://127.0.0.1:8443;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
+listen 10.0.0.250:80;
+listen 10.0.0.250:443 ssl;
+server_name $SERVER_EASYRTC;
+ssl_certificate /etc/ssl/nginx/easyrtc.crt;
+ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
+rewrite ^/$ /demos/demo_multiparty.html permanent;
+location / {
+proxy_pass       https://127.0.0.1:8443;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
 }
 " > /etc/nginx/sites-enabled/easyrtc
 
@@ -3247,14 +3250,14 @@ server {
 
 echo "
 server {
-        listen 10.0.0.1:80;
-        server_name i2p.librenet;
+listen 10.0.0.1:80;
+server_name i2p.librenet;
 
 location / {
-    proxy_pass       http://127.0.0.1:7657;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
+proxy_pass       http://127.0.0.1:7657;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
 }
 " > /etc/nginx/sites-enabled/i2p 
 
@@ -3262,14 +3265,14 @@ location / {
 
 echo "
 server {
-        listen 10.0.0.1:80;
-        server_name tahoe.librenet;
+listen 10.0.0.1:80;
+server_name tahoe.librenet;
 
 location / {
-    proxy_pass       http://127.0.0.1:3456;
-    proxy_set_header Host      \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-  }
+proxy_pass       http://127.0.0.1:3456;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
 }
 " > /etc/nginx/sites-enabled/tahoe
 
@@ -3296,62 +3299,62 @@ cat << EOF > /root/libre_scripts/check_interfaces.sh
 #!/bin/bash
 # Checking physical interfaces (eth0 and eth1)
 if ip addr show eth1 | grep 'state UP'; then
-    if ip addr show eth0 | grep 'state UP'; then
-        # Checking virtual interfaces (ethx:1 ethx:2 ethx:3 ethx:4 ethx:5 ethx:6)
-            if ping -c 1 10.0.0.245; then
-                if ping -c 1 10.0.0.250; then
-                    if ping -c 1 10.0.0.251; then
-                        if ping -c 1 10.0.0.252; then
-                            if ping -c 1 10.0.0.253; then
-                                if ping -c 1 10.0.0.254; then
-                                    logger "Check Interfaces: Network is ok"
-                                else
-                                    #Make a note in syslog
-                                    logger "Check Interfaces: ethx:4 is down, restarting network ..."
-                                    /etc/init.d/networking restart
-                                    exit
-                                fi
-                            else
-                                #Make a note in syslog
-                                logger "Check Interfaces: ethx:3 is down, restarting network ..."
-                                /etc/init.d/networking restart
-                                exit
-                            fi
-                        else
-                            #Make a note in syslog
-                            logger "Check Interfaces: ethx:2 is down, restarting network ..."
-                            /etc/init.d/networking restart
-                            exit
-                        fi
-                    else
-                        #Make a note in syslog
-                        logger "Check Interfaces: ethx:1 is down, restarting network ..."
-                        /etc/init.d/networking restart
-                        exit
-                    fi
-                else
-                    #Make a note in syslog
-                    logger "Check Interfaces: ethx:6 is down, restarting network ..."
-                    /etc/init.d/networking restart
-                    exit
-                fi
-            else
-                #Make a note in syslog
-                logger "Check Interfaces: ethx:5 is down, restarting network ..."
-                /etc/init.d/networking restart
-                exit
-            fi
+if ip addr show eth0 | grep 'state UP'; then
+# Checking virtual interfaces (ethx:1 ethx:2 ethx:3 ethx:4 ethx:5 ethx:6)
+    if ping -c 1 10.0.0.245; then
+	if ping -c 1 10.0.0.250; then
+	    if ping -c 1 10.0.0.251; then
+		if ping -c 1 10.0.0.252; then
+		    if ping -c 1 10.0.0.253; then
+			if ping -c 1 10.0.0.254; then
+			    logger "Check Interfaces: Network is ok"
+			else
+			    #Make a note in syslog
+			    logger "Check Interfaces: ethx:4 is down, restarting network ..."
+			    /etc/init.d/networking restart
+			    exit
+			fi
+		    else
+			#Make a note in syslog
+			logger "Check Interfaces: ethx:3 is down, restarting network ..."
+			/etc/init.d/networking restart
+			exit
+		    fi
+		else
+		    #Make a note in syslog
+		    logger "Check Interfaces: ethx:2 is down, restarting network ..."
+		    /etc/init.d/networking restart
+		    exit
+		fi
+	    else
+		#Make a note in syslog
+		logger "Check Interfaces: ethx:1 is down, restarting network ..."
+		/etc/init.d/networking restart
+		exit
+	    fi
+	else
+	    #Make a note in syslog
+	    logger "Check Interfaces: ethx:6 is down, restarting network ..."
+	    /etc/init.d/networking restart
+	    exit
+	fi
     else
-        #Make a note in syslog
-        logger "Check Interfaces: eth0 is down, restarting network ..."
-        /etc/init.d/networking restart
-        exit
+	#Make a note in syslog
+	logger "Check Interfaces: ethx:5 is down, restarting network ..."
+	/etc/init.d/networking restart
+	exit
     fi
 else
-    #Make a note in syslog
-    logger "Check Interfaces: eth1 is down, restarting network ..."
-    /etc/init.d/networking restart
-    exit
+#Make a note in syslog
+logger "Check Interfaces: eth0 is down, restarting network ..."
+/etc/init.d/networking restart
+exit
+fi
+else
+#Make a note in syslog
+logger "Check Interfaces: eth1 is down, restarting network ..."
+/etc/init.d/networking restart
+exit
 fi
 EOF
 
@@ -3378,82 +3381,82 @@ cat << EOF > /root/libre_scripts/check_services.sh
 #!/bin/bash
 # Checking unbound
 if /etc/init.d/unbound status | grep "active (running)"; then
-    logger "Check Services: Unbound is ok"
+logger "Check Services: Unbound is ok"
 else
-    logger "Check Services: Unbound is not running. Restarting ..."
-    /etc/init.d/unbound restart
+logger "Check Services: Unbound is not running. Restarting ..."
+/etc/init.d/unbound restart
 fi
 
 # Checking isc-dhcp-server
 if /etc/init.d/isc-dhcp-server status | grep "active (running)"; then
-    logger "Check Services: isc-dhcp-server is ok"
+logger "Check Services: isc-dhcp-server is ok"
 else
-    logger "Check Services: isc-dhcp-server is not running. Restarting ..."
-    /etc/init.d/isc-dhcp-server restart
+logger "Check Services: isc-dhcp-server is not running. Restarting ..."
+/etc/init.d/isc-dhcp-server restart
 fi
 
 # Checking squid
 if /etc/init.d/squid status | grep "active (running)"; then
-    logger "Check Services: squid is ok"
+logger "Check Services: squid is ok"
 else
-    logger "Check Services: squid is not running. Restarting ..."
-    /etc/init.d/squid restart
+logger "Check Services: squid is not running. Restarting ..."
+/etc/init.d/squid restart
 fi
 
 # Checking squid-tor
 if /etc/init.d/squid-tor status | grep "active (running)"; then
-    logger "Check Services: squid-tor is ok"
+logger "Check Services: squid-tor is ok"
 else
-    logger "Check Services: squid-tor is not running. Restarting ..."
-    /etc/init.d/squid-tor restart
+logger "Check Services: squid-tor is not running. Restarting ..."
+/etc/init.d/squid-tor restart
 fi
 
 # Checking squid-i2p
 if /etc/init.d/squid-i2p status | grep "active (running)"; then
-    logger "Check Services: squid-i2p is ok"
+logger "Check Services: squid-i2p is ok"
 else
-    logger "Check Services: squid-i2p is not running. Restarting ..."
-    /etc/init.d/squid-i2p restart
+logger "Check Services: squid-i2p is not running. Restarting ..."
+/etc/init.d/squid-i2p restart
 fi
 
 # Checking clamav-daemon
 if /etc/init.d/clamav-daemon status | grep "active (running)"; then
-    logger "Check Services: clamav-daemon is ok"
+logger "Check Services: clamav-daemon is ok"
 else
-    logger "Check Services: clamav-daemon is not running. Restarting ..."
-    /etc/init.d/clamav-daemon restart
+logger "Check Services: clamav-daemon is not running. Restarting ..."
+/etc/init.d/clamav-daemon restart
 fi
 
 # Checking c-icap
 if /etc/init.d/c-icap status | grep "active (running)"; then
-    logger "Check Services: c-icap is ok"
+logger "Check Services: c-icap is ok"
 else
-    logger "Check Services: c-icap is not running. Restarting ..."
-    /etc/init.d/c-icap restart
+logger "Check Services: c-icap is not running. Restarting ..."
+/etc/init.d/c-icap restart
 fi
 
 # Checking privoxy
 if /etc/init.d/privoxy status | grep "active (running)"; then
-    logger "Check Services: privoxy is ok"
+logger "Check Services: privoxy is ok"
 else
-    logger "Check Services: privoxy is not running. Restarting ..."
-    /etc/init.d/privoxy restart
+logger "Check Services: privoxy is not running. Restarting ..."
+/etc/init.d/privoxy restart
 fi
 
 # Checking privoxy-tor
 if /etc/init.d/privoxy-tor status | grep "active (running)"; then
-    logger "Check Services: privoxy-tor is ok"
+logger "Check Services: privoxy-tor is ok"
 else
-    logger "Check Services: privoxy-tor is not running. Restarting ..."
-    /etc/init.d/privoxy-tor restart
+logger "Check Services: privoxy-tor is not running. Restarting ..."
+/etc/init.d/privoxy-tor restart
 fi
 
 # Checking nginx
 if /etc/init.d/nginx status | grep "active (running)"; then
-    logger "Check Services: Nginx is ok"
+logger "Check Services: Nginx is ok"
 else
-    logger "Check Services: Nginx is not running. Restarting ..."
-    /etc/init.d/nginx restart
+logger "Check Services: Nginx is not running. Restarting ..."
+/etc/init.d/nginx restart
 fi
 EOF
 
@@ -3469,30 +3472,30 @@ crontab /root/libre_scripts/cron_jobs
 # ---------------------------------------------------------
 configure_suricata()
 {
-	echo "Configuring Suricata ..."
+echo "Configuring Suricata ..."
 
-        #prepare network interface to work with suricata
-        echo "peparing the network interfaces ..."
-        ethtool -K lo rx off tso off gso off sg off gro off lro off
-	ifconfig lo mtu 1400
+#prepare network interface to work with suricata
+echo "peparing the network interfaces ..."
+ethtool -K lo rx off tso off gso off sg off gro off lro off
+ifconfig lo mtu 1400
 
-	# Suricata configuration
-	sed -i -e '/#HOME_NET:/d' /etc/suricata/suricata.yaml
-	sed -i -e 's@HOME_NET:.*$@HOME_NET: "[10.0.0.0/24]"@g' /etc/suricata/suricata.yaml
-	sed -i -e 's@  windows: \[.*\]@  windows: []@g' /etc/suricata/suricata.yaml
-	sed -i -e 's@  linux: \[.*\]@  linux: [0.0.0.0]@g' /etc/suricata/suricata.yaml
-	sed -i -e "s@  - interface: eth0@  - interface: lo@g" /etc/suricata/suricata.yaml
+# Suricata configuration
+sed -i -e '/#HOME_NET:/d' /etc/suricata/suricata.yaml
+sed -i -e 's@HOME_NET:.*$@HOME_NET: "[10.0.0.0/24]"@g' /etc/suricata/suricata.yaml
+sed -i -e 's@  windows: \[.*\]@  windows: []@g' /etc/suricata/suricata.yaml
+sed -i -e 's@  linux: \[.*\]@  linux: [0.0.0.0]@g' /etc/suricata/suricata.yaml
+sed -i -e "s@  - interface: eth0@  - interface: lo@g" /etc/suricata/suricata.yaml
 
-	# Suricata logs
-	touch /var/log/suricata/eve.json
-	touch /var/log/suricata/fast.log
-	touch /var/log/suricata/stats.log
-	touch /var/log/suricata/suricata.log
-	chmod 644 /var/log/suricata/*.log
-	chmod -R 666 /var/log/suricata 
+# Suricata logs
+touch /var/log/suricata/eve.json
+touch /var/log/suricata/fast.log
+touch /var/log/suricata/stats.log
+touch /var/log/suricata/suricata.log
+chmod 644 /var/log/suricata/*.log
+chmod -R 666 /var/log/suricata 
 
-	# Suricata service
-	cat << EOF > /etc/default/suricata
+# Suricata service
+cat << EOF > /etc/default/suricata
 # Default config for Suricata
 
 # set to yes to start the server in the init.d script
@@ -3516,31 +3519,31 @@ NFQUEUE=0
 # Pid file
 PIDFILE=/var/run/suricata.pid
 EOF
-	echo "Restarting suricata ..."
-	update-rc.d suricata defaults
-	service suricata stop
+echo "Restarting suricata ..."
+update-rc.d suricata defaults
+service suricata stop
 
-	# Starting suricata in loopback 
-        kill -9 `cat /var/run/suricata.pid`
-        rm -rf /var/run/suricata.pid
-	suricata -D -c /etc/suricata/suricata.yaml -i lo 
+# Starting suricata in loopback 
+kill -9 `cat /var/run/suricata.pid`
+rm -rf /var/run/suricata.pid
+suricata -D -c /etc/suricata/suricata.yaml -i lo 
 
-	# checking for ethernet card configuration
-	sleep 20
-	if grep "ethtool" /var/log/suricata/suricata.log; then 
+# checking for ethernet card configuration
+sleep 20
+if grep "ethtool" /var/log/suricata/suricata.log; then 
 
-		# Getting ethtools parameters
-		PARAMS=`cat /var/log/suricata/suricata.log \
-		| grep ethtool  | awk -F 'ethtool' '{print $2}'`
+	# Getting ethtools parameters
+	PARAMS=`cat /var/log/suricata/suricata.log \
+	| grep ethtool  | awk -F 'ethtool' '{print $2}'`
 
-		# Configuring ethernet card
-		ethtool $PARAMS
+	# Configuring ethernet card
+	ethtool $PARAMS
 
-		# kill suricata process and run it again
-		kill -9 `cat /var/run/suricata.pid`
-                rm -rf /var/run/suricata.pid
-		suricata -D -c /etc/suricata/suricata.yaml -i lo
-	fi
+	# kill suricata process and run it again
+	kill -9 `cat /var/run/suricata.pid`
+	rm -rf /var/run/suricata.pid
+	suricata -D -c /etc/suricata/suricata.yaml -i lo
+fi
 }
 
 
@@ -3550,65 +3553,65 @@ EOF
 configure_logstash()
 {
 
-	echo "Conifgureing logstash ..."
+echo "Conifgureing logstash ..."
 
-	# Creating configuration file
-	mkdir -p /etc/logstash/conf.d
-	touch /etc/logstash/conf.d/logstash.conf
-	chmod a+rw /etc/logstash/conf.d/logstash.conf
+# Creating configuration file
+mkdir -p /etc/logstash/conf.d
+touch /etc/logstash/conf.d/logstash.conf
+chmod a+rw /etc/logstash/conf.d/logstash.conf
 
-	# Logstash configuration
-	cat << EOF > /etc/logstash/conf.d/logstash.conf
+# Logstash configuration
+cat << EOF > /etc/logstash/conf.d/logstash.conf
 input {
-    file {
-        path => "/var/log/suricata/eve.json"
-        start_position => beginning
-        ignore_older => 0
-        sincedb_path => ["/var/lib/logstash/sincedb"]
-        codec =>   json
-        type => "SuricataIDPS"
-    }
+file {
+path => "/var/log/suricata/eve.json"
+start_position => beginning
+ignore_older => 0
+sincedb_path => ["/var/lib/logstash/sincedb"]
+codec =>   json
+type => "SuricataIDPS"
+}
 }
 filter {
-  if [type] == "SuricataIDPS" {
-    date {
-      match => [ "timestamp", "ISO8601" ]
-    }
-    ruby {
-      code => "if event['event_type'] == 'fileinfo'; event['fileinfo']['type']=event['fileinfo']['magic'].to_s.split(',')[0]; end;"
-    }
-  }
-  if [src_ip]  {
-    geoip {
-      source => "src_ip"
-      target => "geoip"
-      #database => "/opt/logstash/vendor/geoip/GeoLiteCity.dat"
-      add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
-      add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
-    }
-    mutate {
-      convert => [ "[geoip][coordinates]", "float" ]
-    }
-    if ![geoip.ip] {
-      if [dest_ip]  {
-        geoip {
-          source => "dest_ip"
-          target => "geoip"
-          #database => "/opt/logstash/vendor/geoip/GeoLiteCity.dat"
-          add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
-          add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
-        }
-        mutate {
-          convert => [ "[geoip][coordinates]", "float" ]
-        }
-      }
-    }
-  }
+if [type] == "SuricataIDPS" {
+date {
+match => [ "timestamp", "ISO8601" ]
+}
+ruby {
+code => "if event['event_type'] == 'fileinfo'; event['fileinfo']['type']=event['fileinfo']['magic'].to_s.split(',')[0]; end;"
+}
+}
+if [src_ip]  {
+geoip {
+source => "src_ip"
+target => "geoip"
+#database => "/opt/logstash/vendor/geoip/GeoLiteCity.dat"
+add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
+}
+mutate {
+convert => [ "[geoip][coordinates]", "float" ]
+}
+if ![geoip.ip] {
+if [dest_ip]  {
+geoip {
+  source => "dest_ip"
+  target => "geoip"
+  #database => "/opt/logstash/vendor/geoip/GeoLiteCity.dat"
+  add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+  add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
+}
+mutate {
+  convert => [ "[geoip][coordinates]", "float" ]
+}
+}
+}
+}
 }
 output {
-    elasticsearch {
-        hosts => [ "localhost:9200" ]
-    }
+elasticsearch {
+hosts => [ "localhost:9200" ]
+}
 }
 EOF
 }
@@ -3619,14 +3622,14 @@ EOF
 # ---------------------------------------------------------
 configure_kibana()
 {
-        echo "Configuring Kibana ..."
+echo "Configuring Kibana ..."
 
-	# Configure PAM limits
-	sed -i -e '/# End of file/d' /etc/security/limits.conf
-	echo 'elasticsearch hard memlock 102400' >> /etc/security/limits.conf
-	echo '# End of file' >> /etc/security/limits.conf
-	# Configure elastic
-	cat << EOF > /etc/default/elasticsearch
+# Configure PAM limits
+sed -i -e '/# End of file/d' /etc/security/limits.conf
+echo 'elasticsearch hard memlock 102400' >> /etc/security/limits.conf
+echo '# End of file' >> /etc/security/limits.conf
+# Configure elastic
+cat << EOF > /etc/default/elasticsearch
 ################################
 # Elasticsearch
 ################################
@@ -3657,56 +3660,56 @@ ES_JAVA_OPTS=-server
 ES_STARTUP_SLEEP_TIME=15
 EOF
 
-	# Elasticsearch configuration
-	sed -i -e 's/cluster.name.*/cluster.name: "LibreRouter"/g' /etc/elasticsearch/elasticsearch.yml
+# Elasticsearch configuration
+sed -i -e 's/cluster.name.*/cluster.name: "LibreRouter"/g' /etc/elasticsearch/elasticsearch.yml
 
-	
-	# Fix logstash permissions
-	sed -i -e 's/LS_GROUP=.*/LS_GROUP=root/g' /etc/init.d/logstash
-	systemctl daemon-reload
 
-	# Enable autostart
-	systemctl enable elasticsearch
-	echo "Restarting elasticsearch ..."
-	service elasticsearch restart
-	systemctl enable kibana
-	systemctl enable logstash
+# Fix logstash permissions
+sed -i -e 's/LS_GROUP=.*/LS_GROUP=root/g' /etc/init.d/logstash
+systemctl daemon-reload
 
-	echo "Restarting logstash ..."
-	service logstash restart
-	echo "Applying Kibana dashboards ..."
-	sleep 20 && /opt/KTS/load.sh && echo ""
-	echo "Kibana dashboards were successfully configured"
-	echo "Restarting kibana ..."
-	service kibana restart
+# Enable autostart
+systemctl enable elasticsearch
+echo "Restarting elasticsearch ..."
+service elasticsearch restart
+systemctl enable kibana
+systemctl enable logstash
+
+echo "Restarting logstash ..."
+service logstash restart
+echo "Applying Kibana dashboards ..."
+sleep 20 && /opt/KTS/load.sh && echo ""
+echo "Kibana dashboards were successfully configured"
+echo "Restarting kibana ..."
+service kibana restart
 }
 
 
 configure_snortbarn()
 {
-	echo "Configuring Snort + Barnyard2"
+echo "Configuring Snort + Barnyard2"
 
-	# Configure Snort
-	sed -i -e 's@ipvar HOME_NET .*@ipvar HOME_NET 10.0.0.0/24@g' /etc/snort/snort.conf
-	sed -i -e 's@ipvar EXTERNAL_NET .*@ipvar EXTERNAL_NET any@g' /etc/snort/snort.conf
-	echo 'output unified2: filename snort.log, limit 128' >> /etc/snort/snort.conf
-	sed -i -e 's@# alert@alert@g' /etc/snort/rules/snort.rules
+# Configure Snort
+sed -i -e 's@ipvar HOME_NET .*@ipvar HOME_NET 10.0.0.0/24@g' /etc/snort/snort.conf
+sed -i -e 's@ipvar EXTERNAL_NET .*@ipvar EXTERNAL_NET any@g' /etc/snort/snort.conf
+echo 'output unified2: filename snort.log, limit 128' >> /etc/snort/snort.conf
+sed -i -e 's@# alert@alert@g' /etc/snort/rules/snort.rules
 
-	# Validate Snort configuration
-	snort -T -i $INT_INTERFACE -c /etc/snort/snort.conf
-	if [ $? -ne 0 ]; then
-		echo "Error: invalid Snort configuration"
-		exit 1
-	fi
+# Validate Snort configuration
+snort -T -i $INT_INTERFACE -c /etc/snort/snort.conf
+if [ $? -ne 0 ]; then
+	echo "Error: invalid Snort configuration"
+	exit 1
+fi
 
-	# Configure Barnyard
-	sed -i -e 's/#config hostname:.*/config hostname: librerouter/g' /etc/snort/barnyard2.conf
-	sed -i -e "s/#config interface:.*/config interface: $INT_INTERFACE/g" /etc/snort/barnyard2.conf
-	echo "output database: log, mysql, user=root password=$MYSQL_PASS dbname=snorby host=localhost" >> /etc/snort/barnyard2.conf
-	touch /var/log/snort/barnyard2.waldo
+# Configure Barnyard
+sed -i -e 's/#config hostname:.*/config hostname: librerouter/g' /etc/snort/barnyard2.conf
+sed -i -e "s/#config interface:.*/config interface: $INT_INTERFACE/g" /etc/snort/barnyard2.conf
+echo "output database: log, mysql, user=root password=$MYSQL_PASS dbname=snorby host=localhost" >> /etc/snort/barnyard2.conf
+touch /var/log/snort/barnyard2.waldo
 
-	# Create startup scripts
-	cat << EOF > /etc/init.d/snortbarn
+# Create startup scripts
+cat << EOF > /etc/init.d/snortbarn
 #!/bin/sh
 #
 ### BEGIN INIT INFO
@@ -3728,96 +3731,96 @@ mysqld_get_param() {
 
 do_start()
 {
-    log_daemon_msg "Starting Snort and Barnyard" ""
-    # Make sure mysql has finished starting
-    ps_alive=0
-    while [ \$ps_alive -lt 1 ];
-    do
-    pidfile=\`mysqld_get_param pid-file\`
-    if [ -f "\$pidfile" ] && ps \`cat \$pidfile\` >/dev/null 2>&1; then ps_alive=1; fi
-	sleep 1
-    done
+log_daemon_msg "Starting Snort and Barnyard" ""
+# Make sure mysql has finished starting
+ps_alive=0
+while [ \$ps_alive -lt 1 ];
+do
+pidfile=\`mysqld_get_param pid-file\`
+if [ -f "\$pidfile" ] && ps \`cat \$pidfile\` >/dev/null 2>&1; then ps_alive=1; fi
+sleep 1
+done
 
-    /usr/bin/snort -q -i $INT_INTERFACE -c /etc/snort/snort.conf -D
-    /usr/bin/barnyard2 -q -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D
+/usr/bin/snort -q -i $INT_INTERFACE -c /etc/snort/snort.conf -D
+/usr/bin/barnyard2 -q -c /etc/snort/barnyard2.conf -d /var/log/snort -f snort.log -w /var/log/snort/barnyard2.waldo -D
 
-    log_end_msg 0
-    return 0
+log_end_msg 0
+return 0
 }
 
 do_stop()
 {
-    log_daemon_msg "Stopping Snort and Barnyard" ""
-    kill \$(pidof snort) 2> /dev/null
-    kill \$(pidof barnyard2) 2> /dev/null
-    log_end_msg 0
-    return 0
+log_daemon_msg "Stopping Snort and Barnyard" ""
+kill \$(pidof snort) 2> /dev/null
+kill \$(pidof barnyard2) 2> /dev/null
+log_end_msg 0
+return 0
 }
 
 case "\$1" in
- start)
-    do_start
-    ;;
- stop)
-    do_stop
-    ;;
- restart)
-    do_stop
-    do_start
-    ;;
- *)
-    echo "Usage: snort-barn {start|stop|restart}" >&2
-    exit 3
-    ;;
+start)
+do_start
+;;
+stop)
+do_stop
+;;
+restart)
+do_stop
+do_start
+;;
+*)
+echo "Usage: snort-barn {start|stop|restart}" >&2
+exit 3
+;;
 esac
 exit 0
 EOF
-	chmod +x /etc/init.d/snortbarn
-	update-rc.d snortbarn defaults
-	insserv -f -v snortbarn
-	service snortbarn start
+chmod +x /etc/init.d/snortbarn
+update-rc.d snortbarn defaults
+insserv -f -v snortbarn
+service snortbarn start
 
-	# Create cron job for pulledpork
-	echo '10 1 * * * root /usr/sbin/pulledpork.pl -c /etc/snort/pulledpork.conf' >> /etc/crontab
-	echo '25 1 * * * root service snortbarn restart' >> /etc/crontab
+# Create cron job for pulledpork
+echo '10 1 * * * root /usr/sbin/pulledpork.pl -c /etc/snort/pulledpork.conf' >> /etc/crontab
+echo '25 1 * * * root service snortbarn restart' >> /etc/crontab
 }
 
 
 configure_snorby()
 {
-	echo "Configuring Snorby"
-	cat << EOF > /var/www/snorby/config/snorby_config.yml
+echo "Configuring Snorby"
+cat << EOF > /var/www/snorby/config/snorby_config.yml
 production:
-  domain: 'snorbi.librenet'
-  wkhtmltopdf: /usr/bin/wkhtmltopdf
-  ssl: false
-  mailer_sender: 'snorby@example.com'
-  geoip_uri: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz"
-  rules:
-    - "/etc/snort/rules"
-  authentication_mode: database
-  timezone_search: true
+domain: 'snorbi.librenet'
+wkhtmltopdf: /usr/bin/wkhtmltopdf
+ssl: false
+mailer_sender: 'snorby@example.com'
+geoip_uri: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz"
+rules:
+- "/etc/snort/rules"
+authentication_mode: database
+timezone_search: true
 EOF
 
-	cat << EOF > /var/www/snorby/config/database.yml
+cat << EOF > /var/www/snorby/config/database.yml
 # Snorby Database Configuration
 snorby: &snorby
-  adapter: mysql
-  username: root
-  password: "$MYSQL_PASS"
-  host: localhost
+adapter: mysql
+username: root
+password: "$MYSQL_PASS"
+host: localhost
 
 production:
-  database: snorby
-  <<: *snorby
+database: snorby
+<<: *snorby
 EOF
-	cd /var/www/snorby
-	RAILS_ENV=production bundle exec rake snorby:setup
-	cd
-	mysql -u root --password=$MYSQL_PASS -e "grant all on snorby.* to root@localhost"
-	mysql -u root --password=$MYSQL_PASS -e "flush privileges"
-	# Create startup script
-	cat << EOF > /etc/init.d/snorby
+cd /var/www/snorby
+RAILS_ENV=production bundle exec rake snorby:setup
+cd
+mysql -u root --password=$MYSQL_PASS -e "grant all on snorby.* to root@localhost"
+mysql -u root --password=$MYSQL_PASS -e "flush privileges"
+# Create startup script
+cat << EOF > /etc/init.d/snorby
 #!/bin/sh
 #
 ### BEGIN INIT INFO
@@ -3835,45 +3838,45 @@ EOF
 
 do_start()
 {
-    log_daemon_msg "Starting Snorby worker" ""
-    cd /var/www/snorby
-    RAILS_ENV=production bundle exec rails r Snorby::Worker.start
-    log_end_msg 0
-    return 0
+log_daemon_msg "Starting Snorby worker" ""
+cd /var/www/snorby
+RAILS_ENV=production bundle exec rails r Snorby::Worker.start
+log_end_msg 0
+return 0
 }
 
 do_stop()
 {
-    log_daemon_msg "Stopping Snorby worker" ""
-    cd /var/www/snorby
-    RAILS_ENV=production bundle exec rails r Snorby::Worker.stop
-    log_end_msg 0
-    return 0
+log_daemon_msg "Stopping Snorby worker" ""
+cd /var/www/snorby
+RAILS_ENV=production bundle exec rails r Snorby::Worker.stop
+log_end_msg 0
+return 0
 }
 
 case "\$1" in
- start)
-    do_start
-    ;;
- stop)
-    do_stop
-    ;;
- restart)
-    do_stop
-    do_start
-    ;;
- *)
-    echo "Usage: snorby {start|stop|restart}" >&2
-    exit 3
-    ;;
+start)
+do_start
+;;
+stop)
+do_stop
+;;
+restart)
+do_stop
+do_start
+;;
+*)
+echo "Usage: snorby {start|stop|restart}" >&2
+exit 3
+;;
 esac
 exit 0
 EOF
-	chmod +x /etc/init.d/snorby
-	update-rc.d snorby defaults
-	insserv -f -v snorby
-	service snorby restart
-	service snortbarn restart
+chmod +x /etc/init.d/snorby
+update-rc.d snorby defaults
+insserv -f -v snorby
+service snorby restart
+service snortbarn restart
 }
 
 
@@ -3915,33 +3918,33 @@ cat << EOF > /var/www/html/virus_warning_page.html
 <head>
 <style>
 div.container {
-    width: 100%;
-    border: 1px solid red;
+width: 100%;
+border: 1px solid red;
 }
 header, footer {
-    padding: 1em;
-    color: white;
-    background-color: red;
-    clear: left;
-    text-align: center;
+padding: 1em;
+color: white;
+background-color: red;
+clear: left;
+text-align: center;
 }
 article {
-    margin-left: 170px;
-    border-left: 1px solid red;
-    padding: 1em;
-    overflow: hidden;
+margin-left: 170px;
+border-left: 1px solid red;
+padding: 1em;
+overflow: hidden;
 }
 </style>
 </head>
 <body>
 <div class="container">
 <header>
-   <h1>WARNING !!!</h1>
+<h1>WARNING !!!</h1>
 </header>
 <article>
-  <h1>Visiting this site may harm your computer</h1>
-  <p>The website you are visiting appears to host malware - software that can hurt your computer or otherwise operate without your consent.</p>
-  <p>Just visiting a site that contains malware can infect your computer.</p>
+<h1>Visiting this site may harm your computer</h1>
+<p>The website you are visiting appears to host malware - software that can hurt your computer or otherwise operate without your consent.</p>
+<p>Just visiting a site that contains malware can infect your computer.</p>
 </article>
 <footer>LibreRouter</footer>
 </div>
@@ -3956,33 +3959,33 @@ cat << EOF > /var/www/html/squidguard_warning_page.html
 <head>
 <style>
 div.container {
-    width: 100%;
-    border: 1px solid red;
+width: 100%;
+border: 1px solid red;
 }
 header, footer {
-    padding: 1em;
-    color: white;
-    background-color: red;
-    clear: left;
-    text-align: center;
+padding: 1em;
+color: white;
+background-color: red;
+clear: left;
+text-align: center;
 }
 article {
-    margin-left: 170px;
-    border-left: 1px solid red;
-    padding: 1em;
-    overflow: hidden;
+margin-left: 170px;
+border-left: 1px solid red;
+padding: 1em;
+overflow: hidden;
 }
 </style>
 </head>
 <body>
 <div class="container">
 <header>
-   <h1>WARNING !!!</h1>
+<h1>WARNING !!!</h1>
 </header>
 <article>
-  <h1>Security risk blocked for your protection</h1>
-  <p>The website category is filtered.</p>
-  <p>Access to the web page you were trying to visit has been blocked in accordance with security policy.</p>
+<h1>Security risk blocked for your protection</h1>
+<p>The website category is filtered.</p>
+<p>Access to the web page you were trying to visit has been blocked in accordance with security policy.</p>
 </article>
 <footer>LibreRouter</footer>
 </div>
@@ -4008,26 +4011,26 @@ echo "| Service Name |       Tor domain       |    Direct access    |  IP Addres
 echo "------------------------------------------------------------------------------" \
 | tee -a /var/box_services
 for i in $(ls /var/lib/tor/hidden_service/)
- do
-    if [ $i == "easyrtc" ]; then
-      IP_ADD="10.0.0.250"
-    fi
-    if [ $i == "yacy" ]; then
-      IP_ADD="10.0.0.251"
-    fi
-    if [ $i == "friendica" ]; then
-      IP_ADD="10.0.0.252"
-    fi
-    if [ $i == "owncloud" ]; then
-      IP_ADD="10.0.0.253"
-    fi
-    if [ $i == "mailpile" ]; then
-      IP_ADD="10.0.0.254"
-    fi
-    hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
-    printf "|%12s  |%23s |%11s.librenet |%13s |\n" $i $hn $i $IP_ADD \
-    | tee -a /var/box_services
- done
+do
+if [ $i == "easyrtc" ]; then
+IP_ADD="10.0.0.250"
+fi
+if [ $i == "yacy" ]; then
+IP_ADD="10.0.0.251"
+fi
+if [ $i == "friendica" ]; then
+IP_ADD="10.0.0.252"
+fi
+if [ $i == "owncloud" ]; then
+IP_ADD="10.0.0.253"
+fi
+if [ $i == "mailpile" ]; then
+IP_ADD="10.0.0.254"
+fi
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |%11s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+| tee -a /var/box_services
+done
 echo "------------------------------------------------------------------------------" \
 | tee -a /var/box_services
 
@@ -4064,7 +4067,7 @@ chmod +x /usr/sbin/services
 echo "You can print local services info by \"services\" command"
 sleep 2
 }
-	
+
 
 # ---------------------------------------------------------
 # Function to reboot librerouter
@@ -4077,15 +4080,15 @@ LOOP_N=0
 while [ $LOOP_N -eq 0 ]; do
 read ANSWER
 if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ]; then
-  LOOP_N=1
-  echo "Restarting ..."
-  reboot
+LOOP_N=1
+echo "Restarting ..."
+reboot
 elif [ "$ANSWER" = "N" -o "$ANSWER" = "n" ]; then
-  LOOP_N=1
-  echo "Exiting ..."
+LOOP_N=1
+echo "Exiting ..."
 else
-  LOOP_N=0
-  echo "Please type \"Y\" or \"N\""
+LOOP_N=0
+echo "Please type \"Y\" or \"N\""
 fi
 done
 }
