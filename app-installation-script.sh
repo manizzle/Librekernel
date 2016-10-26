@@ -521,9 +521,9 @@ elif [ $PLATFORM = "D8" ]; then
 
 	# services
 	apt-get install -y --force-yes \
-        privoxy unbound owncloud isc-dhcp-server \
-        yacy c-icap clamav clamav-daemon webmin squidguard postfix \
-        tor i2p roundcube tinyproxy prosody \
+        privoxy unbound owncloud webmin isc-dhcp-server \
+        yacy c-icap clamav clamav-daemon  squidguard postfix \
+	tor i2p roundcube tinyproxy prosody \
         2>&1 > /tmp/apt-get-install_2.log
 
         #bro passenger logstash kibana nginx nginx-extras libcurl4-openssl-dev \
@@ -646,11 +646,16 @@ get_hardware()
            PROCESSOR="AMD"	                             
            HARDWARE=`dmidecode -s system-product-name`       
 	fi
+	
+	# Detecting Architecture
+ 	ARCH=`uname -m`
 
-        # Printing Processor and Hardware types     
+        # Printing Processor Hardware and Architecture types     
 
 	echo "Processor: $PROCESSOR"
         echo "Hardware: $HARDWARE"
+	echo "Architecture: $ARCH"
+
 }
 
 # ----------------------------------------------
@@ -1985,6 +1990,9 @@ install_glype()
 # ---------------------------------------------------------
 install_gitlab()
 {
+# Gitlab can only be installed on x86_64 (64 bit) architecture
+if [ "$ARCH" == "x86_64" ]; then
+
 	echo "Installing gitlab ..."
 
 	# Install the necessary dependencies
@@ -2010,6 +2018,9 @@ install_gitlab()
  	
 	# Configure gitlab
 	gitlab-ctl reconfigure
+else
+	echo "Skipping gitlab installation. x86_64 Needed / Detected: $ARCH"
+fi
 }
 
 
@@ -2023,6 +2034,7 @@ install_gitlab()
 #   PROCESSOR
 #   EXT_INTERFACE
 #   INT_INTERFACE
+#   ARCH
 # ----------------------------------------------  
 save_variables()
 {
@@ -2034,6 +2046,7 @@ save_variables()
 "Platform: $PLATFORM\n\
 Hardware: $HARDWARE\n\
 Processor: $PROCESSOR\n\
+Architecture: $ARCH\n\
 Ext_interface: $EXT_INTERFACE\n\
 Int_interface: $INT_INTERFACE\n\
 DB_PASS: $MYSQL_PASS" \
@@ -2043,6 +2056,7 @@ DB_PASS: $MYSQL_PASS" \
 "Platform: $PLATFORM\n\
 Hardware: $HARDWARE\n\
 Processor: $PROCESSOR\n\
+Architecture: $ARCH\n\
 Ext_interface: $EXT_INTERFACE\n\
 Int_interface: $INT_INTERFACE" \
                  > /var/box_variables
@@ -2053,6 +2067,7 @@ Int_interface: $INT_INTERFACE" \
 "Platform: $PLATFORM\n\
 Hardware: $HARDWARE\n\
 Processor: $PROCESSOR\n\
+Architecture: $ARCH\n\
 Ext_interface: $EXT_INTERFACE\n\
 Int_interface: $INT_INTERFACE" \
                  > /var/box_variables
