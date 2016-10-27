@@ -716,6 +716,7 @@ Features to be implemented in the project to be listed here in order of priority
 **Following sections need to be placed at appropriate places**
 
 *** Section 2**
+
 Kernel & Forensics
 Threat 	CageOS Protection
 Several Exploit 	GrSecurity
