@@ -2015,9 +2015,11 @@ if [ "$ARCH" == "x86_64" ]; then
                 echo "Error: unable to install Gitlab. Exiting ..."
                 exit 3
         fi
- 	
-	# Configure gitlab
-	gitlab-ctl reconfigure
+
+	# Installing from packages for dependencies
+	curl -LO https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+	bash script.deb.sh
+	apt-get install -y --force-yes gitlab-ce
 else
 	echo "Skipping gitlab installation. x86_64 Needed / Detected: $ARCH"
 fi
