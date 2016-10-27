@@ -75,6 +75,30 @@ get_variables()
 
 
 # ---------------------------------------------------------
+# Function to get info about available HDDs 
+# ---------------------------------------------------------
+get_hdd(){
+echo "Checking HDDs ..."
+
+ALL_HDD=`lsblk -l | grep "disk" | awk '{print $1}' ORS=' '`
+HDDS=`lsblk -l | grep "disk" | awk '{print $1}' | wc -l`
+
+SYS_HDD=`lsblk -l | grep -w "/" | awk '{print $1}' | sed 's/[0-9]//g'`
+
+if [ $HDDS -ge 2 ]; then
+        EXT_HDD=`echo $ALL_HDD | sed s/"$SYS_HDD "//g`
+else
+        EXT_HDD="N/A"
+fi
+echo " 
+Detected:  $ALL_HDD
+System:    $SYS_HDD 
+External:  $EXT_HDD
+"   
+}  
+
+
+# ---------------------------------------------------------
 # This functions configures hostname and static lookup
 # table 
 # ---------------------------------------------------------
@@ -93,7 +117,8 @@ cat << EOF > /etc/hosts
 10.0.0.245       webmin.librenet
 10.0.0.11       kibana.librenet
 10.0.0.12       snorby.librenet
-10.0.0.246       squidguard.librenet
+10.0.0.246      squidguard.librenet
+10.0.0.247      gitlab.librenet
 10.0.0.250      easyrtc.librenet
 10.0.0.251      yacy.librenet
 10.0.0.252      friendica.librenet
@@ -189,8 +214,15 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         #squidguard
         auto $INT_INTERFACE:9
         allow-hotplug $INT_INTERFACE:9
-        iface $INT_INTERFACE:8 inet static
+        iface $INT_INTERFACE:9 inet static
             address 10.0.0.246
+            netmask 255.255.255.0
+
+        #gitlab
+        auto $INT_INTERFACE:10
+        allow-hotplug $INT_INTERFACE:10
+        iface $INT_INTERFACE:10 inet static
+            address 10.0.0.247
             netmask 255.255.255.0
 EOF
 	# Network interfaces configuration for board
@@ -472,6 +504,7 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.246 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.247 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.250 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.251 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.252 -j ACCEPT
@@ -1214,7 +1247,8 @@ local-data: "tahoe.librenet. IN A 10.0.0.1"
 local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
-local-data: "squidguard.librenet. IN A 10.0.0.246"' > /etc/unbound/unbound.conf
+local-data: "squidguard.librenet. IN A 10.0.0.246"
+local-data: "gitlab.librenet. IN A 10.0.0.247"' > /etc/unbound/unbound.conf
 
 for i in $(ls /var/lib/tor/hidden_service/)
 do
@@ -3685,6 +3719,41 @@ service kibana restart
 }
 
 
+# ---------------------------------------------------------
+# Function to configure gitlab
+# ---------------------------------------------------------
+configure_gitlab()
+{
+# Gitlab can only be installed on x86_64 (64 bit) architecture
+# So we configure it if architecture is x86_64
+if [ "$ARCH" == "x86_64" ]; then
+	echo "Configuring Gitlab ..."
+
+	# Changing configuration in gitlab.rb
+	sed -i -e '/^[^#]/d' /etc/gitlab/gitlab.rb
+
+	echo "
+external_url 'http://gitlab.librenet'
+gitlab_workhorse['auth_backend'] = \"http://localhost:8081\"
+unicorn['port'] = 8081
+nginx['redirect_http_to_https'] = true
+nginx['listen_addresses'] = ['10.0.0.247']
+" >> /etc/gitlab/gitlab.rb
+
+	# Reconfiguring gitlab 
+	gitlab-ctl reconfigure
+
+	# Restarting gitlab server
+	gitlab-ctl restart
+else
+	echo "Gitlab configuration is skipped as detected architecture: $ARCH"
+fi
+}
+
+
+# ---------------------------------------------------------
+# Function to configure snortbarn
+# ---------------------------------------------------------
 configure_snortbarn()
 {
 echo "Configuring Snort + Barnyard2"
@@ -4103,6 +4172,7 @@ done
 
 check_root			# Checking user
 get_variables			# Getting variables
+get_hdd				# Getting hdd info
 configure_hosts			# Configurint hostname and /etc/hosts
 configure_interfaces		# Configuring external and internal interfaces
 configure_dhcp			# Configuring DHCP server 
@@ -4135,6 +4205,7 @@ check_services			# Checking services
 #configure_suricata		# Configure Suricata service
 #configure_logstash		# Configure logstash
 #configure_kibana		# Configure Kibana service
+configure_gitlab 		# Configure gitlab servies (only for amd64)
 #configure_snortbarn		# Configure Snort and Barnyard services
 #configure_snorby		# Configure Snorby
 #services_to_tor                # Redirect yacy and prosody traffic to tor
