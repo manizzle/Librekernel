@@ -2026,6 +2026,38 @@ fi
 }
 
 
+# ---------------------------------------------------------
+# Funtion to install ndpi package
+# ---------------------------------------------------------
+install_ndpi()
+{
+        echo "Installing ndpi ..."
+        apt-get install -y --force-yes \
+        autogen automake autoconf libtool make libpcap-dev gcc
+
+        if [ ! -e nDPI ]; then
+                echo "Downloading ndpi ..."
+                git clone https://github.com/ntop/nDPI
+                if [ $? -ne 0 ]; then
+                        echo "Unable to download ndpi. Exiting ..."
+                        exit 3
+                fi
+        fi
+
+        # Compiling ndpi
+        cd nDPI/
+        ./autogen.sh
+        ./configure
+        make
+        make install
+        cd ../
+        if [ $? -ne 0 ]; then
+                echo "Unable to install ndpi. Exiting ..."
+                exit 3
+        fi
+}
+
+
 # ----------------------------------------------
 # This function saves variables in file, so
 # parametization script can read and use these 
@@ -2146,6 +2178,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_snorby		# Install Snorby package
 #	install_glype		# Install glype proxy
 	install_gitlab		# Install gitlab packae
+	install_ndpi		# Install ndpi package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
