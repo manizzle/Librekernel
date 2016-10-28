@@ -287,11 +287,11 @@ EOF
 
 		# Prepare kibaba repo
 		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-		echo "deb https://packages.elastic.co/kibana/4.6/debian stable main" | sudo tee -a /etc/apt/sources.list.d/kibana.list
+		echo "deb https://packages.elastic.co/kibana/4.6/debian stable main" > /etc/apt/sources.list.d/kibana.list
 
 		# Prepare lohstash repo
 		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-		echo "deb https://packages.elastic.co/logstash/2.4/debian stable main" | sudo tee -a /etc/apt/sources.list
+		echo "deb https://packages.elastic.co/logstash/2.4/debian stable main" > /etc/apt/sources.list.d/elastic.list
 
 	
 		# Prepare backports repo (suricata, roundcube)
@@ -1051,6 +1051,46 @@ install_easyrtc()
 		exit 3
 	fi
 	cd $INSTALL_HOME
+}
+
+
+# -----------------------------------------------
+# Function to install owncloud 
+# -----------------------------------------------            
+install_owncloud()
+{
+	echo "Installing owncloud ..."
+	
+	# Deleting previous packages
+	rm -rf /var/www/owncloud
+	
+	if [ ! -e  owncloud-9.1.1.tar.bz2 ]; then
+		echo "Downloading owncloud ..."
+		wget https://download.owncloud.org/community/owncloud-9.1.1.tar.bz2
+                if [ $? -ne 0 ]; then
+	                echo "Error: Unable to download owncloud. Exiting ..."
+       		        exit 3
+                fi
+		
+	fi
+
+	tar xf owncloud-9.1.1.tar.bz2
+	mv owncloud /var/www/owncloud
+
+	# Installing ojsxc xmpp client
+	if [ ! -e ojsxc-3.0.1.zip ]; then
+		echo "Downlouding ojsxc ..."
+		wget https://github.com/owncloud/jsxc.chat/releases/download/v3.0.1/ojsxc-3.0.1.zip
+		if [ $? -ne 0 ]; then 
+                        echo "Error: Unable to download ojsxc. Exiting ..."
+                        exit 3
+                fi
+	fi
+
+	unzip ojsxc-3.0.1.zip
+	mv ojsxc /var/www/owncloud/apps
+
+	chown -R www-data /var/www/owncloud
 }
 
 
@@ -2154,6 +2194,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_nginx		# Install nginx package
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
+	install_owncloud	# Install Owncloud package
 	install_libecap		# Install libecap package
 	install_fg-ecap		# Install fg-ecap package
 	install_squid		# Install squid package
