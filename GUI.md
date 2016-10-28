@@ -95,6 +95,12 @@ Following is the Apps wizard, where the user need to enable/disable apps.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+#SSL Wizard
+Following is the ssl wizard, where the user need to enable/disable ssl bumping.
+![ssl_wizard_pic](https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/images/ssl-wizard.png)
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 #Security Firewall Wizard
 Following is the Security Firewall configuration wizard, where the user need to enable/disable firewall configuration items.
 ![security_fw_wizard_pic](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/security_firewall_wizard.png)
