@@ -1598,15 +1598,15 @@ echo "Configuring Owncloud local service ..."
 SERVER_OWNCLOUD="$(cat /var/lib/tor/hidden_service/owncloud/hostname 2>/dev/null)"
 
 # Getting owncloud files in web server root directory
-if [ ! -e  /var/www/owncloud ]; then
-if [ -e /ush/share/owncloud ]; then
-cp -r /usr/share/owncloud /var/www/owncloud
-else
-if [ -e /opt/owncloud ]; then
-cp -r /opt/owncloud /var/www/owncloud
-fi
-fi
-fi
+#if [ ! -e  /var/www/owncloud ]; then
+#if [ -e /ush/share/owncloud ]; then
+#cp -r /usr/share/owncloud /var/www/owncloud
+#else
+#if [ -e /opt/owncloud ]; then
+#cp -r /opt/owncloud /var/www/owncloud
+#fi
+#fi
+#fi
 
 chown -R www-data /var/www/owncloud
 
@@ -1622,7 +1622,35 @@ array (
 ),
 );
 EOF
+
+# Setting permissions
 chmod -R a+rw /var/www/owncloud/config/
+
+# ojsxc app configuration
+sed -i "34iexec(\'.\/configs.sh\');" /var/www/owncloud/index.php
+
+echo "
+#!/bin/bash
+php5 occ app:enable ojsxc 
+php occ config:app:set ojsxc installed_version --value=\"3.0.1\"
+php occ config:app:set ojsxc ocsid --value=\"162257\"
+php occ config:app:set ojsxc types --value=\"prelogin\"
+php occ config:app:set ojsxc enabled --value=\"yes\"
+php occ config:app:set ojsxc serverType --value=\"internal\"
+#sudo -u www-data php occ config:app:set ojsxc boshUrl --value=\"\"
+#sudo -u www-data php occ config:app:set ojsxc xmppDomain --value=\"\"
+#sudo -u www-data php occ config:app:set ojsxc xmppResource --value=\"\"
+php occ config:app:set ojsxc xmppOverwrite --value=\"false\"
+php occ config:app:set ojsxc xmppStartMinimized --value=\"false\"
+#sudo -u www-data php occ config:app:set ojsxc iceUrl --value=\"\"
+#sudo -u www-data php occ config:app:set ojsxc iceUsername --value=\"\"
+#sudo -u www-data php occ config:app:set ojsxc iceCredential --value=\"\"
+#sudo -u www-data php occ config:app:set ojsxc iceSecret --value=\"\"
+#sudo -u www-data php occ config:app:set ojsxc iceTtl --value=\"\"
+" > /var/www/owncloud/configs.sh
+
+# Setting permissions
+chmod 777 /var/www/owncloud/configs.sh
 }
 
 
