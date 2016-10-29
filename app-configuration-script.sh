@@ -2,16 +2,23 @@
 # ---------------------------------------------------------
 # This script aims to configure all the packages and 
 # services which have been installed by test.sh script.
-# This script is functionally seperated into 3 parts
-# 	1. Configuration of Network Interfaces 
-# 	2. Configuration of Revers Proxy Services 
-# 	3. Configuration of Applications
+# This script is functionally seperated into 4 parts
+#       1. Detect system variables
+# 	2. Configuration of Network Interfaces 
+# 	3. Configuration of Revers Proxy Services 
+# 	4. Configuration of Applications
 # ---------------------------------------------------------
 
 
-# Global variables list
-EXT_INETRFACE="N/A"		# External interface variable
-INT_INTERFACE="N/A"		# Internal interface variable
+# ---------------------------------------------------------
+# Variables list
+# ---------------------------------------------------------
+PROCESSOR="Not Detected"        # Processor type (ARM/Intel/AMD)
+HARDWARE="Not Detected"         # Hardware type (Board/Physical/Virtual)
+PLATFORM="Not Detected"         # Platform type (U12/U14/D7/D8/T7)
+ARCH="Not Detected"		# Architecture (i386/x86_64)
+EXT_INTERFACE="Not Detected"    # External Interface (Connected to Internet)
+INT_INETRFACE="Not Detected"    # Internal Interface (Connected to local network)
 
 
 # ---------------------------------------------------------
@@ -27,8 +34,8 @@ check_root ()
 		echo "You need to be root to proceed. Exiting"
 		exit 1
 	else
-		echo "OK"
-	fi
+	echo "OK"
+fi
 }
 
 
@@ -71,6 +78,164 @@ get_variables()
 		echo "Error: i cant find variables of the machine and operating system ,the installation script wasnt installed or failed, please check the Os requirements (at the moment only works in Debian 8 we are ongoing to ubuntu)" 
 		exit 6
 	fi
+}
+
+
+# ----------------------------------------------
+# This function detects platform.
+#
+# Suitable platform are:
+#
+#  * Ubuntu 12.04
+#  * Ubuntu 14.04
+#  * Debian GNU/Linux 7
+#  * Debian GNU/Linux 8
+#  * Trisquel 7
+# ----------------------------------------------
+get_platform ()
+{
+        echo "Detecting platform ..."
+        FILE=/etc/issue
+        if cat $FILE | grep "Ubuntu 12.04" > /dev/null; then
+                PLATFORM="U12"
+        elif cat $FILE | grep "Ubuntu 14.04" > /dev/null; then
+                PLATFORM="U14"
+        elif cat $FILE | grep "Debian GNU/Linux 7" > /dev/null; then
+                PLATFORM="D7"
+        elif cat $FILE | grep "Debian GNU/Linux 8" > /dev/null; then
+                PLATFORM="D8"
+        elif cat $FILE | grep "Trisquel GNU/Linux 7.0" > /dev/null; then
+                PLATFORM="T7"
+        else
+                echo "ERROR: UNKNOWN PLATFORM"
+                exit
+        fi
+        echo "Platform: $PLATFORM"
+}
+
+
+# ----------------------------------------------
+# This function checks hardware
+# Hardware can be.
+# 1. Intel board pipo x10.
+# 2. Intel Physical/Virtual machine.
+# Function gets Processor, Hardware and
+# Architecture types and saves them in 
+# PROCESSOR, HARDWARE and ARCH variables.
+# ----------------------------------------------
+get_hardware()
+{
+        echo "Detecting hardware ..."
+
+        # Checking CPU for ARM and saving
+        # Processor and Hardware types in
+        # PROCESSOR and HARDWARE variables
+        if grep ARM /proc/cpuinfo > /dev/null 2>&1; then
+           PROCESSOR="ARM"
+           HARDWARE=`cat /proc/cpuinfo | grep Hardware | awk {'print $3'}`
+        # Checking CPU for Intel and saving
+        # Processor and Hardware types in
+        # PROCESSOR and HARDWARE variables
+        elif grep Intel /proc/cpuinfo > /dev/null 2>&1;  then
+           PROCESSOR="Intel"
+           HARDWARE=`dmidecode -s system-product-name`
+        # Checking CPU for AMD and saving
+        # Processor and Hardware types in
+        # PROCESSOR and HARDWARE variables
+        elif grep AMD /proc/cpuinfo > /dev/null 2>&1;  then
+           PROCESSOR="AMD"
+           HARDWARE=`dmidecode -s system-product-name`
+        fi
+
+        # Detecting Architecture
+        ARCH=`uname -m`
+
+        # Printing Processor Hardware and Architecture types
+
+        echo "Processor: $PROCESSOR"
+        echo "Hardware: $HARDWARE"
+        echo "Architecture: $ARCH"
+}
+
+
+# ----------------------------------------------
+# This function enables DHCP client and checks
+# for Internet on predefined network interface.
+#
+# Steps to define interface are:
+#
+# 1. Checking Internet access.
+# *
+# *
+# ***** If success.
+# *
+# *     2. Get Interface name
+# *
+# ***** If no success.
+#     *
+#     * 2. Checking for DHCP server and Internet in
+#       *  network connected to eth0.
+#       *
+#       ***** If success.
+#       *   *
+#       *   * 2. Enable DHCP client on eth0 and
+#       *        default route to eth0
+#       *
+#       ***** If no success.
+#           *
+#           * 2. Checking for DHCP server and Internet
+#           *  in network connected to eth1
+#           *
+#           ***** If success.
+#           *   *
+#           *   * 3. Enable DHCP client on eth1.
+#           *
+#           *
+#           ***** If no success.
+#               *
+#               * 3. Warn user and exit with error.
+#
+# ----------------------------------------------
+get_interfaces()
+{
+        # Check internet Connection. If Connection exist then get
+        # and save Internet side network interface name in
+        # EXT_INTERFACE variable
+        if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+                EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
+                echo "Internet connection established on interface $EXT_INTERFACE"
+        else
+                # Checking eth0 for Internet connection
+                echo "Getting Internet access on eth0"
+                echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+                echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
+                echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
+                /etc/init.d/networking restart
+                if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+                        echo "Internet conection established on: eth0"
+                        EXT_INTERFACE="eth0"
+                else
+                        echo "Warning: Unable to get Internet access on eth0"
+                        # Checking eth1 for Internet connection
+                        echo "Getting Internet access on eth1"
+                        echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+                        echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
+                        echo -e "auto eth1\niface eth1 inet dhcp" >> /etc/network/interfaces
+                        /etc/init.d/networking restart
+                        if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+                                echo "Internet conection established on: eth1"
+                                EXT_INTERFACE="eth1"
+                        else
+                                echo "Warning: Unable to get Internet access on eth1"
+                                echo "Please plugin Internet cable to eth0 or eth1 and enable DHCP on gateway"
+                                echo "Error: Unable to get Internet access. Exiting"
+                                exit 7
+                        fi
+                fi
+        fi
+        # Getting internal interface name
+        INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
+        echo "Internal interface: $INT_INTERFACE"
 }
 
 
@@ -125,7 +290,6 @@ cat << EOF > /etc/hosts
 10.0.0.253      owncloud.librenet
 10.0.0.254      mailpile.librenet
 EOF
-
 }
 
 
@@ -4199,7 +4363,10 @@ done
 # Block 1: Configuing Network Interfaces
 
 check_root			# Checking user
-get_variables			# Getting variables
+#get_variables			# Getting variables
+get_platform			# Getting platform info
+get_hardware			# Getting hardware info
+get_interfaces          	# Get external and internal interfaces
 get_hdd				# Getting hdd info
 configure_hosts			# Configurint hostname and /etc/hosts
 configure_interfaces		# Configuring external and internal interfaces
