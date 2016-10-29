@@ -8,12 +8,14 @@ PLATFORM="Not Detected"         # Platform type	(U12/U14/D7/D8/T7)
 EXT_INTERFACE="Not Detected"	# External Interface (Connected to Internet) 
 INT_INETRFACE="Not Detected"	# Internal Interface (Connected to local network)
 
+
 # ----------------------------------------------
 # Env Variables
 # ----------------------------------------------
 export GIT_SSL_NO_VERIFY=true
 export INSTALL_HOME=`pwd`
 export DEBIAN_FRONTEND=noninteractive
+
 
 #----------------------------------------------
 # This function detects platform.
@@ -47,6 +49,7 @@ get_platform ()
 	echo "Platform: $PLATFORM"
 }
 
+
 # ----------------------------------------------
 # check_internet
 # ----------------------------------------------
@@ -59,6 +62,7 @@ check_internet ()
 	fi
 }
 
+
 # ----------------------------------------------
 # check_root
 # ----------------------------------------------
@@ -70,6 +74,7 @@ check_root ()
 		exit 2
 	fi
 }
+
 
 # ----------------------------------------------
 # configure_repositories
@@ -379,6 +384,7 @@ EOF
 	fi
 }
 
+
 # ----------------------------------------------
 # This script installs bridge-utils package and
 # configures bridge interfaces.
@@ -615,6 +621,7 @@ fi
 
 }
 
+
 # ----------------------------------------------
 # This function checks hardware 
 # Hardware can be.
@@ -657,6 +664,7 @@ get_hardware()
 	echo "Architecture: $ARCH"
 
 }
+
 
 # ----------------------------------------------
 # This script checks requirements for Physical 
@@ -702,6 +710,7 @@ check_requirements()
 		exit 6
 	fi
 }
+
 
 # ----------------------------------------------
 # This function enables DHCP client and checks 
@@ -782,6 +791,7 @@ get_interfaces()
         INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
         echo "Internal interface: $INT_INTERFACE"
 }
+
 
 # ----------------------------------------------
 # This scripts check odroid board to find out if
@@ -2067,6 +2077,75 @@ fi
 
 
 # ---------------------------------------------------------
+# Function to install trac server
+# ---------------------------------------------------------
+install_trac()
+{
+        if [ "$ARCH" == "x86_64" ]; then
+                echo "Installing trac ..."
+                apt-get -y --force-yes install trac
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to install trac. Exiting ..."
+                        exit 3
+                fi
+        else
+                echo "Skipping trac installation. x86_64 Needed / Detected: $ARCH"
+        fi
+}
+
+# ---------------------------------------------------------
+# Function to install redmine server
+# ---------------------------------------------------------
+install_redmine()
+{
+        if [ "$ARCH" == "x86_64" ]; then
+                echo "Installing redmine ..."
+                apt-get -y --force-yes install \
+                mysql-server mysql-client libmysqlclient-dev \
+                gcc build-essential zlib1g zlib1g-dev zlibc \
+                ruby-zip libssl-dev libyaml-dev libcurl4-openssl-dev \
+                ruby gem libapr1-dev libxslt1-dev checkinstall \
+                libxml2-dev ruby-dev vim libmagickwand-dev imagemagick
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to install redmine. Exiting ..."
+                        exit
+                fi
+
+                mkdir /opt/redmine
+                chown -R www-data /opt/redmine
+                cd /opt/redmine
+
+                # Downloading redmine
+                wget http://www.redmine.org/releases/redmine-3.3.1.tar.gz
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download redmine. Exiting ..."
+                        exit
+                fi
+
+                tar xzf redmine-3.3.1.tar.gz
+                cd redmine-3.3.1
+
+                # Install bundler
+                gem install bundler
+                bundle install --without development test
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to install bundler. Exiting ..."
+                        exit
+                fi
+
+                # Generate secret token
+                bundle exec rake generate_secret_token
+
+                # Prepare DB and install all tables:
+                RAILS_ENV=production bundle exec rake db:migrate
+                RAILS_ENV=production bundle exec rake redmine:load_default_data
+        else
+                echo "Skipping redmine installation. x86_64 Needed / Detected: $ARCH"
+        fi
+}
+
+
+# ---------------------------------------------------------
 # Funtion to install ndpi package
 # ---------------------------------------------------------
 install_ndpi()
@@ -2204,7 +2283,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_ecapguardian	# Inatall ecapguardian package
 #	install_e2guardian	# Inatall e2guardian package
 	install_suricata	# Install Suricata package
- #	install_kibana		# Install Kibana,elasticsearch,logstash packages
+#	install_kibana		# Install Kibana,elasticsearch,logstash packages
 #	install_scirius		# Install Scirius package
 #	install_snort		# Install Snort package
 #	install_barnyard	# Install Barnyard package
@@ -2219,6 +2298,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_snorby		# Install Snorby package
 #	install_glype		# Install glype proxy
 	install_gitlab		# Install gitlab packae
+#	install_trac		# Install trac package
+#	install_redmine		# Install redmine package
 	install_ndpi		# Install ndpi package
 	save_variables	        # Save detected variables
 
