@@ -24,7 +24,7 @@
 -wget http://http.debian.net/debian/pool/main/c/capstone/capstone_3.0.4.orig.tar.gz
 -tar xfsz capstone*
 -cd capstone-3*
--cmake .
+-make .
 -make install
 -## GET LATEST RUBY INSTALL
 -wget https://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.1.tar.gz
