@@ -36,6 +36,4 @@
 -#go to new ruby path and install bettercap using gem
 -cd /usr/local/bin
 -./gem install bettercap
-# Make sure linux kernel has NAT module compiled and loaded
--insmod nat
 -bettercap -X --proxy --proxy-https
