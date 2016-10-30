@@ -4,6 +4,7 @@ Important note before testing :
 - The scripts FAIL if you do that, due to problems with ethernet connection.
 - install the scripts via direct console access.
 - You never I repeat never save any the certificate of any web in the browseers
+- Incognito tabs mode are not allowed in the tests
 
 [1. Testing http]
 
@@ -19,7 +20,7 @@ http://www.abc.es
 This spet is for https testing for non HSTS web pages.
 Please open any https (NON HSTS) web page to see if https works.
 
-https://way.com/
+https://
 
 
 [3. Testing https(HSTS)]
