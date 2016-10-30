@@ -3,21 +3,23 @@ Important note before testing :
 - Do NOT try to install the scripts via ssh session.
 - The scripts FAIL if you do that, due to problems with ethernet connection.
 - install the scripts via direct console access.
+- You never I repeat never save any the certificate of any web in the browseers
 
 [1. Testing http]
 
 This step is for http testing.
 Just open any http web page to see if http works.
 
-for example http://ebay.com
+http://ebay.com
+http://www.elmundo.es
+http://www.abc.es
 
-
-[2. Testing https(NON HSTS)]
+[2. Testing https (NON HSTS)]
 
 This spet is for https testing for non HSTS web pages.
 Please open any https (NON HSTS) web page to see if https works.
 
-for example https://way.com/
+https://way.com/
 
 
 [3. Testing https(HSTS)]
