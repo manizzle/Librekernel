@@ -1,20 +1,21 @@
-Important note before testing : 
+Important notes before testing : 
 
 - Do NOT try to install the scripts via ssh session.
 - The scripts FAIL if you do that, due to problems with ethernet connection.
 - install the scripts via direct console access.
-- You never I repeat never save any the certificate of any web in the browseers 
-(the certificate you will install isnt a version of the generate by squid)
-- Incognito tabs mode are not allowed in the tests
+- NEVER save any certificate of any website in the browsers.
+(the certificate you will install isn't one generate by squid)
+- Incognito mode is not allowed in the tests.
 
-Evidence for the issue:
-all evidence via
-a)nslookup
-b)ping
-c)capture filtering by port and ip resolved
+Always provide evidence for the issues you open:
+Evidence takes the form of:
+
+a) nslookup logs
+b) ping logs
+c) capture filtering by port and ip resolved
 d) screen capture of the browser
 e) screen capture of the wireshark in diferent tcp packets
-f)logs from librerouter.
+f) logs from librerouter.
 
 [1. Testing http]
 
