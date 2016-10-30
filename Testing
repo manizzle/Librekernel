@@ -3,7 +3,10 @@ Important note before testing :
 - Do NOT try to install the scripts via ssh session.
 - The scripts FAIL if you do that, due to problems with ethernet connection.
 - install the scripts via direct console access.
-- You never I repeat never save any the certificate of any web in the browseers
+- You never I repeat never save any the certificate of any web in the browseers 
+(the certificate you will install isnt a version of the generate by squid)
+
+
 - Incognito tabs mode are not allowed in the tests
 
 [1. Testing http]
@@ -19,8 +22,11 @@ http://www.abc.es
 
 This spet is for https testing for non HSTS web pages.
 Please open any https (NON HSTS) web page to see if https works.
+We need to find the hsts method to dinamically downgrade all https site to http
+(apart of the diferent solution to be with the separate browser and CA installed)
 
 https://www.amazon.de
+https://best.aliexpress.com
 
 If you see Internet widgits in the certificate it means that the ssl tunnel is bumped
 The diference with hsts is the errors concretelly does not shows hsts as cause of fail.
@@ -31,8 +37,13 @@ The diference with hsts is the errors concretelly does not shows hsts as cause o
 This step is for https testing for HSTS web pages.
 Please open any https (HSTS) web page to see if https works.
 
-for example https://owncloud.org/
-
+https://accounts.google.com/
+https://gmail.com
+https://www.dropbox.com/
+https://login.live.com
+https://www.skype.com
+https://www.twitter.com
+https://www.facebook.com
 
 [4. Testing antivirus]
 
