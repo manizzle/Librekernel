@@ -8,10 +8,13 @@ Important note before testing :
 - Incognito tabs mode are not allowed in the tests
 
 Evidence for the issue:
-a)Screenshot
-b)Wireshark cpature
-c)nslookup
-d)logs from librerouter.
+all evidence via
+a)nslookup
+b)ping
+c)capture filtering by port and ip resolved
+d) screen capture of the browser
+e) screen capture of the wireshark in diferent tcp packets
+f)logs from librerouter.
 
 [1. Testing http]
 
