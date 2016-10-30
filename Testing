@@ -86,12 +86,12 @@ Local services should be tested for
 
 6.1 Direct access testing
 Please go to this web pages 
-yacy.librenet
-owncloud.librenet
-mailpile.librenet
-friendica.librenet
-easyrtc.librenet
-webmin.librenet
+http://yacy.librenet
+http://owncloud.librenet
+http://mailpile.librenet
+http://friendica.librenet
+http://easyrtc.librenet
+http://webmin.librenet
 
 6.2 Redirection testing
 (Please note that you need to disable HSTS checking in your browser 
