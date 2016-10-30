@@ -48,6 +48,12 @@ Resume of steps:
 - sudo chmod 777 app-installation-script.sh
 - ./app-installation-script.sh
 
+Important note before testing : 
+
+- Do NOT try to install the scripts via ssh session.
+- The scripts FAIL if you do that, due to problems with ethernet connection.
+- install the scripts via direct console access.
+
 Lab done!
 
 Try to navigate normally from the windows 10
