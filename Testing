@@ -1,3 +1,9 @@
+Important note before testing : 
+
+- Do NOT try to install the scripts via ssh session.
+- The scripts FAIL if you do that, due to problems with ethernet connection.
+- install the scripts via direct console access.
+
 [1. Testing http]
 
 This step is for http testing.
