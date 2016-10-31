@@ -5,7 +5,8 @@ Important notes before testing :
 - install the scripts via direct console access.
 - NEVER save any certificate of any website in the browsers.
 (the certificate you will install isn't one generate by squid)
-- Incognito mode is not allowed in the tests.
+- Incognito mode is NOT allowed in the tests.
+- Do NOT test using Firefox.
 
 Always provide evidence for the issues you open:
 Evidence takes the form of:
