@@ -284,6 +284,8 @@ cat << EOF > /etc/hosts
 10.0.0.12       snorby.librenet
 10.0.0.246      squidguard.librenet
 10.0.0.247      gitlab.librenet
+10.0.0.248	trac.librenet
+10.0.0.249      redmine.librenet
 10.0.0.250      easyrtc.librenet
 10.0.0.251      yacy.librenet
 10.0.0.252      friendica.librenet
@@ -387,6 +389,20 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         allow-hotplug $INT_INTERFACE:10
         iface $INT_INTERFACE:10 inet static
             address 10.0.0.247
+            netmask 255.255.255.0
+
+        #trac
+        auto $INT_INTERFACE:11
+        allow-hotplug $INT_INTERFACE:11
+        iface $INT_INTERFACE:11 inet static
+            address 10.0.0.248
+            netmask 255.255.255.0
+
+        #redmine
+        auto $INT_INTERFACE:12
+        allow-hotplug $INT_INTERFACE:12
+        iface $INT_INTERFACE:12 inet static
+            address 10.0.0.249
             netmask 255.255.255.0
 EOF
 	# Network interfaces configuration for board
@@ -1412,7 +1428,9 @@ local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
 local-data: "squidguard.librenet. IN A 10.0.0.246"
-local-data: "gitlab.librenet. IN A 10.0.0.247"' > /etc/unbound/unbound.conf
+local-data: "gitlab.librenet. IN A 10.0.0.247"
+local-data: "trac.librenet. IN A 10.0.0.248"
+local-data: "redmine.librenet. IN A 10.0.0.249"' > /etc/unbound/unbound.conf
 
 for i in $(ls /var/lib/tor/hidden_service/)
 do
@@ -2449,6 +2467,70 @@ inet_interfaces = all
 
 echo "Restarting postfix ..."
 service postfix restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configura trac server
+# ---------------------------------------------------------
+configure_trac() {
+# trac can only be installed on x86_64 (64 bit) architecture
+# So we configure it if architecture is x86_64
+if [ "$ARCH" == "x86_64" ]; then
+        echo "Configuring Trac ..."
+        mkdir -p /opt/trac/libretrac
+
+        # Initializing trac project
+        trac-admin /opt/trac/libretrac initenv
+	if [ $? -ne 0 ]; then
+        	echo "Unable to configure trac. Exiting ..."
+       		exit 1
+	fi
+	   
+        # Setting permissions
+        chown -R www-data:www-data /opt/trac/libretrac
+
+        # Adding startup
+        sed -i '102i# Start Trac ' /etc/rc.local
+        sed -i '103itracd -s --port 8000 /opt/trac/libretrac' /etc/rc.local
+
+        tracd -s --port 8000 /opt/trac/libretrac
+else
+        echo "Trac configuration is skipped as detected architecture: $ARCH"
+fi
+}
+
+
+# ---------------------------------------------------------
+# Function to configure redmine
+# ---------------------------------------------------------
+configure_redmine()
+{
+        echo "Configuring redmine ..."
+
+        # Preparing MySQL
+        mysql --user=root --password=$password
+        CREATE DATABASE redmine CHARACTER SET utf8;
+        CREATE USER 'redmine'@'localhost' IDENTIFIED BY 'my_password';
+        GRANT ALL PRIVILEGES ON redmine.* TO 'redmine'@'localhost';
+        exit
+
+        # Redmine DB configuration
+        cd /opt/redmine/redmine-3.3.1
+        cp config/database.yml.example config/database.yml
+
+        # Customize DB configuration
+echo "
+production:
+  adapter: mysql2
+  database: redmine
+  host: localhost
+  username: redmine
+  password: my_password
+" > config/database.yml
+
+        # Link the redmine public dir to the nginx-redmine root:
+        ln -s /opt/redmine/redmine-X.X.X/public/ /var/www/html/redmine
 }
 
 
@@ -4395,6 +4477,8 @@ configure_squidguard		# Configuring squidguard
 configure_squidguardmgr		# Configure squidguardmgr
 configure_ecapguardian		# Configuring ecapguardian
 configure_postfix		# Configuring postfix mail service
+#configure_trac			# Configuring trac service
+#configure_redmine		# Configuring redmine service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
 #configure_suricata		# Configure Suricata service
