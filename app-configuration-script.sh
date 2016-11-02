@@ -295,6 +295,76 @@ EOF
 }
 
 
+# ----------------------------------------------
+# This script installs bridge-utils package and
+# configures bridge interfaces.
+#
+# br0 = eth0 and wlan0
+# br1 = eth1 and wlan1
+# ----------------------------------------------
+configure_bridges()
+{
+        # Updating and installing bridge-utils package
+        echo "Updating repositories ..."
+        apt-get update 2>&1 > /tmp/apt-get-update-bridge.log
+        echo "Installing bridge-utils ..."
+        apt-get install bridge-utils 2>&1 > /tmp/apt-get-install-bridge.log
+
+        # Checking if bridge-utils is installed successfully
+        if [ $? -ne 0 ]; then
+                echo "Error: Unable to install bridge-utils"
+                exit 8
+        else
+
+        EXT_BR_INT=`echo $EXT_INTERFACE | tail -c 2`
+        INT_BR_INT=`echo $INT_INTERFACE | tail -c 2`
+
+        echo "Configuring bridge interfaces..."
+        echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+        echo "auto lo" >> /etc/network/interfaces
+        echo "iface lo inet loopback" >> /etc/network/interfaces
+
+        # Configuring bridge interfaces
+
+        echo "#External network interface" >> /etc/network/interfaces
+        echo "auto $EXT_INTERFACE" >> /etc/network/interfaces
+        echo "allow-hotplug $EXT_INTERFACE" >> /etc/network/interfaces
+        echo "iface $EXT_INTERFACE inet dhcp" >> /etc/network/interfaces
+
+        echo "#External network interface" >> /etc/network/interfaces
+        echo "auto wlan$EXT_BR_INT" >> /etc/network/interfaces
+        echo "allow-hotplug wlan$EXT_BR_INT" >> /etc/network/interfaces
+        echo "iface wlan$EXT_BR_INT inet manual" >> /etc/network/interfaces
+
+        echo "##External Network Bridge " >> /etc/network/interfaces
+        echo "#auto br$EXT_BR_INT" >> /etc/network/interfaces
+        echo "#allow-hotplug br$EXT_BR_INT" >> /etc/network/interfaces
+        echo "#iface br$EXT_BR_INT inet dhcp" >> /etc/network/interfaces
+        echo "#bridge_ports eth$EXT_BR_INT wlan$EXT_BR_INT" >> /etc/network/interfaces
+
+        echo "#Internal network interface" >> /etc/network/interfaces
+        echo "auto $INT_INTERFACE" >> /etc/network/interfaces
+        echo "allow-hotplug $INT_INTERFACE" >> /etc/network/interfaces
+        echo "iface $INT_INTERFACE inet manual" >> /etc/network/interfaces
+
+        echo "#Internal network interface" >> /etc/network/interfaces
+        echo "auto wlan$INT_BR_INT" >> /etc/network/interfaces
+        echo "allow-hotplug wlan$INT_BR_INT" >> /etc/network/interfaces
+        echo "iface wlan$INT_BR_INT inet manual" >> /etc/network/interfaces
+
+        echo "# Internal network Bridge" >> /etc/network/interfaces
+        echo "auto br$INT_BR_INT" >> /etc/network/interfaces
+        echo "allow-hotplug br$INT_BR_INT" >> /etc/network/interfaces
+        echo "# Setup bridge" >> /etc/network/interfaces
+        echo "iface br$INT_BR_INT inet static" >> /etc/network/interfaces
+        echo "    bridge_ports eth$INT_BR_INT wlan$INT_BR_INT" >> /etc/network/interfaces
+        echo "    address 10.0.0.1" >> /etc/network/interfaces
+        echo "    netmask 255.255.255.0" >> /etc/network/interfaces
+        echo "    network 10.0.0.0" >> /etc/network/interfaces
+        fi
+}
+
+
 # ---------------------------------------------------------
 # This function configures internal and external interfaces
 # ---------------------------------------------------------
@@ -2770,6 +2840,9 @@ chmod +x /etc/init.d/nginx
 # Systemctl reload
 systemctl daemon-reload
 
+
+#--------php-handler----------#
+
 # Creating virtual hosts
 echo "upstream php-handler {
 server 127.0.0.1:9000;
@@ -2777,17 +2850,23 @@ server 127.0.0.1:9000;
 }
 " > /etc/nginx/sites-enabled/php-fpm
 
-echo "server {
-listen 80 default_server;
-return 301 http://librerouter.librenet;
-}
 
-server {
-listen 80;
-server_name box.librenet;
-return 301 http://librerouter.librenet;
-}
-" > /etc/nginx/sites-enabled/default
+#----------defualt page----------#
+
+#echo "server {
+#listen 80 default_server;
+#return 301 http://librerouter.librenet;
+#}
+#
+#server {
+#listen 80;
+#server_name box.librenet;
+#return 301 http://librerouter.librenet;
+#}
+#" > /etc/nginx/sites-enabled/default
+
+
+#----------librerouter.librenet--------#
 
 echo "server {
 listen 10.0.0.1:80;
@@ -2815,6 +2894,9 @@ location /phpMyAdmin {
 }
 }
 " > /etc/nginx/sites-enabled/librerouter
+
+
+#------------yacy.librenet-----------#
 
 # Configuring Yacy virtual host
 echo "Configuring Yacy virtual host ..."
@@ -2887,6 +2969,9 @@ proxy_set_header X-Real-IP \$remote_addr;
 }
 }
 " > /etc/nginx/sites-enabled/yacy
+
+
+#--------friendica.librenet----------#
 
 # Configuring Friendica virtual host
 echo "Configuring Friendica virtual host ..."
@@ -3082,6 +3167,8 @@ deny all;
 
 " > /etc/nginx/sites-enabled/friendica 
 
+
+#--------owncloud.librenet----------#
 
 # Configuring Owncloud virtual host
 echo "Configuring Owncloud virtual host ..."
@@ -3282,6 +3369,9 @@ include fastcgi_params;
 #  }
 #" > /etc/nginx/sites-enabled/owncloud
 
+
+#--------mailpile.librenet----------#
+
 # Configuring Mailpile virtual host
 echo "Configuring Mailpile virtual host ..."
 
@@ -3353,6 +3443,8 @@ proxy_read_timeout  90;
 " > /etc/nginx/sites-enabled/mailpile
 
 
+#--------webmin.librenet----------#
+
 # Configuring Webmin virtual host
 echo "Configuring Webmin virtual host ..."
 
@@ -3402,73 +3494,82 @@ if [ ! -e /etc/ssl/nginx/kibana.key -o ! -e  /etc/ssl/nginx/kibana.crt ]; then
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/kibana.key -out /etc/ssl/nginx/kibana.crt -subj '/CN=librerouter' -batch
 fi
 
+
+#--------kibana.librenet----------#
+
 # Creating Kibana virtual host configuration
-echo '
-server {
-listen 10.0.0.11;
-server_name _;
-return 301 https://kibana.librenet;
-}
+#echo '
+#server {
+#listen 10.0.0.11;
+#server_name _;
+#return 301 https://kibana.librenet;
+#}
+#
+#server {
+#listen 80;
+#listen 443 ssl;
+#server_name kibana.librenet;
+#
+#ssl on;
+#ssl_certificate /etc/ssl/nginx/kibana.crt;
+#ssl_certificate_key /etc/ssl/nginx/kibana.key;
+#ssl_session_timeout 5m;
+#ssl_protocols SSLv3 TLSv1;
+#ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+#ssl_prefer_server_ciphers on;
+#access_log /var/log/nginx/kibana.access.log;
+#error_log /var/log/nginx/kibana.error.log;
+#
+#location / {
+#	proxy_pass       http://127.0.0.1:5601;
+#	proxy_set_header Upgrade $http_upgrade;
+#	proxy_set_header Host $host;
+#	proxy_cache_bypass $http_upgrade;
+#}
+#}
+#' > /etc/nginx/sites-enabled/kibana
 
-server {
-listen 80;
-listen 443 ssl;
-server_name kibana.librenet;
 
-ssl on;
-ssl_certificate /etc/ssl/nginx/kibana.crt;
-ssl_certificate_key /etc/ssl/nginx/kibana.key;
-ssl_session_timeout 5m;
-ssl_protocols SSLv3 TLSv1;
-ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-ssl_prefer_server_ciphers on;
-access_log /var/log/nginx/kibana.access.log;
-error_log /var/log/nginx/kibana.error.log;
-
-location / {
-	proxy_pass       http://127.0.0.1:5601;
-	proxy_set_header Upgrade $http_upgrade;
-	proxy_set_header Host $host;
-	proxy_cache_bypass $http_upgrade;
-}
-}
-' > /etc/nginx/sites-enabled/kibana
+#--------snorby.librenet----------#
 
 # Configuring Snorby virtual host
-echo "Configuring Snorby virtual host ..."
-echo '
-server {
-listen 10.0.0.12:80;
-server_name snorby.librenet;
-#	passenger_enabled on;
-#	passenger_ruby /usr/bin/ruby2.1;
-#	passenger_user  root;
-#	passenger_group root;
+#echo "Configuring Snorby virtual host ..."
+#echo '
+#server {
+#listen 10.0.0.12:80;
+#server_name snorby.librenet;
+##	passenger_enabled on;
+##	passenger_ruby /usr/bin/ruby2.1;
+##	passenger_user  root;
+##	passenger_group root;
+#
+#access_log /var/log/nginx/snorby.log;
+#root /var/www/snorby/public;
+#index index.html;
+#
+#location /snorby {
+#	root /usr/www/snorby/public;
+#	index index.html;
+#	location ~ \.cgi$ {
+#		try_files $uri =404;
+#		include fastcgi_params;
+#		fastcgi_pass unix:/var/run/fcgiwrap/fcgiwrap.sock;
+#		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+#		fastcgi_param REMOTE_USER $remote_user;
+#	}
+#
+#	location ~ \.php$ {
+#		try_files $uri =404;
+#		include fastcgi_params;
+#		fastcgi_pass 127.0.0.1:9000;
+#		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+#	}
+#}
+#}
+#' > /etc/nginx/sites-enabled/snorby
 
-access_log /var/log/nginx/snorby.log;
-root /var/www/snorby/public;
-index index.html;
 
-location /snorby {
-	root /usr/www/snorby/public;
-	index index.html;
-	location ~ \.cgi$ {
-		try_files $uri =404;
-		include fastcgi_params;
-		fastcgi_pass unix:/var/run/fcgiwrap/fcgiwrap.sock;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_param REMOTE_USER $remote_user;
-	}
-
-	location ~ \.php$ {
-		try_files $uri =404;
-		include fastcgi_params;
-		fastcgi_pass 127.0.0.1:9000;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-	}
-}
-}
-' > /etc/nginx/sites-enabled/snorby
+#--------squidguard.librenet----------#
 
 # Configuring squidguard virtual host
 echo "Configuring squidguard virtual host ..."
@@ -3499,6 +3600,9 @@ uwsgi_pass 127.0.0.1:9000;
 
 # Include passenger in nginx
 sed -i -e 's@\t# include /etc/nginx/passenger.conf.*@\tinclude /etc/nginx/passenger.conf;@g' /etc/nginx/nginx.conf
+
+
+#--------easyrtc.librenet----------#
 
 # Configuring EasyRTC virtual host
 echo "Configuring EasyRTC virtual host ..."
@@ -3569,20 +3673,23 @@ proxy_set_header X-Real-IP \$remote_addr;
 }
 " > /etc/nginx/sites-enabled/i2p 
 
+
+#--------tahoe.librenet----------#
+
 # tahoe.librenet virtual host configuration
 
-echo "
-server {
-listen 10.0.0.1:80;
-server_name tahoe.librenet;
-
-location / {
-proxy_pass       http://127.0.0.1:3456;
-proxy_set_header Host      \$host;
-proxy_set_header X-Real-IP \$remote_addr;
-}
-}
-" > /etc/nginx/sites-enabled/tahoe
+#echo "
+#server {
+#listen 10.0.0.1:80;
+#server_name tahoe.librenet;
+#
+#location / {
+#proxy_pass       http://127.0.0.1:3456;
+#proxy_set_header Host      \$host;
+#proxy_set_header X-Real-IP \$remote_addr;
+#}
+#}
+#" > /etc/nginx/sites-enabled/tahoe
 
 # Restarting Yacy php5-fpm and Nginx services 
 echo "Restarting nginx ..."
@@ -4451,6 +4558,7 @@ get_hardware			# Getting hardware info
 get_interfaces          	# Get external and internal interfaces
 get_hdd				# Getting hdd info
 configure_hosts			# Configurint hostname and /etc/hosts
+#configure_bridges		# Configure bridges
 configure_interfaces		# Configuring external and internal interfaces
 configure_dhcp			# Configuring DHCP server 
 
