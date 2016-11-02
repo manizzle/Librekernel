@@ -993,6 +993,57 @@ install_easyrtc()
 }
 
 
+# ---------------------------------------------------------
+# Function to install hublin
+# ---------------------------------------------------------
+install_hublin()
+{
+        echo "installing hublin ..."
+
+        # Install nvm
+        curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
+
+        source ~/.bashrc
+
+        # Install node 0.10
+        nvm install 0.10
+        nvm use 0.10
+
+        if [ ! -e meetings ]; then
+                echo "Downloading hublin ..."
+                git clone --recursive https://ci.open-paas.org/stash/scm/meet/meetings.gi
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download hublin. Exiting ..."
+                        exit 3
+                fi
+
+        fi
+
+        # Installing mongodb
+        echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen' > /etc/apt/sources.list.d/mongodb.list
+        apt-get install -y --force-yes mongodb-org=2.6.5 mongodb-org-server=2.6.5 mongodb-org-shell=2.6.5 mongodb-org-mongos=2.6.5 mongodb-org-tools=2.6.5
+    service mongod start
+
+        # Installing radis-server
+        apt-get -y --force-yes  install redis-server
+
+        # Installing hublin dependencies
+        npm install -g mocha grunt-cli bower karma-cli
+
+        cd meetings/modules/hublin-easyrtc-connector
+        npm install
+
+        cd ../../
+        npm install
+        if [ $? -ne 0 ]; then
+               echo "Error: unable to install hublin. Exiting ..."
+               exit 3
+        fi
+
+        cd ../
+}
+
+
 # -----------------------------------------------
 # Function to install owncloud 
 # -----------------------------------------------            
@@ -2204,6 +2255,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_nginx		# Install nginx package
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
+#	install_hublin		# Install hublin package
 	install_owncloud	# Install Owncloud package
 	install_libecap		# Install libecap package
 	install_fg-ecap		# Install fg-ecap package
