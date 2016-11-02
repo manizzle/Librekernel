@@ -386,77 +386,6 @@ EOF
 
 
 # ----------------------------------------------
-# This script installs bridge-utils package and
-# configures bridge interfaces.
-#
-# br0 = eth0 and wlan0 
-# br1 = eth1 and wlan1
-# ----------------------------------------------
-configure_bridges()
-{
-	# Updating and installing bridge-utils package
-	echo "Updating repositories ..."
-        apt-get update 2>&1 > /tmp/apt-get-update-bridge.log
- 	echo "Installing bridge-utils ..."
-	apt-get install bridge-utils 2>&1 > /tmp/apt-get-install-bridge.log
-
-	# Checking if bridge-utils is installed successfully
-        if [ $? -ne 0 ]; then
-		echo "Error: Unable to install bridge-utils"
-		exit 8
-	else
-
-	EXT_BR_INT=`echo $EXT_INTERFACE | tail -c 2`
-       	INT_BR_INT=`echo $INT_INTERFACE | tail -c 2`
-
-	echo "Configuring bridge interfaces..."
-	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-	echo "auto lo" >> /etc/network/interfaces
-	echo "iface lo inet loopback" >> /etc/network/interfaces
-
-	# Configuring bridge interfaces
-
-	echo "#External network interface" >> /etc/network/interfaces
-	echo "auto $EXT_INTERFACE" >> /etc/network/interfaces
-	echo "allow-hotplug $EXT_INTERFACE" >> /etc/network/interfaces
-	echo "iface $EXT_INTERFACE inet dhcp" >> /etc/network/interfaces
-
-	echo "#External network interface" >> /etc/network/interfaces
-	echo "auto wlan$EXT_BR_INT" >> /etc/network/interfaces
-	echo "allow-hotplug wlan$EXT_BR_INT" >> /etc/network/interfaces
-	echo "iface wlan$EXT_BR_INT inet manual" >> /etc/network/interfaces
-
-	echo "##External Network Bridge " >> /etc/network/interfaces
-	echo "#auto br$EXT_BR_INT" >> /etc/network/interfaces
-	echo "#allow-hotplug br$EXT_BR_INT" >> /etc/network/interfaces
-	echo "#iface br$EXT_BR_INT inet dhcp" >> /etc/network/interfaces   
-	echo "#bridge_ports eth$EXT_BR_INT wlan$EXT_BR_INT" >> /etc/network/interfaces
-	
-	echo "#Internal network interface" >> /etc/network/interfaces
-	echo "auto $INT_INTERFACE" >> /etc/network/interfaces
-	echo "allow-hotplug $INT_INTERFACE" >> /etc/network/interfaces
-	echo "iface $INT_INTERFACE inet manual" >> /etc/network/interfaces
-	
-	echo "#Internal network interface" >> /etc/network/interfaces
-	echo "auto wlan$INT_BR_INT" >> /etc/network/interfaces
-	echo "allow-hotplug wlan$INT_BR_INT" >> /etc/network/interfaces
-	echo "iface wlan$INT_BR_INT inet manual" >> /etc/network/interfaces
-
-	echo "# Internal network Bridge" >> /etc/network/interfaces
-	echo "auto br$INT_BR_INT" >> /etc/network/interfaces
-	echo "allow-hotplug br$INT_BR_INT" >> /etc/network/interfaces
-	echo "# Setup bridge" >> /etc/network/interfaces
-	echo "iface br$INT_BR_INT inet static" >> /etc/network/interfaces
-	echo "    bridge_ports eth$INT_BR_INT wlan$INT_BR_INT" >> /etc/network/interfaces
-	echo "    address 10.0.0.1" >> /etc/network/interfaces
-	echo "    netmask 255.255.255.0" >> /etc/network/interfaces
-	echo "    network 10.0.0.0" >> /etc/network/interfaces
-	fi
-
-}
-
-
-# ----------------------------------------------
 # install_packages
 # ----------------------------------------------
 install_packages() 
@@ -2045,31 +1974,35 @@ if [ "$ARCH" == "x86_64" ]; then
 
 	echo "Installing gitlab ..."
 
-	# Install the necessary dependencies
-	apt-get install -y --force-yes curl openssh-server ca-certificates postfix
+	# Check if gitlab is installed or not 
+	which gitlab-ce
+	if [ $? -ne 0 ]; then 
+		# Install the necessary dependencies
+		apt-get install -y --force-yes curl openssh-server ca-certificates postfix
 
-        if [ ! -e gitlab-ce_8.12.7-ce.0_amd64.deb ]; then
-        echo "Downloading Gitlab ..."
-        wget --no-check-certificat -O gitlab-ce_8.12.7-ce.0_amd64.deb \
-	https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb/download 
-
-                if [ $? -ne 0 ]; then
-                        echo "Error: unable to download Gitlab. Exiting ..."
-                        exit 3
-                fi
-        fi
+	        if [ ! -e gitlab-ce_8.12.7-ce.0_amd64.deb ]; then
+	        echo "Downloading Gitlab ..."
+	        wget --no-check-certificat -O gitlab-ce_8.12.7-ce.0_amd64.deb \
+		https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb/download 
+	
+	                if [ $? -ne 0 ]; then
+	                        echo "Error: unable to download Gitlab. Exiting ..."
+	                        exit 3
+	                fi
+	        fi
         
-	# Install gitlab 
-	dpkg -i gitlab-ce_8.12.7-ce.0_amd64.deb
-        if [ $? -ne 0 ]; then
-                echo "Error: unable to install Gitlab. Exiting ..."
-                exit 3
-        fi
+		# Install gitlab 
+		dpkg -i gitlab-ce_8.12.7-ce.0_amd64.deb
+	        if [ $? -ne 0 ]; then
+	                echo "Error: unable to install Gitlab. Exiting ..."
+	                exit 3
+	        fi
 
-	# Installing from packages for dependencies
-	curl -LO https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
-	bash script.deb.sh
-	apt-get install -y --force-yes gitlab-ce
+		# Installing from packages for dependencies
+		curl -LO https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+		bash script.deb.sh
+		apt-get install -y --force-yes gitlab-ce
+	fi
 else
 	echo "Skipping gitlab installation. x86_64 Needed / Detected: $ARCH"
 fi
@@ -2264,8 +2197,6 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	check_requirements      # Checking requirements for 
         get_interfaces  	# Get DHCP on eth0 or eth1 and 
 				# connect to Internet
-        configure_bridges       # Configure bridge interfacers
-                                # Physical or Virtual machine
 	configure_repositories	# Prepare and update repositories
 	install_packages       	# Download and install packages	
 #	install_libressl	# Install Libressl package
