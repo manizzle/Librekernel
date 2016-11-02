@@ -527,7 +527,7 @@ elif [ $PLATFORM = "D8" ]; then
 
 	# services
 	apt-get install -y --force-yes \
-        privoxy unbound owncloud webmin isc-dhcp-server \
+        privoxy unbound owncloud isc-dhcp-server \
         yacy c-icap clamav clamav-daemon  squidguard postfix \
 	tor i2p roundcube tinyproxy prosody \
         2>&1 > /tmp/apt-get-install_2.log
