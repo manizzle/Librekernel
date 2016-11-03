@@ -1,8 +1,0 @@
-vconntype=dhcp
-vipaddr=192.168.1.2
-vnetmask=255.255.255.0
-vgw=0.0.0.0
-vdns1=8.8.8.8
-vdns2=8.8.4.4
-dhcpon=checked
-staticon=
