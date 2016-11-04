@@ -1386,7 +1386,7 @@ LOOP_N=0
 echo "Configuring i2p hidden services ..."
 while [ $LOOP_S -lt 1 ]
 do
-if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | wc -l` -eq 6 ]; then
+if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ 2>/dev/null | wc -l` -eq 6 ]; then
 echo "i2p successfully configured"
 LOOP_S=1
 else
@@ -2689,6 +2689,7 @@ sed -i s/*:80/*:88/g  /etc/apache2/sites-enabled/000-default.conf
 sed -i s/80/88/g  /etc/apache2/ports.conf
 
 mkdir -p /etc/ssl/nginx/
+rm -rf /etc/nginx/sites-enabled/*
 mkdir -p /etc/nginx/sites-enabled/
 
 # Creating configuration file
