@@ -2026,7 +2026,7 @@ if [ "$ARCH" == "x86_64" ]; then
 	echo "Installing gitlab ..."
 
 	# Check if gitlab is installed or not 
-	which gitlab-ce
+	which gitlab-ctl > /dev/null 2>&1
 	if [ $? -ne 0 ]; then 
 		# Install the necessary dependencies
 		apt-get install -y --force-yes curl openssh-server ca-certificates postfix
@@ -2281,7 +2281,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_snorby		# Install Snorby package
 #	install_glype		# Install glype proxy
 	install_gitlab		# Install gitlab packae
-#	install_trac		# Install trac package
+	install_trac		# Install trac package
 #	install_redmine		# Install redmine package
 	install_ndpi		# Install ndpi package
 	save_variables	        # Save detected variables
