@@ -88,13 +88,13 @@ configure_repositories ()
 	apt-get -y --force-yes install ntpdate > /dev/null
 	
 	# Time synchronization
-	/etc/init.d/ntp stop 
+	/etc/init.d/ntp stop > /dev/null 2>&1
  	ntpdate -s ntp.ubuntu.com
 	if [ $? -ne 0 ]; then
         	echo "Error: unable to set time"
                 exit 3
         fi	
-	/etc/init.d/ntp restart
+	/etc/init.d/ntp restart > /dev/null 2>&1
 	echo "Date and time have been set"
 	date	
 	
@@ -291,11 +291,11 @@ EOF
 		apt-key add jcameron-key.asc 
 
 		# Prepare kibaba repo
-		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 		echo "deb https://packages.elastic.co/kibana/4.6/debian stable main" > /etc/apt/sources.list.d/kibana.list
 
 		# Prepare lohstash repo
-		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+		wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 		echo "deb https://packages.elastic.co/logstash/2.4/debian stable main" > /etc/apt/sources.list.d/elastic.list
 
 	
