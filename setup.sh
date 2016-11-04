@@ -12,7 +12,7 @@ if [ $? -ne 0 ]; then
 fi
 echo "Running installation scirpt"
 chmod +x app-installation-script.sh
-app-installation-script.sh
+./app-installation-script.sh
 
 
 # -----------------------------------------------
@@ -27,4 +27,4 @@ if [ $? -ne 0 ]; then
 fi
 echo "Runngin configuraiton script"
 chmod +x app-configuration-script.sh
-app-configuration-script.sh
+./app-configuration-script.sh
