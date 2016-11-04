@@ -750,11 +750,13 @@ iptables -F
 iptables -t nat -F
 iptables -t filter -F
 
-iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.246 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.247 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.248 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.249 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.250 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.251 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.252 -j ACCEPT
@@ -2543,15 +2545,17 @@ service postfix restart
 # ---------------------------------------------------------
 # Function to configura trac server
 # ---------------------------------------------------------
-configure_trac() {
+configure_trac() 
+{
 # trac can only be installed on x86_64 (64 bit) architecture
 # So we configure it if architecture is x86_64
 if [ "$ARCH" == "x86_64" ]; then
         echo "Configuring Trac ..."
+	rm -rf /opt/trac/libretrac
         mkdir -p /opt/trac/libretrac
 
         # Initializing trac project
-        trac-admin /opt/trac/libretrac initenv
+        trac-admin /opt/trac/libretrac initenv LibreProject sqlite:db
 	if [ $? -ne 0 ]; then
         	echo "Unable to configure trac. Exiting ..."
        		exit 1
@@ -2561,10 +2565,12 @@ if [ "$ARCH" == "x86_64" ]; then
         chown -R www-data:www-data /opt/trac/libretrac
 
         # Adding startup
-        sed -i '102i# Start Trac ' /etc/rc.local
-        sed -i '103itracd -s --port 8000 /opt/trac/libretrac' /etc/rc.local
+        sed -i '104i# Start Trac ' /etc/rc.local 
+        sed -i '105itracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &' /etc/rc.local
 
-        tracd -s --port 8000 /opt/trac/libretrac
+	export LC_ALL=en_US.UTF-8
+	kill -9 `netstat -tulpn | grep 8000 | awk '{print $7}' | awk -F/ '{print $1}'` 2> /dev/null	
+        tracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &
 else
         echo "Trac configuration is skipped as detected architecture: $ARCH"
 fi
@@ -3692,6 +3698,41 @@ proxy_set_header X-Real-IP \$remote_addr;
 #}
 #" > /etc/nginx/sites-enabled/tahoe
 
+
+#--------trac.librenet-----------#
+# trac.librenet virtual host configuration
+echo "Configuring trac virtual host ..."
+
+# Generating certificates for trac ssl connection
+echo "Generating keys and certificates for trac"
+if [ ! -e /etc/ssl/nginx/trac.key -o ! -e  /etc/ssl/nginx/trac.crt ]; then
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/trac.key -out /etc/ssl/nginx/trac.crt -subj '/CN=librerouter' -batch
+fi
+
+# trac.librenet virtual host configuration
+echo "
+server {
+	listen 10.0.0.248;
+	server_name _;
+	return 301 http://trac.librenet;
+}
+
+server {
+	listen 10.0.0.248:80;
+	listen 10.0.0.248:443 ssl;
+	server_name trac.librenet;
+	ssl_certificate /etc/ssl/nginx/trac.crt;
+	ssl_certificate_key /etc/ssl/nginx/trac.key;
+	location / {
+		proxy_pass       http://127.0.0.1:8000;
+		proxy_set_header Host      \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
+}
+" > /etc/nginx/sites-enabled/trac 
+
+
+
 # Restarting Yacy php5-fpm and Nginx services 
 echo "Restarting nginx ..."
 service yacy restart
@@ -4586,7 +4627,7 @@ configure_squidguard		# Configuring squidguard
 configure_squidguardmgr		# Configure squidguardmgr
 configure_ecapguardian		# Configuring ecapguardian
 configure_postfix		# Configuring postfix mail service
-#configure_trac			# Configuring trac service
+configure_trac			# Configuring trac service
 #configure_redmine		# Configuring redmine service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
