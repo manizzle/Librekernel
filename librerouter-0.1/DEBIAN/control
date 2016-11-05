@@ -1,0 +1,16 @@
+Package: librerouter
+Version: 0.1
+Architecture: all
+Maintainer: LibreRouter Egy Team <yuri@sphinux.org>
+Installed-Size: 48
+Depends: coreutils, lighttpd, makepasswd, openssl, gawk, iputils-ping, net-tools, ifupdown, isc-dhcp-client, dpkg, xinit
+Section: admin
+Priority: optional
+Description: Installs required Web GUI
+ This package provides the frontend along with all required configuration
+ and dependencies including the web server and it's configuration 
+ LibreRouter is an opensource privacy protection engine that provides i2p and Tor
+ anonymity as well as centralizing the most common services using multiple preinstalled
+ third party software. 
+ Homepage: https://github.com/Librerouter/Librekernel
+

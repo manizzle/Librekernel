@@ -1,0 +1,48 @@
+#! /bin/bash
+
+parms=`echo "$1" | tr -d '$,(,),{,},\`,|,/,<,>,%,#,@,!'`
+export MODULE=`basename $(pwd)`
+
+oldpass=`echo "${parms}" | awk -F '&' '{print $1}' | cut -d '=' -f2 | head -n1`
+newpass=`echo "${parms}" | awk -F '&' '{print $2}' | cut -d '=' -f2 | head -n1`
+cnewpass=`echo "${parms}" | awk -F '&' '{print $3}' | cut -d '=' -f2 | head -n1`
+
+if [[ -z "$oldpass" ]]
+then
+	echo "1::Error: Missing field data (Old Password)."
+	exit
+elif [[ -z "$newpass" ]]
+then
+	echo "2::Error: Missing field data (New Password)."
+	exit
+elif [[ -z "$cnewpass" ]]
+then
+	echo "3::Error: Missing field data (Confirm Password)."
+	exit
+elif [[ "$cnewpass" != "$newpass" ]]
+then
+	echo "4::Error: New password and confirmation do not match."
+	exit
+elif [[ `echo "$oldpass" | md5sum | awk '{print $1}'` != `head -n1 /opt/librerouter/webui/db/users.db | awk -F ':::' '{print $2}'` ]]
+then
+	echo "5::Error: The password you entered doesn't match your old password."
+	exit
+elif [[ `echo -n "$newpass" | wc -c` -lt "8" ]]
+then
+	echo "6::Error: The password you entered is too short, should be at least 8 characters with at least one number, one uppercase letter and another lowercase letter."
+	exit
+elif [[ -z `echo -n "$newpass" | grep "[a-z]"` ]] || [[ -z `echo -n "$newpass" | grep "[A-Z]"` ]] || [[ -z `echo -n "$newpass" | grep "[0-9]"` ]]
+then
+	echo "7::Error: The password you entered is too weak, should have at least one number, one uppercase letter and another lowercase letter."
+	exit
+elif [[ "$oldpass" == "$newpass" ]]
+then
+	echo "8::Error: New password can't be the same as Old password."
+	exit
+fi
+
+
+username=`head -n1 /opt/librerouter/webui/db/users.db | awk -F ':::' '{print $1}'`
+newpasswd=`echo "$newpass" | md5sum | awk '{print $1}'`
+echo "${username}:::${newpasswd}:::" > /opt/librerouter/webui/db/users.db
+echo "0::Success: Password changed successfully."
