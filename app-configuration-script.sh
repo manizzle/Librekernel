@@ -1844,7 +1844,7 @@ console.log('listening on http://localhost:8443');
 });
 EOF
 
-sed -i '/function connect() {/a easyrtc.setSocketUrl(":8443");' /opt/easyrtc/node_modules/easyrtc/demos/js/*.js
+# sed -i '/function connect() {/a easyrtc.setSocketUrl(":8443");' /opt/easyrtc/node_modules/easyrtc/demos/js/*.js
 
 cd /opt/easyrtc/server_example
 
@@ -2016,6 +2016,7 @@ chmod -R 777 /etc/squid/ssl_cert
 fi
 
 echo "Creating log directory for Squid..."
+rm -rf mkdir /var/log/squid
 mkdir /var/log/squid
 chown -R proxy:proxy /var/log/squid
 chmod -R 777 /var/log/squid
@@ -3745,6 +3746,99 @@ server {
 	}
 }
 " > /etc/nginx/sites-enabled/trac 
+
+
+#----------redmine.librenet----------#
+#
+# Redmine.librenet virtual host configuration
+
+# Generating certificates for redmine ssl connection
+echo "Generating keys and certificates for redmine"
+if [ ! -e /etc/ssl/nginx/redmine.key -o ! -e  /etc/ssl/nginx/redmine.crt ]; then
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/redmine.key -out /etc/ssl/nginx/redmine.crt -subj '/CN=librerouter' -batch
+fi
+
+echo "
+# Upstream Ruby process cluster for load balancing
+upstream thin_cluster {
+    server unix:/tmp/thin.0.sock;
+    server unix:/tmp/thin.1.sock;
+    server unix:/tmp/thin.2.sock;
+    server unix:/tmp/thin.3.sock;
+}
+
+server {
+    listen       10.0.0.249:80;
+    server_name  redmine.librenet;
+
+    access_log  /var/log/nginx/redmine-proxy-access;
+    error_log   /var/log/nginx/redmine-proxy-error;
+
+#    include sites/proxy.include;
+    root /opt/redmine/redmine-3.3.1/public;
+    proxy_redirect off;
+
+    # Send sensitive stuff via https
+    rewrite ^/login(.*) https://redmine.librenet\$request_uri permanent;
+    rewrite ^/my/account(.*) https://redmine.librenet\$request_uri permanent;
+    rewrite ^/my/password(.*) https://redmine.librenet\$request_uri permanent;
+    rewrite ^/admin(.*) https://redmine.librenet\$request_uri permanent;
+
+    location / {
+        try_files \$uri/index.html \$uri.html \$uri @cluster;
+    }
+
+    location @cluster {
+        proxy_pass http://thin_cluster;
+    }
+}
+
+server {
+    listen       10.0.0.249:443 ssl;
+    server_name  redmine.librenet;
+
+    access_log  /var/log/nginx/redmine-ssl-proxy-access;
+    error_log   /var/log/nginx/redmine-ssl-proxy-error;
+
+    ssl on;
+
+    ssl_certificate /etc/ssl/nginx/redmine.crt;
+    ssl_certificate_key /etc/ssl/nginx/redmine.key;
+
+#    include sites/proxy.include;
+    proxy_redirect off;
+    root /opt/redmine/redmine-3.3.1/public;
+
+    # When were back to non-sensitive things, send back to http
+    rewrite ^/\$ http://redmine.librenet\$request_uri permanent;
+
+    # Examples of URLs we dont want to rewrite (otherwise 404 errors occur):
+    # /projects/PROJECTNAME/archive?status=
+    # /projects/copy/PROJECTNAME
+    # /projects/PROJECTNAME/destroy
+
+    # This should exclude those (tested here: http://www.regextester.com/ )
+    if (\$uri !~* \"^/projects/.*(copy|destroy|archive)\") {
+        rewrite ^/projects(.*) http://redmine.librenet\$request_uri permanent;
+    }
+
+    rewrite ^/guide(.*) http://redmine.librenet\$request_uri permanent;
+    rewrite ^/users(.*) http://redmine.librenet\$request_uri permanent;
+    rewrite ^/my/page(.*) http://redmine.librenet\$request_uri permanent;
+    rewrite ^/logout(.*) http://redmine.librenet\$request_uri permanent;
+
+    location / {
+        try_files \$uri/index.html \$uri.html \$uri @cluster;
+    }
+
+    location @cluster {
+        proxy_pass http://thin_cluster;
+    }
+}
+" > /etc/nginx/sites-enabled/redmine
+
+
+
 
 
 
