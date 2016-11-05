@@ -1,0 +1,7 @@
+title="User Settings"
+instr="Change the Admin account password"
+mainh="A strong password keeps your account safe."
+submit="Submit"
+oldpass="Old Password"
+newpass="New Password"
+cnewpass="Confirm Password"
