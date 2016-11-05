@@ -863,7 +863,7 @@ configure_tor()
 {
 echo "Configuring Tor server ..."
 tordir=/var/lib/tor/hidden_service
-for i in yacy owncloud friendica mailpile easyrtc 
+for i in yacy owncloud friendica mailpile easyrtc ssh gitlab trac redmine  
 do
 
 # Setting user and group to debian-tor
@@ -929,6 +929,21 @@ HiddenServicePort 443 10.0.0.254:443
 HiddenServiceDir /var/lib/tor/hidden_service/easyrtc
 HiddenServicePort 80 10.0.0.250:80
 HiddenServicePort 443 10.0.0.250:443
+
+HiddenServiceDir /var/lib/tor/hidden_service/ssh
+HiddenServicePort 22 10.0.0.1:22
+
+HiddenServiceDir /var/lib/tor/hidden_service/gitlab
+HiddenServicePort 80 10.0.0.247:80
+HiddenServicePort 443 10.0.0.247:443
+
+HiddenServiceDir /var/lib/tor/hidden_service/trac
+HiddenServicePort 80 10.0.0.248:80
+HiddenServicePort 443 10.0.0.248:443
+
+HiddenServiceDir /var/lib/tor/hidden_service/redmine
+HiddenServicePort 80 10.0.0.249:80
+HiddenServicePort 443 10.0.0.249:443
 
 # ----- Tor DNS ----- #
 
@@ -4518,6 +4533,18 @@ IP_ADD="10.0.0.253"
 fi
 if [ $i == "mailpile" ]; then
 IP_ADD="10.0.0.254"
+fi
+if [ $i == "ssh" ]; then
+IP_ADD="10.0.0.1"
+fi
+if [ $i == "gitlab" ]; then
+IP_ADD="10.0.0.247"
+fi
+if [ $i == "trac" ]; then
+IP_ADD="10.0.0.248"
+fi
+if [ $i == "redmine" ]; then
+IP_ADD="10.0.0.249"
 fi
 hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
 printf "|%12s  |%23s |%11s.librenet |%13s |\n" $i $hn $i $IP_ADD \
