@@ -602,7 +602,7 @@ get_hardware()
 #  Minimum requirements are:
 #
 #  * 2 Network Interfaces.
-#  * 1 GB Physical Memory (RAM).
+#  * 4 GB Physical Memory (RAM).
 #  * 16 GB Free Space On Hard Drive.
 #
 # ----------------------------------------------
@@ -611,23 +611,27 @@ check_requirements()
 	echo "Checking requirements ..."
 
         # This variable contains network interfaces quantity.  
-	NET_INTERFACES=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | wc -l`
+	# NET_INTERFACES=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | wc -l`
 
         # This variable contains total physical memory size.
+	echo -n "Physical memory size: "
         MEMORY=`grep MemTotal /proc/meminfo | awk '{print $2}'`
-	
+	echo "$MEMORY KB"	
+
 	# This variable contains total free space on root partition.
+	echo -n "Root partition size: "
 	STORAGE=`df -h / | grep -w "/" | awk '{print $4}' | sed 's/[^0-9.]*//g'`
-        
+	echo "$STORAGE GB" 	
+       
         # Checking network interfaces quantity.
-	if [ $NET_INTERFACES -le 1 ]; then
-        	echo "You need at least 2 network interfaces. Exiting"
-		exit 4 
-        fi
+	# if [ $NET_INTERFACES -le 1 ]; then
+        #	echo "You need at least 2 network interfaces. Exiting"
+        #	exit 4 
+        # fi
 	
 	# Checking physical memory size.
-        if [ $MEMORY -le 900000 ]; then 
-		echo "You need at least 1GB of RAM. Exiting"
+        if [ $MEMORY -le 3600000 ]; then 
+		echo "You need at least 4GB of RAM. Exiting"
                 exit 5
         fi
 
@@ -638,6 +642,8 @@ check_requirements()
 		echo "You need at least 16GB of free space. Exiting"
 		exit 6
 	fi
+
+        sleep 10
 }
 
 
@@ -1098,10 +1104,10 @@ install_libecap()
                         echo "Error: unable to download libecap"
                         exit 3
                 fi
+		tar xzf libecap-1.0.0.tar.gz
         fi
 
         echo "Building libecap ..."
-	tar -xzf libecap-1.0.0.tar.gz
         
 	cd libecap-1.0.0/
 	
@@ -2082,50 +2088,51 @@ install_trac()
 # ---------------------------------------------------------
 install_redmine()
 {
-        if [ "$ARCH" == "x86_64" ]; then
-                echo "Installing redmine ..."
-                apt-get -y --force-yes install \
-                mysql-server mysql-client libmysqlclient-dev \
-                gcc build-essential zlib1g zlib1g-dev zlibc \
-                ruby-zip libssl-dev libyaml-dev libcurl4-openssl-dev \
-                ruby gem libapr1-dev libxslt1-dev checkinstall \
-                libxml2-dev ruby-dev vim libmagickwand-dev imagemagick
-                if [ $? -ne 0 ]; then
-                        echo "Error: unable to install redmine. Exiting ..."
-                        exit
-                fi
+if [ "$ARCH" == "x86_64" ]; then
+	echo "Installing redmine ..."
+        apt-get -y --force-yes install \
+        mysql-server mysql-client libmysqlclient-dev \
+        gcc build-essential zlib1g zlib1g-dev zlibc \
+        ruby-zip libssl-dev libyaml-dev libcurl4-openssl-dev \
+        ruby gem libapr1-dev libxslt1-dev checkinstall \
+        libxml2-dev ruby-dev vim libmagickwand-dev imagemagick
+        if [ $? -ne 0 ]; then
+        	echo "Error: unable to install redmine. Exiting ..."
+                exit
+        fi
 
-                mkdir /opt/redmine
-                chown -R www-data /opt/redmine
-                cd /opt/redmine
+        mkdir /opt/redmine
+        chown -R www-data /opt/redmine
+        cd /opt/redmine
 
-                # Downloading redmine
+	if [ ! -e redmine-3.3.1 ]; then
+                echo "Downloading redmine ..."
                 wget http://www.redmine.org/releases/redmine-3.3.1.tar.gz
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download redmine. Exiting ..."
                         exit
                 fi
-
                 tar xzf redmine-3.3.1.tar.gz
-                cd redmine-3.3.1
+	fi
+        cd redmine-3.3.1
 
-                # Install bundler
-                gem install bundler
-                bundle install --without development test
-                if [ $? -ne 0 ]; then
-                        echo "Error: unable to install bundler. Exiting ..."
-                        exit
-                fi
-
-                # Generate secret token
-                bundle exec rake generate_secret_token
-
-                # Prepare DB and install all tables:
-                RAILS_ENV=production bundle exec rake db:migrate
-                RAILS_ENV=production bundle exec rake redmine:load_default_data
-        else
-                echo "Skipping redmine installation. x86_64 Needed / Detected: $ARCH"
+        # Install bundler
+        gem install bundler
+        bundle install --without development test
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install bundler. Exiting ..."
+                exit
         fi
+
+        # Generate secret token
+        bundle exec rake generate_secret_token
+
+        # Prepare DB and install all tables:
+        RAILS_ENV=production bundle exec rake db:migrate
+        RAILS_ENV=production bundle exec rake redmine:load_default_data
+else
+        echo "Skipping redmine installation. x86_64 Needed / Detected: $ARCH"
+fi
 }
 
 
@@ -2245,7 +2252,7 @@ get_hardware  	# Getting hardware info
 if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; then 
 	check_internet          # Check Internet access
 #	check_assemblance
-#	check_requirements      # Checking requirements for 
+	check_requirements      # Checking requirements for 
         get_interfaces  	# Get DHCP on eth0 or eth1 and 
 				# connect to Internet
 	configure_repositories	# Prepare and update repositories
@@ -2282,7 +2289,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_glype		# Install glype proxy
 	install_gitlab		# Install gitlab packae
 	install_trac		# Install trac package
-#	install_redmine		# Install redmine package
+	install_redmine		# Install redmine package
 	install_ndpi		# Install ndpi package
 	save_variables	        # Save detected variables
 
