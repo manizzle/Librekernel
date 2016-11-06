@@ -90,7 +90,7 @@ then
 		then
 			export ERR=0
 			clientcsrf=`param csrf`
-			[[ `echo "$HTTP_REFERER" | awk -F '/' '{print $3}'` != "$SERVER_NAME" ]] && [[ `echo "$HTTP_REFERER" | awk -F '/' '{print $3}'` != "" ]] && ERR=1
+			[[ `echo "$HTTP_REFERER" | awk -F '/' '{print $3}' | awk -F ':' '{print $1}'` != "$SERVER_NAME" ]] && [[ `echo "$HTTP_REFERER" | awk -F '/' '{print $3}'` != "" ]] && ERR=1
 		else
 			export ERR=1
 			rm -f /var/lib/librerouter/sess/"${cip}"/"${cookiename}"
@@ -105,7 +105,7 @@ lang=`echo "$QUERY_STRING" | grep -o "lang=[[:alnum:]]*" | awk -F '=' '{print $2
 
 if [[ "$page" == "logout" ]]
 then
-	if [[ `echo "$HTTP_REFERER" | awk -F '/' '{print $3}'` != "$SERVER_NAME" ]]
+	if [[ `echo "$HTTP_REFERER" | awk -F '/' '{print $3}' | awk -F ':' '{print $1}'` != "$SERVER_NAME" ]]
 	then
 		echo "<html><head><title>FATAL</title><style>"
 		cat "${UIPATH}/css/main.css"
