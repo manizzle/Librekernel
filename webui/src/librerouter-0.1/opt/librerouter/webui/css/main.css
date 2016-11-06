@@ -232,6 +232,7 @@
 		padding: 15px 0px;
 		cursor: pointer;
 		transition: background-color 0.6s;
+		font-size: 80%;
 	}
 	#sidedrawer strong:hover
 	{
@@ -373,7 +374,7 @@
 	}
 	.a-menu-item
 	{
-		padding: 15px 53px 14px;
+		padding: 15px 23% 14px;
 	}
 	.login-form {
 	        background:#eee;
