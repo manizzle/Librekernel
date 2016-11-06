@@ -1,6 +1,6 @@
 title="User Settings"
 instr="Change the Admin account password"
-mainh="A strong password keeps your account safe."
+mainh="Choose a strong password."
 submit="Submit"
 oldpass="Old Password"
 newpass="New Password"
