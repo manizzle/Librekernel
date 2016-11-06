@@ -1,5 +1,5 @@
 <center><h2>$title</h2></center>
-<h3>$instr</h3>
+<center><h3>$instr</h3></center>
 <center><h3>$mainh</h3></center>
 <center><form action='index.cgi' method='post'>
 <label for="dhcp" onclick="javascript:yesnoCheck();"><div class="label-inline">$dhcp</div></label><input class="regular-radio" type="checkbox" name="conntype" id="static" value="static" onclick="javascript:yesnoCheck();" $staticon><label for="static" onclick="javascript:yesnoCheck();"><div class="label-inline">$static</div></label><br>
