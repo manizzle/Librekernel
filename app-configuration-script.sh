@@ -847,6 +847,12 @@ evebox -e http://localhost:9200 &
 # Start elasticsearch
 /etc/init.d/elasticsearch start
 
+# Start Trac 
+tracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &
+
+# Start Redmine
+thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d start
+
 exit 0
 EOF
 
@@ -2580,10 +2586,6 @@ if [ "$ARCH" == "x86_64" ]; then
         # Setting permissions
         chown -R www-data:www-data /opt/trac/libretrac
 
-        # Adding startup
-        sed -i '104i# Start Trac ' /etc/rc.local 
-        sed -i '105itracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &' /etc/rc.local
-
 	export LC_ALL=en_US.UTF-8
 	kill -9 `netstat -tulpn | grep 8000 | awk '{print $7}' | awk -F/ '{print $1}'` 2> /dev/null	
         tracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &
@@ -2601,15 +2603,19 @@ configure_redmine()
         echo "Configuring redmine ..."
 
         # Preparing MySQL
-        mysql --user=root --password=$password
+        mysql --user=root --password=$MYSQL_PASS
         CREATE DATABASE redmine CHARACTER SET utf8;
-        CREATE USER 'redmine'@'localhost' IDENTIFIED BY 'my_password';
-        GRANT ALL PRIVILEGES ON redmine.* TO 'redmine'@'localhost';
+        #CREATE USER 'redmine'@'localhost' IDENTIFIED BY 'my_password';
+        #GRANT ALL PRIVILEGES ON redmine.* TO 'redmine'@'localhost';
         exit
 
         # Redmine DB configuration
         cd /opt/redmine/redmine-3.3.1
         cp config/database.yml.example config/database.yml
+	cp config/configuration.yml.example config/configuration.yml
+
+	# Run bundle
+	bundle install --without development test rmagick
 
         # Customize DB configuration
 echo "
@@ -2617,12 +2623,29 @@ production:
   adapter: mysql2
   database: redmine
   host: localhost
-  username: redmine
-  password: my_password
+  username: root
+  password: "$MYSQL_PASS"
+  encoding: utf8
+
+#development:
+#  adapter: mysql2
+#  database: redmine
+#  host: localhost
+#  username: root
+#  password: "$MYSQL_PASS"
+#  encoding: utf8
 " > config/database.yml
 
+	# Migrate database and load default settings
+	RAILS_ENV=production bundle exec rake db:migrate
+	RAILS_ENV=production bundle exec rake redmine:load_default_data
+
+	# Start thin server
+	thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d star
+
         # Link the redmine public dir to the nginx-redmine root:
-        ln -s /opt/redmine/redmine-X.X.X/public/ /var/www/html/redmine
+        # ln -s /opt/redmine/redmine-3.3.1/public/ /var/www/html/redmine
+
 }
 
 
@@ -3761,10 +3784,7 @@ fi
 echo "
 # Upstream Ruby process cluster for load balancing
 upstream thin_cluster {
-    server unix:/tmp/thin.0.sock;
-    server unix:/tmp/thin.1.sock;
-    server unix:/tmp/thin.2.sock;
-    server unix:/tmp/thin.3.sock;
+    server 127.0.0.1:8889;
 }
 
 server {
@@ -3836,11 +3856,6 @@ server {
     }
 }
 " > /etc/nginx/sites-enabled/redmine
-
-
-
-
-
 
 # Restarting Yacy php5-fpm and Nginx services 
 echo "Restarting nginx ..."
