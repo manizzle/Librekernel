@@ -620,8 +620,8 @@ check_requirements()
 
 	# This variable contains total free space on root partition.
 	echo -n "Root partition size: "
-	STORAGE=`df -h / | grep -w "/" | awk '{print $4}' | sed 's/[^0-9.]*//g'`
-	echo "$STORAGE GB" 	
+	STORAGE=`df / | grep -w "/" | awk '{print $4}'`
+	echo "$STORAGE KB" 	
        
         # Checking network interfaces quantity.
 	# if [ $NET_INTERFACES -le 1 ]; then
@@ -636,14 +636,13 @@ check_requirements()
         fi
 
 	# Checking free space. 
-	MIN_STORAGE=16
+	MIN_STORAGE=12000000
 	STORAGE2=`echo $STORAGE | awk -F. {'print $1'}`
 	if [ $STORAGE2 -lt $MIN_STORAGE ]; then
 		echo "You need at least 16GB of free space. Exiting"
 		exit 6
 	fi
-
-        sleep 10
+	sleep 1
 }
 
 
