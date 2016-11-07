@@ -1,6 +1,6 @@
 #! /bin/bash
 
-export iface=eth0
+export iface=eth1
 parms=`echo "$1" | tr -d '$,(,),{,},\`,|,/,<,>,%,#,@,!'`
 export MODULE=`basename $(pwd)`
 

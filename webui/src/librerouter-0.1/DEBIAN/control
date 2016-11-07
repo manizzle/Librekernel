@@ -3,7 +3,7 @@ Version: 0.1
 Architecture: all
 Maintainer: LibreRouter Egy Team <yuri@sphinux.org>
 Installed-Size: 48
-Depends: coreutils, lighttpd, makepasswd, openssl, gawk, iputils-ping, net-tools, ifupdown, isc-dhcp-client, dpkg, xinit
+Depends: coreutils, lighttpd, makepasswd, openssl, gawk, iputils-ping, net-tools, ifupdown, isc-dhcp-client, dpkg, xinit, matchbox, chromium, x11-xserver-utils
 Section: admin
 Priority: optional
 Description: Installs required Web GUI

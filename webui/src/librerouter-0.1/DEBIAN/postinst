@@ -1,6 +1,7 @@
 #! /bin/bash
 
-cp -Rf /etc/lighttpd_librerouter/ /etc/lighttpd/
+mv /etc/lighttpd/ /etc/lighttpd_bak/
+mv /etc/lighttpd_librerouter/ /etc/lighttpd/
 update-rc.d cgid defaults
 update-rc.d cgid enable
 systemctl daemon-reload
