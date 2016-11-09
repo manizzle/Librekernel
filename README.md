@@ -107,7 +107,12 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
 
-##DNS:
+#How Librerouter will threat the traffic as a Privacy Firewall.
+
+![protocols policy](https://cloud.githubusercontent.com/assets/13025157/20144114/d6fe682e-a69b-11e6-8036-a0f12e717650.png)
+
+
+#DNS:
 
 - Unbound-dns 
 - If it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
