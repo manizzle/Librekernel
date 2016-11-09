@@ -114,9 +114,9 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 #DNS:
 
-- Unbound-dns 
-- If it is not resolved then using DNSCRYPT and using services like D.I.A.N.A (oposite of IANA) or Open NIC.
-- If it can not resolved, then we need to ask through TOR.
+- Unbound-dns is the DNS SERVER 
+- If it is not resolved then using cached then we use DNSCRYPT to ask D.I.A.N.A and OpenNIC.
+- If it can not resolved, then we need to ask through TOR aleatory.
 - Further integration will include Bitname,others like DjDNS (this last need maintenance is not workinghttps://github.com/DJDNS/djdns)).
 
 ![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
@@ -125,6 +125,8 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
   * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound.
   * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
   * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound.
+  
+![redirection](https://cloud.githubusercontent.com/assets/13025157/20144719/c280abee-a69d-11e6-8af5-cbab5d18d171.png)
 
 #### Darknets Domains:
  
