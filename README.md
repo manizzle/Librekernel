@@ -114,17 +114,17 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 #DNS:
 
-- Unbound-dns is the DNS SERVER 
+- Unbound-dns is the DNS SERVER hsts domain list goes to dns hsts bypass engine. 
 - If it is not resolved then using cached then we use DNSCRYPT to ask D.I.A.N.A and OpenNIC.
 - If it can not resolved, then we need to ask through TOR aleatory.
 - Further integration will include Bitname,others like DjDNS (this last need maintenance is not workinghttps://github.com/DJDNS/djdns)).
 
 ![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
  
-  * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound.
-  * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound.
-  * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound.
-  * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound.
+  * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound. and hsts downgraded and dns hardredirected.
+  * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound. and hsts downgraded and dns hardredirected.
+  * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound. and hsts downgraded and dns hardredirected.
+  * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound. and hsts downgraded and dns hardredirected.
   
 ![redirection](https://cloud.githubusercontent.com/assets/13025157/20144719/c280abee-a69d-11e6-8af5-cbab5d18d171.png)
 
