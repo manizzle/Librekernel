@@ -279,9 +279,10 @@ cat << EOF > /etc/hosts
 #<ip-address>   <hostname.domain.org>   <hostname>
 127.0.0.1       localhost.librenet librerouter localhost
 10.0.0.1        librerouter.librenet
-10.0.0.245       webmin.librenet
 10.0.0.11       kibana.librenet
 10.0.0.12       snorby.librenet
+10.0.0.244      ntop.librenet
+10.0.0.245      webmin.librenet
 10.0.0.246      squidguard.librenet
 10.0.0.247      gitlab.librenet
 10.0.0.248	trac.librenet
@@ -473,6 +474,13 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         allow-hotplug $INT_INTERFACE:12
         iface $INT_INTERFACE:12 inet static
             address 10.0.0.249
+            netmask 255.255.255.0
+
+	#Webmin
+        auto $INT_INTERFACE:13
+        allow-hotplug $INT_INTERFACE:13
+        iface $INT_INTERFACE:13 inet static
+            address 10.0.0.244
             netmask 255.255.255.0
 EOF
 	# Network interfaces configuration for board
@@ -752,6 +760,7 @@ iptables -t filter -F
 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.244 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.246 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.247 -j ACCEPT
@@ -1517,6 +1526,7 @@ local-zone: "librenet" static
 local-data: "librerouter.librenet. IN A 10.0.0.1"
 local-data: "i2p.librenet. IN A 10.0.0.1"
 local-data: "tahoe.librenet. IN A 10.0.0.1"
+local-data: "ntop.librenet. IN A 10.0.0.244"
 local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
@@ -2603,11 +2613,12 @@ configure_redmine()
         echo "Configuring redmine ..."
 
         # Preparing MySQL
-        mysql --user=root --password=$MYSQL_PASS
-        CREATE DATABASE redmine CHARACTER SET utf8;
+        MYSQL_USER="root"
+	echo "CREATE DATABASE redmine CHARACTER SET utf8;" \
+	| mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" > /dev/null 2>&1
         #CREATE USER 'redmine'@'localhost' IDENTIFIED BY 'my_password';
         #GRANT ALL PRIVILEGES ON redmine.* TO 'redmine'@'localhost';
-        exit
+        #exit
 
         # Redmine DB configuration
         cd /opt/redmine/redmine-3.3.1
@@ -2617,6 +2628,22 @@ configure_redmine()
 	# Run bundle
 	bundle install --without development test rmagick
 
+	# Creating thin configuration
+	echo "
+pid: /var/run/thin.pid
+timeout: 30
+wait: 30
+log: /var/log/thin.log
+max_conns: 1024
+environment: production
+max_persistent_conns: 512
+servers: 1
+threaded: true
+no-epoll: true
+daemonize: true
+chdir: /opt/redmine/redmine-3.3.1
+" > /etc/thin2.1/config.yml 
+	
         # Customize DB configuration
 echo "
 production:
@@ -2638,14 +2665,49 @@ production:
 
 	# Migrate database and load default settings
 	RAILS_ENV=production bundle exec rake db:migrate
-	RAILS_ENV=production bundle exec rake redmine:load_default_data
+	RAILS_ENV=production REDMINE_LANG=en bundle exec rake redmine:load_default_data
 
 	# Start thin server
 	thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d star
 
         # Link the redmine public dir to the nginx-redmine root:
         # ln -s /opt/redmine/redmine-3.3.1/public/ /var/www/html/redmine
+}
 
+
+# ---------------------------------------------------------
+# Function to configure ntop
+# ---------------------------------------------------------
+configure_ntop()
+{
+	echo "configuring ntop ..."
+
+	# Interface configuretion
+	sed -i 's/INTERFACES="none"/INTERFACES="$EXT_INTERFACE"/g' /var/lib/ntop/init.cfg
+
+	# Creating configuration file	
+	echo "
+#--user ntop
+--daemon
+--db-file-path /usr/share/ntop
+--interface $EXT_INTERFACE
+-p /etc/ntop/protocol.list 
+#? --protocols=\"HTTP=http|www|https|3128,FTP=ftp|ftp-data\"
+#--trace-level 0 # FATALERROR only
+#--trace-level 1 # ERROR and above only 
+#--trace-level 2 # WARNING and above only
+--trace-level 3 # INFO, WARNING and ERRORs - the default
+#--trace-level 4 # NOISY - everything
+#--trace-level 6 # NOISY + MSGID
+#--trace-level 7 # NOISY + MSGID + file/line
+#--daemon --use-syslog
+#--http-server -w 127.0.0.1:3000
+#--https-server -w 127.0.0.1:3001 
+" > /etc/ntop/ntop.conf
+
+	# Restarting ntop sevice
+	echo "Restarting ntop ..."
+	/etc/init.d/ntop restart
 }
 
 
@@ -3857,6 +3919,27 @@ server {
 }
 " > /etc/nginx/sites-enabled/redmine
 
+#----------------------ntop.librenet-----------------------#
+#                       10.0.0.244                         #
+############################################################
+echo "
+# Redirect connections from 10.0.0.244 to ntop.librenet
+server {
+	listen 10.0.0.244;
+	server_name _;
+	return 301 http://ntop.librenet;
+}
+server {
+	listen 10.0.0.244:80;
+	server_name ntop.librenet;
+	location / {
+		proxy_pass       http://127.0.0.1:3000;
+		proxy_set_header Host      \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
+}
+" > /etc/nginx/sites-enabled/ntop
+
 # Restarting Yacy php5-fpm and Nginx services 
 echo "Restarting nginx ..."
 service yacy restart
@@ -4760,11 +4843,12 @@ configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
 configure_squidguard		# Configuring squidguard
-configure_squidguardmgr		# Configure squidguardmgr
+configure_squidguardmgr		# Configuring squidguardmgr
 configure_ecapguardian		# Configuring ecapguardian
 configure_postfix		# Configuring postfix mail service
 configure_trac			# Configuring trac service
-#configure_redmine		# Configuring redmine service
+configure_redmine		# Configuring redmine service
+configure_ntop			# Configuring ntop service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
 #configure_suricata		# Configure Suricata service
