@@ -25,6 +25,6 @@ if [ $? -ne 0 ]; then
         echo "Unable to download configuration script. Exiting ..."
         exit 1
 fi
-echo "Runngin configuraiton script"
+echo "Running configuraiton script"
 chmod +x app-configuration-script.sh
 ./app-configuration-script.sh
