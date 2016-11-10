@@ -2093,7 +2093,7 @@ if [ "$ARCH" == "x86_64" ]; then
         mysql-server mysql-client libmysqlclient-dev \
         gcc build-essential zlib1g zlib1g-dev zlibc \
         ruby-zip libssl-dev libyaml-dev libcurl4-openssl-dev \
-        ruby gem libapr1-dev libxslt1-dev checkinstall thin \
+        ruby gem libapr1-dev libxslt1-dev checkinstall \
         libxml2-dev ruby-dev vim libmagickwand-dev imagemagick
         if [ $? -ne 0 ]; then
         	echo "Error: unable to install redmine. Exiting ..."
@@ -2117,18 +2117,28 @@ if [ "$ARCH" == "x86_64" ]; then
 
         # Install bundler
         gem install bundler
-        bundle install --without development test
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install bundler. Exiting ..."
-                exit
+                exit 3
         fi
+	
+	# Install thin
+        gem install thin 
+        if [ $? -ne 0 ]; then
+                echo "Error: unable to install thin. Exiting ..."
+                exit 3
+        fi
+	
+	echo "gem 'thin'" > Gemfile.local
+	bundle install --without development test
+	thin install
 
         # Generate secret token
         bundle exec rake generate_secret_token
 
         # Prepare DB and install all tables:
-        RAILS_ENV=production bundle exec rake db:migrate
-        RAILS_ENV=production bundle exec rake redmine:load_default_data
+        #RAILS_ENV=production bundle exec rake db:migrate
+        #RAILS_ENV=production bundle exec rake redmine:load_default_data
 else
         echo "Skipping redmine installation. x86_64 Needed / Detected: $ARCH"
 fi
