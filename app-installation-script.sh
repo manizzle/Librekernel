@@ -6,7 +6,7 @@ PROCESSOR="Not Detected"   	# Processor type (ARM/Intel/AMD)
 HARDWARE="Not Detected"    	# Hardware type (Board/Physical/Virtual)
 PLATFORM="Not Detected"         # Platform type	(U12/U14/D7/D8/T7)
 EXT_INTERFACE="Not Detected"	# External Interface (Connected to Internet) 
-INT_INETRFACE="Not Detected"	# Internal Interface (Connected to local network)
+INT_INTERFACE="Not Detected"	# Internal Interface (Connected to local network)
 
 
 # ----------------------------------------------
