@@ -134,13 +134,7 @@ check_requirements()
 	echo -n "Root partition size: "
 	STORAGE=`df / | grep -w "/" | awk '{print $4}'`
 	echo "$STORAGE KB" 	
-       
-        # Checking network interfaces quantity.
-	# if [ $NET_INTERFACES -le 1 ]; then
-        #	echo "You need at least 2 network interfaces. Exiting"
-        #	exit 4 
-        # fi
-	
+       	
 	# Checking physical memory size.
         if [ $MEMORY -le 3600000 ]; then 
 		echo "You need at least 4GB of RAM. Exiting"
@@ -203,33 +197,30 @@ get_interfaces()
 		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
 		echo "Internet connection established on interface $EXT_INTERFACE"
 	else
-		# Checking eth0 for Internet connection
-        	echo "Getting Internet access on eth0"
-		echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-		echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-		echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
-		/etc/init.d/networking restart 
-		if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-			echo "Internet conection established on: eth0"	
-			EXT_INTERFACE="eth0"
-		else
-			echo "Warning: Unable to get Internet access on eth0"
-        		# Checking eth1 for Internet connection
-			echo "Getting Internet access on eth1"
-	        	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+		# Test all available ethernet interfaces for internet connection.
+		# Useful if there are more than two ethernet interfaces.
+
+		for i in `ifconfig -s | awk '{print $1}' | grep eth`
+		do 
+			iface="$i"
+			echo "Getting Internet access on eth0"
+			echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
 			echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-			echo -e "auto eth1\niface eth1 inet dhcp" >> /etc/network/interfaces
+			echo -e  "auto $iface\niface $iface inet dhcp" >> /etc/network/interfaces
 			/etc/init.d/networking restart 
 			if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-				echo "Internet conection established on: eth1"	
-				EXT_INTERFACE="eth1"
+				echo "Internet conection established on: $iface"	
+				EXT_INTERFACE="$iface"
+				break
+			fi
+		done
+			if [[ -z $EXT_INTERFACE ]]
 			else
-				echo "Warning: Unable to get Internet access on eth1"
-				echo "Please plugin Internet cable to eth0 or eth1 and enable DHCP on gateway"
+				echo "Warning: Unable to get Internet access on available interfaces"
+				echo "Please plugin Internet cable and enable DHCP on gateway"
 				echo "Error: Unable to get Internet access. Exiting"
 				exit 7
 			fi
-		fi
 	fi
 	# Getting internal interface name
         INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
@@ -256,7 +247,6 @@ configure_repositories ()
 	/etc/init.d/ntp restart > /dev/null 2>&1
 	echo "Date and time have been set"
 	date	
-	
 	
 	echo "Configuring repositories ... "
 
@@ -322,8 +312,6 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
 		
 		# preparing i2p repo 
-        	#echo 'deb http://deb.i2p2.no/ trusty main' >/etc/apt/sources.list.d/i2p.list
-        	#echo 'deb-src http://deb.i2p2.no/ trusty main' >>/etc/apt/sources.list.d/i2p.list
                 echo -ne '\n' | apt-add-repository ppa:i2p-maintainers/i2p
 
 		# preparing tor repo 
@@ -354,15 +342,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' > /etc/apt/sources.list.d/owncloud.list
 		wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/Release.key -O- | apt-key add -
-
-		# Prepare prosody repo
-		# echo 'deb http://packages.prosody.im/debian wheezy main' > /etc/apt/sources.list.d/prosody.list
-		# wget https://prosody.im/files/prosody-debian-packages.key -O- | apt-key add -
  
 		# Prepare tahoe repo
 		echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 8CF6E896B3C01B09
-		# W: GPG error: https://dl.dropboxusercontent.com wheezy Release: The following signatures were invalid: KEYEXPIRED 1460252357
 				
 		# Prepare yacy repo
 		echo 'deb http://debian.yacy.net ./' > /etc/apt/sources.list.d/yacy.list
@@ -391,9 +374,6 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		export DEBIAN_FRONTEND=noninteractive
 
 		# Configuring Repositories for Debian 8
-		#echo "deb http://ftp.es.debian.org/debian/ jessie main" > /etc/apt/sources.list
-		#echo "deb http://ftp.es.debian.org/debian/ jessie-updates main" >> /etc/apt/sources.list
-		#echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
 		cat << EOF >  /etc/apt/sources.list
 deb http://ftp.debian.org/debian jessie main contrib non-free
 deb http://ftp.debian.org/debian jessie-updates main contrib non-free
@@ -420,10 +400,6 @@ EOF
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/ /' > /etc/apt/sources.list.d/owncloud.list
 		wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/Release.key -O- | apt-key add -
         
-
-		# Prepare prosody repo
-#		echo 'deb http://packages.prosody.im/debian wheezy main' > /etc/apt/sources.list.d/prosody.list
-#		wget https://prosody.im/files/prosody-debian-packages.key -O- | apt-key add -
  
 		# Prepare tahoe repo
 		echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
@@ -832,7 +808,7 @@ install_mailpile()
 
 # ----------------------------------------------
 # Function to install EasyRTC package
-# ----------------------------------------------
+# -----------------------------------------------
 install_easyrtc() 
 {
 	echo "Installing EasyRTC package ..."
@@ -1384,17 +1360,6 @@ Ext_interface: $EXT_INTERFACE\n\
 Int_interface: $INT_INTERFACE" \
                  > /var/box_variables
 		fi
-	else
-		touch /var/box_variables	
-        	echo -e \
-"Platform: $PLATFORM\n\
-Hardware: $HARDWARE\n\
-Processor: $PROCESSOR\n\
-Architecture: $ARCH\n\
-Ext_interface: $EXT_INTERFACE\n\
-Int_interface: $INT_INTERFACE" \
-                 > /var/box_variables
-	fi
 }
 
 
