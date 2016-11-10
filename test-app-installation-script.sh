@@ -14,6 +14,16 @@ export GIT_SSL_NO_VERIFY=true
 export INSTALL_HOME=`pwd`
 export DEBIAN_FRONTEND=noninteractive
 #----------------------------------------------
+# check_root
+# ----------------------------------------------
+check_root ()
+{
+	echo "Checking user root ..."
+	if [ "$(whoami)" != "root" ]; then
+		echo "You need to be root to proceed. Exiting"
+		exit 2
+	fi
+}
 # This function detects platform.
 #
 # Suitable platform are:
@@ -45,6 +55,48 @@ get_platform ()
 	echo "Platform: $PLATFORM"
 }
 # ----------------------------------------------
+# This function checks hardware 
+# Hardware can be.
+# 1. ARM for odroid board.
+# 2. INTEL or AMD for Physical/Virtual machine.
+# Function gets Processor and Hardware types and saves
+# them in PROCESSOR and HARDWARE variables.
+# ----------------------------------------------
+get_hardware()
+{
+        echo "Detecting hardware ..."
+      
+        # Checking CPU for ARM and saving
+	# Processor and Hardware types in
+	# PROCESSOR and HARDWARE variables
+	if grep ARM /proc/cpuinfo > /dev/null 2>&1; then    
+           PROCESSOR="ARM"	                           
+           HARDWARE=`cat /proc/cpuinfo | grep Hardware | awk {'print $3'}`   
+        # Checking CPU for Intel and saving
+	# Processor and Hardware types in
+	# PROCESSOR and HARDWARE variables
+	elif grep Intel /proc/cpuinfo > /dev/null 2>&1;  then 
+           PROCESSOR="Intel"	                             
+           HARDWARE=`dmidecode -s system-product-name`       
+        # Checking CPU for AMD and saving
+	# Processor and Hardware types in
+	# PROCESSOR and HARDWARE variables
+	elif grep AMD /proc/cpuinfo > /dev/null 2>&1;  then 
+           PROCESSOR="AMD"	                             
+           HARDWARE=`dmidecode -s system-product-name`       
+	fi
+	
+	# Detecting Architecture
+ 	ARCH=`uname -m`
+
+        # Printing Processor Hardware and Architecture types     
+
+	echo "Processor: $PROCESSOR"
+        echo "Hardware: $HARDWARE"
+	echo "Architecture: $ARCH"
+
+}
+# ----------------------------------------------
 # check_internet
 # ----------------------------------------------
 check_internet () 
@@ -56,15 +108,132 @@ check_internet ()
 	fi
 }
 # ----------------------------------------------
-# check_root
+# This script checks requirements for Physical 
+# Machines.
+# 
+#  Minimum requirements are:
+#
+#  * 2 Network Interfaces.
+#  * 4 GB Physical Memory (RAM).
+#  * 16 GB Free Space On Hard Drive.
+#
 # ----------------------------------------------
-check_root ()
+check_requirements()
 {
-	echo "Checking user root ..."
-	if [ "$(whoami)" != "root" ]; then
-		echo "You need to be root to proceed. Exiting"
-		exit 2
+	echo "Checking requirements ..."
+
+        # This variable contains network interfaces quantity.  
+	# NET_INTERFACES=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | wc -l`
+
+        # This variable contains total physical memory size.
+	echo -n "Physical memory size: "
+        MEMORY=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+	echo "$MEMORY KB"	
+
+	# This variable contains total free space on root partition.
+	echo -n "Root partition size: "
+	STORAGE=`df / | grep -w "/" | awk '{print $4}'`
+	echo "$STORAGE KB" 	
+       
+        # Checking network interfaces quantity.
+	# if [ $NET_INTERFACES -le 1 ]; then
+        #	echo "You need at least 2 network interfaces. Exiting"
+        #	exit 4 
+        # fi
+	
+	# Checking physical memory size.
+        if [ $MEMORY -le 3600000 ]; then 
+		echo "You need at least 4GB of RAM. Exiting"
+                exit 5
+        fi
+
+	# Checking free space. 
+	MIN_STORAGE=12000000
+	STORAGE2=`echo $STORAGE | awk -F. {'print $1'}`
+	if [ $STORAGE2 -lt $MIN_STORAGE ]; then
+		echo "You need at least 16GB of free space. Exiting"
+		exit 6
 	fi
+	sleep 1
+}
+# ----------------------------------------------
+# This function enables DHCP client and checks 
+# for Internet on predefined network interface.
+#
+# Steps to define interface are:
+#
+# 1. Checking Internet access. 
+# *
+# *
+# ***** If success. 
+# *
+# *     2. Get Interface name 
+# *
+# ***** If no success. 
+#     *
+#     * 2. Checking for DHCP server and Internet in  
+#       *  network connected to eth0.
+#       *
+#       ***** If success.
+#       *   *
+#       *   * 2. Enable DHCP client on eth0 and   
+#       *        default route to eth0
+#       *
+#       ***** If no success. 
+#           * 
+#           * 2. Checking for DHCP server and Internet 
+#           *  in network connected to eth1
+#           *
+#           ***** If success.
+#           *   * 
+#           *   * 3. Enable DHCP client on eth1.
+#           *
+#           *
+#           ***** If no success.
+#               *
+#               * 3. Warn user and exit with error.
+#
+# ----------------------------------------------
+get_interfaces()
+{
+	# Check internet Connection. If Connection exist then get 
+	# and save Internet side network interface name in 
+	# EXT_INTERFACE variable
+	if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
+		echo "Internet connection established on interface $EXT_INTERFACE"
+	else
+		# Checking eth0 for Internet connection
+        	echo "Getting Internet access on eth0"
+		echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+		echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
+		echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
+		/etc/init.d/networking restart 
+		if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+			echo "Internet conection established on: eth0"	
+			EXT_INTERFACE="eth0"
+		else
+			echo "Warning: Unable to get Internet access on eth0"
+        		# Checking eth1 for Internet connection
+			echo "Getting Internet access on eth1"
+	        	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+			echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
+			echo -e "auto eth1\niface eth1 inet dhcp" >> /etc/network/interfaces
+			/etc/init.d/networking restart 
+			if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+				echo "Internet conection established on: eth1"	
+				EXT_INTERFACE="eth1"
+			else
+				echo "Warning: Unable to get Internet access on eth1"
+				echo "Please plugin Internet cable to eth0 or eth1 and enable DHCP on gateway"
+				echo "Error: Unable to get Internet access. Exiting"
+				exit 7
+			fi
+		fi
+	fi
+	# Getting internal interface name
+        INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
+        echo "Internal interface: $INT_INTERFACE"
 }
 # ----------------------------------------------
 # configure_repositories
@@ -289,23 +458,6 @@ EOF
 		echo "deb https://packages.elastic.co/logstash/2.4/debian stable main" > /etc/apt/sources.list.d/elastic.list
 
 	
-		# Prepare backports repo (suricata, roundcube)
-#		echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list
-
-		# Prepare bro repo
-#		wget http://download.opensuse.org/repositories/network:bro/Debian_8.0/Release.key -O- | apt-key add -
-#		echo 'deb http://download.opensuse.org/repositories/network:/bro/Debian_8.0/ /' > /etc/apt/sources.list.d/bro.list
-
-		# Prepare elastic repo
-#		wget https://packages.elastic.co/GPG-KEY-elasticsearch -O- | apt-key add -
-#		echo "deb http://packages.elastic.co/kibana/4.5/debian stable main" > /etc/apt/sources.list.d/kibana.list
-#		echo "deb https://packages.elastic.co/logstash/2.3/debian stable main" > /etc/apt/sources.list.d/logstash.list
-#		echo "deb https://packages.elastic.co/elasticsearch/2.x/debian stable main" > /etc/apt/sources.list.d/elastic.list
-
-		# Prepare passenger repo
-#		apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
-#		echo "deb https://oss-binaries.phusionpassenger.com/apt/passenger jessie main" > /etc/apt/sources.list.d/passenger.list
-
 # Preparing repositories for Trisquel GNU/Linux 7.0
 
 	elif [ $PLATFORM = "T7" ]; then
@@ -536,176 +688,6 @@ if [ ! -e  /var/www/friendica ]; then
 	chmod g+rwx /var/www/friendica/.htconfig.php
 fi
 
-}
-# ----------------------------------------------
-# This function checks hardware 
-# Hardware can be.
-# 1. ARM for odroid board.
-# 2. INTEL or AMD for Physical/Virtual machine.
-# Function gets Processor and Hardware types and saves
-# them in PROCESSOR and HARDWARE variables.
-# ----------------------------------------------
-get_hardware()
-{
-        echo "Detecting hardware ..."
-      
-        # Checking CPU for ARM and saving
-	# Processor and Hardware types in
-	# PROCESSOR and HARDWARE variables
-	if grep ARM /proc/cpuinfo > /dev/null 2>&1; then    
-           PROCESSOR="ARM"	                           
-           HARDWARE=`cat /proc/cpuinfo | grep Hardware | awk {'print $3'}`   
-        # Checking CPU for Intel and saving
-	# Processor and Hardware types in
-	# PROCESSOR and HARDWARE variables
-	elif grep Intel /proc/cpuinfo > /dev/null 2>&1;  then 
-           PROCESSOR="Intel"	                             
-           HARDWARE=`dmidecode -s system-product-name`       
-        # Checking CPU for AMD and saving
-	# Processor and Hardware types in
-	# PROCESSOR and HARDWARE variables
-	elif grep AMD /proc/cpuinfo > /dev/null 2>&1;  then 
-           PROCESSOR="AMD"	                             
-           HARDWARE=`dmidecode -s system-product-name`       
-	fi
-	
-	# Detecting Architecture
- 	ARCH=`uname -m`
-
-        # Printing Processor Hardware and Architecture types     
-
-	echo "Processor: $PROCESSOR"
-        echo "Hardware: $HARDWARE"
-	echo "Architecture: $ARCH"
-
-}
-# ----------------------------------------------
-# This script checks requirements for Physical 
-# Machines.
-# 
-#  Minimum requirements are:
-#
-#  * 2 Network Interfaces.
-#  * 4 GB Physical Memory (RAM).
-#  * 16 GB Free Space On Hard Drive.
-#
-# ----------------------------------------------
-check_requirements()
-{
-	echo "Checking requirements ..."
-
-        # This variable contains network interfaces quantity.  
-	# NET_INTERFACES=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | wc -l`
-
-        # This variable contains total physical memory size.
-	echo -n "Physical memory size: "
-        MEMORY=`grep MemTotal /proc/meminfo | awk '{print $2}'`
-	echo "$MEMORY KB"	
-
-	# This variable contains total free space on root partition.
-	echo -n "Root partition size: "
-	STORAGE=`df / | grep -w "/" | awk '{print $4}'`
-	echo "$STORAGE KB" 	
-       
-        # Checking network interfaces quantity.
-	# if [ $NET_INTERFACES -le 1 ]; then
-        #	echo "You need at least 2 network interfaces. Exiting"
-        #	exit 4 
-        # fi
-	
-	# Checking physical memory size.
-        if [ $MEMORY -le 3600000 ]; then 
-		echo "You need at least 4GB of RAM. Exiting"
-                exit 5
-        fi
-
-	# Checking free space. 
-	MIN_STORAGE=12000000
-	STORAGE2=`echo $STORAGE | awk -F. {'print $1'}`
-	if [ $STORAGE2 -lt $MIN_STORAGE ]; then
-		echo "You need at least 16GB of free space. Exiting"
-		exit 6
-	fi
-	sleep 1
-}
-# ----------------------------------------------
-# This function enables DHCP client and checks 
-# for Internet on predefined network interface.
-#
-# Steps to define interface are:
-#
-# 1. Checking Internet access. 
-# *
-# *
-# ***** If success. 
-# *
-# *     2. Get Interface name 
-# *
-# ***** If no success. 
-#     *
-#     * 2. Checking for DHCP server and Internet in  
-#       *  network connected to eth0.
-#       *
-#       ***** If success.
-#       *   *
-#       *   * 2. Enable DHCP client on eth0 and   
-#       *        default route to eth0
-#       *
-#       ***** If no success. 
-#           * 
-#           * 2. Checking for DHCP server and Internet 
-#           *  in network connected to eth1
-#           *
-#           ***** If success.
-#           *   * 
-#           *   * 3. Enable DHCP client on eth1.
-#           *
-#           *
-#           ***** If no success.
-#               *
-#               * 3. Warn user and exit with error.
-#
-# ----------------------------------------------
-get_interfaces()
-{
-	# Check internet Connection. If Connection exist then get 
-	# and save Internet side network interface name in 
-	# EXT_INTERFACE variable
-	if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
-		echo "Internet connection established on interface $EXT_INTERFACE"
-	else
-		# Checking eth0 for Internet connection
-        	echo "Getting Internet access on eth0"
-		echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-		echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-		echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
-		/etc/init.d/networking restart 
-		if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-			echo "Internet conection established on: eth0"	
-			EXT_INTERFACE="eth0"
-		else
-			echo "Warning: Unable to get Internet access on eth0"
-        		# Checking eth1 for Internet connection
-			echo "Getting Internet access on eth1"
-	        	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-			echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-			echo -e "auto eth1\niface eth1 inet dhcp" >> /etc/network/interfaces
-			/etc/init.d/networking restart 
-			if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-				echo "Internet conection established on: eth1"	
-				EXT_INTERFACE="eth1"
-			else
-				echo "Warning: Unable to get Internet access on eth1"
-				echo "Please plugin Internet cable to eth0 or eth1 and enable DHCP on gateway"
-				echo "Error: Unable to get Internet access. Exiting"
-				exit 7
-			fi
-		fi
-	fi
-	# Getting internal interface name
-        INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
-        echo "Internal interface: $INT_INTERFACE"
 }
 # ----------------------------------------------
 # Function to install modsecurity
@@ -1471,6 +1453,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_ndpi		# Install ndpi package
 	save_variables	        # Save detected variables
 fi
+
 # ---------------------------------------------
 # If script reachs to this point then it's done 
 # successfully
