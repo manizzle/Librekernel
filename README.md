@@ -647,13 +647,6 @@ There are list of modules that need to be connected to odroid board, so script w
 You can fine information about necessary modules here
 If any module is missed user will get warning and script will exit.
 
- - Step 5.2. Configuring bridge interfaces.
-In this step script will configure 2 bridge interfaces br0 and br1.
-    eth0 and wlan0 will be bridged into interface br0
-    eth1 and wlan1 will be bridged into interface br1
-In ethernet network, br0 should be connected to Internet and br0 to local network. In wireless network, bridge interdace with wore powerful wlan will be connected to Internet and other one to local network.
-After configuring bridge interfaces script will enable dhcp chient on external network interface and set static ip address 10.0.0.1/8 in internal network interface, and then check the Internet connection.
-If everything goes fine it will process to next step, otherwise will warn the user to plug the machine to Internet and exit.
 
  - Step 6.2. Preparing repositories and updating sources
 The same as in Physical/Virtual machine case.
@@ -666,29 +659,4 @@ If step 7 finished successfully then test.sh execution for odroid board is finis
 Setup the proper exit for the script with a proper succes or not
 Success need to be based in a list check for all apps has being installed.
  
-
-
-
-#app-configuration-script.sh (Parametrization script)**
-
-It aims to configure all the packages and services.
-
-![configuration_script_](https://cloud.githubusercontent.com/assets/18449119/17086028/edfbbd78-51e7-11e6-996f-e67e849a88a0.JPG)
-
-1. Check User 
-  * You need to run script as root user
-
-2. Get variables
-  * Get variables values defined by app-installation-script.sh
-
-3. Configure network interfaces
-  * External interface will be configured to get ip dinamically 
-  * Internal interface will be configured with static ip address 10.0.0.1/24
-  There are also 4 virtual interfaces
-  * :1 10.0.0.251/24 for Yacy services
-  * :2 10.0.0.252/24 for Friendica services
-  * :3 10.0.0.253/24 for Owncloud services 
-  * :4 10.0.0.254/24 for Mailpile services
-
-
 
