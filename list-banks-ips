@@ -6,7 +6,8 @@ Implementation:
 ******************
 
 Final Form:
-bankname    bankcompletedomain      ip x.x.x.x    reversedns
+bank SUBdomain             ipx.x.x.x    
+reversedns                 ipx.x.x.x  
 
 Bank Names Domains (at the buton):
 -- https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
@@ -26,14 +27,6 @@ Reverse Domain Name Generator
 - shodan
 - http://www.dnspython.org/
 
-Domain Generator
-- Google + ?
-- http://openaccess.dialog.com/ip/
-- http://www.ldap.verisignlabs.com/
-- http://www.yougetsignal.com/tools/web-sites-on-web-server/
--- http://www.yougetsignal.com/list-of-domain-names/
-- https://www.robtex.com/
-
 Sub-Domain Generator
 - https://github.com/guelfoweb/knock
 - https://github.com/aboul3la/Sublist3r
@@ -47,6 +40,9 @@ Sub-Domain Generator
 - http://tools.kali.org/information-gathering/dnsrecon
 - https://github.com/infosec-au/altdns
 - https://github.com/Cleveridge/cleveridge-subdomain-scanner
+
+
+
 
 IP Generator
 - dig, nslookup
@@ -2532,3 +2528,21 @@ AS62481 SUNTRUST-BANK - SunTrust Banks, Inc.
 AS62556 LANB - LOS ALAMOS NATIONAL BANK
 AS62848 PMB - Pacific Mercantile Bank
 AS62934 FFBF-PROD01 - First Federal Bank of Florida
+
+Bank Names Domains (at the buton):
+-- https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
+-- https://www.thebankerdatabase.com/index.cfm/banks/all/
+-- http://www.allbanks.org/main/list/0.html
+-- http://pugahome.tripod.com/allbanks.htm
+BGP AS Database (at the button the AS belonging to banks)
+- http://www.bgplookingglass.com/list-of-autonomous-system-numbers
+- http://www.bgplookingglass.com/list-of-autonomous-system-numbers-2
+- https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=bgp
+- https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=%22autonomous+system%22
+Domain Generator (NOT REQUIRED!)
+- Google 
+- http://openaccess.dialog.com/ip/
+- http://www.ldap.verisignlabs.com/
+- http://www.yougetsignal.com/tools/web-sites-on-web-server/
+-- http://www.yougetsignal.com/list-of-domain-names/
+- https://www.robtex.com/
