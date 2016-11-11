@@ -9,25 +9,17 @@ Final Form:
 bank SUBdomain             ipx.x.x.x    
 reversedns                 ipx.x.x.x  
 
-Bank Names Domains (at the buton):
--- https://www.thebankerdatabase.com/index.cfm/banks/all/?letter=A
--- https://www.thebankerdatabase.com/index.cfm/banks/all/
--- http://www.allbanks.org/main/list/0.html
--- http://pugahome.tripod.com/allbanks.htm
+Bank Names Domains (at the buton the list)
 
-BGP AS Database (at the button the AS belonging to banks)
-- http://www.bgplookingglass.com/list-of-autonomous-system-numbers
-- http://www.bgplookingglass.com/list-of-autonomous-system-numbers-2
-- https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=bgp
-- https://github.com/CIRCL/bgp-ranking/search?utf8=%E2%9C%93&q=%22autonomous+system%22
+BGP ASs Database (at the button the AS belonging to banks)
 
-Reverse Domain Name Generator
+Reverse Domain Name Generator (check with all BGP IP blocks and generate all discovered reverse domains with respective IPs)
 - dig
 - nslookup
 - shodan
 - http://www.dnspython.org/
 
-Sub-Domain Generator
+Sub-Domain Generator (check with all domains and generate all discovered subdmains with IPs)
 - https://github.com/guelfoweb/knock
 - https://github.com/aboul3la/Sublist3r
 - https://github.com/rbsec/dnscan
@@ -40,9 +32,6 @@ Sub-Domain Generator
 - http://tools.kali.org/information-gathering/dnsrecon
 - https://github.com/infosec-au/altdns
 - https://github.com/Cleveridge/cleveridge-subdomain-scanner
-
-
-
 
 IP Generator
 - dig, nslookup
