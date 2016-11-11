@@ -1,7 +1,5 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
-
-
 # What the app-installation-script does?
 
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
@@ -156,6 +154,8 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 #How Librerouter will threat the network traffic as a Privacy Firewall in router mode (most common).
 
+![blocking_diagram_1](https://cloud.githubusercontent.com/assets/13025157/18578310/871cd3b2-7bef-11e6-96d2-6b45fd7662e3.png)
+
  - a) Clean network web browsing traffic (IoT, cookies tracks, scripts tracks, malware, exploits, attackes, non privacy friendly corporations web servers)
  - b) Blocking not privacy friendly protocols and inspecting inside ssl tunnels.
  - c) Monitoring for abnormal behaviours.
@@ -198,98 +198,18 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 ![dnsipdated](https://cloud.githubusercontent.com/assets/17382786/17974408/4054bb80-6ae6-11e6-9747-a79d3d703e65.png)
  
 
-###HSTS 
-https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+## Can the user in the future workaround the redirection in router mode:
 
-Problem: when a use uses the google/bing search by a direct query keyword in the browsers
-The browser enfoces hsts then the certificate from our redirected yacy fails.
-Then we cant inspect the traffic for this big list of domains:
-https://cs.chromium.org/chromium/src/net/http/transport_security_state_static.json
-We inspect for protecting the browser against exploitation of bugs and attacks.
-Who can guaranteed this entities are not doing it?
-
-We inspect the HSTS domains with Snort,Suricata BRO and CLamAV via ICAP CCAP and Squid bumping
-
-The problem is that the redirection we made when the user tries gmail for instance in to local service mailpile fails with multiple browser because hsts.
-
-Why we redirect gmail to mailpile or roundcube? obvious we offer s elfhosted solution better than corporate centralized.
+Yes in the future via GUI should be possible to reconfigure this cage enabling services as plugins.
 
 
 
-#### Can the user in the future workaround it:
+#Temporary architecture
 
-Yes in the future via GUI should be possible to reconfigure this cage.
-
-
-
-#Network use cases
 ![network_diagram_2](https://cloud.githubusercontent.com/assets/13025157/18578293/695f395a-7bef-11e6-8d83-82d88b6b0feb.png)
 
 
- -  a) https to onion
- -  b) https to i2p
- -  c) http to onion
- -  d) http to i2p
- -  e) http with ads to internet
- -  f) https with ads to internet
- -  g) https with not allowed content porn to internet
- -  h) https to a bank
- -  i) http to a bad domain
- -  h) https to a bad domain
- -  i) https to a good domain that tries to exploit the browser via flash exploit
- -  h) https that tries to download a exe file with virus.
- -  i) http conecting to a place but this conection matches a botnet signature.
- -  j) ssh to a server between the librerouter and internet (internal lan of the user , external side of the librerouter)
- -  k) tahoe trying to use TOR or I2P addresses.
- -  l) user browser a keyword in browser formularie > browser tries to query google or duckduckgo or bing for that search.
- -  m) Attacks  to local services url from  from TOR or I2P.
- -  n) any local machine tries to go to youtube> how to macke interactive the procces where librerouter ask to the users to allow or not.
- -  o) any web tries to track via installing certificates like fb of gmail or google to spy on users.
- -  p) how the user will allow or not any IoT while is blocked in librerouter?
- -  q) what we do with udp?
- -  r) udp dns request that not goes to unbound?
- -  s) udp p2p trafic from emule?
- -  t) udp others?
- -  u) icmp ping to any IP
- -  v) non http,icmp,https,dns traffic (how layer 7 will try to identify the protocol and alert the user to allow or not)
- -  w) a request from xmmp federation from internet or from TOR or I2P
- -  x) to allow or not javascript,flash, etc on preallowed white and black list
- -  y) yacy trying to go by TOR or I2P
- -  z) prosody trying to conect via over TOR
- -  a1) webrtc protocol
- -  a2) hsts via browser direct entry for example gmaik push enter key
- -  a3) hsts via browser corrected entry form for example https://www.gmail.com enter key 
-
-#Blocked stuff
-![blocking_diagram_1](https://cloud.githubusercontent.com/assets/13025157/18578310/871cd3b2-7bef-11e6-96d2-6b45fd7662e3.png)
-
-##Intelligence IP and Domain Providers:
-
-- Shallalist
-- mesdk12 http://squidguard.mesd.k12.or.us/blacklists.tgz
-- http://urlblacklist.com/?sec=download
-- https://www.iblocklist.com/lists
-- http://iplists.firehol.org/
-- https://github.com/rustybird/corridor
-- Spamhaus
-- Virustotal
-- http://urlblacklist.com/
-
 Where we use it?
-
-##Privacy testers: We used in the browser from the simulated client with windows 10
-
- - https://anonymous-proxy-servers.net/en/help/security_test.html
- - www.iprivacytools.com
- - checker.samair.ru
- - https://anonymous-proxy-servers.net/en/help/security_test.html
- - https://www.onion-router.net/Tests.html
- - analyze.privacy.net
- - https://www.maxa-tools.com/cookie-privacy.php
- - https://panopticlick.eff.org/
- - https://www.perfect-privacy.com/german/webrtc-leaktest/
- - https://www.browserleaks.com/
- - browserspy.dk
 
 ##Squid tuning conf for Privacy : squid.conf 
 
@@ -615,4 +535,18 @@ Same configuration works fine with Suricata v3.0.0.
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 
+###HSTS 
+https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
 
+Problem: when a use uses the google/bing search by a direct query keyword in the browsers
+The browser enfoces hsts then the certificate from our redirected yacy fails.
+Then we cant inspect the traffic for this big list of domains:
+https://cs.chromium.org/chromium/src/net/http/transport_security_state_static.json
+We inspect for protecting the browser against exploitation of bugs and attacks.
+Who can guaranteed this entities are not doing it?
+
+We inspect the HSTS domains with Snort,Suricata BRO and CLamAV via ICAP CCAP and Squid bumping
+
+The problem is that the redirection we made when the user tries gmail for instance in to local service mailpile fails with multiple browser because hsts.
+
+Why we redirect gmail to mailpile or roundcube? obvious we offer s elfhosted solution better than corporate centralized.
