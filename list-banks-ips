@@ -15,9 +15,12 @@ wget http://bgp.he.net/ASNUMBER#_prefixes
 parse all:
 <a href="/net/62.76.0.0/24">62.76.0.0/24</a>
 <a href="/net/xx.yyy.zzzz.kkkk/AA">62.76.0.0/24</a>
+Generate a document with all  http://magic-cookie.co.uk/iplist-cgi.txt
+Or scann al subnets with nmap quick -Pn save al llist ips in text file
 
 Reverse Domain Name Generator (check with all BGP IP blocks and generate all discovered reverse domains with respective IPs)
-- dig
+- host all list of ip in the block
+- dig -x per ip in ip block
 - nslookup
 - shodan
 - http://www.dnspython.org/
