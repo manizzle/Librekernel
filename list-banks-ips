@@ -9,9 +9,9 @@ Final Form:
 bank SUBdomain             ipx.x.x.x    
 reversedns                 ipx.x.x.x  
 
-Bank Names Domains (at the buton the list)
+Bank Names Domains (at the buton can find the list)
 
-BGP ASs Database (at the button the AS belonging to banks)
+BGP ASs Database (at the button can find whole the AS belonging to banks)
 
 Reverse Domain Name Generator (check with all BGP IP blocks and generate all discovered reverse domains with respective IPs)
 - dig
