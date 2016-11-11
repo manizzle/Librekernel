@@ -107,7 +107,7 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
 
-#How Librerouter will threat the traffic as a Privacy Firewall.
+#How Librerouter will threat the network traffic as a Privacy Firewall.
 
 a) Clean network web browsing traffic (IoT, cookies tracks, scripts tracks, malware, exploits, attackes, non privacy friendly corporations web servers)
 b) Blocking not privacy friendly protocols and inspecting inside ssl tunnels.
