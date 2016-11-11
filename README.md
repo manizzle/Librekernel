@@ -1,6 +1,8 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
-###1. What the app-installation-script does?
+
+
+# What the app-installation-script does?
 
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
 
@@ -112,8 +114,9 @@ Report us problems
 Investigate and play while we continue developing it.
 New version of the instalaltion-configuration scripts,ISOs and OVA virtual machine export will be upcoming.
 
-#***Networking in Librerouter:
-There are two bridges with two interfaces each in PIPO in VM you dont have bridges (only 2 separated zone NICs):
+#Networking in Librerouter:
+
+There are two bridges with two interfaces each in the machine like two bridges (only 2 separated zone NICs):
 	
 1. External area red bridge acting as WAN (2 nics): cable or wireless interface as DHCP client of your internet router.
 2. Internal area gren bridge acting as LAN (2 nics): cable or wireless interface as an AP for being DHCP server for your new secure LAN.
@@ -125,41 +128,33 @@ There are two bridges with two interfaces each in PIPO in VM you dont have bridg
  - WAN is Cabled Ethernet, LAN is WiFi
  - WAN is Cabled Ethernet, LAN is Cabled Ethernet
 
-**Step 2: Setup the network.**
-
-Librerouter has 4 ways to work: 
+#Librerouter has 4 ways to work in the network: 
 
  - Server (no protection but services)
  - Network Router (services and network protection) (dont mix with NIC bridges that we have to separate 4 interfaces in 2 zones)
- - Pasive Security Sensor 
- - Transparent Man in the Middle Interception (hacking pentesting security testers)
+ 
+ - Pasive Security Sensor (not yet done)
+ - Transparent Man in the Middle Interception (hacking pentesting security testers) (not yet done)
  
 ##Server mode
 
 The way networking works in Librerouter will be:
 
 ![servermode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/36.png)
-
  -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
  -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not hable to defend against web browsing leaks,tracking,ads and malware)
-
 ![server](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/37.png)
-
 ![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
 
  
 ##Router bridge mode
-
 ![bridgemode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/38.png)
-
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
-
 ![untitled](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/39.png)
-
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
 
-#How Librerouter will threat the network traffic as a Privacy Firewall.
+#How Librerouter will threat the network traffic as a Privacy Firewall in router mode (most common).
 
  - a) Clean network web browsing traffic (IoT, cookies tracks, scripts tracks, malware, exploits, attackes, non privacy friendly corporations web servers)
  - b) Blocking not privacy friendly protocols and inspecting inside ssl tunnels.
