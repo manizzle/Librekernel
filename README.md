@@ -1,5 +1,56 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
+###1. What the app-installation-script does?
+
+![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
+
+ - Step 1. Checking user
+The script should be run by user root, if it was run by another user then it will warn and exit.
+
+ - Step 2. Checking Platform
+The all software intended to run on Debian 7/8 or Ubuntu 12.04/14.04, so if script finds another platform it will output an error and exit.
+
+ - Step 3. Checking Hardware
+As software can be installed either on odroid or Physical/Virtual machine, in this step we need to determine hardware. If script runs on odroid it should find Processor = ARM Hardware = XU3 or XU4 or C1+ or C2 If script runs on Physical/Virtual machine it should fine Processor = Intel After determining hardware type we can determine the next step.
+If hardware is Physical/Virtual machine
+
+ - Step 4. Checking requirements
+There are a list of minimum requirements that Physical/Virtual machine needs to meet.
+    2 network interfaces (ethernet or wlan)
+    1 GB of Physical memory
+    16 GB of Free disk space
+If machine meets the requirements then script goes to next step, otherwise it will warn and exit.
+
+ - Step 5. Getting DHCP client on interfaces
+In this step script first DHCP request from eth1 to get an ip address. If succeed, it will check for Internet connection and if Internet connection is established this step is done successfully. In any case of failure (no DHCP response or on Internet connection) script will try the same scenario for next interface. Order to try is - eth1, wlan1, eth0, wlan0 (list of available interfaces are available from step 4).
+Of no success in any interface, then script will warn user to plug the machine to Internet and will exit.
+
+ - Step 6. Preparing repositories and updating sources
+In this step script adds repository links for necessary packages into package manager sources and updates them. Script will output an error ant exit if it is not possible to add repositories or update sources.
+
+ - Step 7. Downloading and Installing packages
+As we already have repository sources updated in step 6, so at this point script will download and install packages using package manager tools. If something goes wrong during download or installation, script will output an error ant exit.
+If step 7 finished successfully then test.sh execution for Physical/Virtual machine is finished successfully and it's time to run the next script “app-installation-script.sh”.
+If hardware is odroid board
+
+ - Step 4.2. Check if the board assembled.
+There are list of modules that need to be connected to odroid board, so script will check if that modules are connected.
+You can fine information about necessary modules here
+If any module is missed user will get warning and script will exit.
+
+
+ - Step 6.2. Preparing repositories and updating sources
+The same as in Physical/Virtual machine case.
+
+ - Step 7.2. Downloading and Installing packages
+The same as in Physical/Virtual machine case.
+If step 7 finished successfully then test.sh execution for odroid board is finished successfully and it's time to run the next script “app-installation-script.sh”. 
+
+ - Step 8 Required (not implemented)
+Setup the proper exit for the script with a proper succes or not
+Success need to be based in a list check for all apps has being installed.
+ 
+ 
 #Setting up a lab to start to contribute:
 
 ESXi,VirtualBox,other vitrual lab:
@@ -609,54 +660,4 @@ Installs the drivers for Pipo X8 hardware (not necesary if you using a virtual e
  - SOUND CARD (there is no mic in the machine)  NON FREE
  - Ethernet drivers (both usb and onboard) are free.
 
-###1. What the app-installation-script does?
-
-![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
-
- - Step 1. Checking user
-The script should be run by user root, if it was run by another user then it will warn and exit.
-
- - Step 2. Checking Platform
-The all software intended to run on Debian 7/8 or Ubuntu 12.04/14.04, so if script finds another platform it will output an error and exit.
-
- - Step 3. Checking Hardware
-As software can be installed either on odroid or Physical/Virtual machine, in this step we need to determine hardware. If script runs on odroid it should find Processor = ARM Hardware = XU3 or XU4 or C1+ or C2 If script runs on Physical/Virtual machine it should fine Processor = Intel After determining hardware type we can determine the next step.
-If hardware is Physical/Virtual machine
-
- - Step 4. Checking requirements
-There are a list of minimum requirements that Physical/Virtual machine needs to meet.
-    2 network interfaces (ethernet or wlan)
-    1 GB of Physical memory
-    16 GB of Free disk space
-If machine meets the requirements then script goes to next step, otherwise it will warn and exit.
-
- - Step 5. Getting DHCP client on interfaces
-In this step script first DHCP request from eth1 to get an ip address. If succeed, it will check for Internet connection and if Internet connection is established this step is done successfully. In any case of failure (no DHCP response or on Internet connection) script will try the same scenario for next interface. Order to try is - eth1, wlan1, eth0, wlan0 (list of available interfaces are available from step 4).
-Of no success in any interface, then script will warn user to plug the machine to Internet and will exit.
-
- - Step 6. Preparing repositories and updating sources
-In this step script adds repository links for necessary packages into package manager sources and updates them. Script will output an error ant exit if it is not possible to add repositories or update sources.
-
- - Step 7. Downloading and Installing packages
-As we already have repository sources updated in step 6, so at this point script will download and install packages using package manager tools. If something goes wrong during download or installation, script will output an error ant exit.
-If step 7 finished successfully then test.sh execution for Physical/Virtual machine is finished successfully and it's time to run the next script “app-installation-script.sh”.
-If hardware is odroid board
-
- - Step 4.2. Check if the board assembled.
-There are list of modules that need to be connected to odroid board, so script will check if that modules are connected.
-You can fine information about necessary modules here
-If any module is missed user will get warning and script will exit.
-
-
- - Step 6.2. Preparing repositories and updating sources
-The same as in Physical/Virtual machine case.
-
- - Step 7.2. Downloading and Installing packages
-The same as in Physical/Virtual machine case.
-If step 7 finished successfully then test.sh execution for odroid board is finished successfully and it's time to run the next script “app-installation-script.sh”. 
-
- - Step 8 Required (not implemented)
-Setup the proper exit for the script with a proper succes or not
-Success need to be based in a list check for all apps has being installed.
- 
 
