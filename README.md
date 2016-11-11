@@ -209,93 +209,8 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 ![network_diagram_2](https://cloud.githubusercontent.com/assets/13025157/18578293/695f395a-7bef-11e6-8d83-82d88b6b0feb.png)
 
 
-Where we use it?
+#Engines especifications and configuration dependencies:
 
-##Squid tuning conf for Privacy : squid.conf 
-
-	- via off
-	- forwarded_for off
-	- header_access From deny all
-	- header_access Server deny all
-	- header_access WWW-Authenticate deny all
-	- header_access Link deny all
-	- header_access Cache-Control deny all
-	- header_access Proxy-Connection deny all
-	- header_access X-Cache deny all
-	- header_access X-Cache-Lookup deny all
-	- header_access Via deny all
-	- header_access Forwarded-For deny all
-	- header_access X-Forwarded-For deny all
-	- header_access Pragma deny all
-	- header_access Keep-Alive deny all
-	-   request_header_access Authorization allow all
-	-   request_header_access Proxy-Authorization allow all
-	-   request_header_access Cache-Control allow all
-	-   request_header_access Content-Length allow all
-	-   request_header_access Content-Type allow all
-	-   request_header_access Date allow all
-	-   request_header_access Host allow all
-	-   request_header_access If-Modified-Since allow all
-	-   request_header_access Pragma allow all
-	-   request_header_access Accept allow all
-	-   request_header_access Accept-Charset allow all
-	-   request_header_access Accept-Encoding allow all
-	-   request_header_access Accept-Language allow all
- 	-   request_header_access Connection allow all
-	-   request_header_access All deny all
-	-   forwarded_for delete
-	-   follow_x_forwarded_for deny all
- 	-   request_header_access X-Forwarded-For deny all
-	-   request_header_access From deny all
-	-   request_header_access Referer deny all
-	-   request_header_access User-Agent deny all
-
-##Squid ADS :
-
- - https://calomel.org/squid_adservers.html
- - http://adzapper.sourceforge.net/
- - http://pgl.yoyo.org/adservers/
-
-##Unboudndns implement list of ADs servers to be block:
-
- - https://github.com/jodrell/unbound-block-hosts
-
-##Squid SSL bumping for AV SSL and IPS (intrusion prevention applied to decrypt traffic) :
-
- - https://hitch-tls.org/
- - https://github.com/varnish/hitch
- - https://github.com/dani87/sslbump
- - https://github.com/jpelias/squid3-ssl-bump/blob/master/Install%20Squid%203.4%20with%20ssl%20bump%20on%20Debian%208%20(Jessie)
- - https://github.com/diladele
-
-##Squid Content filter with privacy enhacement:
-
- - https://github.com/andybalholm/redwood
-
-##IDS/IPS:
-
- - https://github.com/aircrack-ng/OpenWIPS-n
- - https://suricata-ids.org
- - https://www.snort.org
- - https://www.bro.org
- - https://github.com/lmco/vortex-ids
- - 
-##Graphical Interface for IDS/IPS:
- - https://github.com/StamusNetworks/scirius
- - https://github.com/jasonish/evebox
- - https://github.com/StamusNetworks/KTS
- - https://www.elastic.co/products/kibana
- - https://github.com/Snorby/snorby
- - https://www.prelude-siem.org/
- - https://github.com/mcholste/elsa
- - http://sguil.net
- - 
-##Network forensics with netflow
- - http://www.ntop.org
- - http://www.haka-security.org/hakabana.html
- - https://sourceforge.net/p/flowviewer/wiki/Home/
- - https://github.com/aptivate/pmgraph
- - http://nfdump.sourceforge.net 
 
 
 
@@ -304,16 +219,6 @@ Where we use it?
 ![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
 
 
-#NETWORK USE CASES
-
-When user is using HTTPS connection to a darknet domain, this traffic it's considered dangerus and insecure. (the goverment try to explodes the browser for deanonymization) On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
-If this connection it's to a HTTPS regular/banking domain, this SSL tunnel will be not open Bumped/inspected. Will be routed directly to the clearnet internet (ex: https://yourbank.com)
-
-When the user is using HTTP, because is considered insecure itself this clear traffic is going to go through TOR to add anonymization but after a threatment from the local engines to add privacy on it.. The user can also decide in the future about which things he dont want to use TOr for HTTP.
-
-- I2P domains/eepSite (ex: i2p2.i2p) will be redirected to I2P
-- Hidden services (ex: asdf1234.onion) will go through TOR
-- HTTP (ex: http://news.com) will go through TOR to the internet site
 
 
  
@@ -321,20 +226,20 @@ When the user is using HTTP, because is considered insecure itself this clear tr
 
 - Is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
 
-###TOR configurations.
+#TOR configurations.
 Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
 
-###I2P configuration.
+#I2P configuration.
 
-###NGINX configuration.
+#NGINX configuration.
 
-###Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
+#Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
 
-###Privoxy configuration.
+#Privoxy configuration.
 
-###Iptables configuration.
+#Iptables configuration.
 
-####Rules Description
+##Rules Description
 
 $INT_INTERFACE - is internal network interface
 
@@ -404,9 +309,14 @@ iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE
  - rule for NATing traffic from internal to extarnal interface
 
 
-###X further service configuration.
+# Modsecurity for Hidenservices and direct clearnet published NAT services
 
-### Suricata configuration.
+# Suricata Intrusion Prevention System Ruleset versus use cases configuration.
+
+When user is using HTTPS connection to a darknet domain, this traffic it's considered dangerus and insecure. (the goverment try to explodes the browser for deanonymization) On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
+If this connection it's to a HTTPS regular/banking domain, this SSL tunnel will be not open Bumped/inspected. Will be routed directly to the clearnet internet (ex: https://yourbank.com)
+
+When the user is using HTTP, because is considered insecure itself this clear traffic is going to go through TOR to add anonymization but after a threatment from the local engines to add privacy on it.. The user can also decide in the future about which things he dont want to use TOr for HTTP.
 To provide full internet security, we want IDS/IPS to inspect all kind of communications in our network: tor, i2p and direct.
 But we also want to inspect all secure connections. To do so, we use squid proxy with ssl-bump feature to perform mitm.
 All decrypted traffic goes to icap server, where it's being scanned by clam antivirus.
@@ -550,3 +460,42 @@ We inspect the HSTS domains with Snort,Suricata BRO and CLamAV via ICAP CCAP and
 The problem is that the redirection we made when the user tries gmail for instance in to local service mailpile fails with multiple browser because hsts.
 
 Why we redirect gmail to mailpile or roundcube? obvious we offer s elfhosted solution better than corporate centralized.
+
+##Squid tuning conf for Privacy : squid.conf 
+
+	- via off
+	- forwarded_for off
+	- header_access From deny all
+	- header_access Server deny all
+	- header_access WWW-Authenticate deny all
+	- header_access Link deny all
+	- header_access Cache-Control deny all
+	- header_access Proxy-Connection deny all
+	- header_access X-Cache deny all
+	- header_access X-Cache-Lookup deny all
+	- header_access Via deny all
+	- header_access Forwarded-For deny all
+	- header_access X-Forwarded-For deny all
+	- header_access Pragma deny all
+	- header_access Keep-Alive deny all
+	-   request_header_access Authorization allow all
+	-   request_header_access Proxy-Authorization allow all
+	-   request_header_access Cache-Control allow all
+	-   request_header_access Content-Length allow all
+	-   request_header_access Content-Type allow all
+	-   request_header_access Date allow all
+	-   request_header_access Host allow all
+	-   request_header_access If-Modified-Since allow all
+	-   request_header_access Pragma allow all
+	-   request_header_access Accept allow all
+	-   request_header_access Accept-Charset allow all
+	-   request_header_access Accept-Encoding allow all
+	-   request_header_access Accept-Language allow all
+ 	-   request_header_access Connection allow all
+	-   request_header_access All deny all
+	-   forwarded_for delete
+	-   follow_x_forwarded_for deny all
+ 	-   request_header_access X-Forwarded-For deny all
+	-   request_header_access From deny all
+	-   request_header_access Referer deny all
+	-   request_header_access User-Agent deny all
