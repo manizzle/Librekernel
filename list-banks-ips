@@ -1,10 +1,8 @@
 The Target of this document is to explain how to obtain the all banks WW for not enrouting this traffic via SQUID by an exception in iptables.
-Then the Banks traffic wont be bumped for security reasons. The requested list is and file with bankname bankcompletedomain      ip x.x.x.x    reversedns
+Then the Banks traffic wont be bumped for security reasons. The requested list is and file with bankname bankcompletedomain   ip x.x.x.x    reversedns
 
-******************
 Implementation:
 ******************
-
 Final Form:
 bank SUBdomain             ipx.x.x.x    
 reversedns                 ipx.x.x.x  
