@@ -222,12 +222,8 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 
 
  
-###Unbounddns server configuration.
-
-- Is implemented by configure_unbound() function. (lines 491-726 of app-configuration-script.sh) 
-
 #TOR configurations.
-Tor dns configuration is implemented by configure_tor() function. (lines 411-474 of app-configuration-script.sh) 
+Tor dns configuration is implemented like this...
 
 #I2P configuration.
 
