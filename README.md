@@ -76,12 +76,13 @@ There are two bridges with two interfaces each in PIPO in VM you dont have bridg
 
 **Step 2: Setup the network.**
 
-Librerouter has two way to work: 
+Librerouter has 4 ways to work: 
 
  - Server (no protection but services)
  - Network Router (services and network protection) (dont mix with NIC bridges that we have to separate 4 interfaces in 2 zones)
+ - Pasive Security Sensor 
+ - Transparent Man in the Middle Interception (hacking pentesting security testers)
  
-
 ##Server mode
 
 The way networking works in Librerouter will be:
@@ -109,13 +110,13 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 #How Librerouter will threat the network traffic as a Privacy Firewall.
 
-a) Clean network web browsing traffic (IoT, cookies tracks, scripts tracks, malware, exploits, attackes, non privacy friendly corporations web servers)
-b) Blocking not privacy friendly protocols and inspecting inside ssl tunnels.
-c) Monitoring for abnormal behaviours.
-d) Offering decentralized alternatives of the such called cloud services. 
-e) Will clean files in storage erasing metadata Sanitization (optional to classified and personal information) 
-f) Will protect the access to your webs publically in TOR-I2P and clearnet.(normal internet).
-d) Will selfhost search engine,email,storage,conference,collaborative,git,project managing,socialnetwork, TOR shop.
+ - a) Clean network web browsing traffic (IoT, cookies tracks, scripts tracks, malware, exploits, attackes, non privacy friendly corporations web servers)
+ - b) Blocking not privacy friendly protocols and inspecting inside ssl tunnels.
+ - c) Monitoring for abnormal behaviours.
+ - d) Offering decentralized alternatives of the such called cloud services. 
+ - e) Will clean files in storage erasing metadata Sanitization (optional to classified and personal information) 
+ - f) Will protect the access to your webs publically in TOR-I2P and clearnet.(normal internet).
+ - d) Will selfhost search engine,email,storage,conference,collaborative,git,project managing,socialnetwork, TOR shop.
 
 ![protocols policy](https://cloud.githubusercontent.com/assets/13025157/20144114/d6fe682e-a69b-11e6-8036-a0f12e717650.png)
 
