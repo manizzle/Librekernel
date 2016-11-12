@@ -1530,10 +1530,7 @@ local-data: "ntop.librenet. IN A 10.0.0.244"
 local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
-local-data: "squidguard.librenet. IN A 10.0.0.246"
-local-data: "gitlab.librenet. IN A 10.0.0.247"
-local-data: "trac.librenet. IN A 10.0.0.248"
-local-data: "redmine.librenet. IN A 10.0.0.249"' > /etc/unbound/unbound.conf
+local-data: "squidguard.librenet. IN A 10.0.0.246"' > /etc/unbound/unbound.conf
 
 for i in $(ls /var/lib/tor/hidden_service/)
 do
@@ -1557,6 +1554,22 @@ if [ $i == "mailpile" ]; then
 echo "local-data: \"$i.librenet. IN A 10.0.0.254\"" \
 >> /etc/unbound/unbound.conf
 fi
+if [ $i == "gitlab" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.247\"" \
+>> /etc/unbound/unbound.conf
+fi
+if [ $i == "trac" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.248\"" \
+>> /etc/unbound/unbound.conf
+fi
+if [ $i == "redmine" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.249\"" \
+>> /etc/unbound/unbound.conf
+fi
+if [ $i == "ssh" ]; then
+echo "local-data: \"$i.librenet. IN A 10.0.0.1\"" \
+>> /etc/unbound/unbound.conf
+fi
 done
 
 for i in $(ls /var/lib/tor/hidden_service/)
@@ -1578,6 +1591,18 @@ echo "local-data: \"$hn. IN A 10.0.0.253\"" >> /etc/unbound/unbound.conf
 fi
 if [ $i == "mailpile" ]; then
 echo "local-data: \"$hn. IN A 10.0.0.254\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "gitlab" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.247\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "trac" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.248\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "redmine" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.249\"" >> /etc/unbound/unbound.conf
+fi
+if [ $i == "ssh" ]; then
+echo "local-data: \"$hn. IN A 10.0.0.1\"" >> /etc/unbound/unbound.conf
 fi
 fi
 done
