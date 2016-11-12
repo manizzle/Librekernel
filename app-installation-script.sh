@@ -2146,34 +2146,57 @@ fi
 
 
 # ---------------------------------------------------------
-# Funtion to install ndpi package
+# Funtion to install ndpi and ndpi-netfilter package
 # ---------------------------------------------------------
 install_ndpi()
 {
         echo "Installing ndpi ..."
-        apt-get install -y --force-yes \
-        autogen automake autoconf libtool make libpcap-dev gcc
 
-        if [ ! -e nDPI ]; then
-                echo "Downloading ndpi ..."
-                git clone https://github.com/ntop/nDPI
+	# Installing dependencies
+	apt-get install -y --force-yes \
+	autogen automake make gcc \
+	linux-source libtool autoconf pkg-config subversion \
+	libpcap-dev iptables-dev linux-headers-amd64
+	
+	# Removing old source
+	rm -rf /usr/src/ndpi-netfilter
+
+	if [ ! -e ndpi-netfilter ]; then
+		echo "Downloading ndpi ..."
+		git clone https://github.com/betolj/ndpi-netfilter
                 if [ $? -ne 0 ]; then
                         echo "Unable to download ndpi. Exiting ..."
                         exit 3
                 fi
-        fi
+	fi
+	cp -r ndpi-netfilter /usr/src/
+	
+	# Extracting nDPI
+	cd /usr/src/ndpi-netfilter
+	tar xvfz nDPI.tar.gz
+	cd nDPI
 
-        # Compiling ndpi
-        cd nDPI/
-        ./autogen.sh
-        ./configure
-        make
-        make install
-        cd ../
+	# Building nDPI
+	./autogen.sh
+	./configure --with-pic
+	make
+	make install
         if [ $? -ne 0 ]; then
                 echo "Unable to install ndpi. Exiting ..."
                 exit 3
         fi
+
+	# Building nDPI-netfilter
+	cd ..
+	NDPI_PATH=/usr/src/ndpi-netfilter/nDPI make
+	make modules_install
+        if [ $? -ne 0 ]; then
+                echo "Unable to install ndpi-netfilter. Exiting ..."
+                exit 3
+        fi
+
+	# Connecting to xtables
+	cp /usr/src/ndpi-netfilter/ipt/libxt_ndpi.so /lib/xtables/
 }
 
 
