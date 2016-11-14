@@ -782,6 +782,9 @@ iptables -t nat -A OUTPUT     -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-p
 iptables -t nat -A PREROUTING -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m tcp --sport 80 -d 10.191.0.1 -j REDIRECT --to-ports 3128
 
+# ssh to tor socks proxy
+iptables -t nat -A PREROUTING -i eth1 -p tcp -d 10.0.0.0/8 --dport 22 -j REDIRECT --to-ports 9051
+
 # to squid-tor
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --to 10.0.0.1:3129
 
@@ -836,19 +839,19 @@ nohup nodejs /opt/easyrtc/server_example/server.js &
 /etc/init.d/tor restart
 
 # Running uwsgi
-uwsgi --ini /etc/uwsgi/uwsgi.ini &
+uwsgi --ini /etc/uwsgi/uwsgi.ini & > /dev/null 2>&1
 
 # Time sync
 ntpdate -s ntp.ubuntu.com
 
 # Start nginx
-/etc/init.d/nginx start
+/etc/init.d/nginx start > /dev/null 2>&1 > /dev/null 2>&1
 
 # Start suricata
 suricata -D -c /etc/suricata/suricata.yaml -i lo &
 
 # Start logstash
-/opt/logstash/bin/logstash -f /etc/logstash/conf.d/logstash.conf &
+/opt/logstash/bin/logstash -f /etc/logstash/conf.d/logstash.conf & > /dev/null 2>&1
 
 # Start Evebox
 evebox -e http://localhost:9200 &
@@ -860,7 +863,10 @@ evebox -e http://localhost:9200 &
 tracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &
 
 # Start Redmine
-thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d start
+thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d start > /dev/null 2>&1
+
+# Start Redsocks
+/opt/redsocks/redsocks -c /opt/redsocks/redsocks.conf
 
 exit 0
 EOF
@@ -2733,6 +2739,37 @@ configure_ntop()
 	# Restarting ntop sevice
 	echo "Restarting ntop ..."
 	/etc/init.d/ntop restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configure redsocks proxy server
+# ---------------------------------------------------------
+configure_redsocks()
+{
+        echo "Configuring redsocks ..."
+
+        # Creating log file
+        rm -rf /var/log/redsocks.log
+        touch /var/log/redsocks.log
+
+        # Creating configuretion file
+cat << EOF > /opt/redsocks/redsocks.conf
+	base {
+       		log_debug = off;
+        	log_info = on;
+        	log = "file:/var/log/redsocks.log";
+        	daemon = on;
+        	redirector = iptables;
+	}
+	redsocks {
+        	local_ip = 0.0.0.0;
+        	local_port = 9051;
+        	ip = 127.0.0.1;
+        	port = 9050;
+        	type = socks5;
+	}
+EOF
 }
 
 
@@ -4874,6 +4911,7 @@ configure_postfix		# Configuring postfix mail service
 configure_trac			# Configuring trac service
 configure_redmine		# Configuring redmine service
 configure_ntop			# Configuring ntop service
+configure_redsocks		# Configure redsocks proxy server
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
 #configure_suricata		# Configure Suricata service
