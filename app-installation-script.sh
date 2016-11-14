@@ -2197,6 +2197,43 @@ install_ndpi()
 
 	# Connecting to xtables
 	cp /usr/src/ndpi-netfilter/ipt/libxt_ndpi.so /lib/xtables/
+
+	cd $INSTALL_HOME
+}
+
+
+# ----------------------------------------------
+# Function to install redsocks package
+# ----------------------------------------------
+install_redsocks()
+{
+        echo "Installing redsocks ..."
+
+        # Installing dependencies
+        apt-get install -y --force-yes \
+        iptables git-core libevent-2.0-5 libevent-dev
+
+        # Removing old source
+        rm -rf redsocks
+
+        if [ ! -e redsocks ]; then
+                echo "Downloading redsocks..."
+                git clone https://github.com/darkk/redsocks
+                if [ $? -ne 0 ]; then
+                        echo "Unable to download redsocks. Exiting ..."
+                        exit 3
+                fi
+        fi
+
+        # Building nDPI
+        cd redsocks/
+        make
+        if [ $? -ne 0 ]; then
+                echo "Unable to install redsocks. Exiting ..."
+                exit 3
+        fi
+
+	cd $INSTALL_HOME
 }
 
 
@@ -2323,6 +2360,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_trac		# Install trac package
 	install_redmine		# Install redmine package
 	install_ndpi		# Install ndpi package
+	install_redsocks	# Install redsocks package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
