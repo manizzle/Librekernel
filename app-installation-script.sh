@@ -2093,13 +2093,14 @@ if [ "$ARCH" == "x86_64" ]; then
         mysql-server mysql-client libmysqlclient-dev \
         gcc build-essential zlib1g zlib1g-dev zlibc \
         ruby-zip libssl-dev libyaml-dev libcurl4-openssl-dev \
-        ruby gem libapr1-dev libxslt1-dev checkinstall \
+        ruby ruby2.1 gem libapr1-dev libxslt1-dev checkinstall \
         libxml2-dev ruby-dev vim libmagickwand-dev imagemagick
         if [ $? -ne 0 ]; then
         	echo "Error: unable to install redmine. Exiting ..."
                 exit
         fi
 
+	rm -rf /opt/redmine
         mkdir /opt/redmine
         chown -R www-data /opt/redmine
         cd /opt/redmine
@@ -2214,6 +2215,7 @@ install_redsocks()
         iptables git-core libevent-2.0-5 libevent-dev
 
         # Removing old source
+	cd /opt/
         rm -rf redsocks
 
         if [ ! -e redsocks ]; then
