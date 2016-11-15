@@ -783,7 +783,8 @@ iptables -t nat -A PREROUTING -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-p
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m tcp --sport 80 -d 10.191.0.1 -j REDIRECT --to-ports 3128
 
 # ssh to tor socks proxy
-iptables -t nat -A PREROUTING -i eth1 -p tcp -d 10.0.0.0/8 --dport 22 -j REDIRECT --to-ports 9051
+iptables -t nat -A OUTPUT -p tcp -d 10.0.0.0/8 --dport 22 -j REDIRECT --to-ports 9051
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 --dport 22 -j REDIRECT --to-ports 9051
 
 # to squid-tor
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --to 10.0.0.1:3129
@@ -845,7 +846,7 @@ uwsgi --ini /etc/uwsgi/uwsgi.ini & > /dev/null 2>&1
 ntpdate -s ntp.ubuntu.com
 
 # Start nginx
-/etc/init.d/nginx start > /dev/null 2>&1 > /dev/null 2>&1
+/etc/init.d/nginx start > /dev/null 2>&1 
 
 # Start suricata
 suricata -D -c /etc/suricata/suricata.yaml -i lo &
@@ -2558,7 +2559,7 @@ cat << EOF > /root/libre_scripts/ecapguardian.sh
 #!/bin/bash
 sleep 60
 /usr/sbin/ecapguardian &
-sleep 10
+sleep 30
 chmod -R a+rwx /etc/ecapguardian/ecap
 EOF
 
