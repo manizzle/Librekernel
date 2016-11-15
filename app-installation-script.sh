@@ -2239,7 +2239,21 @@ install_redsocks()
 }
 
 
-# ----------------------------------------------
+# -----------------------------------------------
+# Function to install ntopng
+# -----------------------------------------------
+install_ntopng()
+{
+        echo "Installing ntopng ..."
+        sudo apt-get -y --force-yes install ntopng
+        if [ $? -ne 0 ]; then
+                echo "Error: Unable to install ntopng. Exiting"
+                exit 3
+        fi      
+}
+
+
+# -----------------------------------------------
 # This function saves variables in file, so
 # parametization script can read and use these 
 # values
@@ -2250,7 +2264,7 @@ install_redsocks()
 #   EXT_INTERFACE
 #   INT_INTERFACE
 #   ARCH
-# ----------------------------------------------  
+# -----------------------------------------------  
 save_variables()
 {
         echo "Saving variables ..."
@@ -2363,6 +2377,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_redmine		# Install redmine package
 	install_ndpi		# Install ndpi package
 	install_redsocks	# Install redsocks package
+	install_ntopng		# Install ntopng package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
