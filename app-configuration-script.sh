@@ -2710,36 +2710,45 @@ production:
 # ---------------------------------------------------------
 # Function to configure ntop
 # ---------------------------------------------------------
-configure_ntop()
+configure_ntopng()
 {
-	echo "configuring ntop ..."
+	echo "configuring ntopng ..."
 
 	# Interface configuretion
-	sed -i 's/INTERFACES="none"/INTERFACES="$EXT_INTERFACE"/g' /var/lib/ntop/init.cfg
+	# sed -i 's/INTERFACES="none"/INTERFACES="$EXT_INTERFACE"/g' /var/lib/ntop/init.cfg
 
 	# Creating configuration file	
 	echo "
 #--user ntop
---daemon
---db-file-path /usr/share/ntop
---interface $EXT_INTERFACE
--p /etc/ntop/protocol.list 
+#--daemon
+#--db-file-path /usr/share/ntop
+#--interface $EXT_INTERFACE
+#-p /etc/ntop/protocol.list 
 #? --protocols=\"HTTP=http|www|https|3128,FTP=ftp|ftp-data\"
 #--trace-level 0 # FATALERROR only
 #--trace-level 1 # ERROR and above only 
 #--trace-level 2 # WARNING and above only
---trace-level 3 # INFO, WARNING and ERRORs - the default
+#--trace-level 3 # INFO, WARNING and ERRORs - the default
 #--trace-level 4 # NOISY - everything
 #--trace-level 6 # NOISY + MSGID
 #--trace-level 7 # NOISY + MSGID + file/line
 #--daemon --use-syslog
 #--http-server -w 127.0.0.1:3000
-#--https-server -w 127.0.0.1:3001 
-" > /etc/ntop/ntop.conf
+#--https-server -w 127.0.0.1:3001
+--pid-path=/var/tmp/ntopng.pid
+--daemon
+--interface=$EXT_INTERFACE,$INT_INTERFACE
+--http-port=3000
+--local-networks="10.0.0.0/24"
+--dns-mode=1
+--data-dir=/var/tmp/ntopng
+--disable-autologout
+--community
+" > /etc/ntopng/ntopng.conf
 
-	# Restarting ntop sevice
-	echo "Restarting ntop ..."
-	/etc/init.d/ntop restart
+	# Restarting ntopng sevice
+	echo "Restarting ntopng ..."
+	/etc/init.d/ntopng restart
 }
 
 
@@ -4911,7 +4920,7 @@ configure_ecapguardian		# Configuring ecapguardian
 configure_postfix		# Configuring postfix mail service
 configure_trac			# Configuring trac service
 configure_redmine		# Configuring redmine service
-configure_ntop			# Configuring ntop service
+configure_ntopng		# Configuring ntop service
 configure_redsocks		# Configure redsocks proxy server
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
