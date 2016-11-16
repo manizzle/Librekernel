@@ -292,6 +292,11 @@ cat << EOF > /etc/hosts
 10.0.0.252      friendica.librenet
 10.0.0.253      owncloud.librenet
 10.0.0.254      mailpile.librenet
+10.0.0.250      conference.librerouter.net
+10.0.0.251      search.librerouter.net
+10.0.0.252      social.librerouter.net
+10.0.0.253      storage.librerouter.net
+10.0.0.254      email.librerouter.net
 EOF
 }
 
@@ -1537,6 +1542,11 @@ local-data: "ntop.librenet. IN A 10.0.0.244"
 local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
+local-data: "conference.librerouter.net. IN A 10.0.0.250"
+local-data: "search.librerouter.net. IN A 10.0.0.251"
+local-data: "social.librerouter.net. IN A 10.0.0.252"
+local-data: "storage.librerouter.net. IN A 10.0.0.253"
+local-data: "email.librerouter.net. IN A 10.0.0.254"
 local-data: "squidguard.librenet. IN A 10.0.0.246"' > /etc/unbound/unbound.conf
 
 for i in $(ls /var/lib/tor/hidden_service/)
@@ -2717,7 +2727,9 @@ configure_ntopng()
 	# Interface configuretion
 	# sed -i 's/INTERFACES="none"/INTERFACES="$EXT_INTERFACE"/g' /var/lib/ntop/init.cfg
 
-	# Creating configuration file	
+	# Creating configuration file
+	rm -rf /etc/ntopng/ntopng.conf
+	touch /etc/ntopng/ntopng.conf
 	echo "
 #--user ntop
 #--daemon
@@ -3076,7 +3088,7 @@ location /phpMyAdmin {
 " > /etc/nginx/sites-enabled/librerouter
 
 
-#------------yacy.librenet-----------#
+#------------search.librerouter.net-----------#
 
 # Configuring Yacy virtual host
 echo "Configuring Yacy virtual host ..."
@@ -3084,74 +3096,48 @@ echo "Configuring Yacy virtual host ..."
 # Getting Tor hidden service yacy hostname
 SERVER_YACY="$(cat /var/lib/tor/hidden_service/yacy/hostname 2>/dev/null)"
 
-# Generating keys and certificates for https connection
-echo "Generating keys and certificates for Yacy ..."
-if [ ! -e /etc/ssl/nginx/$SERVER_YACY.key -o ! -e /etc/ssl/nginx/$SERVER_YACY.csr -o ! -e  /etc/ssl/nginx/$SERVER_YACY.crt ]; then
-openssl genrsa -out /etc/ssl/nginx/$SERVER_YACY.key 2048 -batch
-openssl req -new -key /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.csr -subj '/CN=librerouter' -batch
-cp /etc/ssl/nginx/$SERVER_YACY.key /etc/ssl/nginx/$SERVER_YACY.key.org 
-openssl rsa -in /etc/ssl/nginx/$SERVER_YACY.key.org -out /etc/ssl/nginx/$SERVER_YACY.key 
-openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_YACY.csr -signkey /etc/ssl/nginx/$SERVER_YACY.key -out /etc/ssl/nginx/$SERVER_YACY.crt 
-fi
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/search/search_bundle.crt
+cat /etc/ssl/nginx/search/search_librerouter_net.crt /etc/ssl/nginx/search/search_librerouter_net.ca-bundle >> /etc/ssl/nginx/search/search_bundle.crt
 
 # Creating Yacy virtual host configuration
 echo "
-# Redirect yacy.librenet to Tor hidden service yacy
+# search.librerouter.net http server
 server {
-listen 10.0.0.251:80;
-server_name yacy.librenet;
-rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
-location / {
-proxy_pass       http://127.0.0.1:8090;
-proxy_set_header Host      \$host;
-proxy_set_header X-Real-IP \$remote_addr;
-}
+	listen 10.0.0.251:80;
+	server_name search.librerouter.net;
+	rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
+	location / {
+		proxy_pass       http://127.0.0.1:8090;
+		proxy_set_header Host      \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
 }
 
-# Redirect connections from 10.0.0.251 to Tor hidden service yacy
+# Redirect connections from 10.0.0.251 to search.librerouter.net
 server {
-listen 10.0.0.251;
-server_name _;
-return 301 http://yacy.librenet;
+	listen 10.0.0.251;
+	server_name _;
+	return 301 http://search.librerouter.net;
 }
 
-# Redirect connections to yacy running on 127.0.0.1:8090
-#server {
-#        listen 10.0.0.251:80;
-#        server_name $SERVER_YACY;
-#
-#location / {
-#    proxy_pass       http://127.0.0.1:8090;
-#    proxy_set_header Host      \$host;
-#    proxy_set_header X-Real-IP \$remote_addr;
-#  }
-#}
-
-# Redirect https connections to http
-#server {
-#        listen 10.0.0.251:443 ssl;
-#        server_name $SERVER_YACY;
-#        ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
-#        ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
-#        return 301 http://$SERVER_YACY;
-#}
+# search.librerouter.net https server
 server {
-listen 10.0.0.251:443 ssl;
-server_name yacy.librenet;
-ssl_certificate /etc/ssl/nginx/$SERVER_YACY.crt;
-ssl_certificate_key /etc/ssl/nginx/$SERVER_YACY.key;
-rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
-
-location / {
-proxy_pass       http://127.0.0.1:8090;
-proxy_set_header Host      \$host;
-proxy_set_header X-Real-IP \$remote_addr;
-}
+	listen 10.0.0.251:443 ssl;
+	server_name search.librerouter.net;
+	ssl_certificate /etc/ssl/nginx/search/search_bundle.crt;
+	ssl_certificate_key /etc/ssl/nginx/search/search_librerouter_net.key;
+	rewrite ^/search(.*) http://\$server_name/yacysearch.html?query=\$arg_q? last;
+	location / {
+		proxy_pass       http://127.0.0.1:8090;
+		proxy_set_header Host      \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
 }
 " > /etc/nginx/sites-enabled/yacy
 
 
-#--------friendica.librenet----------#
+#--------social.librerouter.net----------#
 
 # Configuring Friendica virtual host
 echo "Configuring Friendica virtual host ..."
@@ -3159,62 +3145,28 @@ echo "Configuring Friendica virtual host ..."
 # Getting Tor hidden service friendica hostname
 SERVER_FRIENDICA="$(cat /var/lib/tor/hidden_service/friendica/hostname 2>/dev/null)"
 
-# Generating keys and certificates for https connection
-echo "Generating keys and certificates for Friendica ..."
-if [ ! -e /etc/ssl/nginx/$SERVER_FRIENDICA.key -o ! -e /etc/ssl/nginx/$SERVER_FRIENDICA.csr -o ! -e  /etc/ssl/nginx/$SERVER_FRIENDICA.crt ]; then
-openssl genrsa -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 2048 -batch
-openssl req -new -key /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.csr -subj '/CN=librerouter' -batch
-cp /etc/ssl/nginx/$SERVER_FRIENDICA.key /etc/ssl/nginx/$SERVER_FRIENDICA.key.org 
-openssl rsa -in /etc/ssl/nginx/$SERVER_FRIENDICA.key.org -out /etc/ssl/nginx/$SERVER_FRIENDICA.key 
-openssl x509 -req -days 365 -in /etc/ssl/nginx/$SERVER_FRIENDICA.csr -signkey /etc/ssl/nginx/$SERVER_FRIENDICA.key -out /etc/ssl/nginx/$SERVER_FRIENDICA.crt 
-fi
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/social/social_bundle.crt
+cat /etc/ssl/nginx/social/social_librerouter_net.crt /etc/ssl/nginx/social/social_librerouter_net.ca-bundle >> /etc/ssl/nginx/social/social_bundle.crt
 
 # Creating friendica virtual host configuration
 echo "
-## Redirect connections from port 8181 to Tor hidden service friendica port 80
-#server {
-#  listen 8181;
-#  server_name $SERVER_FRIENDICA;
-#  return 301 http://$SERVER_FRIENDICA;
-#}
-
-# Redirect connections from 10.0.0.252 to Tor hidden service friendica
+# Redirect connections from 10.0.0.252 to social.librerouter.net 
 server {
 listen 10.0.0.252:80;
 server_name _;
-return 301 http://friendica.librenet;
+return 301 http://social.librerouter.net;
 }
 
-# Redirect connections from http to https
-#server {
-#  listen 10.0.0.252:80;
-#  server_name friendica.librenet;
-#  
-#  index index.php;
-#  root /var/www/friendica;
-#  rewrite ^ https://friendica.librenet\$request_uri? permanent;
-#  }
-
-# Main server for Tor hidden service friendica
-#server {
-#  listen 10.0.0.252:80;
-#  server_name $SERVER_FRIENDICA;
-#
-#  index index.php;
-#  root /var/www/friendica;
-#  rewrite ^ https://$SERVER_FRIENDICA\$request_uri? permanent;
-#}
-
-# Configure Friendica with SSL
-
+# social.librerouter.net https server
 server {
 listen 10.0.0.252:80;
 listen 10.0.0.252:443 ssl;
-server_name friendica.librenet;
+server_name social.librerouter.net;
 
 ssl on;
-ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
-ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
+ssl_certificate /etc/ssl/nginx/social/social_bundle.crt;
+ssl_certificate_key /etc/ssl/nginx/social/social_librerouter_net.key;
 ssl_session_timeout 5m;
 ssl_protocols SSLv3 TLSv1;
 ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
@@ -3282,8 +3234,8 @@ listen 10.0.0.252:443 ssl;
 server_name $SERVER_FRIENDICA;
 
 ssl on;
-ssl_certificate /etc/ssl/nginx/$SERVER_FRIENDICA.crt;
-ssl_certificate_key /etc/ssl/nginx/$SERVER_FRIENDICA.key;
+ssl_certificate /etc/ssl/nginx/social/social_bundle.crt;
+ssl_certificate_key /etc/ssl/nginx/social/social_librerouter_net.key;
 ssl_session_timeout 5m;
 ssl_protocols SSLv3 TLSv1;
 ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
@@ -3313,42 +3265,41 @@ rewrite ^/(.*) /index.php?q=\$uri&\$args last;
 # allow browser to cache them
 # added .htm for advanced source code editor library
 location ~* \.(jpg|jpeg|gif|png|ico|css|js|htm|html|ttf|woff|svg)$ {
-expires 30d;
-try_files \$uri /index.php?q=\$uri&\$args;
+	expires 30d;
+	try_files \$uri /index.php?q=\$uri&\$args;
 }
 # block these file types
 location ~* \.(tpl|md|tgz|log|out)$ {
-deny all;
+	deny all;
 }
 
 # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
 # or a unix socket
 location ~* \.php$ {
-try_files \$uri =404;
+	try_files \$uri =404;
 
-fastcgi_split_path_info ^(.+\.php)(/.+)$;
+	fastcgi_split_path_info ^(.+\.php)(/.+)$;
 
-# With php5-cgi alone:
-# fastcgi_pass 127.0.0.1:9000;
+	# With php5-cgi alone:
+	# fastcgi_pass 127.0.0.1:9000;
 
-# With php5-fpm:
-fastcgi_pass unix:/var/run/php5-fpm.sock;
+	# With php5-fpm:
+	fastcgi_pass unix:/var/run/php5-fpm.sock;
 
-include fastcgi_params;
-fastcgi_index index.php;
-fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+	include fastcgi_params;
+	fastcgi_index index.php;
+	fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
 }
 
 # deny access to all dot files
 location ~ /\. {
-deny all;
+	deny all;
 }
 }
-
 " > /etc/nginx/sites-enabled/friendica 
 
 
-#--------owncloud.librenet----------#
+#--------storage.librerouter.net----------#
 
 # Configuring Owncloud virtual host
 echo "Configuring Owncloud virtual host ..."
@@ -3356,201 +3307,103 @@ echo "Configuring Owncloud virtual host ..."
 # Getting Tor hidden service owncloud hostname
 SERVER_OWNCLOUD="$(cat /var/lib/tor/hidden_service/owncloud/hostname 2>/dev/null)"
 
-echo "Generating keys and certificates for Owncloud ..."
-rm -rf /etc/ssl/nginx/owncloud.key
-rm -rf /etc/ssl/nginx/owncloud.csr
-rm -rf /etc/ssl/nginx/owncloud.crt
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
--keyout /etc/ssl/nginx/owncloud.key \
--out /etc/ssl/nginx/owncloud.crt -subj '/CN=librerouter' -batch
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/storage/storage_bundle.crt
+cat /etc/ssl/nginx/storage/storage_librerouter_net.crt /etc/ssl/nginx/storage/storage_librerouter_net.ca-bundle >> /etc/ssl/nginx/storage/storage_bundle.crt
 
 # Creating Owncloud virtual host configuration
 echo "
-# Redirect connections from port 7070 to Tor hidden service owncloud port 80
+# Redirect connections from 10.0.0.253 to storage.librerouter.net
 server {
-listen 10.0.0.253:7070;
-server_name $SERVER_OWNCLOUD;
-return 301 https://$SERVER_OWNCLOUD;
+	listen 10.0.0.253:80;
+	server_name _;
+	return 301 https://storage.librerouter.net;
 }
 
-# Redirect connections from 10.0.0.253 to owncloud with https
+# storage.librerouter.net https server
 server {
-listen 10.0.0.253:80;
-server_name _;
-return 301 https://owncloud.librenet;
-}
+	listen 10.0.0.253:443 ssl;
+	ssl_certificate      /etc/ssl/nginx/storage/storage_bundle.crt;
+	ssl_certificate_key  /etc/ssl/nginx/storage/storage_librerouter_net.key;
+	server_name storage.librerouter.net;
+	index index.php;
+	root /var/www/owncloud;
 
-# Redirect connections from owncloud.librenet to Tor hidden service owncloud
-server {
-listen 10.0.0.253:443 ssl;
-ssl_certificate      /etc/ssl/nginx/owncloud.crt;
-ssl_certificate_key  /etc/ssl/nginx/owncloud.key;
-server_name owncloud.librenet;
-index index.php;
-root /var/www/owncloud;
+	# set max upload size
+	client_max_body_size 10G;
+	fastcgi_buffers 64 4K;
 
-# set max upload size
-client_max_body_size 10G;
-fastcgi_buffers 64 4K;
+	# rewrite rules
+	rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
+	rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
+	rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
 
-# rewrite rules
-rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
-rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
-rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
+	# error pages paths
+	error_page 403 /core/templates/403.php;
+	error_page 404 /core/templates/404.php;
 
-# error pages paths
-error_page 403 /core/templates/403.php;
-error_page 404 /core/templates/404.php;
-
-location ~ \.php(?:\$|/) {
-fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-include fastcgi_params;
-fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-fastcgi_param PATH_INFO \$fastcgi_path_info;
-fastcgi_param HTTPS on;
-fastcgi_pass unix:/var/run/php5-fpm.sock;
-}
+	location ~ \.php(?:\$|/) {
+		fastcgi_split_path_info ^(.+\.php)(/.+)\$;
+		include fastcgi_params;
+		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+		fastcgi_param PATH_INFO \$fastcgi_path_info;
+		fastcgi_param HTTPS on;
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+	}
 
 
-location = /robots.txt {
-allow all;
-log_not_found off;
-access_log off;
-}
+	location = /robots.txt {
+		allow all;
+		log_not_found off;
+		access_log off;
+	}
 
-location ~ ^/(?:\.htaccess|data|config|db_structure\.xml|README){
-deny all;
-}
+	location ~ ^/(?:\.htaccess|data|config|db_structure\.xml|README){
+		deny all;
+	}
 
-location / {
-# The following 2 rules are only needed with webfinger
-rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
-rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
+	location / {
+		# The following 2 rules are only needed with webfinger
+		rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+		rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
 
-rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
-rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
+		rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
+		rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
+	
+		rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
 
-rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
+		try_files \$uri \$uri/ /index.php;
+	}
 
-try_files \$uri \$uri/ /index.php;
-}
-
-# Optional: set long EXPIRES header on static assets
-location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
-expires 30d;
-# Optional: Dont log access to assets
- access_log off;
-}
+	# Optional: set long EXPIRES header on static assets
+	location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
+		expires 30d;
+		# Optional: Dont log access to assets
+		access_log off;
+	}
 
 }
 
 # Main server for Tor hidden service owncloud
 server {
-listen 10.0.0.253:80;
-server_name $SERVER_OWNCLOUD;
-index index.php;
-root /var/www/owncloud;
+	listen 10.0.0.253:80;
+	server_name $SERVER_OWNCLOUD;
+	index index.php;
+	root /var/www/owncloud;
 
-# php5-fpm configuration
-location ~ \.php$ {
-fastcgi_split_path_info ^(.+\.php)(/.+)$;
-fastcgi_pass unix:/var/run/php5-fpm.sock;
-fastcgi_index index.php;
-fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-include fastcgi_params;
-}
+	# php5-fpm configuration
+	location ~ \.php$ {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+		fastcgi_index index.php;
+		fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+		include fastcgi_params;
+	}
 }
 " > /etc/nginx/sites-enabled/owncloud
 
-#  server {
-#  listen 80;
-#  server_name $SERVER_OWNCLOUD;
-#  return 301 https://\$server_name\$request_uri;
-#  }
-#  
-#server {
-#  listen 10.0.0.253;
-#  server_name _;
-#  return 301 https://$SERVER_OWNCLOUD;
-#}
-#
-#server {
-#  listen 80;
-#  server_name owncloud.librenet;
-#  return 301 https://$SERVER_OWNCLOUD\$request_uri;
-#  }
-#
-#server {
-#  listen 7070;
-#  server_name $SERVER_OWNCLOUD;
-#  return 301 https://\$server_name\$request_uri;
-#  }
-#
-#server {
-#  listen 443;
-#  ssl on;
-#  server_name $SERVER_OWNCLOUD;
-#  ssl_certificate /etc/ssl/nginx/$SERVER_OWNCLOUD.crt;
-#  ssl_certificate_key /etc/ssl/nginx/$SERVER_OWNCLOUD.key;
-#
-#  # Path to the root of your installation
-#  root /var/www/owncloud/;
-#  # set max upload size
-#  client_max_body_size 10G;
-#  fastcgi_buffers 64 4K;
-#
-#  rewrite ^/caldav(.*)\$ /remote.php/caldav\$1 redirect;
-#  rewrite ^/carddav(.*)\$ /remote.php/carddav\$1 redirect;
-#  rewrite ^/webdav(.*)\$ /remote.php/webdav\$1 redirect;
-#
-#  index index.php;
-#  error_page 403 /core/templates/403.php;
-#  error_page 404 /core/templates/404.php;
-#
-#  location = /robots.txt {
-#    allow all;
-#    log_not_found off;
-#    access_log off;
-#    }
-#
-#  location ~ ^/(?:\.htaccess|data|config|db_structure\.xml|README){
-#    deny all;
-#    }
-#
-#  location / {
-#   # The following 2 rules are only needed with webfinger
-#   rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
-#   rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json last;
-#
-#   rewrite ^/.well-known/carddav /remote.php/carddav/ redirect;
-#   rewrite ^/.well-known/caldav /remote.php/caldav/ redirect;
-#
-#   rewrite ^(/core/doc/[^\/]+/)\$ \$1/index.html;
-#
-#   try_files \$uri \$uri/ /index.php;
-#   }
-#
-#   location ~ \.php(?:\$|/) {
-#   fastcgi_split_path_info ^(.+\.php)(/.+)\$;
-#   include fastcgi_params;
-#   fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-#   fastcgi_param PATH_INFO \$fastcgi_path_info;
-#   fastcgi_param HTTPS on;
-#   fastcgi_pass php-handler;
-#   }
-#
-#   # Optional: set long EXPIRES header on static assets
-#   location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|css|js|swf)\$ {
-#       expires 30d;
-#       # Optional: Dont log access to assets
-#         access_log off;
-#   }
-#
-#  }
-#" > /etc/nginx/sites-enabled/owncloud
 
-
-#--------mailpile.librenet----------#
+#--------email.librerouter.net----------#
 
 # Configuring Mailpile virtual host
 echo "Configuring Mailpile virtual host ..."
@@ -3558,67 +3411,64 @@ echo "Configuring Mailpile virtual host ..."
 # Getting Tor hidden service mailpile hostname
 SERVER_MAILPILE="$(cat /var/lib/tor/hidden_service/mailpile/hostname 2>/dev/null)"
 
-# Generating certificates for mailpile ssl connection
-echo "Generating keys and certificates for MailPile"
-if [ ! -e /etc/ssl/nginx/$SERVER_MAILPILE.key -o ! -e  /etc/ssl/nginx/$SERVER_MAILPILE.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/$SERVER_MAILPILE.key -out /etc/ssl/nginx/$SERVER_MAILPILE.crt -subj '/CN=librerouter' -batch
-fi
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/email/email_bundle.crt
+cat /etc/ssl/nginx/email/email_librerouter_net.crt /etc/ssl/nginx/email/email_librerouter_net.ca-bundle >> /etc/ssl/nginx/email/email_bundle.crt 
 
 # Creating mailpile virtual host configuration
 echo "
-# Redirect connections from 10.0.0.254 to Tor hidden service mailpile
+# Redirect connections from 10.0.0.254 to email.librerouter.net
 server {
-listen 10.0.0.254;
-server_name _;
-return 301 http://mailpile.librenet;
+	listen 10.0.0.254;
+	server_name _;
+	return 301 http://email.librerouter.net;
 }   
 
-# Redirect connections from mailpile.librenet to Tor hidden service mailpile
+# email.librerouter.net http/https server
 server {
 # Mailpile Domain
-server_name mailpile.librenet;
-client_max_body_size 20m;
+	server_name email.librerouter.net;
+	client_max_body_size 20m;
 
-# Nginx port 80 and 443
-listen 10.0.0.254:80;
-listen 10.0.0.254:443 ssl;
+	# Nginx port 80 and 443
+	listen 10.0.0.254:80;
+	listen 10.0.0.254:443 ssl;
 
-# SSL Certificate File
-ssl_certificate      /etc/ssl/nginx/$SERVER_MAILPILE.crt;
-ssl_certificate_key  /etc/ssl/nginx/$SERVER_MAILPILE.key;
-# Nginx Poroxy pass for mailpile
-location / {
-proxy_set_header X-Real-IP \$remote_addr;
-proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-proxy_set_header Host \$http_host;
-proxy_set_header X-NginX-Proxy true;
-proxy_pass http://127.0.0.1:33411;
-proxy_read_timeout  90;
-}
+	# SSL Certificate File
+	ssl_certificate      /etc/ssl/nginx/email/email_bundle.crt;
+	ssl_certificate_key  /etc/ssl/nginx/email/email_librerouter_net.key;
+	# Nginx Poroxy pass for mailpile
+	location / {
+		proxy_set_header X-Real-IP \$remote_addr;
+		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+		proxy_set_header Host \$http_host;
+		proxy_set_header X-NginX-Proxy true;
+		proxy_pass http://127.0.0.1:33411;
+		proxy_read_timeout  90;
+	}
 } 
 
 server {
+	# Mailpile Domain
+	server_name $SERVER_MAILPILE;
+	client_max_body_size 20m;
 
-# Mailpile Domain
-server_name $SERVER_MAILPILE;
-client_max_body_size 20m;
+	# Nginx port 80 and 443
+	listen 10.0.0.254:80;
+	listen 10.0.0.254:443 ssl;
 
-# Nginx port 80 and 443
-listen 10.0.0.254:80;
-listen 10.0.0.254:443 ssl;
-
-# SSL Certificate File
-ssl_certificate      /etc/ssl/nginx/$SERVER_MAILPILE.crt;
-ssl_certificate_key  /etc/ssl/nginx/$SERVER_MAILPILE.key;
-# Nginx Poroxy pass for mailpile
-location / {
-proxy_set_header X-Real-IP \$remote_addr;
-proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-proxy_set_header Host \$http_host;
-proxy_set_header X-NginX-Proxy true;
-proxy_pass http://127.0.0.1:33411;
-proxy_read_timeout  90;
-}
+	# SSL Certificate File
+	ssl_certificate      /etc/ssl/nginx/email/email_bundle.crt;
+	ssl_certificate_key  /etc/ssl/nginx/email/email_librerouter_net.key;
+	# Nginx Poroxy pass for mailpile
+	location / {
+		proxy_set_header X-Real-IP \$remote_addr;
+		proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+		proxy_set_header Host \$http_host;
+		proxy_set_header X-NginX-Proxy true;
+		proxy_pass http://127.0.0.1:33411;
+		proxy_read_timeout  90;
+	}
 }
 " > /etc/nginx/sites-enabled/mailpile
 
@@ -3782,7 +3632,7 @@ uwsgi_pass 127.0.0.1:9000;
 sed -i -e 's@\t# include /etc/nginx/passenger.conf.*@\tinclude /etc/nginx/passenger.conf;@g' /etc/nginx/nginx.conf
 
 
-#--------easyrtc.librenet----------#
+#--------conference.librerouter.net----------#
 
 # Configuring EasyRTC virtual host
 echo "Configuring EasyRTC virtual host ..."
@@ -3790,51 +3640,46 @@ echo "Configuring EasyRTC virtual host ..."
 # Getting Tor hidden service EasyRTC hostname
 SERVER_EASYRTC="$(cat /var/lib/tor/hidden_service/easyrtc/hostname 2>/dev/null)"
 
-# Generating keys and certificates for https connection
-echo "Generating keys and certificates for Owncloud ..."
-rm -rf /etc/ssl/nginx/easyrtc.key
-rm -rf /etc/ssl/nginx/easyrtc.csr
-rm -rf /etc/ssl/nginx/easyrtc.crt
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
--keyout /etc/ssl/nginx/easyrtc.key \
--out /etc/ssl/nginx/easyrtc.crt -subj '/CN=librerouter' -batch
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/conference/conference_bundle.crt
+cat /etc/ssl/nginx/conference/conference_librerouter_net.crt /etc/ssl/nginx/conference/conference_librerouter_net.ca-bundle >> /etc/ssl/nginx/conference/conference_bundle.crt
 
 # Creating EasyRTC virtual host configuration
 echo "
 # Redirect connections from 10.0.0.250 to EasyTRC https 
 server {
-listen 10.0.0.250;
-server_name _;
-return 301 https://easyrtc.librenet/demos/demo_multiparty.html;
+	listen 10.0.0.250;
+	server_name _;
+	return 301 https://conference.librerouter.net/demos/demo_multiparty.html;
 }
 
-# easyrtc https server 
+# conference.librerouter.net https server 
 server {
-listen 10.0.0.250:80;
-listen 10.0.0.250:443 ssl;
-server_name easyrtc.librenet;
-ssl_certificate /etc/ssl/nginx/easyrtc.crt;
-ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
-rewrite ^/$ /demos/demo_multiparty.html permanent;
-location / {
-proxy_pass       https://127.0.0.1:8443;
-proxy_set_header Host      \$host;
-proxy_set_header X-Real-IP \$remote_addr;
-}
+	listen 10.0.0.250:80;
+	listen 10.0.0.250:443 ssl;
+	server_name conference.librerouter.net;
+	ssl_certificate /etc/ssl/nginx/conference/conference_bundle.crt;
+	ssl_certificate_key /etc/ssl/nginx/conference/conference_librerouter_net.key;
+	rewrite ^/$ /demos/demo_multiparty.html permanent;
+	location / {
+		proxy_pass       https://127.0.0.1:8443;
+		proxy_set_header Host      \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
 }
 
 server {
-listen 10.0.0.250:80;
-listen 10.0.0.250:443 ssl;
-server_name $SERVER_EASYRTC;
-ssl_certificate /etc/ssl/nginx/easyrtc.crt;
-ssl_certificate_key /etc/ssl/nginx/easyrtc.key;
-rewrite ^/$ /demos/demo_multiparty.html permanent;
-location / {
-proxy_pass       https://127.0.0.1:8443;
-proxy_set_header Host      \$host;
-proxy_set_header X-Real-IP \$remote_addr;
-}
+	listen 10.0.0.250:80;
+	listen 10.0.0.250:443 ssl;
+	server_name $SERVER_EASYRTC;
+        ssl_certificate /etc/ssl/nginx/conference/conference_bundle.crt;
+        ssl_certificate_key /etc/ssl/nginx/conference/conference_librerouter_net.key;
+	rewrite ^/$ /demos/demo_multiparty.html permanent;
+	location / {
+		proxy_pass       https://127.0.0.1:8443;
+		proxy_set_header Host      \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
 }
 " > /etc/nginx/sites-enabled/easyrtc
 
