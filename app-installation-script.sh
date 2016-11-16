@@ -845,6 +845,30 @@ install_modsecurity()
 }
 
 
+# -----------------------------------------------
+# Function to install ssl certificates
+# -----------------------------------------------
+install_certificates()
+{
+        echo "Installing certificates ..."
+        if [ ! -e certs ]; then
+                echo "Downloading certificates ..."
+                svn co https://github.com/Librerouter/Librekernel/trunk/certs
+                if [ $? -ne 0 ]; then
+                        echo "Error: unable to download certificates. Exiting ..."
+                        exit 3
+                fi
+        fi
+
+        # Moving certificates to nginx directory
+        rm -rf /etc/ssl/nginx/*
+        mv certs/* /etc/ssl/nginx/
+
+        # Cleanup
+        rm -rf certs
+}
+
+
 # ----------------------------------------------
 # Function to install nginx
 # ----------------------------------------------
@@ -2344,6 +2368,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_packages       	# Download and install packages	
 #	install_libressl	# Install Libressl package
 	install_modsecurity     # Install modsecurity package
+	install_certificates	# Install ssl certificates
 	install_nginx		# Install nginx package
 	install_mailpile	# Install Mailpile package
 	install_easyrtc		# Install EasyRTC package
