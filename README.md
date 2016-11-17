@@ -11,19 +11,17 @@ The script should be run by user root and by console, if it was run by another u
 The all software intended to run on Debian 8 , so if script finds another platform it will output an error and exit.
 
  - Step 3. Checking Hardware
-As software can be installed either on ARM boards or Physical/Virtual x86 64b machine, in this step we need to determine hardware. If script runs on odroid it should find Processor = ARM Hardware = XU3 or XU4 or C1+ or C2 If script runs on Physical/Virtual machine it should fine Processor = Intel After determining hardware type we can determine the next step.
-If hardware is Physical/Virtual machine
+As software can be installed either on ARM boards or Physical/Virtual x86 64b machine, in this step we need to determine hardware. After determining hardware type we can determine the next step.
 
  - Step 4. Checking requirements
 There are a list of minimum requirements that Physical/Virtual machine needs to meet.
-    2 network interfaces (ethernet or wlan)
+    2 at least network interfaces (ethernet or wlan)
     1 GB of Physical memory
     16 GB of Free disk space
 If machine meets the requirements then script goes to next step, otherwise it will warn and exit.
 
  - Step 5. Getting DHCP client on interfaces
-In this step script first DHCP request from eth1 to get an ip address. If succeed, it will check for Internet connection and if Internet connection is established this step is done successfully. In any case of failure (no DHCP response or on Internet connection) script will try the same scenario for next interface. Order to try is - eth1, wlan1, eth0, wlan0 (list of available interfaces are available from step 4).
-Of no success in any interface, then script will warn user to plug the machine to Internet and will exit.
+In this step script first DHCP request from ethX to get an ip address. If succeed, it will check for Internet connection and if Internet connection is established this step is done successfully. In any case of failure (no DHCP response or on Internet connection) script will try the same scenario for next interface. Order to try is - eth1, wlan1, eth0, wlan0 (list of available interfaces are available from step 4). Of no success in any interface, then script will warn user to plug the machine to Internet and will exit.
 
  - Step 6. Preparing repositories and updating sources
 In this step script adds repository links for necessary packages into package manager sources and updates them. Script will output an error ant exit if it is not possible to add repositories or update sources.
