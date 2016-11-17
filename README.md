@@ -5,13 +5,13 @@
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
 
  - Step 1. Checking user
-The script should be run by user root, if it was run by another user then it will warn and exit.
+The script should be run by user root and by console, if it was run by another user then it will warn and exit.
 
  - Step 2. Checking Platform
-The all software intended to run on Debian 7/8 or Ubuntu 12.04/14.04, so if script finds another platform it will output an error and exit.
+The all software intended to run on Debian 8 , so if script finds another platform it will output an error and exit.
 
  - Step 3. Checking Hardware
-As software can be installed either on odroid or Physical/Virtual machine, in this step we need to determine hardware. If script runs on odroid it should find Processor = ARM Hardware = XU3 or XU4 or C1+ or C2 If script runs on Physical/Virtual machine it should fine Processor = Intel After determining hardware type we can determine the next step.
+As software can be installed either on ARM boards or Physical/Virtual x86 64b machine, in this step we need to determine hardware. If script runs on odroid it should find Processor = ARM Hardware = XU3 or XU4 or C1+ or C2 If script runs on Physical/Virtual machine it should fine Processor = Intel After determining hardware type we can determine the next step.
 If hardware is Physical/Virtual machine
 
  - Step 4. Checking requirements
