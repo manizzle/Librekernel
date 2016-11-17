@@ -28,14 +28,11 @@ In this step script adds repository links for necessary packages into package ma
 
  - Step 7. Downloading and Installing packages
 As we already have repository sources updated in step 6, so at this point script will download and install packages using package manager tools. If something goes wrong during download or installation, script will output an error ant exit.
-If step 7 finished successfully then test.sh execution for Physical/Virtual machine is finished successfully and it's time to run the next script “app-installation-script.sh”.
-If hardware is odroid board
+If step 7 finished successfully it's time to run the next script “app-installation-script.sh”.
 
- - Step 4.2. Check if the board assembled.
-There are list of modules that need to be connected to odroid board, so script will check if that modules are connected.
-You can fine information about necessary modules here
-If any module is missed user will get warning and script will exit.
-
+ - Step 4.2. Check if the ARM board assembled.
+There are list of modules that need to be connected to ARM boards, so script will check if that modules are connected.
+You can fine information about necessary modules later. If any module is missed user will get warning and script will exit.
 
  - Step 6.2. Preparing repositories and updating sources
 The same as in Physical/Virtual machine case.
@@ -43,11 +40,6 @@ The same as in Physical/Virtual machine case.
  - Step 7.2. Downloading and Installing packages
 The same as in Physical/Virtual machine case.
 If step 7 finished successfully then test.sh execution for odroid board is finished successfully and it's time to run the next script “app-installation-script.sh”. 
-
- - Step 8 Required (not implemented)
-Setup the proper exit for the script with a proper succes or not
-Success need to be based in a list check for all apps has being installed.
- 
  
 #Setting up a lab to start to contribute:
 
