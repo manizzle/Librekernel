@@ -39,7 +39,7 @@ def resolve(domain):
     try:
         ips = [n.to_text() for n
                in dns.resolver.query(dns.name.from_text(domain), "A").rrset]
-    except dns.resolver.NXDOMAIN:
+    except (dns.resolver.NXDOMAIN, dns.resolver.Timeout):
         return []
     return ips 
     
