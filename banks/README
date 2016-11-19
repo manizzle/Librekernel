@@ -1,0 +1,17 @@
+First, install all python dependencies from requirements.txt
+
+Then, Follow these instructions to generate bank ips
+
+1) python bgp.py
+**This will generate a file called bank_as.json**
+
+2) sudo python rdns.py bank_as.json
+**This will take a long time to run. It also requires sudo privileges for port scanning.
+This will generate a file called bank_as.json.dns**
+
+3) python subd.py bank_as.json.dns bank_domains &> bank_subdomains
+**bank_domains is the file of bank domain names that can be added to easily
+This will take a long time to run as well**
+
+4) python ip_gen.py bank_as.json.dns bank_subdomains &> bank_ips
+**This will not take a long time at all**
