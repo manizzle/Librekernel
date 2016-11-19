@@ -1,0 +1,3 @@
+[submodule "Sublist3r"]
+	path=banks/sublis3r
+	url=https://github.com/aboul3la/Sublist3r
