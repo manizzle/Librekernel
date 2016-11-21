@@ -1416,6 +1416,190 @@ tunnel.11.startOnLoad=true
 tunnel.11.targetHost=10.0.0.254
 tunnel.11.targetPort=80
 tunnel.11.type=httpserver
+tunnel.12.description=mailpile
+tunnel.12.name=gitlab server
+tunnel.12.option.enableUniqueLocal=false
+tunnel.12.option.i2cp.destination.sigType=1
+tunnel.12.option.i2cp.enableAccessList=false
+tunnel.12.option.i2cp.enableBlackList=false
+tunnel.12.option.i2cp.encryptLeaseSet=false
+tunnel.12.option.i2cp.reduceIdleTime=1200000
+tunnel.12.option.i2cp.reduceOnIdle=false
+tunnel.12.option.i2cp.reduceQuantity=1
+tunnel.12.option.i2p.streaming.connectDelay=0
+tunnel.12.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.12.option.i2p.streaming.maxConnsPerDay=0
+tunnel.12.option.i2p.streaming.maxConnsPerHour=0
+tunnel.12.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.12.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.12.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.12.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.12.option.inbound.backupQuantity=0
+tunnel.12.option.inbound.length=3
+tunnel.12.option.inbound.lengthVariance=0
+tunnel.12.option.inbound.nickname=gitlab server
+tunnel.12.option.inbound.quantity=2
+tunnel.12.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.12.option.maxPosts=0
+tunnel.12.option.maxTotalPosts=0
+tunnel.12.option.outbound.backupQuantity=0
+tunnel.12.option.outbound.length=3
+tunnel.12.option.outbound.lengthVariance=0
+tunnel.12.option.outbound.nickname=gitlab server
+tunnel.12.option.outbound.quantity=2
+tunnel.12.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.12.option.postBanTime=1800
+tunnel.12.option.postCheckTime=300
+tunnel.12.option.postTotalBanTime=600
+tunnel.12.option.rejectInproxy=false
+tunnel.12.option.rejectReferer=false
+tunnel.12.option.rejectUserAgents=false
+tunnel.12.option.shouldBundleReplyInfo=false
+tunnel.12.option.useSSL=false
+tunnel.12.privKeyFile=i2ptunnel12-privKeys.dat
+tunnel.12.spoofedHost=gitlab.i2p
+tunnel.12.startOnLoad=true
+tunnel.12.targetHost=10.0.0.247
+tunnel.12.targetPort=80
+tunnel.12.type=httpserver
+tunnel.13.description=trac
+tunnel.13.name=trac server
+tunnel.13.option.enableUniqueLocal=false
+tunnel.13.option.i2cp.destination.sigType=1
+tunnel.13.option.i2cp.enableAccessList=false
+tunnel.13.option.i2cp.enableBlackList=false
+tunnel.13.option.i2cp.encryptLeaseSet=false
+tunnel.13.option.i2cp.reduceIdleTime=1200000
+tunnel.13.option.i2cp.reduceOnIdle=false
+tunnel.13.option.i2cp.reduceQuantity=1
+tunnel.13.option.i2p.streaming.connectDelay=0
+tunnel.13.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.13.option.i2p.streaming.maxConnsPerDay=0
+tunnel.13.option.i2p.streaming.maxConnsPerHour=0
+tunnel.13.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.13.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.13.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.13.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.13.option.inbound.backupQuantity=0
+tunnel.13.option.inbound.length=3
+tunnel.13.option.inbound.lengthVariance=0
+tunnel.13.option.inbound.nickname=trac server
+tunnel.13.option.inbound.quantity=2
+tunnel.13.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.13.option.maxPosts=0
+tunnel.13.option.maxTotalPosts=0
+tunnel.13.option.outbound.backupQuantity=0
+tunnel.13.option.outbound.length=3
+tunnel.13.option.outbound.lengthVariance=0
+tunnel.13.option.outbound.nickname=trac server
+tunnel.13.option.outbound.quantity=2
+tunnel.13.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.13.option.postBanTime=1800
+tunnel.13.option.postCheckTime=300
+tunnel.13.option.postTotalBanTime=600
+tunnel.13.option.rejectInproxy=false
+tunnel.13.option.rejectReferer=false
+tunnel.13.option.rejectUserAgents=false
+tunnel.13.option.shouldBundleReplyInfo=false
+tunnel.13.option.useSSL=false
+tunnel.13.privKeyFile=i2ptunnel13-privKeys.dat
+tunnel.13.spoofedHost=trac.i2p
+tunnel.13.startOnLoad=true
+tunnel.13.targetHost=10.0.0.248
+tunnel.13.targetPort=80
+tunnel.13.type=httpserver
+tunnel.14.description=redmine
+tunnel.14.name=redmine server
+tunnel.14.option.enableUniqueLocal=false
+tunnel.14.option.i2cp.destination.sigType=1
+tunnel.14.option.i2cp.enableAccessList=false
+tunnel.14.option.i2cp.enableBlackList=false
+tunnel.14.option.i2cp.encryptLeaseSet=false
+tunnel.14.option.i2cp.reduceIdleTime=1200000
+tunnel.14.option.i2cp.reduceOnIdle=false
+tunnel.14.option.i2cp.reduceQuantity=1
+tunnel.14.option.i2p.streaming.connectDelay=0
+tunnel.14.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.14.option.i2p.streaming.maxConnsPerDay=0
+tunnel.14.option.i2p.streaming.maxConnsPerHour=0
+tunnel.14.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.14.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.14.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.14.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.14.option.inbound.backupQuantity=0
+tunnel.14.option.inbound.length=3
+tunnel.14.option.inbound.lengthVariance=0
+tunnel.14.option.inbound.nickname=redmine server
+tunnel.14.option.inbound.quantity=2
+tunnel.14.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.14.option.maxPosts=0
+tunnel.14.option.maxTotalPosts=0
+tunnel.14.option.outbound.backupQuantity=0
+tunnel.14.option.outbound.length=3
+tunnel.14.option.outbound.lengthVariance=0
+tunnel.14.option.outbound.nickname=redmine server
+tunnel.14.option.outbound.quantity=2
+tunnel.14.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.14.option.postBanTime=1800
+tunnel.14.option.postCheckTime=300
+tunnel.14.option.postTotalBanTime=600
+tunnel.14.option.rejectInproxy=false
+tunnel.14.option.rejectReferer=false
+tunnel.14.option.rejectUserAgents=false
+tunnel.14.option.shouldBundleReplyInfo=false
+tunnel.14.option.useSSL=false
+tunnel.14.privKeyFile=i2ptunnel14-privKeys.dat
+tunnel.14.spoofedHost=redmine.i2p
+tunnel.14.startOnLoad=true
+tunnel.14.targetHost=10.0.0.249
+tunnel.14.targetPort=80
+tunnel.14.type=httpserver
+tunnel.15.description=ssh
+tunnel.15.name=ssh server
+tunnel.15.option.enableUniqueLocal=false
+tunnel.15.option.i2cp.destination.sigType=1
+tunnel.15.option.i2cp.enableAccessList=false
+tunnel.15.option.i2cp.enableBlackList=false
+tunnel.15.option.i2cp.encryptLeaseSet=false
+tunnel.15.option.i2cp.reduceIdleTime=1200000
+tunnel.15.option.i2cp.reduceOnIdle=false
+tunnel.15.option.i2cp.reduceQuantity=1
+tunnel.15.option.i2p.streaming.connectDelay=0
+tunnel.15.option.i2p.streaming.maxConcurrentStreams=0
+tunnel.15.option.i2p.streaming.maxConnsPerDay=0
+tunnel.15.option.i2p.streaming.maxConnsPerHour=0
+tunnel.15.option.i2p.streaming.maxConnsPerMinute=0
+tunnel.15.option.i2p.streaming.maxTotalConnsPerDay=0
+tunnel.15.option.i2p.streaming.maxTotalConnsPerHour=0
+tunnel.15.option.i2p.streaming.maxTotalConnsPerMinute=0
+tunnel.15.option.inbound.backupQuantity=0
+tunnel.15.option.inbound.length=3
+tunnel.15.option.inbound.lengthVariance=0
+tunnel.15.option.inbound.nickname=ssh server
+tunnel.15.option.inbound.quantity=2
+tunnel.15.option.inbound.randomKey=YlziI03Dh95j5lGlVzXjQehxMq913sDiSlgihQVJSiI=
+tunnel.15.option.maxPosts=0
+tunnel.15.option.maxTotalPosts=0
+tunnel.15.option.outbound.backupQuantity=0
+tunnel.15.option.outbound.length=3
+tunnel.15.option.outbound.lengthVariance=0
+tunnel.15.option.outbound.nickname=ssh server
+tunnel.15.option.outbound.quantity=2
+tunnel.15.option.outbound.randomKey=xPyC-Y3Voh5MznimTaS00rVP2v74khpLEDI5fikPoO8=
+tunnel.15.option.postBanTime=1800
+tunnel.15.option.postCheckTime=300
+tunnel.15.option.postTotalBanTime=600
+tunnel.15.option.rejectInproxy=false
+tunnel.15.option.rejectReferer=false
+tunnel.15.option.rejectUserAgents=false
+tunnel.15.option.shouldBundleReplyInfo=false
+tunnel.15.option.useSSL=false
+tunnel.15.privKeyFile=i2ptunnel15-privKeys.dat
+tunnel.15.spoofedHost=ssh.i2p
+tunnel.15.startOnLoad=true
+tunnel.15.targetHost=10.0.0.1
+tunnel.15.targetPort=22
+tunnel.15.type=sshserver
 EOF
 
 # Setting permissions
@@ -1430,7 +1614,7 @@ LOOP_N=0
 echo "Configuring i2p hidden services ..."
 while [ $LOOP_S -lt 1 ]
 do
-if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ 2>/dev/null | wc -l` -eq 6 ]; then
+if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ 2>/dev/null | wc -l` -eq 10 ]; then
 echo "i2p successfully configured"
 LOOP_S=1
 else
@@ -1438,7 +1622,7 @@ sleep 1
 LOOP_N=$((LOOP_N + 1))
 fi
 # Wail up to 120 s for tor hidden services to become available
-if [ $LOOP_N -eq 120 ]; then
+if [ $LOOP_N -eq 160 ]; then
 echo "Error: Unable to configure i2p. Exiting ..."
 exit 1
 fi
@@ -2710,7 +2894,7 @@ production:
 	RAILS_ENV=production REDMINE_LANG=en bundle exec rake redmine:load_default_data
 
 	# Start thin server
-	thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d star
+	thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d start
 
         # Link the redmine public dir to the nginx-redmine root:
         # ln -s /opt/redmine/redmine-3.3.1/public/ /var/www/html/redmine
@@ -2729,6 +2913,7 @@ configure_ntopng()
 
 	# Creating configuration file
 	rm -rf /etc/ntopng/ntopng.conf
+	mkdir /etc/ntopng/
 	touch /etc/ntopng/ntopng.conf
 	echo "
 #--user ntop
@@ -4664,25 +4849,57 @@ echo "--------------------------------------------------------------------------
 
 # Print i2p
 echo "" | tee -a /var/box_services
-echo "----------------------------------------------------------------------------" | tee -a /var/box_services
-echo "| Service   |                         i2p domain                           |" | tee -a /var/box_services
-echo "----------------------------------------------------------------------------" | tee -a /var/box_services
-echo -n "| easyrtc   | " | tee -a /var/box_services
+echo "------------------------------------------------------------------------------" | tee -a /var/box_services
+echo "| Service     |                         i2p domain                           |" | tee -a /var/box_services
+echo "------------------------------------------------------------------------------" | tee -a /var/box_services
+echo -n "| easyrtc     | " | tee -a /var/box_services
 echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '2!d' | sed s/-.*//` | tee -a /var/box_services
 echo " |" | tee -a /var/box_services
-echo -n "| yacy      | " | tee -a /var/box_services
+echo -n "| yacy        | " | tee -a /var/box_services
 echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '3!d' | sed s/-.*//` | tee -a /var/box_services
 echo " |" | tee -a /var/box_services
-echo -n "| friendica | " | tee -a /var/box_services
+echo -n "| friendica   | " | tee -a /var/box_services
 echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '4!d' | sed s/-.*//` | tee -a /var/box_services
 echo " |" | tee -a /var/box_services
-echo -n "| owncloud  | " | tee -a /var/box_services
+echo -n "| owncloud    | " | tee -a /var/box_services
 echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '5!d' | sed s/-.*//` | tee -a /var/box_services
 echo " |" | tee -a /var/box_services
-echo -n "| mailpile  | " | tee -a /var/box_services
+echo -n "| mailpile    | " | tee -a /var/box_services
 echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '6!d' | sed s/-.*//` | tee -a /var/box_services
 echo " |" | tee -a /var/box_services
-echo "----------------------------------------------------------------------------" | tee -a /var/box_services
+echo -n "| gitlab      | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '7!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo -n "| trac        | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '8!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo -n "| redmine     | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '9!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo -n "| ssh         | " | tee -a /var/box_services
+echo -n `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ | sed '10!d' | sed s/-.*//` | tee -a /var/box_services
+echo " |" | tee -a /var/box_services
+echo "------------------------------------------------------------------------------" | tee -a /var/box_services
+
+cat << EOF >> /var/box_services
+
+------------------------------------------------------------------------------
+|                  Users and Passwords in LibreRouter                        |
+------------------------------------------------------------------------------
+|    services name    |        username        |        password             |
+------------------------------------------------------------------------------
+|    mysql            |          root          |       $MYSQL_PASS            |
+|    easyrtc          |                    (No Need)                         |
+|    friendica        |                (Please Register)                     |
+|    gitlab           |                (Please Register)                     |
+|    mailpile         |                (Please Register)                     |
+|    owncloud         |                (Please Register)                     |
+|    redmine          |                (Please Register)                     |
+|    trac             |                (Please Register)                     |
+|    yacy             |                    (No Need)                         |
+|    ssh              |         (Your machine root login and pass)           |
+------------------------------------------------------------------------------
+EOF
 
 # Create services command
 cat << EOF > /usr/sbin/services
