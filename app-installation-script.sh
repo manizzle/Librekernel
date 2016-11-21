@@ -693,34 +693,69 @@ get_interfaces()
 		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
 		echo "Internet connection established on interface $EXT_INTERFACE"
 	else
-		# Checking eth0 for Internet connection
-        	echo "Getting Internet access on eth0"
-		echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-		echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-		echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
-		/etc/init.d/networking restart 
-		if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-			echo "Internet conection established on: eth0"	
-			EXT_INTERFACE="eth0"
-		else
-			echo "Warning: Unable to get Internet access on eth0"
-        		# Checking eth1 for Internet connection
-			echo "Getting Internet access on eth1"
-	        	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+		# Test all available ethernet interfaces for internet connection.
+		# Useful if there are more than two ethernet interfaces.
+
+		for i in `ifconfig -s | awk '{print $1}' | grep eth`
+		do 
+			iface="$i"
+			echo "Getting Internet access on eth0"
+			echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
 			echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-			echo -e "auto eth1\niface eth1 inet dhcp" >> /etc/network/interfaces
+			echo -e  "auto $iface\niface $iface inet dhcp" >> /etc/network/interfaces
 			/etc/init.d/networking restart 
 			if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-				echo "Internet conection established on: eth1"	
-				EXT_INTERFACE="eth1"
-			else
-				echo "Warning: Unable to get Internet access on eth1"
-				echo "Please plugin Internet cable to eth0 or eth1 and enable DHCP on gateway"
+				echo "Internet conection established on: $iface"	
+				EXT_INTERFACE="$iface"
+				break
+			fi
+		done
+			if [ ! -z $EXT_INTERFACE ]; then
+				echo "Warning: Unable to get Internet access on available interfaces"
+				echo "Please plugin Internet cable and enable DHCP on gateway"
 				echo "Error: Unable to get Internet access. Exiting"
 				exit 7
 			fi
-		fi
+		
 	fi
+
+
+# Older version
+#	if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+#		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
+#		echo "Internet connection established on interface $EXT_INTERFACE"
+#	else
+#		# Checking eth0 for Internet connection
+#        	echo "Getting Internet access on eth0"
+#		echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+#		echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
+#		echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
+#		/etc/init.d/networking restart 
+#		if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+#			echo "Internet conection established on: eth0"	
+#			EXT_INTERFACE="eth0"
+#		else
+#			echo "Warning: Unable to get Internet access on eth0"
+#        		# Checking eth1 for Internet connection
+#			echo "Getting Internet access on eth1"
+#	        	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
+#			echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
+#			echo -e "auto eth1\niface eth1 inet dhcp" >> /etc/network/interfaces
+#			/etc/init.d/networking restart 
+#			if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+#				echo "Internet conection established on: eth1"	
+#				EXT_INTERFACE="eth1"
+#			else
+#				echo "Warning: Unable to get Internet access on eth1"
+#				echo "Please plugin Internet cable to eth0 or eth1 and enable DHCP on gateway"
+#				echo "Error: Unable to get Internet access. Exiting"
+#				exit 7
+#			fi
+#		fi
+#	fi
+
+
+
 	# Getting internal interface name
         INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
         echo "Internal interface: $INT_INTERFACE"
