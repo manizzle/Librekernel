@@ -2418,7 +2418,7 @@ http_access deny CONNECT !SSL_ports
 
 http_access deny all
 
-http_port 3129 accel vhost allow-direct
+http_port 10.0.0.1:3129 accel vhost allow-direct
 
 hierarchy_stoplist cgi-bin ?
 
@@ -2498,7 +2498,7 @@ http_access deny CONNECT !SSL_ports
 
 http_access deny all
 
-http_port 3128 accel vhost allow-direct
+http_port 10.0.0.1:3128 accel vhost allow-direct
 
 hierarchy_stoplist cgi-bin ?
 
@@ -2930,12 +2930,12 @@ configure_ntopng()
 #--trace-level 6 # NOISY + MSGID
 #--trace-level 7 # NOISY + MSGID + file/line
 #--daemon --use-syslog
-#--http-server -w 127.0.0.1:3000
+--http-server -w 127.0.0.1:3000
 #--https-server -w 127.0.0.1:3001
 --pid-path=/var/tmp/ntopng.pid
 --daemon
 --interface=$EXT_INTERFACE,$INT_INTERFACE
---http-port=3000
+#--http-port=3000
 --local-networks="10.0.0.0/24"
 --dns-mode=1
 --data-dir=/var/tmp/ntopng
@@ -3061,7 +3061,7 @@ echo "Configuring Nginx ..."
 
 # Stop and change apache configuration
 /etc/init.d/apache2 stop
-sed -i s/*:80/*:88/g  /etc/apache2/sites-enabled/000-default.conf
+sed -i s/*:80/127.0.0.1:88/g  /etc/apache2/sites-enabled/000-default.conf
 sed -i s/80/88/g  /etc/apache2/ports.conf
 
 mkdir -p /etc/ssl/nginx/
