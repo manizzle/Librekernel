@@ -3014,6 +3014,21 @@ EOF
 
 
 # ---------------------------------------------------------
+# Configure prosody xmpp server
+# ---------------------------------------------------------
+condifure_prosody()
+{
+	echo "configuring prosody ..."
+	if ! cat /etc/prosody/prosody.cfg.lua | grep "interfaces = { \"127.0.0.1\" }"; then
+		sed -i '18iinterfaces = { "127.0.0.1" }' /etc/prosody/prosody.cfg.lua 
+	fi
+	
+	# Restarting prosody
+	/etc/init.d/prosody restart
+}
+
+
+# ---------------------------------------------------------
 # Function to start mailpile local service
 # ---------------------------------------------------------
 configure_mailpile()
@@ -5017,7 +5032,8 @@ configure_postfix		# Configuring postfix mail service
 configure_trac			# Configuring trac service
 configure_redmine		# Configuring redmine service
 configure_ntopng		# Configuring ntop service
-configure_redsocks		# Configure redsocks proxy server
+configure_redsocks		# Configuring redsocks proxy server
+condifure_prosody		# Configuring prosody xmpp server 
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
 #configure_suricata		# Configure Suricata service
