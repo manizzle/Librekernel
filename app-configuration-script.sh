@@ -795,6 +795,7 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 --dport 22 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --to 10.0.0.1:3129
 
 # to squid http 
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m ndpi --http -j DNAT --to 10.0.0.1:3130
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 80 -j DNAT --to 10.0.0.1:3130
 
 # to squid https 
@@ -802,6 +803,10 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 443 -j REDIRECT -
 
 # iptables nat
 iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE 
+
+# ndpi protocole checking
+iptables -t mangle -I PREROUTING -m ndpi --dpi_check
+iptables -t mangle -I POSTROUTING -m ndpi --dpi_check
 
 # Redirecting traffic to tor
 #iptables -t nat -A PREROUTING -i eth0 -p tcp -d 10.0.0.0/8 --dport 80 --syn -j REDIRECT --to-ports 9040
