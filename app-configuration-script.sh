@@ -2946,7 +2946,7 @@ configure_ntopng()
 
 	# Creating configuration file
 	rm -rf /etc/ntopng/ntopng.conf
-	mkdir /etc/ntopng/
+	mkdir -p /etc/ntopng/
 	touch /etc/ntopng/ntopng.conf
 	echo "
 #--user ntop
@@ -3016,7 +3016,7 @@ EOF
 # ---------------------------------------------------------
 # Configure prosody xmpp server
 # ---------------------------------------------------------
-condifure_prosody()
+configure_prosody()
 {
 	echo "configuring prosody ..."
 	if ! cat /etc/prosody/prosody.cfg.lua | grep "interfaces = { \"127.0.0.1\" }"; then
@@ -3025,6 +3025,21 @@ condifure_prosody()
 	
 	# Restarting prosody
 	/etc/init.d/prosody restart
+}
+
+
+# ---------------------------------------------------------
+# Configure tomcat server
+# ---------------------------------------------------------
+configure_tomcat()
+{
+        echo "configuring tomcat ..."
+        if ! cat /etc/tomcat7/server.xml | grep "address=\"127.0.0.1\""; then
+		sed -i 's/<Connector port="8080" protocol="HTTP\/1.1"/<Connector address="127.0.0.1" port="8080" protocol="HTTP\/1.1"/g' /etc/tomcat7/server.xml
+        fi
+
+        # Restarting tomcat
+        /etc/init.d/tomcat7 restart
 }
 
 
@@ -5033,7 +5048,8 @@ configure_trac			# Configuring trac service
 configure_redmine		# Configuring redmine service
 configure_ntopng		# Configuring ntop service
 configure_redsocks		# Configuring redsocks proxy server
-condifure_prosody		# Configuring prosody xmpp server 
+configure_prosody		# Configuring prosody xmpp server 
+configure_tomcat		# Configuring tomcat server
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
 #configure_suricata		# Configure Suricata service
