@@ -2240,6 +2240,39 @@ service privoxy restart
 
 
 # ---------------------------------------------------------
+# Function to configure tinyproxy
+# ---------------------------------------------------------
+configure_tinyproxy()
+{
+	echo "Configuring tinyproxy ..."
+cat << EOF > /etc/tinyproxy.conf
+User nobody
+Group nogroup
+Port 8888
+Listen 127.0.0.1
+Timeout 600
+DefaultErrorFile "/usr/share/tinyproxy/default.html"
+StatFile "/usr/share/tinyproxy/stats.html"
+Logfile "/var/log/tinyproxy/tinyproxy.log"
+LogLevel Info
+PidFile "/var/run/tinyproxy/tinyproxy.pid"
+MaxClients 100
+MinSpareServers 5
+MaxSpareServers 20
+StartServers 10
+MaxRequestsPerChild 0
+Allow 127.0.0.1
+ViaProxyName "tinyproxy"
+ConnectPort 443
+ConnectPort 563
+EOF
+
+	# Restarting tinyproxy
+	/etc/init.d/tinyproxy restart
+}
+
+
+# ---------------------------------------------------------
 # Function to configure squid
 # ---------------------------------------------------------
 configure_squid()
@@ -4973,6 +5006,7 @@ configure_mailpile		# Configuring Mailpile local service
 configure_modsecurity		# Configuring modsecurity 
 configure_nginx                 # Configuring Nginx web server
 configure_privoxy		# Configuring Privoxy proxy server
+configure_tinyproxy             # Configuring Tinyproxy proxy server
 configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
