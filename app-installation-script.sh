@@ -429,7 +429,8 @@ elif [ $PLATFORM = "D8" ]; then
         php5-curl php5-intl php5-mcrypt php5-memcache \
         php-xml-parser php-pear phpmyadmin php5 mailutils \
         apache2- apache2-mpm-prefork- apache2-utils- apache2.2-bin- \
-        apache2.2-common- openjdk-7-jre-headless uwsgi \
+        apache2.2-common- rpcbind- exim4- \
+        openjdk-7-jre-headless uwsgi \
         php5-gd php5-imap smarty3 git ntpdate macchanger \
         bridge-utils hostapd hostapd bridge-utils librrd-dev \
         curl macchanger ntpdate bc sudo lsb-release dnsutils \
