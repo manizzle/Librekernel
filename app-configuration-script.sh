@@ -2893,6 +2893,8 @@ configure_redmine()
 	bundle install --without development test rmagick
 
 	# Creating thin configuration
+        mkdir -p /etc/thin2.1
+        touch /etc/thin2.1/config.yml
 	echo "
 pid: /var/run/thin.pid
 timeout: 30
@@ -4873,46 +4875,83 @@ rm -rf /var/box_services
 touch /var/box_services
 echo "Printing local services info ..."
 echo ""
-echo "------------------------------------------------------------------------------" \
+echo "------------------------------------------------------------------------------------" \
 | tee /var/box_services
-echo "| Service Name |       Tor domain       |    Direct access    |  IP Address  |" \
+echo "| Service Name |       Tor domain       |       Direct access       |  IP Address  |" \
 | tee -a /var/box_services
-echo "------------------------------------------------------------------------------" \
+echo "------------------------------------------------------------------------------------" \
 | tee -a /var/box_services
 for i in $(ls /var/lib/tor/hidden_service/)
 do
 if [ $i == "easyrtc" ]; then
 IP_ADD="10.0.0.250"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s | conference.librerouter.net |%13s |\n" $i $hn $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "yacy" ]; then
 IP_ADD="10.0.0.251"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |     search.librerouter.net |%13s |\n" $i $hn $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "friendica" ]; then
 IP_ADD="10.0.0.252"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |     social.librerouter.net |%13s |\n" $i $hn $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "owncloud" ]; then
 IP_ADD="10.0.0.253"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |    storage.librerouter.net |%13s |\n" $i $hn $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "mailpile" ]; then
 IP_ADD="10.0.0.254"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |      email.librerouter.net |%13s |\n" $i $hn $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "ssh" ]; then
 IP_ADD="10.0.0.1"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "gitlab" ]; then
 IP_ADD="10.0.0.247"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "trac" ]; then
 IP_ADD="10.0.0.248"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+| tee -a /var/box_services
 fi
+
 if [ $i == "redmine" ]; then
 IP_ADD="10.0.0.249"
-fi
 hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
-printf "|%12s  |%23s |%11s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
 | tee -a /var/box_services
+fi
+
+#hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+#printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+#| tee -a /var/box_services
+
 done
-echo "------------------------------------------------------------------------------" \
+echo "------------------------------------------------------------------------------------" \
 | tee -a /var/box_services
 
 # Print i2p
