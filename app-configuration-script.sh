@@ -312,9 +312,9 @@ configure_bridges()
 {
         # Updating and installing bridge-utils package
         echo "Updating repositories ..."
-        apt-get update 2>&1 > /tmp/apt-get-update-bridge.log
+        apt-get update 2>&1 > /var/apt-get-update-bridge.log
         echo "Installing bridge-utils ..."
-        apt-get install bridge-utils 2>&1 > /tmp/apt-get-install-bridge.log
+        apt-get install bridge-utils 2>&1 > /var/apt-get-install-bridge.log
 
         # Checking if bridge-utils is installed successfully
         if [ $? -ne 0 ]; then
@@ -2042,8 +2042,8 @@ app.use(serveStatic('static', {'index': ['index.html']}));
 // Start Express http server on port 8443
 var webServer = https.createServer(
 {
-key:  fs.readFileSync("/etc/ssl/nginx/easyrtc.key"),
-cert: fs.readFileSync("/etc/ssl/nginx/easyrtc.crt")
+key:  fs.readFileSync("/etc/ssl/nginx/conference/conference_librerouter_net.key"),
+cert: fs.readFileSync("/etc/ssl/nginx/conference/conference_bundle.crt")
 },
 app).listen(8443);
 
@@ -4988,22 +4988,25 @@ sleep 2
 do_reboot()
 {
 echo "Configuration finished !!!"
-echo "Librerouter needs to restart. Do restart now? [Y/N]"
-LOOP_N=0
-while [ $LOOP_N -eq 0 ]; do
-read ANSWER
-if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ]; then
-LOOP_N=1
-echo "Restarting ..."
+echo "Librerouter needs to restart. Restarting ..."
 reboot
-elif [ "$ANSWER" = "N" -o "$ANSWER" = "n" ]; then
-LOOP_N=1
-echo "Exiting ..."
-else
-LOOP_N=0
-echo "Please type \"Y\" or \"N\""
-fi
-done
+
+#echo "Librerouter needs to restart. Do restart now? [Y/N]"
+#LOOP_N=0
+#while [ $LOOP_N -eq 0 ]; do
+#read ANSWER
+#if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ]; then
+#LOOP_N=1
+#echo "Restarting ..."
+#reboot
+#elif [ "$ANSWER" = "N" -o "$ANSWER" = "n" ]; then
+#LOOP_N=1
+#echo "Exiting ..."
+#else
+#LOOP_N=0
+#echo "Please type \"Y\" or \"N\""
+#fi
+#done
 }
 
 
