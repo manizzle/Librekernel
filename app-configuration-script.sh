@@ -780,7 +780,6 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 22 -j
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p udp -d 10.0.0.1 --dport 53 -j REDIRECT --to-ports 53
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 80 -j REDIRECT --to-ports 80
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 443 -j REDIRECT --to-ports 443
-iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.1 --dport 7000 -j REDIRECT --to-ports 7000
 
 # to squid-i2p 
 iptables -t nat -A OUTPUT     -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
@@ -808,23 +807,24 @@ iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE
 iptables -t mangle -I PREROUTING -m ndpi --dpi_check
 iptables -t mangle -I POSTROUTING -m ndpi --dpi_check
 
-# Redirecting traffic to tor
-#iptables -t nat -A PREROUTING -i eth0 -p tcp -d 10.0.0.0/8 --dport 80 --syn -j REDIRECT --to-ports 9040
-#iptables -t nat -A PREROUTING -i eth0 -p udp --dport 53 -j REDIRECT --to-ports 53
+# Blocking ICMP (All Directions)
+iptables -A INPUT -p ICMP -j DROP
+iptables -A OUTPUT -p ICMP -j DROP
+iptables -A FORWARD -p ICMP -j DROP
 
-# Redirecting http traffic to squid 
-#iptables -t nat -A PREROUTING -i eth1 -p tcp ! -d 10.0.0.0/24 --dport 80 -j DNAT --to 10.0.0.1:3128
-#iptables -t nat -A PREROUTING -i eth0 -p tcp ! -d 10.0.0.0/24 --dport 80 -j DNAT --to 10.0.0.1:3128
+# Blocking IPsec (All Directions)
+iptables -A INPUT -m ndpi --ipsec -j DROP
+iptables -A OUTPUT -m ndpi --ipsec -j DROP
+iptables -A FORWARD -m ndpi --ipsec -j DROP
 
-## i2p petitions 
-#iptables -t nat -A OUTPUT     -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
-#iptables -t nat -A PREROUTING -d 10.191.0.1 -p tcp --dport 80 -j REDIRECT --to-port 3128
-#iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m tcp --sport 80 -d 10.191.0.1 -j REDIRECT --to-ports 3128 
+# Blocking DNS request to any servers other than librerouter
+iptables -A INPUT -m ndpi --dns ! -d 10.0.0.1 -j DROP
+iptables -A OUTPUT -m ndpi --dns ! -d 10.0.0.1 -j DROP
+iptables -A FORWARD -m ndpi --dns ! -d 10.0.0.1 -j DROP
 
-## Allow surf onion zone
-#iptables -t nat -A PREROUTING -p tcp -d 10.192.0.0/16 -j REDIRECT --to-port 9040
-#iptables -t nat -A OUTPUT     -p tcp -d 10.192.0.0/16 -j REDIRECT --to-port 9040
-#iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --syn -m multiport ! --dports 80 -j REDIRECT --to-ports 9040
+# Block any other TCP-UDP connections
+iptables -P FORWARD DROP
+
 
 ## Enable Blacklist
 #[ -e /etc/blacklists/blacklists-iptables.sh ] && /etc/blacklists/blacklists-iptables.sh &
