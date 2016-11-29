@@ -794,7 +794,7 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 --dport 22 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --to 10.0.0.1:3129
 
 # to squid http 
-iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m ndpi --http -j DNAT --to 10.0.0.1:3130
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m ndpi --http -j REDIRECT --to-ports 3130
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 80 -j DNAT --to 10.0.0.1:3130
 
 # to squid https 
@@ -817,14 +817,12 @@ iptables -A INPUT -m ndpi --ipsec -j DROP
 iptables -A OUTPUT -m ndpi --ipsec -j DROP
 iptables -A FORWARD -m ndpi --ipsec -j DROP
 
-# Blocking DNS request to any servers other than librerouter
-iptables -A INPUT -m ndpi --dns ! -d 10.0.0.1 -j DROP
-iptables -A OUTPUT -m ndpi --dns ! -d 10.0.0.1 -j DROP
+# Blocking DNS request from client to any servers other than librerouter
+iptables -A INPUT -i $INT_INTERFACE -m ndpi --dns ! -d 10.0.0.1 -j DROP
 iptables -A FORWARD -m ndpi --dns ! -d 10.0.0.1 -j DROP
 
 # Block any other TCP-UDP connections
 iptables -P FORWARD DROP
-
 
 ## Enable Blacklist
 #[ -e /etc/blacklists/blacklists-iptables.sh ] && /etc/blacklists/blacklists-iptables.sh &
