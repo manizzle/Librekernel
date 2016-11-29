@@ -116,7 +116,7 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		echo "Updating repositories in Ubuntu 12.04"
 #        	echo "deb http://security.ubuntu.com/ubuntu precise-security main" >> /etc/apt/sources.list
  		echo "Installing apt-transport-https ..."
-		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https"
 			exit 3
@@ -146,9 +146,9 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		# Configuring repositories for Ubuntu 14.04
 		echo "Updating repositories in Ubuntu 14.04"
 #        	echo "deb http://security.ubuntu.com/ubuntu trusty-security main" >> /etc/apt/sources.list
-        	#apt-get update 2>&1 > /tmp/apt-get-update-default.log
+        	#apt-get update 2>&1 > /var/apt-get-update-default.log
  		echo "Installing apt-transport-https ..."
-		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https"
 			exit 3
@@ -184,9 +184,9 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		# There is a need to install apt-transport-https 
 		# package before preparing third party repositories
 		echo "Updating repositories ..."
-	        apt-get update 2>&1 > /tmp/apt-get-update-default.log
+	        apt-get update 2>&1 > /var/apt-get-update-default.log
  		echo "Installing apt-transport-https ..."
-		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https"
 			exit 3
@@ -249,9 +249,9 @@ EOF
 		# There is a need to install apt-transport-https 
 		# package before preparing third party repositories
 		echo "Updating repositories ..."
-       		apt-get update 2>&1 > /tmp/apt-get-update-default.log
+       		apt-get update 2>&1 > /var/apt-get-update-default.log
  		echo "Installing apt-transport-https ..."
-		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https"
 			exit 3
@@ -333,7 +333,7 @@ EOF
 		# There is a need to install apt-transport-https 
 		# package before preparing third party repositories
 		echo "Updating repositories ..."
-   		apt-get update 2>&1 > /tmp/apt-get-update-default.log
+   		apt-get update 2>&1 > /var/apt-get-update-default.log
 
 		if [ $? -ne 0 ]; then
 			echo "ERROR: UNABLE TO UPDATE REPOSITORIES"
@@ -343,7 +343,7 @@ EOF
 		fi
 	
  		echo "Installing apt-transport-https ..."
-		apt-get install -y --force-yes apt-transport-https 2>&1 > /tmp/apt-get-install-aptth.log
+		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 
 		if [ $? -ne 0 ]; then
 			echo "ERROR: UNABLE TO INSTALL PACKAGES: apt-transport-https"
@@ -391,7 +391,7 @@ EOF
 install_packages() 
 {
 	echo "Updating repositories packages ... "
-	apt-get update 2>&1 > /tmp/apt-get-update.log
+	apt-get update 2>&1 > /var/apt-get-update.log
 	echo "Installing packages ... "
 
 # Installing Packages for Debian 7 GNU/Linux
@@ -416,7 +416,7 @@ if [ $PLATFORM = "D7" ]; then
         gnupg openssl python-virtualenv python-pip python-lxml git \
         libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
         postfix mailutils aptitude \
-	2>&1 > /tmp/apt-get-install.log
+	2>&1 > /var/apt-get-install.log
 
 # Installing Packages for Debian 8 GNU/Linux
 
@@ -453,14 +453,14 @@ elif [ $PLATFORM = "D8" ]; then
         librrds-perl libapache2-mod-php5- apache2-prefork-dev \
         libmysqlclient-dev wkhtmltopdf libpcre3 mysql-server \
 	mysql-client-5.5 \
-        2>&1 > /tmp/apt-get-install_1.log
+        2>&1 > /var/apt-get-install_1.log
 
 	# services
 	apt-get install -y --force-yes \
         privoxy unbound owncloud isc-dhcp-server \
         yacy c-icap clamav clamav-daemon  squidguard postfix \
 	tor i2p roundcube tinyproxy prosody \
-        2>&1 > /tmp/apt-get-install_2.log
+        2>&1 > /var/apt-get-install_2.log
 
         #bro passenger logstash kibana nginx nginx-extras libcurl4-openssl-dev \
 
@@ -486,7 +486,7 @@ elif [ $PLATFORM = "T7" ]; then
         gnupg openssl python-virtualenv python-pip python-lxml git \
         libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev \
         postfix mailutils aptitude \
-	2>&1 > /tmp/apt-get-install.log
+	2>&1 > /var/apt-get-install.log
 
 # Installing Packages for Ubuntu 14.04 GNU/Linux
 
@@ -509,7 +509,7 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
         gnupg openssl python-virtualenv python-pip python-lxml git \
          zlib1g-dev python-dev webmin \
         postfix mailutils aptitude \
-	2>&1 > /tmp/apt-get-install.log
+	2>&1 > /var/apt-get-install.log
 fi
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install packages"
