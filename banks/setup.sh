@@ -48,7 +48,8 @@ install_dependencies()
         pip install tldextract
         pip install netaddr
         pip install scapy
-
+        pip install unidecode
+        
         if [ $? -ne 0 ]; then
                 echo "Error: Unable to install dependencies. Exiting ..."
                 exit 3
