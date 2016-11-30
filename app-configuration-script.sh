@@ -386,12 +386,12 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 
 	#External network interface
 	auto $EXT_INTERFACE
-	allow-hotplug $EXT_INTERFACE
+	#allow-hotplug $EXT_INTERFACE
 	iface $EXT_INTERFACE inet dhcp
 
 	#Internal network interface
 	auto $INT_INTERFACE
-	allow-hotplug $INT_INTERFACE
+	#allow-hotplug $INT_INTERFACE
 	iface $INT_INTERFACE inet static
 	    address 10.0.0.1
 	    netmask 255.255.255.0
@@ -399,91 +399,91 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
     
 	#Yacy
 	auto $INT_INTERFACE:1
-	allow-hotplug $INT_INTERFACE:1
+	#allow-hotplug $INT_INTERFACE:1
 	iface $INT_INTERFACE:1 inet static
 	    address 10.0.0.251
             netmask 255.255.255.0
 
 	#Friendica
 	auto $INT_INTERFACE:2
-	allow-hotplug $INT_INTERFACE:2
+	#allow-hotplug $INT_INTERFACE:2
 	iface $INT_INTERFACE:2 inet static
 	    address 10.0.0.252
 	    netmask 255.255.255.0
     
 	#OwnCloud
 	auto $INT_INTERFACE:3
-	allow-hotplug $INT_INTERFACE:3
+	#allow-hotplug $INT_INTERFACE:3
 	iface $INT_INTERFACE:3 inet static
 	    address 10.0.0.253
 	    netmask 255.255.255.0
     
 	#Mailpile
 	auto $INT_INTERFACE:4
-	allow-hotplug $INT_INTERFACE:4
+	#allow-hotplug $INT_INTERFACE:4
 	iface $INT_INTERFACE:4 inet static
 	    address 10.0.0.254
 	    netmask 255.255.255.0
 	
 	#Webmin
 	auto $INT_INTERFACE:5
-	allow-hotplug $INT_INTERFACE:5
+	#allow-hotplug $INT_INTERFACE:5
 	iface $INT_INTERFACE:5 inet static
 	    address 10.0.0.245
 	    netmask 255.255.255.0
 	
 	#EasyRTC
 	auto $INT_INTERFACE:6
-	allow-hotplug $INT_INTERFACE:6
+	#allow-hotplug $INT_INTERFACE:6
 	iface $INT_INTERFACE:6 inet static
 	    address 10.0.0.250
             netmask 255.255.255.0
 
 	#Kibana
 	auto $INT_INTERFACE:7
-	allow-hotplug $INT_INTERFACE:7
+	#allow-hotplug $INT_INTERFACE:7
 	iface $INT_INTERFACE:7 inet static
 	    address 10.0.0.11
 	    netmask 255.255.255.0
 
 	#Snorby
 	auto $INT_INTERFACE:8
-	allow-hotplug $INT_INTERFACE:8
+	#allow-hotplug $INT_INTERFACE:8
 	iface $INT_INTERFACE:8 inet static
 	    address 10.0.0.12
 	    netmask 255.255.255.0
 
         #squidguard
         auto $INT_INTERFACE:9
-        allow-hotplug $INT_INTERFACE:9
+        #allow-hotplug $INT_INTERFACE:9
         iface $INT_INTERFACE:9 inet static
             address 10.0.0.246
             netmask 255.255.255.0
 
         #gitlab
         auto $INT_INTERFACE:10
-        allow-hotplug $INT_INTERFACE:10
+        #allow-hotplug $INT_INTERFACE:10
         iface $INT_INTERFACE:10 inet static
             address 10.0.0.247
             netmask 255.255.255.0
 
         #trac
         auto $INT_INTERFACE:11
-        allow-hotplug $INT_INTERFACE:11
+        #allow-hotplug $INT_INTERFACE:11
         iface $INT_INTERFACE:11 inet static
             address 10.0.0.248
             netmask 255.255.255.0
 
         #redmine
         auto $INT_INTERFACE:12
-        allow-hotplug $INT_INTERFACE:12
+        #allow-hotplug $INT_INTERFACE:12
         iface $INT_INTERFACE:12 inet static
             address 10.0.0.249
             netmask 255.255.255.0
 
 	#Webmin
         auto $INT_INTERFACE:13
-        allow-hotplug $INT_INTERFACE:13
+        #allow-hotplug $INT_INTERFACE:13
         iface $INT_INTERFACE:13 inet static
             address 10.0.0.244
             netmask 255.255.255.0
