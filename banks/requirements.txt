@@ -5,7 +5,4 @@ dnspython
 tldextract
 netaddr
 scapy
-
-
-
-
+unidecode
