@@ -488,6 +488,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
             address 10.0.0.244
             netmask 255.255.255.0
 EOF
+
 	# Network interfaces configuration for board
 #	elif [ "$PROCESSOR" = "ARM" ]; then
 #	cat << EOF >  /etc/network/interfaces 
