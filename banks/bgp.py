@@ -179,6 +179,10 @@ def main():
         if ctr >= LIMIT:
             break
 
+    done = sum(1 for (asn, data) in bdi.iteritems() if "ranges" in data)
+    total = len(bdi)
+    if done != total:
+        print >>sys.stderr, "%d/%d ASN ranges processed. Daily limit has reached, please run script again in 24 hours" % (done, len(bdi))
     with open("bank_as.json", "w") as fp:
         json.dump(bdi, fp, indent=2)
 

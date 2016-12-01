@@ -20,7 +20,7 @@ def main():
     with open(sys.argv[1]) as fp:
         as_data = json.load(fp)
     for asn, asdat in as_data.iteritems():
-        for rge in asdat["ranges"]:
+        for rge in asdat.get("ranges", []):
             if rge in ["MISSING", "NA"]: continue
             print >>sys.stderr, asn, asdat["name"], rge
             ipdomains = get_domains(rge)
@@ -28,11 +28,6 @@ def main():
                 for ip, domains in ipdomains:
                     for d in domains:
                         asdat.setdefault("domains", {}).setdefault(d, []).append(ip)
-                #ctr += 1
-                #if ctr > 1:
-                #    break
-        #if ctr > 1:
-        #    break
     with open(sys.argv[1] + ".dns", "w") as fp:
         json.dump(as_data, fp, indent=2)
 
