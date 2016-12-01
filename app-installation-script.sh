@@ -898,10 +898,10 @@ install_certificates()
 
         # Moving certificates to nginx directory
         rm -rf /etc/ssl/nginx/*
-        mv certs/* /etc/ssl/nginx/
+        cp certs/* /etc/ssl/nginx/
 
         # Cleanup
-        rm -rf certs
+        # rm -rf certs
 }
 
 
