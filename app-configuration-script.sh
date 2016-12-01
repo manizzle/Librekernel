@@ -198,6 +198,11 @@ get_hardware()
 # ----------------------------------------------
 get_interfaces()
 {
+	# Removing firewall
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F	
+
         # Check internet Connection. If Connection exist then get
         # and save Internet side network interface name in
         # EXT_INTERFACE variable
@@ -292,6 +297,9 @@ cat << EOF > /etc/hosts
 10.0.0.252      friendica.librenet
 10.0.0.253      owncloud.librenet
 10.0.0.254      mailpile.librenet
+10.0.0.247	gitlab.librerouter.net
+10.0.0.248      trac.librerouter.net
+10.0.0.249      redmine.librerouter.net
 10.0.0.250      conference.librerouter.net
 10.0.0.251      search.librerouter.net
 10.0.0.252      social.librerouter.net
@@ -1730,6 +1738,9 @@ local-data: "ntop.librenet. IN A 10.0.0.244"
 local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
+local-data: "gitlab.librerouter.net. IN A 10.0.0.247"
+local-data: "trac.librerouter.net. IN A 10.0.0.248"
+local-data: "redmine.librerouter.net. IN A 10.0.0.249"
 local-data: "conference.librerouter.net. IN A 10.0.0.250"
 local-data: "search.librerouter.net. IN A 10.0.0.251"
 local-data: "social.librerouter.net. IN A 10.0.0.252"
@@ -3971,30 +3982,36 @@ proxy_set_header X-Real-IP \$remote_addr;
 #" > /etc/nginx/sites-enabled/tahoe
 
 
-#--------trac.librenet-----------#
-# trac.librenet virtual host configuration
-echo "Configuring trac virtual host ..."
+# -----------trac.librerouter.net------------ #
+#
+# trac.librerouter.net virtual host configuration
 
-# Generating certificates for trac ssl connection
-echo "Generating keys and certificates for trac"
-if [ ! -e /etc/ssl/nginx/trac.key -o ! -e  /etc/ssl/nginx/trac.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/trac.key -out /etc/ssl/nginx/trac.crt -subj '/CN=librerouter' -batch
-fi
+# Configuring Trac virtual host
+echo "Configuring Trac virtual host ..."
 
-# trac.librenet virtual host configuration
+# Getting Tor hidden service trac hostname
+SERVER_TRAC="$(cat /var/lib/tor/hidden_service/trac/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/trac/trac_bundle.crt
+cat /etc/ssl/nginx/trac/trac_librerouter_net.crt /etc/ssl/nginx/trac/trac_librerouter_net.ca-bundle >> /etc/ssl/nginx/trac/trac_bundle.crt
+
+# trac.librerouter.net virtual host configuration
 echo "
 server {
 	listen 10.0.0.248;
 	server_name _;
-	return 301 http://trac.librenet;
+	return 301 https://trac.librerouter.net;
 }
 
 server {
 	listen 10.0.0.248:80;
 	listen 10.0.0.248:443 ssl;
 	server_name trac.librenet;
-	ssl_certificate /etc/ssl/nginx/trac.crt;
-	ssl_certificate_key /etc/ssl/nginx/trac.key;
+
+        ssl_certificate /etc/ssl/nginx/trac/trac_bundle.crt;
+        ssl_certificate_key /etc/ssl/nginx/trac/trac_librerouter_net.key;
+
 	location / {
 		proxy_pass       http://127.0.0.1:8000;
 		proxy_set_header Host      \$host;
@@ -4004,15 +4021,20 @@ server {
 " > /etc/nginx/sites-enabled/trac 
 
 
-#----------redmine.librenet----------#
+# ----------redmine.librerouter.net---------- #
 #
-# Redmine.librenet virtual host configuration
+# redmine.librerouter.net virtual host configuration
 
-# Generating certificates for redmine ssl connection
-echo "Generating keys and certificates for redmine"
-if [ ! -e /etc/ssl/nginx/redmine.key -o ! -e  /etc/ssl/nginx/redmine.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/redmine.key -out /etc/ssl/nginx/redmine.crt -subj '/CN=librerouter' -batch
-fi
+
+# Configuring Redmine virtual host
+echo "Configuring Redmine virtual host ..."
+
+# Getting Tor hidden service redmine hostname
+SERVER_REDMINE="$(cat /var/lib/tor/hidden_service/redmine/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/redmine/redmine_bundle.crt
+cat /etc/ssl/nginx/redmine/redmine_librerouter_net.crt /etc/ssl/nginx/redmine/redmine_librerouter_net.ca-bundle >> /etc/ssl/nginx/redmine/redmine_bundle.crt
 
 echo "
 # Upstream Ruby process cluster for load balancing
@@ -4022,48 +4044,49 @@ upstream thin_cluster {
 
 server {
     listen       10.0.0.249:80;
-    server_name  redmine.librenet;
+    server_name  _;
+    return 301 https://redmine.librerouter.net;
 
-    access_log  /var/log/nginx/redmine-proxy-access;
-    error_log   /var/log/nginx/redmine-proxy-error;
+#    access_log  /var/log/nginx/redmine-proxy-access;
+#    error_log   /var/log/nginx/redmine-proxy-error;
 
 #    include sites/proxy.include;
-    root /opt/redmine/redmine-3.3.1/public;
-    proxy_redirect off;
+#    root /opt/redmine/redmine-3.3.1/public;
+#    proxy_redirect off;
 
     # Send sensitive stuff via https
-    rewrite ^/login(.*) https://redmine.librenet\$request_uri permanent;
-    rewrite ^/my/account(.*) https://redmine.librenet\$request_uri permanent;
-    rewrite ^/my/password(.*) https://redmine.librenet\$request_uri permanent;
-    rewrite ^/admin(.*) https://redmine.librenet\$request_uri permanent;
+#    rewrite ^/login(.*) https://redmine.librenet\$request_uri permanent;
+#    rewrite ^/my/account(.*) https://redmine.librenet\$request_uri permanent;
+#    rewrite ^/my/password(.*) https://redmine.librenet\$request_uri permanent;
+#    rewrite ^/admin(.*) https://redmine.librenet\$request_uri permanent;
 
-    location / {
-        try_files \$uri/index.html \$uri.html \$uri @cluster;
-    }
+#    location / {
+#        try_files \$uri/index.html \$uri.html \$uri @cluster;
+#    }
 
-    location @cluster {
-        proxy_pass http://thin_cluster;
-    }
+#    location @cluster {
+#        proxy_pass http://thin_cluster;
+#    }
 }
 
 server {
     listen       10.0.0.249:443 ssl;
-    server_name  redmine.librenet;
+    server_name  redmine.librerouter.net;
 
     access_log  /var/log/nginx/redmine-ssl-proxy-access;
     error_log   /var/log/nginx/redmine-ssl-proxy-error;
 
     ssl on;
 
-    ssl_certificate /etc/ssl/nginx/redmine.crt;
-    ssl_certificate_key /etc/ssl/nginx/redmine.key;
+    ssl_certificate /etc/ssl/nginx/redmine/redmine_bundle.crt;
+    ssl_certificate_key /etc/ssl/nginx/redmine/redmine_librerouter_net.key;
 
 #    include sites/proxy.include;
     proxy_redirect off;
     root /opt/redmine/redmine-3.3.1/public;
 
     # When were back to non-sensitive things, send back to http
-    rewrite ^/\$ http://redmine.librenet\$request_uri permanent;
+    # rewrite ^/\$ http://redmine.librenet\$request_uri permanent;
 
     # Examples of URLs we dont want to rewrite (otherwise 404 errors occur):
     # /projects/PROJECTNAME/archive?status=
@@ -4530,15 +4553,21 @@ configure_gitlab()
 if [ "$ARCH" == "x86_64" ]; then
 	echo "Configuring Gitlab ..."
 
+	# Creating certificate bundle
+	rm -rf /etc/ssl/nginx/gitlab/gitlab_bundle.crt
+	cat /etc/ssl/nginx/gitlab/gitlab_librerouter_net.crt /etc/ssl/nginx/gitlab/gitlab_librerouter_net.ca-bundle >> /etc/ssl/nginx/gitlab/gitlab_bundle.crt
+
 	# Changing configuration in gitlab.rb
 	sed -i -e '/^[^#]/d' /etc/gitlab/gitlab.rb
 
 	echo "
-external_url 'http://gitlab.librenet'
-gitlab_workhorse['auth_backend'] = \"http://localhost:8081\"
+external_url 'https://gitlab.librerouter.net'
+gitlab_workhorse['auth_backend'] = "http://localhost:8081"
 unicorn['port'] = 8081
 nginx['redirect_http_to_https'] = true
 nginx['listen_addresses'] = ['10.0.0.247']
+nginx['ssl_certificate'] = "/etc/ssl/nginx/gitlab/gitlab_bundle.crt"
+nginx['ssl_certificate_key'] = "/etc/ssl/nginx/gitlab/gitlab_librerouter_net.key"
 " >> /etc/gitlab/gitlab.rb
 
 	# Reconfiguring gitlab 
@@ -4927,21 +4956,21 @@ fi
 if [ $i == "gitlab" ]; then
 IP_ADD="10.0.0.247"
 hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
-printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+printf "|%12s  |%23s |     gitlab.librerouter.net |%13s |\n" $i $hn $IP_ADD \
 | tee -a /var/box_services
 fi
 
 if [ $i == "trac" ]; then
 IP_ADD="10.0.0.248"
 hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
-printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+printf "|%12s  |%23s |       trac.librerouter.net |%13s |\n" $i $hn $IP_ADD \
 | tee -a /var/box_services
 fi
 
 if [ $i == "redmine" ]; then
 IP_ADD="10.0.0.249"
 hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
-printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
+printf "|%12s  |%23s |    redmine.librerouter.net |%13s |\n" $i $hn $IP_ADD \
 | tee -a /var/box_services
 fi
 
