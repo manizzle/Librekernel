@@ -55,6 +55,11 @@ get_platform ()
 # ----------------------------------------------
 check_internet () 
 {
+	# Removing firewall
+	iptables -F
+	iptables -t nat -F
+	iptables -t mangle -F
+	
 	echo "Checking Internet access ..."
 	if ! ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
 		echo "You need internet to proceed. Exiting"
