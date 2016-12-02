@@ -4562,12 +4562,12 @@ if [ "$ARCH" == "x86_64" ]; then
 
 	echo "
 external_url 'https://gitlab.librerouter.net'
-gitlab_workhorse['auth_backend'] = "http://localhost:8081"
+gitlab_workhorse['auth_backend'] = \"http://localhost:8081\"
 unicorn['port'] = 8081
 nginx['redirect_http_to_https'] = true
 nginx['listen_addresses'] = ['10.0.0.247']
-nginx['ssl_certificate'] = "/etc/ssl/nginx/gitlab/gitlab_bundle.crt"
-nginx['ssl_certificate_key'] = "/etc/ssl/nginx/gitlab/gitlab_librerouter_net.key"
+nginx['ssl_certificate'] = \"/etc/ssl/nginx/gitlab/gitlab_bundle.crt\"
+nginx['ssl_certificate_key'] = \"/etc/ssl/nginx/gitlab/gitlab_librerouter_net.key\"
 " >> /etc/gitlab/gitlab.rb
 
 	# Reconfiguring gitlab 
