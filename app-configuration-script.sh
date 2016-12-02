@@ -286,6 +286,7 @@ cat << EOF > /etc/hosts
 10.0.0.1        librerouter.librenet
 10.0.0.11       kibana.librenet
 10.0.0.12       snorby.librenet
+10.0.0.243      roundcube.librerouter.net
 10.0.0.244      ntop.librenet
 10.0.0.245      webmin.librenet
 10.0.0.246      squidguard.librenet
@@ -494,6 +495,13 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         #allow-hotplug $INT_INTERFACE:13
         iface $INT_INTERFACE:13 inet static
             address 10.0.0.244
+            netmask 255.255.255.0
+
+        #Roundcube
+        auto $INT_INTERFACE:14
+        #allow-hotplug $INT_INTERFACE:14
+        iface $INT_INTERFACE:14 inet static
+            address 10.0.0.243
             netmask 255.255.255.0
 EOF
 
@@ -774,6 +782,7 @@ iptables -t filter -F
 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.243 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.244 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.245 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.246 -j ACCEPT
@@ -1738,6 +1747,7 @@ local-data: "ntop.librenet. IN A 10.0.0.244"
 local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
+local-data: "roundcube.librerouter.net. IN A 10.0.0.243"
 local-data: "gitlab.librerouter.net. IN A 10.0.0.247"
 local-data: "trac.librerouter.net. IN A 10.0.0.248"
 local-data: "redmine.librerouter.net. IN A 10.0.0.249"
@@ -4021,7 +4031,7 @@ server {
 " > /etc/nginx/sites-enabled/trac 
 
 
-# ----------redmine.librerouter.net---------- #
+# -------------redmine.librerouter.net------------- #
 #
 # redmine.librerouter.net virtual host configuration
 
@@ -4133,6 +4143,82 @@ server {
 	}
 }
 " > /etc/nginx/sites-enabled/ntop
+
+
+#----------------roundcube.librerouter.net-----------------#
+#                       10.0.0.243                         #
+############################################################
+
+# Configuring Roundcube virtual host
+echo "Configuring Roundcube virtual host ..."
+
+# Getting Tor hidden service roundcube hostname
+SERVER_ROUNDCUBE="$(cat /var/lib/tor/hidden_service/roundcube/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+rm -rf /etc/ssl/nginx/roundcube/roundcube_bundle.crt
+cat /etc/ssl/nginx/roundcube/roundcube_librerouter_net.crt /etc/ssl/nginx/roundcube/roundcube_librerouter_net.ca-bundle >> /etc/ssl/nginx/roundcube/roundcube_bundle.crt
+
+cat << EOF > /etc/nginx/sites-enabled/roundcube
+server {
+  listen 10.0.0.243:80;
+  server_name _;
+  return 301 https://roundcube.librerouter.net\$request_uri;
+}
+
+server {
+  # llisten 80 is modified to listen 443 ssl;
+  listen 10.0.0.243:443 ssl;
+  server_name roundcube.librerouter.net;
+  root /usr/share/roundcube;
+  index index.php index.html index.htm;
+  access_log /var/log/roundcube_access.log;
+  error_log /var/log/roundcube_error.log;
+
+  location / {
+    try_files \$uri \$uri/ /index.php?q=\$uri&\$args;
+  }
+
+  error_page 404 /404.html;
+  error_page 500 502 503 504 /50x.html;
+
+  location = /50x.html {
+    root /etc/nginx;
+  }
+
+  location ~ ^/(README.md|INSTALL|LICENSE|CHANGELOG|UPGRADING)\$ {
+    deny all;
+  }
+
+  location ~ ^/(config|temp|logs)/ {
+    deny all;
+  }
+
+  location ~ /\. {
+    deny all;
+    access_log off;
+    log_not_found off;
+  }
+
+  # pass the PHP scripts to FastCGI server listening on /var/run/php5-fpm.sock
+  location ~ \.php\$ {
+    try_files \$uri =404;
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+    include fastcgi_params;
+  }
+
+  ssl_certificate /etc/ssl/nginx/roundcube/roundcube_bundle.crt;
+  ssl_certificate_key /etc/ssl/nginx/roundcube/roundcube_librerouter_net.key;
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+  ssl_session_cache shared:SSL:20m;
+  ssl_session_timeout 10m;
+  add_header Strict-Transport-Security "max-age=31536000";
+}
+EOF
 
 # Restarting Yacy php5-fpm and Nginx services 
 echo "Restarting nginx ..."
