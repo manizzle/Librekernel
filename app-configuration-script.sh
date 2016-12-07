@@ -812,7 +812,7 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 --dport 22 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.0/8 -j DNAT --to 10.0.0.1:3129
 
 # to squid http 
-iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m ndpi --http -j REDIRECT --to-ports 3130
+#iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -m ndpi --http -j REDIRECT --to-ports 3130
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 80 -j DNAT --to 10.0.0.1:3130
 
 # to squid https 
@@ -822,8 +822,8 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 443 -j REDIRECT -
 iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE 
 
 # ndpi protocole checking
-iptables -t mangle -I PREROUTING -m ndpi --dpi_check
-iptables -t mangle -I POSTROUTING -m ndpi --dpi_check
+#iptables -t mangle -I PREROUTING -m ndpi --dpi_check
+#iptables -t mangle -I POSTROUTING -m ndpi --dpi_check
 
 # Blocking ICMP (All Directions)
 iptables -A INPUT -p ICMP -j DROP
@@ -831,13 +831,13 @@ iptables -A OUTPUT -p ICMP -j DROP
 iptables -A FORWARD -p ICMP -j DROP
 
 # Blocking IPsec (All Directions)
-iptables -A INPUT -m ndpi --ipsec -j DROP
-iptables -A OUTPUT -m ndpi --ipsec -j DROP
-iptables -A FORWARD -m ndpi --ipsec -j DROP
+#iptables -A INPUT -m ndpi --ipsec -j DROP
+#iptables -A OUTPUT -m ndpi --ipsec -j DROP
+#iptables -A FORWARD -m ndpi --ipsec -j DROP
 
 # Blocking DNS request from client to any servers other than librerouter
-iptables -A INPUT -i $INT_INTERFACE -m ndpi --dns ! -d 10.0.0.1 -j DROP
-iptables -A FORWARD -m ndpi --dns ! -d 10.0.0.1 -j DROP
+#iptables -A INPUT -i $INT_INTERFACE -m ndpi --dns ! -d 10.0.0.1 -j DROP
+#iptables -A FORWARD -m ndpi --dns ! -d 10.0.0.1 -j DROP
 
 # Block any other TCP-UDP connections
 iptables -P FORWARD DROP
