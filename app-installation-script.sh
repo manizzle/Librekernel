@@ -1,4 +1,4 @@
-#!/bin/bash
+bin/bash
 # ---------------------------------------------
 # Variables list
 # ---------------------------------------------
@@ -903,7 +903,7 @@ install_certificates()
 
         # Moving certificates to nginx directory
         rm -rf /etc/ssl/nginx/*
-        cp certs/* /etc/ssl/nginx/
+        cp -r certs/* /etc/ssl/nginx/
 
         # Cleanup
         # rm -rf certs
@@ -2441,7 +2441,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_gitlab		# Install gitlab packae
 	install_trac		# Install trac package
 	install_redmine		# Install redmine package
-	install_ndpi		# Install ndpi package
+#	install_ndpi		# Install ndpi package
 	install_redsocks	# Install redsocks package
 	install_ntopng		# Install ntopng package
 	save_variables	        # Save detected variables
