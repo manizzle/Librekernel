@@ -1,0 +1,49 @@
+Name      	RAM	      HDD     	CPU     	GUI   	Implemented	Notes  Log.files.path    Configuration.Files
+Jikes	-	-	-	-	No	old, last update 6 years ago Why is required?
+Xplico	-	30MB	-	+(included)	No	
+Vortex-IDS	67MB	3MB	-	+(kibanan)	No	
+Bro-IDS		1GB		+(brownian)	No	
+PmGraph	512MB	25MB	700MHZ	+(included)	No	
+Openssh-server		800KB			Yes	
+modsecurity		80MB			Yes	
+nginx		256KB			Yes	
+mailpile	512MB	33MB			Yes	
+easyrtc					Yes	
+hublin					Yes	
+owncloud					Yes	
+libecap					Yes	
+Fg-ecap					Yes	
+squid					Yes	
+squidclamav				+(squidguardmgr)	Yes	
+ecapguardian					Yes	
+suricata					Yes	
+kibana					Yes	
+scirius					No	
+snort					No	
+barnyard					No	
+openwips_ng					No	
+hakabana					No	
+flowviewer					No	
+nfsen					No	
+evebox					Yes	
+selks					No	
+snorby					No	
+glype					Yes	
+gitlab					Yes	
+trac					Yes	
+redmine					Yes	
+ndpi					Yes	
+redsocks					Yes	
+ntopng					Yes	
+tor					Yes	
+i2p					Yes	
+privoxy					Yes	
+unbound					Yes	
+Isc-dhcp-server					Yes	
+yacy					Yes	
+squidguard					Yes	
+postfix					Yes	
+roundcube					Yes	
+tinyproxy					Yes	
+prosody					Yes	
+Mysql-server					Yes	
