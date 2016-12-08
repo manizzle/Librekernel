@@ -903,6 +903,7 @@ install_certificates()
 
         # Moving certificates to nginx directory
         rm -rf /etc/ssl/nginx/*
+	mkdir -p /etc/ssl/nginx/
         cp -r certs/* /etc/ssl/nginx/
 
         # Cleanup
