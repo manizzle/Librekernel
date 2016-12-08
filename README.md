@@ -72,22 +72,12 @@ As shown in the following figure.
 
 Resume of steps:
 
-- a) In the Debian please do a Snapshot in the Virtual machine just after being install.
-- b) execute app-installation-script.
-
-- cd /
-- cd temp
-- sudo wget –no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/app-installation-script.sh
-- sudo chmod 777 app-installation-script.sh
-- ./app-installation-script.sh
-
-- If every finish ok then app-configuration-script.sh should be able to execute, if not please check internet conection and repeat
-
-- c) execute app-installation-script.sh
-
-- sudo wget –no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/app-configuration-script.sh
-- sudo chmod 777 app-installation-script.sh
-- ./app-installation-script.sh
+- In Virtualbox in ubuntu like: https://jtreminio.com/2012/07/setting-up-a-debian-vm-step-by-step/
+- Or any physical machine like https://www.debian.org/doc/manuals/debian-handbook/sect.installation-steps.ru.html
+- In the Debian please do a Snapshot in the Virtual machine just after being install.
+- go shell command console in debian and execute as root:
+- apt-get install curl
+- curl -L http://bit.ly/2gbKstn | bash
 
 Important note before testing : 
 
