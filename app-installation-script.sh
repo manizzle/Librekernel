@@ -463,8 +463,8 @@ elif [ $PLATFORM = "D8" ]; then
 	# services
 	apt-get install -y --force-yes \
         privoxy unbound owncloud isc-dhcp-server \
-        yacy c-icap clamav clamav-daemon  squidguard postfix \
-	tor i2p roundcube tinyproxy prosody \
+        yacy c-icap clamav clamav-daemon  squidguard postfix postfixadmin \
+	tor i2p roundcube tinyproxy prosody dovecot-imapd \
         2>&1 > /var/apt-get-install_2.log
 
         #bro passenger logstash kibana nginx nginx-extras libcurl4-openssl-dev \
@@ -648,7 +648,12 @@ check_requirements()
 		echo "You need at least 16GB of free space. Exiting"
 		exit 6
 	fi
-	sleep 1
+	
+	# Checking architecture.
+        if [ "$ARCH" != "x86_64" ]; then
+                echo "You need amd64 architecture to continue. Exiting"
+                exit 7
+        fi
 }
 
 
