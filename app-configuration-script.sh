@@ -2840,31 +2840,544 @@ configure_postfix()
 # Configurinf postfix mail service
 echo "Configuring postfix ..."
 
-echo "
-mtpd_banner = \$myhostname ESMTP \$mail_name (Debian/GNU)
+# Creating vmail user
+useradd -r -u 150 -g mail -d /var/vmail -s /sbin/nologin -c "Virtual MailDir Handler" vmail
+mkdir -p /var/vmail
+chown vmail:mail /var/vmail
+chmod 770 /var/vmail
+
+cat << EOF > /etc/postfix/mysql_virtual_alias_domainaliases_maps.cf
+user = root 
+password = $MYSQl_PASS 
+hosts = 127.0.0.1 
+dbname = mail 
+query = SELECT goto FROM alias,alias_domain WHERE alias_domain.alias_domain = '%d' AND alias.address=concat('%u', '@', alias_domain.target_domain) AND alias.active = 1
+EOF
+
+cat << EOF > /etc/postfix/mysql_virtual_alias_maps.cf
+user = root
+password = $MYSQL_PASS
+hosts = 127.0.0.1
+dbname = mail
+table = alias
+select_field = goto
+where_field = address
+additional_conditions = and active = '1'
+EOF
+
+cat << EOF > /etc/postfix/mysql_virtual_domains_maps.cf
+user = root
+password = $MYSQL_PASS
+hosts = 127.0.0.1
+dbname = mail
+table = domain
+select_field = domain
+where_field = domain
+additional_conditions = and backupmx = '0' and active = '1'
+EOF
+
+cat << EOF > /etc/postfix/mysql_virtual_mailbox_domainaliases_maps.cf
+user = root
+password = $MYSQL_PASS
+hosts = 127.0.0.1
+dbname = mail
+query = SELECT maildir FROM mailbox, alias_domain
+  WHERE alias_domain.alias_domain = '%d'
+  AND mailbox.username=concat('%u', '@', alias_domain.target_domain )
+  AND mailbox.active = 1
+EOF
+
+cat << EOF > /etc/postfix/mysql_virtual_mailbox_maps.cf
+user = root
+password = $MYSQL_PASS
+hosts = 127.0.0.1
+dbname = mail
+table = mailbox
+select_field = CONCAT(domain, '/', local_part)
+where_field = username
+additional_conditions = and active = '1'
+EOF
+
+cat << EOF > /etc/postfix/header_checks
+/^Received:/                 IGNORE
+/^User-Agent:/               IGNORE
+/^X-Mailer:/                 IGNORE
+/^X-Originating-IP:/         IGNORE
+/^x-cr-[a-z]*:/              IGNORE
+/^Thread-Index:/             IGNORE
+EOF
+
+cat << EOF > /etc/postfix/main.cf
+smtpd_banner = \$myhostname ESMTP \$mail_name
 biff = no
-append_dot_mydomain = no 
+append_dot_mydomain = no
 readme_directory = no
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+broken_sasl_auth_clients = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain =
+smtpd_sasl_authenticated_header = yes
 smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
 smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
-smtpd_use_tls=yes
-smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
-smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
-smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
-myhostname = librerouter.librenet
-alias_maps = hash:/etc/aliases
-alias_database = hash:/etc/aliases
+smtp_tls_note_starttls_offer = yes
+smtpd_tls_loglevel = 1
+smtpd_tls_received_header = yes
+smtpd_tls_session_cache_timeout = 3600s
+tls_random_source = dev:/dev/urandom
+smtpd_use_tls = yes
+smtpd_enforce_tls = no
+smtp_use_tls = yes
+smtp_enforce_tls = no
+smtpd_tls_security_level = may
+smtp_tls_security_level = may
+unknown_local_recipient_reject_code = 450
+maximal_queue_lifetime = 7d
+minimal_backoff_time = 1000s
+maximal_backoff_time = 8000s
+smtp_helo_timeout = 60s
+smtpd_recipient_limit = 16
+smtpd_soft_error_limit = 3
+smtpd_hard_error_limit = 12
+smtpd_helo_restrictions = permit_mynetworks, warn_if_reject reject_non_fqdn_hostname, reject_invalid_hostname, permit
+smtpd_sender_restrictions = permit_sasl_authenticated, permit_mynetworks, warn_if_reject reject_non_fqdn_sender, reject_unknown_sender_domain, reject_unauth_pipelining, permit
+smtpd_client_restrictions = reject_rbl_client b.barracudacentral.org, reject_rbl_client zen.spamhaus.org, reject_rbl_client spam.dnsbl.sorbs.net
+smtpd_recipient_restrictions = reject_unauth_pipelining, permit_mynetworks, permit_sasl_authenticated, reject_non_fqdn_recipient, reject_unknown_recipient_domain, reject_unauth_destination, check_policy_service inet:127.0.0.1:10023, permit
+smtpd_data_restrictions = reject_unauth_pipelining
+smtpd_relay_restrictions = reject_unauth_pipelining, permit_mynetworks, permit_sasl_authenticated, reject_non_fqdn_recipient, reject_unknown_recipient_domain, reject_unauth_destination, check_policy_service inet:127.0.0.1:10023, permit
+smtpd_helo_required = yes
+smtpd_delay_reject = yes
+disable_vrfy_command = yes
+myhostname = librerouter
 myorigin = /etc/mailname
-mydestination = librerouter.librenet, localhost.librenet, localhost
-relayhost =
-mynetworks = 127.0.0.0/8, 10.0.0.0/24
+mydestination =
+mynetworks = 10.0.0.0/24 127.0.0.0/8 
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
-" > /etc/postfix/main.cf
+mynetworks_style = host
+virtual_mailbox_base = /var/vmail
+virtual_mailbox_maps = mysql:/etc/postfix/mysql_virtual_mailbox_maps.cf, mysql:/etc/postfix/mysql_virtual_mailbox_domainaliases_maps.cf
+virtual_uid_maps = static:150
+virtual_gid_maps = static:8
+virtual_alias_maps = mysql:/etc/postfix/mysql_virtual_alias_maps.cf, mysql:/etc/postfix/mysql_virtual_alias_domainaliases_maps.cf
+virtual_mailbox_domains = mysql:/etc/postfix/mysql_virtual_domains_maps.cf
+virtual_transport = dovecot
+dovecot_destination_recipient_limit = 1
+header_checks = regexp:/etc/postfix/header_checks
+enable_original_recipient = no
+EOF
+
+cat << EOF > /etc/postfix/master.cf
+smtp      inet  n       -       -       -       -       smtpd
+submission inet n       -       -       -       -       smtpd
+  -o syslog_name=postfix/submission
+  -o smtpd_tls_security_level=encrypt
+  -o smtpd_sasl_auth_enable=yes
+  -o smtpd_enforce_tls=yes
+  -o smtpd_client_restrictions=permit_sasl_authenticated,reject_unauth_destination,reject
+  -o smtpd_sasl_tls_security_options=noanonymous
+smtps     inet  n       -       -       -       -       smtpd
+  -o syslog_name=postfix/smtps
+  -o smtpd_tls_wrappermode=yes
+  -o smtpd_sasl_auth_enable=yes
+  -o smtpd_tls_auth_only=yes
+  -o smtpd_client_restrictions=permit_sasl_authenticated,reject_unauth_destination,reject
+  -o smtpd_sasl_security_options=noanonymous,noplaintext
+  -o smtpd_sasl_tls_security_options=noanonymous
+pickup    fifo  n       -       -       60      1       pickup
+  -o content_filter=
+  -o receive_override_options=no_header_body_checks
+cleanup   unix  n       -       -       -       0       cleanup
+qmgr      fifo  n       -       n       300     1       qmgr
+tlsmgr    unix  -       -       -       1000?   1       tlsmgr
+rewrite   unix  -       -       -       -       -       trivial-rewrite
+bounce    unix  -       -       -       -       0       bounce
+defer     unix  -       -       -       -       0       bounce
+trace     unix  -       -       -       -       0       bounce
+verify    unix  -       -       -       -       1       verify
+flush     unix  n       -       -       1000?   0       flush
+proxymap  unix  -       -       n       -       -       proxymap
+proxywrite unix -       -       n       -       1       proxymap
+smtp      unix  -       -       -       -       -       smtp
+relay     unix  -       -       -       -       -       smtp
+showq     unix  n       -       -       -       -       showq
+error     unix  -       -       -       -       -       error
+retry     unix  -       -       -       -       -       error
+discard   unix  -       -       -       -       -       discard
+local     unix  -       n       n       -       -       local
+virtual   unix  -       n       n       -       -       virtual
+lmtp      unix  -       -       -       -       -       lmtp
+anvil     unix  -       -       -       -       1       anvil
+scache    unix  -       -       -       -       1       scache
+maildrop  unix  -       n       n       -       -       pipe
+  flags=DRhu user=vmail argv=/usr/bin/maildrop -d \${recipient}
+uucp      unix  -       n       n       -       -       pipe
+  flags=Fqhu user=uucp argv=uux -r -n -z -a\$sender - $nexthop!rmail (\$recipient)
+ifmail    unix  -       n       n       -       -       pipe
+  flags=F user=ftn argv=/usr/lib/ifmail/ifmail -r \$nexthop (\$recipient)
+bsmtp     unix  -       n       n       -       -       pipe
+  flags=Fq. user=bsmtp argv=/usr/lib/bsmtp/bsmtp -t\$nexthop -f\$sender \$recipient
+scalemail-backend unix  -       n       n       -       2       pipe
+  flags=R user=scalemail argv=/usr/lib/scalemail/bin/scalemail-store \${nexthop} \${user} \${extension}
+mailman   unix  -       n       n       -       -       pipe
+  flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
+  \${nexthop} \${user}
+
+# The next two entries integrate with Amavis for anti-virus/spam checks.
+#amavis      unix    -       -       -       -       3       smtp
+#  -o smtp_data_done_timeout=1200
+#  -o smtp_send_xforward_command=yes
+#  -o disable_dns_lookups=yes
+#  -o max_use=20
+#127.0.0.1:10025 inet    n       -       -       -       -       smtpd
+#  -o content_filter=
+#  -o local_recipient_maps=
+#  -o relay_recipient_maps=
+#  -o smtpd_restriction_classes=
+#  -o smtpd_delay_reject=no
+#  -o smtpd_client_restrictions=permit_mynetworks,reject
+#  -o smtpd_helo_restrictions=
+#  -o smtpd_sender_restrictions=
+#  -o smtpd_recipient_restrictions=permit_mynetworks,reject
+#  -o smtpd_data_restrictions=reject_unauth_pipelining
+#  -o smtpd_end_of_data_restrictions=
+#  -o mynetworks=127.0.0.0/8
+#  -o smtpd_error_sleep_time=0
+#  -o smtpd_soft_error_limit=1001
+#  -o smtpd_hard_error_limit=1000
+#  -o smtpd_client_connection_count_limit=0
+#  -o smtpd_client_connection_rate_limit=0
+#  -o receive_override_options=no_header_body_checks,no_unknown_recipient_checks
+
+# Integration with Dovecot - hand mail over to it for local delivery, and
+# run the process under the vmail user and mail group.
+dovecot      unix   -        n      n       -       -   pipe
+  flags=DRhu user=vmail:mail argv=/usr/lib/dovecot/dovecot-lda -d \$(recipient)
+EOF
 
 echo "Restarting postfix ..."
 service postfix restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configure postfixadmin service
+# ---------------------------------------------------------
+configure_postfixadmin()
+{
+echo "Configuring postfixadmin ..."
+
+# Creating database
+echo "Configuring Friendica local service ..."
+if [ ! -e  /var/lib/mysql/mail ]; then
+	MYSQL_USER="root"
+
+	# Creating MySQL database frnd for friendica local service
+echo "CREATE DATABASE mail;" \
+| mysql -u "$MYSQL_USER" -p"$MYSQL_PASS"
+fi
+
+cat << EOF > /etc/postfix/config.inc.php
+<?php
+require_once('dbconfig.inc.php');
+if (!isset(\$dbserver) || empty(\$dbserver))
+        \$dbserver='localhost';
+\$CONF['configured'] = true;
+\$CONF['setup_password'] = '3d1d32f945b221962d34ccd2306f32a9:8f5e399cd4462b51f88f91c7cb4c79c731b0b659';
+\$CONF['postfix_admin_url'] = '/postfixadmin';
+\$CONF['postfix_admin_path'] = dirname(__FILE__);
+\$CONF['default_language'] = 'en';
+\$CONF['database_type'] = 'mysqli';
+\$CONF['database_host'] = 'localhost';
+\$CONF['database_user'] = 'root';
+\$CONF['database_password'] = '$MYSQL_PASS';
+\$CONF['database_name'] = 'mail';
+\$CONF['database_prefix'] = '';
+\$CONF['database_tables'] = array (
+    'admin' => 'admin',
+    'alias' => 'alias',
+    'alias_domain' => 'alias_domain',
+    'config' => 'config',
+    'domain' => 'domain',
+    'domain_admins' => 'domain_admins',
+    'fetchmail' => 'fetchmail',
+    'log' => 'log',
+    'mailbox' => 'mailbox',
+    'vacation' => 'vacation',
+    'vacation_notification' => 'vacation_notification',
+    'quota' => 'quota',
+    'quota2' => 'quota2',
+);
+\$CONF['admin_email'] = 'admin@librerouter.net';
+\$CONF['smtp_server'] = 'localhost';
+\$CONF['smtp_port'] = '25';
+\$CONF['encrypt'] = 'md5crypt';
+\$CONF['authlib_default_flavor'] = 'md5raw';
+\$CONF['dovecotpw'] = "/usr/bin/doveadm pw";
+\$CONF['min_password_length'] = 5;
+\$CONF['generate_password'] = 'NO';
+\$CONF['show_password'] = 'NO';
+\$CONF['page_size'] = '10';
+\$CONF['default_aliases'] = array (
+    'abuse' => 'abuse@change-this-to-your.domain.tld',
+    'hostmaster' => 'hostmaster@change-this-to-your.domain.tld',
+    'postmaster' => 'postmaster@change-this-to-your.domain.tld',
+    'webmaster' => 'webmaster@change-this-to-your.domain.tld'
+);
+\$CONF['domain_path'] = 'NO';
+\$CONF['domain_in_mailbox'] = 'YES';
+\$CONF['maildir_name_hook'] = 'NO';
+\$CONF['aliases'] = '10';
+\$CONF['mailboxes'] = '10';
+\$CONF['maxquota'] = '10';
+\$CONF['quota'] = 'NO';
+\$CONF['quota_multiplier'] = '1024000';
+\$CONF['transport'] = 'NO';
+\$CONF['transport_options'] = array (
+    'virtual',  // for virtual accounts
+    'local',    // for system accounts
+    'relay'     // for backup mx
+);
+\$CONF['transport_default'] = 'virtual';
+\$CONF['vacation'] = 'NO';
+\$CONF['vacation_domain'] = 'autoreply.change-this-to-your.domain.tld';
+\$CONF['vacation_control'] ='YES';
+\$CONF['vacation_control_admin'] = 'YES';
+\$CONF['alias_control'] = 'NO';
+\$CONF['alias_control_admin'] = 'NO';
+\$CONF['special_alias_control'] = 'NO';
+\$CONF['alias_goto_limit'] = '0';
+\$CONF['alias_domain'] = 'YES';
+\$CONF['backup'] = 'YES';
+\$CONF['sendmail'] = 'YES';
+\$CONF['logging'] = 'YES';
+\$CONF['fetchmail'] = 'YES';
+\$CONF['fetchmail_extra_options'] = 'NO';
+\$CONF['show_header_text'] = 'NO';
+\$CONF['header_text'] = ':: Postfix Admin ::';
+\$CONF['user_footer_link'] = "http://change-this-to-your.domain.tld/main";
+\$CONF['show_footer_text'] = 'YES';
+\$CONF['footer_text'] = 'Return to change-this-to-your.domain.tld';
+\$CONF['footer_link'] = 'http://change-this-to-your.domain.tld';
+\$CONF['welcome_text'] = <<<EOM
+Hi,
+
+Welcome to your new account.
+EOM;
+\$CONF['emailcheck_resolve_domain']='YES';
+\$CONF['show_status']='NO';
+\$CONF['show_status_key']='NO';
+\$CONF['show_status_text']='&nbsp;&nbsp;';
+\$CONF['show_undeliverable']='NO';
+\$CONF['show_undeliverable_color']='tomato';
+\$CONF['show_undeliverable_exceptions']=array("unixmail.domain.ext","exchangeserver.domain.ext","gmail.com");
+\$CONF['show_popimap']='NO';
+\$CONF['show_popimap_color']='darkgrey';
+\$CONF['show_custom_domains']=array("subdomain.domain.ext","domain2.ext");
+\$CONF['show_custom_colors']=array("lightgreen","lightblue");
+\$CONF['recipient_delimiter'] = "";
+\$CONF['create_mailbox_subdirs_prefix']='INBOX.';
+\$CONF['used_quotas'] = 'NO';
+\$CONF['new_quota_table'] = 'NO';
+\$CONF['theme_logo'] = 'images/logo-default.png';
+\$CONF['theme_css'] = 'css/default.css';
+\$CONF['xmlrpc_enabled'] = false;
+if (file_exists(dirname(__FILE__) . '/config.local.php')) {
+    include(dirname(__FILE__) . '/config.local.php');
+}
+EOF
+}
+
+
+# ---------------------------------------------------------
+# Function to configure dovecot
+# ---------------------------------------------------------
+configure_dovecot()
+{
+echo "Configuring dovecot ..."
+
+# Database Config
+cat << EOF > /etc/dovecot/conf.d/auth-sql.conf.ext
+passdb {
+  driver = sql
+  args = /etc/dovecot/dovecot-sql.conf.ext
+}
+userdb {
+  driver = sql
+  args = /etc/dovecot/dovecot-sql.conf.ext
+}
+EOF
+
+cat << EOF >/etc/dovecot/dovecot-sql.conf.ext
+driver = mysql
+connect = host=localhost dbname=mail user=root password=$MYSQL_PASS
+default_pass_scheme = MD5-CRYPT
+password_query = \
+  SELECT username as user, password, '/var/vmail/%d/%n' as userdb_home, \
+  'maildir:/var/vmail/%d/%n' as userdb_mail, 150 as userdb_uid, 8 as userdb_gid \
+  FROM mailbox WHERE username = '%u' AND active = '1'
+user_query = \
+  SELECT '/var/vmail/%d/%n' as home, 'maildir:/var/vmail/%d/%n' as mail, \
+  150 AS uid, 8 AS gid, concat('dirsize:storage=', quota) AS quota \
+  FROM mailbox WHERE username = '%u' AND active = '1'
+EOF
+
+# Authentification Config
+cat << EOF > /etc/dovecot/conf.d/10-auth.conf
+disable_plaintext_auth = yes
+auth_mechanisms = plain login
+!include auth-sql.conf.ext
+EOF
+
+# Mail Config
+cat << EOF > /etc/dovecot/conf.d/10-mail.conf
+mail_location = maildir:/var/vmail/%d/%n
+mail_uid = vmail
+mail_gid = mail
+first_valid_uid = 150
+last_valid_uid = 150
+namespace inbox {
+  inbox = yes
+}
+EOF
+
+# Master Config
+cat << EOF > /etc/dovecot/conf.d/10-master.conf
+service imap-login {
+  inet_listener imap {
+  }
+  inet_listener imaps {
+  }
+}
+service pop3-login {
+  inet_listener pop3 {
+  }
+  inet_listener pop3s {
+  }
+}
+service lmtp {
+  unix_listener lmtp {
+  }
+
+}
+service imap {
+}
+service pop3 {
+}
+service auth {
+  unix_listener auth-userdb {
+        mode = 0600
+        user = vmail
+        group = mail
+      }
+      # Postfix smtp-auth
+  unix_listener /var/spool/postfix/private/auth {
+        mode = 0660
+        user = postfix
+        group = postfix
+      }
+}
+service auth-worker {
+}
+service dict {
+  unix_listener dict {
+  }
+}
+EOF
+
+# LDA Config
+cat << EOF > /etc/dovecot/conf.d/15-lda.conf
+postmaster_address = admin@librerouter.net
+protocol lda {
+}
+EOF
+
+# Setting permissions
+chown -R vmail:dovecot /etc/dovecot
+chmod -R o-rwx /etc/dovecot
+
+# Restarting dovecot
+/etc/init.d/dovecot restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configure amavis server
+# ---------------------------------------------------------             
+configure_amavis()
+{
+echo "Configureing amavis ..."
+cat << EOF > /etc/amavis/conf.d/15-content_filter_mode
+use strict;
+@bypass_virus_checks_maps = (
+   \\%bypass_virus_checks, \\@bypass_virus_checks_acl, \\\$bypass_virus_checks_re);
+@bypass_spam_checks_maps = (
+   \\%bypass_spam_checks, \\@bypass_spam_checks_acl, \\\$bypass_spam_checks_re);
+1;  # ensure a defined return
+EOF
+
+# Database Config
+cat << EOF > /etc/amavis/conf.d/50-user
+use strict;
+\$max_servers  = 3;
+\$sa_tag_level_deflt  = -9999;
+@lookup_sql_dsn = (
+    ['DBI:mysql:database=mail;host=127.0.0.1;port=3306',
+     'mail',
+     '$MYSQL_PASS']);
+\$sql_select_policy = 'SELECT domain from domain WHERE CONCAT("@",domain) IN (%k)';
+1;  # ensure a defined return
+EOF
+
+# Restarting amavis service
+/etc/init.d/amavis restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configure spamassasin service
+# ---------------------------------------------------------
+configure_spamassasin()
+{
+echo "Configuring spamassasin ..."
+cat << EOF > /etc/default/spamassassin
+ENABLED=1
+OPTIONS="--create-prefs --max-children 5 --helper-home-dir"
+PIDFILE="/var/run/spamd.pid"
+CRON=1
+EOF
+
+# Restarting spamassasin
+/etc/init.d/spamassasin restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configure Roundcube service
+# ---------------------------------------------------------
+configure_roundcube()
+{
+echo "Configuring roundcube ..."
+cat << EOF > /etc/roundcube/config.inc.php
+<?php
+\$config = array();
+include_once("/etc/roundcube/debian-db-roundcube.php");
+\$config['default_host'] = '10.0.0.1';
+\$config['smtp_server'] = '127.0.0.1';
+\$config['smtp_port'] = 25;
+\$config['smtp_user'] = '';
+\$config['smtp_pass'] = '';
+\$config['support_url'] = '';
+\$config['product_name'] = 'Roundcube Webmail';
+\$config['des_key'] = 'WVklLBODesUSZUN4XPwfQMzt';
+\$config['plugins'] = array(
+'archive',
+'zipdownload',
+);
+\$config['skin'] = 'larry';
+EOF
 }
 
 
@@ -5290,7 +5803,18 @@ configure_squidclamav		# Configuring squidclamav service
 configure_squidguard		# Configuring squidguard
 configure_squidguardmgr		# Configuring squidguardmgr
 configure_ecapguardian		# Configuring ecapguardian
+
+# ------ Mail server Config ------
+
 configure_postfix		# Configuring postfix mail service
+configure_postfixadmin		# Configuring postfixadmin service
+configure_dovecot               # Configuring dovecot imap service
+configure_amavis                # Configuring amavis service
+configure_spamassasin           # Configuring spamassasin service
+configure_roundcube		# Configuring Roundcube service
+
+# --------------------------------
+
 configure_trac			# Configuring trac service
 configure_redmine		# Configuring redmine service
 configure_ntopng		# Configuring ntop service
