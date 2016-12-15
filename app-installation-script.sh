@@ -463,8 +463,11 @@ elif [ $PLATFORM = "D8" ]; then
 	# services
 	apt-get install -y --force-yes \
         privoxy unbound owncloud isc-dhcp-server \
-        yacy c-icap clamav clamav-daemon  squidguard postfix postfixadmin \
-	tor i2p roundcube tinyproxy prosody dovecot-imapd \
+        yacy c-icap clamav clamav-daemon  squidguard \
+	tor i2p roundcube tinyproxy prosody \
+        memcached postfix postfixadmin \
+        postfix-mysql dovecot-mysql dovecot-imapd postgrey \
+        amavis spamassassin php5-imap \
         2>&1 > /var/apt-get-install_2.log
 
         #bro passenger logstash kibana nginx nginx-extras libcurl4-openssl-dev \
