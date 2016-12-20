@@ -465,7 +465,7 @@ elif [ $PLATFORM = "D8" ]; then
         privoxy unbound owncloud isc-dhcp-server \
         yacy c-icap clamav clamav-daemon  squidguard \
 	tor i2p roundcube tinyproxy prosody \
-        memcached postfix postfixadmin \
+        memcached \
         postfix-mysql dovecot-mysql dovecot-imapd postgrey \
         amavis spamassassin php5-imap \
         2>&1 > /var/apt-get-install_2.log
@@ -2177,7 +2177,18 @@ if [ "$ARCH" == "x86_64" ]; then
 	rm -rf /opt/redmine
         mkdir /opt/redmine
         chown -R www-data /opt/redmine
-        cd /opt/redmine
+ # -----------------------------------------------
+# Function to install ntopng
+# -----------------------------------------------
+install_ntopng()
+{
+        echo "Installing ntopng ..."
+        sudo apt-get -y --force-yes install ntopng
+        if [ $? -ne 0 ]; then
+                echo "Error: Unable to install ntopng. Exiting"
+                exit 3
+        fi
+}       cd /opt/redmine
 
 	if [ ! -e redmine-3.3.1 ]; then
                 echo "Downloading redmine ..."
@@ -2328,6 +2339,30 @@ install_ntopng()
 
 
 # -----------------------------------------------
+# Function to install postfixadmin
+# -----------------------------------------------
+install_postfix()
+{
+        echo "Installing postfix ..."
+        sudo apt-get -y --force-yes install postfix postfixadmin
+        if [ $? -ne 0 ]; then
+                echo "Error: Unable to install postfix. Exiting"
+                exit 3
+        fi
+
+	# Download postfixadmin database
+        if [ ! -e postfixadmin.txt ]; then
+                echo "Downloading postfixadmin database ..."
+                wget https://www.nesono.com/sites/default/files/postfixadmin.txt
+                if [ $? -ne 0 ]; then
+                        echo "Unable to download postfixadmin database. Exiting ..."
+                        exit 3
+                fi
+        fi
+}
+
+
+# -----------------------------------------------
 # This function saves variables in file, so
 # parametization script can read and use these 
 # values
@@ -2453,6 +2488,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_ndpi		# Install ndpi package
 	install_redsocks	# Install redsocks package
 	install_ntopng		# Install ntopng package
+	install_postfix		# Install postfixadmin package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
