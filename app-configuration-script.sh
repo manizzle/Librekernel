@@ -19,7 +19,7 @@ PLATFORM="Not Detected"         # Platform type (U12/U14/D7/D8/T7)
 ARCH="Not Detected"		# Architecture (i386/x86_64)
 EXT_INTERFACE="Not Detected"    # External Interface (Connected to Internet)
 INT_INETRFACE="Not Detected"    # Internal Interface (Connected to local network)
-
+POSTFIX_PASS="null"		# Password for postfixadmin admin account
 
 # ---------------------------------------------------------
 # This function checks user. 
@@ -3070,16 +3070,26 @@ configure_postfixadmin()
 echo "Configuring postfixadmin ..."
 
 # Creating database
-echo "Configuring Friendica local service ..."
+echo "Configuring postfixadmin database ..."
 if [ ! -e  /var/lib/mysql/mail ]; then
 	MYSQL_USER="root"
 
 	# Creating MySQL database frnd for friendica local service
 echo "CREATE DATABASE mail;" \
 | mysql -u "$MYSQL_USER" -p"$MYSQL_PASS"
+
+# Inserting database scheme
+mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" mail < postfixadmin.txt
+
+	# Geneerating admin password
+POSTFIX_PASS=`pwgen 10 1`
+POSTFIX_PASS_ENCRYPT=`openssl passwd -1 $POSTFIX_PASS`
+
+	# Inserting admin info
+echo "insert into admin (username, password, created, modified, active ) values ('admin', '$POSTFIX_PASS_ENCRYPT', '2016-12-20 09:30:53', '2016-12-20 09:30:53', '1')" |  mysql -u root -p"$MYSQL_PASS" mail        
 fi
 
-cat << EOF > /etc/postfix/config.inc.php
+cat << EOF > /etc/postfixadmin/config.inc.php
 <?php
 require_once('dbconfig.inc.php');
 if (!isset(\$dbserver) || empty(\$dbserver))
@@ -3350,7 +3360,7 @@ CRON=1
 EOF
 
 # Restarting spamassasin
-/etc/init.d/spamassasin restart
+/etc/init.d/spamassassin restart
 }
 
 
@@ -5709,6 +5719,7 @@ cat << EOF >> /var/box_services
 |    services name    |        username        |        password             |
 ------------------------------------------------------------------------------
 |    mysql            |          root          |       $MYSQL_PASS            |
+|    postfix          |          admin         |       $POSTFIX_PASS           |
 |    easyrtc          |                    (No Need)                         |
 |    friendica        |                (Please Register)                     |
 |    gitlab           |                (Please Register)                     |
