@@ -2156,6 +2156,7 @@ install_trac()
         fi
 }
 
+
 # ---------------------------------------------------------
 # Function to install redmine server
 # ---------------------------------------------------------
@@ -2177,19 +2178,8 @@ if [ "$ARCH" == "x86_64" ]; then
 	rm -rf /opt/redmine
         mkdir /opt/redmine
         chown -R www-data /opt/redmine
- # -----------------------------------------------
-# Function to install ntopng
-# -----------------------------------------------
-install_ntopng()
-{
-        echo "Installing ntopng ..."
-        sudo apt-get -y --force-yes install ntopng
-        if [ $? -ne 0 ]; then
-                echo "Error: Unable to install ntopng. Exiting"
-                exit 3
-        fi
-}       cd /opt/redmine
-
+	cd /opt/redmine
+	
 	if [ ! -e redmine-3.3.1 ]; then
                 echo "Downloading redmine ..."
                 wget http://www.redmine.org/releases/redmine-3.3.1.tar.gz
