@@ -2848,7 +2848,7 @@ chmod 770 /var/vmail
 
 cat << EOF > /etc/postfix/mysql_virtual_alias_domainaliases_maps.cf
 user = root 
-password = $MYSQl_PASS 
+password = $MYSQL_PASS 
 hosts = 127.0.0.1 
 dbname = mail 
 query = SELECT goto FROM alias,alias_domain WHERE alias_domain.alias_domain = '%d' AND alias.address=concat('%u', '@', alias_domain.target_domain) AND alias.active = 1
@@ -3086,8 +3086,10 @@ POSTFIX_PASS=`pwgen 10 1`
 POSTFIX_PASS_ENCRYPT=`openssl passwd -1 $POSTFIX_PASS`
 
 	# Inserting admin info
-echo "insert into admin (username, password, created, modified, active ) values ('admin', '$POSTFIX_PASS_ENCRYPT', '2016-12-20 09:30:53', '2016-12-20 09:30:53', '1')" |  mysql -u root -p"$MYSQL_PASS" mail        
+echo "insert into admin (username, password, created, modified, active ) values ('admin', '$POSTFIX_PASS_ENCRYPT', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '1')" |  mysql -u root -p"$MYSQL_PASS" mail        
 fi
+echo "insert into domain_admins (username, domain, created, active) values ('admin', 'ALL', '0000-00-00 00:00:00', '1')" | mysql -u root -p"$MYSQL_PASS" mail
+echo"insert into domain (domain, description, aliases, mailboxes, maxquota, quota, transport, backupmx, created, modified, active) values ('ALL', '', '0', '0', '0', '0', '', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '1')" | mysql -u root -p"$MYSQL_PASS" mail
 
 cat << EOF > /etc/postfixadmin/config.inc.php
 <?php
