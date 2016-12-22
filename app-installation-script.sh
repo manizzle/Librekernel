@@ -2334,7 +2334,7 @@ install_ntopng()
 install_postfix()
 {
         echo "Installing postfix ..."
-        sudo apt-get -y --force-yes install postfix postfixadmin
+        DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install postfix postfixadmin
         if [ $? -ne 0 ]; then
                 echo "Error: Unable to install postfix. Exiting"
                 exit 3
