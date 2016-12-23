@@ -836,7 +836,7 @@ iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE
 
 # Blocking ICMP (All Directions)
 iptables -A INPUT -p ICMP -i $INT_INTERFACE -j ACCEPT
-iptables -A OUTPUT -p ICMP -o $INT_INTERFAC -j ACCEPT
+iptables -A OUTPUT -p ICMP -o $INT_INTERFACE -j ACCEPT
 iptables -A INPUT -p ICMP -j DROP
 iptables -A OUTPUT -p ICMP -j DROP
 iptables -A FORWARD -p ICMP -j DROP
@@ -5750,6 +5750,72 @@ sleep 2
 
 
 # ---------------------------------------------------------
+# Function to create configs and logs commands
+# ---------------------------------------------------------
+create_commands()
+{
+echo "Creating configs and logs commands"
+cat << EOF > /var/box_configs
+nginx            /etc/nginx/nginx.conf
+apache2          /etc/apache2/apache2.conf
+prosody          /etc/prosody/prosody.cfg.lua
+roundcube        /etc/roundcube/config.inc.php
+spamassassin     /etc/spamassassin/local.cf
+squid            /etc/squid/squid.conf
+                 /etc/squid/squid-i2p.conf
+                 /etc/squid/squid-tor.conf
+squidclamav      /etc/squidclamav.conf
+squidguard       /etc/squidguard/squidGuard.conf
+ssh              /etc/ssh/sshd_config
+                 /etc/ssh/ssh_config
+dovecot          /etc/dovecot/dovecot.conf
+ecapguardian     /etc/ecapguardian/ecapguardian.conf
+elasticsearch    /etc/elasticsearch/elasticsearch.yml
+mysql            /etc/mysql/my.cnf
+ntopng           /etc/ntopng/ntopng.conf
+thin             /etc/thin2.1/config.yml
+gitlab           /etc/gitlab/gitlab.rb
+tinyproxy        /etc/tinyproxy.conf
+tomcat7          /etc/tomcat7/server.xml
+postfix          /etc/postfix/main.cf
+                 /etc/postfix/master.cf
+postfixadmin     /etc/postfixadmin/config.inc.php
+i2p              /etc/i2p/wrapper.config
+privoxy          /etc/privoxy/config
+                 /etc/privoxy/config-tor
+yacy             /etc/yacy/yacy.conf
+tor              /etc/tor/torrc
+friendice        /var/www/friendica/htconfig.php
+owncloud         /var/www/owncloud/config/config.php
+mailpile         /opt/Mailpile/setup.cfg
+redmine          /opt/redmine/redmine-3.3.1/config/configuration.yml
+trac             /opt/trac/libretrac/conf/trac.ini
+EOF
+
+# Create configs command
+cat << EOF > /usr/sbin/configs
+#!/bin/bash
+cat /var/box_configs
+EOF
+chmod +x /usr/sbin/configs
+
+
+cat << EOF > /var/box_logs
+EOF
+
+# Create logs command
+cat << EOF > /usr/sbin/logs
+#!/bin/bash
+cat /var/box_logs
+EOF
+chmod +x /usr/sbin/logs
+
+echo "You can print librerouter configuration and log files info by \"configs\" and \"logs\" commands"
+sleep 2
+}
+
+
+# ---------------------------------------------------------
 # Function to reboot librerouter
 # ---------------------------------------------------------
 do_reboot()
@@ -5847,6 +5913,7 @@ configure_gitlab 		# Configure gitlab servies (only for amd64)
 #services_to_tor                # Redirect yacy and prosody traffic to tor
 add_warning_pages		# Added warning pages for clamav and squidguard
 print_services			# Print info about service accessibility
+create_commands                 # Create configs and logs commands
 do_reboot                       # Function to reboot librerouter
 
 #configure_blacklists		# Configuring blacklist to block some ip addresses
