@@ -835,6 +835,8 @@ iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE
 #iptables -t mangle -I POSTROUTING -m ndpi --dpi_check
 
 # Blocking ICMP (All Directions)
+iptables -A INPUT -p ICMP -i $INT_INTERFACE -j ACCEPT
+iptables -A OUTPUT -p ICMP -o $INT_INTERFAC -j ACCEPT
 iptables -A INPUT -p ICMP -j DROP
 iptables -A OUTPUT -p ICMP -j DROP
 iptables -A FORWARD -p ICMP -j DROP
