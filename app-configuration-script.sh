@@ -5739,6 +5739,7 @@ cat << EOF >> /var/box_services
 ------------------------------------------------------------------------------
 |    mysql            |          root          |       $MYSQL_PASS            |
 |    postfix          |          admin         |       $POSTFIX_PASS           |
+|    roundcube        |      (Please Register mailbox in postfix)            |
 |    easyrtc          |                    (No Need)                         |
 |    friendica        |                (Please Register)                     |
 |    gitlab           |                (Please Register)                     |
@@ -5748,6 +5749,7 @@ cat << EOF >> /var/box_services
 |    trac             |                (Please Register)                     |
 |    yacy             |                    (No Need)                         |
 |    ssh              |         (Your machine root login and pass)           |
+|    webmin           |         (Your machine root login and pass)           |
 ------------------------------------------------------------------------------
 EOF
 
