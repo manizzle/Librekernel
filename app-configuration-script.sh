@@ -28,13 +28,13 @@ POSTFIX_PASS="null"		# Password for postfixadmin admin account
 # ---------------------------------------------------------
 check_root ()
 {
-	echo -ne "Checking user root ... "
+	echo -ne "Checking user root ... " | tee /var/libre_config.log
 	if [ "$(whoami)" != "root" ]; then
 		echo "Fail"
 		echo "You need to be root to proceed. Exiting"
 		exit 1
 	else
-	echo "OK"
+	echo "OK" | tee -a /var/libre_config.log
 fi
 }
 
@@ -50,7 +50,7 @@ fi
 # ----------------------------------------------------------
 get_variables()
 {
-	echo "Initializing variables ..."
+	echo "Initializing variables ..." | tee -a /var/libre_config.log
 	if [ -e /var/box_variables ]; then
 		PLATFORM=`cat /var/box_variables | grep "Platform" | awk {'print $2'}`
 		HARDWARE=`cat /var/box_variables | grep "Hardware" | awk {'print $2'}`
@@ -67,15 +67,15 @@ get_variables()
 			echo "Error: Can not detect variables. Exiting"
 			exit 5
 		else
-			echo "Platform:      $PLATFORM"
-			echo "Hardware:      $HARDWARE"
-			echo "Processor:     $PROCESSOR"
-			echo "Architecture:  $ARCH"
-			echo "Ext Interface: $EXT_INTERFACE"
-			echo "Int Interface: $INT_INTERFACE"
+			echo "Platform:      $PLATFORM" | tee -a /var/libre_config.log
+			echo "Hardware:      $HARDWARE" | tee -a /var/libre_config.log
+			echo "Processor:     $PROCESSOR" | tee -a /var/libre_config.log
+			echo "Architecture:  $ARCH" | tee -a /var/libre_config.log
+			echo "Ext Interface: $EXT_INTERFACE" | tee -a /var/libre_config.log
+			echo "Int Interface: $INT_INTERFACE" | tee -a /var/libre_config.log
 		fi 
 	else 
-		echo "Error: i cant find variables of the machine and operating system ,the installation script wasnt installed or failed, please check the Os requirements (at the moment only works in Debian 8 we are ongoing to ubuntu)" 
+		echo "Error: i cant find variables of the machine and operating system ,the installation script wasnt installed or failed, please check the Os requirements (at the moment only works in Debian 8 we are ongoing to ubuntu)"  | tee -a /var/libre_config.log
 		exit 6
 	fi
 }
@@ -94,7 +94,7 @@ get_variables()
 # ----------------------------------------------
 get_platform ()
 {
-        echo "Detecting platform ..."
+        echo "Detecting platform ..." | tee -a /var/libre_config.log
         FILE=/etc/issue
         if cat $FILE | grep "Ubuntu 12.04" > /dev/null; then
                 PLATFORM="U12"
@@ -107,10 +107,10 @@ get_platform ()
         elif cat $FILE | grep "Trisquel GNU/Linux 7.0" > /dev/null; then
                 PLATFORM="T7"
         else
-                echo "ERROR: UNKNOWN PLATFORM"
+                echo "ERROR: UNKNOWN PLATFORM" | tee -a /var/libre_config.log
                 exit
         fi
-        echo "Platform: $PLATFORM"
+        echo "Platform: $PLATFORM" | tee -a /var/libre_config.log
 }
 
 
@@ -125,7 +125,7 @@ get_platform ()
 # ----------------------------------------------
 get_hardware()
 {
-        echo "Detecting hardware ..."
+         echo "Detecting hardware ..." | tee -a /var/libre_config.log
 
         # Checking CPU for ARM and saving
         # Processor and Hardware types in
@@ -152,9 +152,9 @@ get_hardware()
 
         # Printing Processor Hardware and Architecture types
 
-        echo "Processor: $PROCESSOR"
-        echo "Hardware: $HARDWARE"
-        echo "Architecture: $ARCH"
+        echo "Processor: $PROCESSOR" | tee -a /var/libre_config.log
+        echo "Hardware: $HARDWARE" | tee -a /var/libre_config.log
+        echo "Architecture: $ARCH" | tee -a /var/libre_config.log
 }
 
 
@@ -208,10 +208,10 @@ get_interfaces()
         # EXT_INTERFACE variable
         if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
                 EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
-                echo "Internet connection established on interface $EXT_INTERFACE"
+                echo "Internet connection established on interface $EXT_INTERFACE" | tee -a /var/libre_config.log
         else
                 # Checking eth0 for Internet connection
-                echo "Getting Internet access on eth0"
+                echo "Getting Internet access on eth0" 
                 echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
                 echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
                 echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
@@ -240,7 +240,7 @@ get_interfaces()
         fi
         # Getting internal interface name
         INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
-        echo "Internal interface: $INT_INTERFACE"
+        echo "Internal interface: $INT_INTERFACE" | tee -a /var/libre_config.log
 }
 
 
@@ -248,7 +248,7 @@ get_interfaces()
 # Function to get info about available HDDs 
 # ---------------------------------------------------------
 get_hdd(){
-echo "Checking HDDs ..."
+echo "Checking HDDs ..." | tee -a /var/libre_config.log
 
 ALL_HDD=`lsblk -l | grep "disk" | awk '{print $1}' ORS=' '`
 HDDS=`lsblk -l | grep "disk" | awk '{print $1}' | wc -l`
@@ -264,7 +264,7 @@ echo "
 Detected:  $ALL_HDD
 System:    $SYS_HDD 
 External:  $EXT_HDD
-"   
+"  | tee -a /var/libre_config.log 
 }  
 
 
@@ -274,6 +274,7 @@ External:  $EXT_HDD
 # ---------------------------------------------------------
 configure_hosts()
 {
+echo "Configuring hosts ..." | tee -a /var/libre_config.log
 echo "librerouter" > /etc/hostname
 
 cat << EOF > /etc/hosts
@@ -386,6 +387,7 @@ configure_bridges()
 # ---------------------------------------------------------
 configure_interfaces()
 {
+	echo "Configuring Interfaces ..." | tee -a /var/libre_config.log
 	# Network interfaces configuration for 
 	# Physical/Virtual machine
 if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; then
@@ -614,7 +616,7 @@ fi
 # ---------------------------------------------------------
 configure_dhcp()
 {
-echo "Configuring dhcp server ..."
+echo "Configuring dhcp server ..." | tee -a /var/libre_config.log
 echo "
 ddns-update-style none;
 option domain-name \"librerouter.librenet\";
@@ -629,7 +631,7 @@ option routers 10.0.0.1;
 " > /etc/dhcp/dhcpd.conf
 
 # Restarting dhcp server
-service isc-dhcp-server restart
+service isc-dhcp-server restart | tee -a /var/libre_config.log
 }
 
 
@@ -725,7 +727,7 @@ done
 # ---------------------------------------------------------
 configure_mysql()
 {
-echo "Configuring MySQL ..."
+echo "Configuring MySQL ..." | tee -a /var/libre_config.log
 # Getting MySQL password
 if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
 	MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
@@ -733,7 +735,7 @@ else
 	MYSQL_PASS=`pwgen 10 1`
 	echo "DB_PASS: $MYSQL_PASS" >> /var/box_variables
 	# Setting password
-	mysqladmin -u root password $MYSQL_PASS
+	mysqladmin -u root password $MYSQL_PASS | tee -a /var/libre_config.log
 fi
 }
 
@@ -743,6 +745,7 @@ fi
 # ---------------------------------------------------------
 configure_banks_access()
 {
+echo "Configuring banks access ..." | tee -a /var/libre_config.log
 touch /var/banks_ips.txt
 echo "192.229.182.219
 194.224.167.58
@@ -768,7 +771,7 @@ chmod a+x /var/banks_access.sh
 # ---------------------------------------------------------
 configure_iptables()
 {
-
+echo "Configuring iptables ..." | tee -a /var/libre_config.log
 # Disabling ipv6 and enabling ipv4 forwarding
 echo "
 net.ipv4.ip_forward=1
@@ -911,7 +914,7 @@ EOF
 
 chmod +x /etc/rc.local
 
-/etc/rc.local
+/etc/rc.local | tee -a /var/libre_config.log
 }
 
 
@@ -920,7 +923,7 @@ chmod +x /etc/rc.local
 # ---------------------------------------------------------
 configure_tor()
 {
-echo "Configuring Tor server ..."
+echo "Configuring Tor server ..." | tee -a /var/libre_config.log
 tordir=/var/lib/tor/hidden_service
 for i in yacy owncloud friendica mailpile easyrtc ssh gitlab trac redmine  
 do
@@ -945,7 +948,7 @@ rm -f /etc/tor/torrc
 #cp /usr/share/tor/tor-service-defaults-torrc /etc/tor/torrc
 echo "" > /usr/share/tor/tor-service-defaults-torrc
 
-echo "Configuring Tor hidden services"
+echo "Configuring Tor hidden services" | tee -a /var/libre_config.log
 
 echo "
 DataDirectory /var/lib/tor
@@ -1013,14 +1016,14 @@ AutomapHostsOnResolve 1
 
 service nginx stop 
 sleep 10
-service tor restart
+service tor restart | tee -a /var/libre_config.log
 
 LOOP_S=0
 LOOP_N=0
 while [ $LOOP_S -lt 1 ]
 do
 if [ -e "/var/lib/tor/hidden_service/yacy/hostname" ]; then
-echo "Tor successfully configured"
+echo "Tor successfully configured" | tee -a /var/libre_config.log
 LOOP_S=1
 else
 sleep 1
@@ -1028,7 +1031,7 @@ LOOP_N=$((LOOP_N + 1))
 fi
 # Wail up to 60 s for tor hidden services to become available
 if [ $LOOP_N -eq 60 ]; then
-echo "Error: Unable to configure tor. Exiting ..."
+echo "Error: Unable to configure tor. Exiting ..." | tee -a /var/libre_config.log
 exit 1 
 fi 
 done
@@ -1040,7 +1043,7 @@ done
 # ---------------------------------------------------------
 configure_i2p()
 {
-echo "Configuring i2p server ..."
+echo "Configuring i2p server ..." | tee -a /var/libre_config.log
 # echo "Changeing RUN_DAEMON ..."
 # waitakey
 # $EDITOR /etc/default/i2p
@@ -1639,7 +1642,7 @@ chown i2psvc:i2psvc /var/lib/i2p/i2p-config/i2ptunnel.config
 chmod 600 /var/lib/i2p/i2p-config/i2ptunnel.config
 
 # Restarting i2p
-service i2p restart
+service i2p restart | tee -a /var/libre_config.log
 
 LOOP_S=0
 LOOP_N=0
@@ -1647,7 +1650,7 @@ echo "Configuring i2p hidden services ..."
 while [ $LOOP_S -lt 1 ]
 do
 if [ `ls /var/lib/i2p/i2p-config/i2ptunnel-keyBackup/ 2>/dev/null | wc -l` -eq 10 ]; then
-echo "i2p successfully configured"
+echo "i2p successfully configured" | tee -a /var/libre_config.log
 LOOP_S=1
 else
 sleep 1
@@ -1655,7 +1658,7 @@ LOOP_N=$((LOOP_N + 1))
 fi
 # Wail up to 120 s for tor hidden services to become available
 if [ $LOOP_N -eq 160 ]; then
-echo "Error: Unable to configure i2p. Exiting ..."
+echo "Error: Unable to configure i2p. Exiting ..." | tee -a /var/libre_config.log
 exit 1
 fi
 done
@@ -1668,6 +1671,7 @@ done
 # ---------------------------------------------------------
 configure_unbound() 
 {
+echo "Configuring unbound DNS server ..." | tee -a /var/libre_config.log
 echo '# Unbound configuration file for Debian.
 #
 # See the unbound.conf(5) man page.
@@ -1881,15 +1885,15 @@ forward-addr: 8.8.8.8@53
 ' >> /etc/unbound/unbound.conf
 
 # Extracting classified domain list package
-echo "Extracting files ..."
+echo "Extracting files ..." | tee -a /var/libre_config.log
 tar -xf shallalist.tar.gz
 if [ $? -ne 0 ]; then
-echo "Error: Unable to extract domains list. Exithing"
+echo "Error: Unable to extract domains list. Exithing" | tee -a /var/libre_config.log
 exit 6
 fi
 
 # Configuring social network domains list
-echo "Configuring domain list ..."
+echo "Configuring domain list ..." | tee -a /var/libre_config.log
 find BL/socialnet -name domains -exec cat {} \; > socialnet_domain.list
 find BL/searchengines -name domains -exec cat {} \; > searchengines_domain.list
 find BL/webmail -name domains -exec cat {} \; > webmail_domain.list
@@ -1980,12 +1984,12 @@ fi
 #
 #	echo "service unbound restart" >> /etc/rc.local
 
-echo "Starting Unbound DNS server ..."
-service unbound restart
+echo "Starting Unbound DNS server ..." | tee -a /var/libre_config.log
+service unbound restart | tee -a /var/libre_config.log
 if ps aux | grep -w "unbound" | grep -v "grep" > /dev/null; then
-echo "Unbound DNS server successfully started."
+echo "Unbound DNS server successfully started." | tee -a /var/libre_config.log
 else
-echo "Error: Unable to start unbound DNS server. Exiting"
+echo "Error: Unable to start unbound DNS server. Exiting" | tee -a /var/libre_config.log
 exit 3
 fi
 }
@@ -1996,7 +2000,7 @@ fi
 # ---------------------------------------------------------
 configure_friendica()
 {
-echo "Configuring Friendica local service ..."
+echo "Configuring Friendica local service ..." | tee -a /var/libre_config.log
 if [ ! -e  /var/lib/mysql/frnd ]; then
 
 # Defining MySQL user and password variables
@@ -2049,9 +2053,9 @@ echo "
 # ---------------------------------------------------------
 configure_easyrtc()
 {
-echo "Starting EasyRTC local service ..."
+echo "Starting EasyRTC local service ..." | tee -a /var/libre_config.log
 if [ ! -e /opt/easyrtc/server_example/server.js ]; then
-echo "Can not find EasyRTC server confiugration. Exiting ..."
+echo "Can not find EasyRTC server confiugration. Exiting ..." | tee -a /var/libre_config.log
 exit 4
 fi
 
@@ -2128,7 +2132,7 @@ EOF
 cd /opt/easyrtc/server_example
 
 # Starting EasyRTC server
-nohup nodejs server &
+nohup nodejs server & 
 
 echo ""
 cd
@@ -2140,7 +2144,7 @@ cd
 # ---------------------------------------------------------
 configure_owncloud()
 {
-echo "Configuring Owncloud local service ..."
+echo "Configuring Owncloud local service ..." | tee -a /var/libre_config.log
 
 # Getting owncloud onion service name
 SERVER_OWNCLOUD="$(cat /var/lib/tor/hidden_service/owncloud/hostname 2>/dev/null)"
@@ -2207,6 +2211,7 @@ chmod 777 /var/www/owncloud/configs.sh
 # --------------------------------------------------------
 configure_privoxy()
 {
+echo "Configuring Privoxy ..." | tee -a /var/libre_config.log
 /etc/init.d/privoxy stop
 rm -f /etc/rc?.d/*privoxy*
 
@@ -2267,11 +2272,11 @@ sed "s~SCRIPTNAME=.*~SCRIPTNAME=/etc/init.d/\$NAME-tor~g" -i /etc/init.d/privoxy
 
 update-rc.d privoxy-tor defaults
 
-echo "Restarting privoxy-tor ..."
-service privoxy-tor restart
+echo "Restarting privoxy-tor ..." | tee -a /var/libre_config.log
+service privoxy-tor restart | tee -a /var/libre_config.log
 
-echo "Restarting privoxy-i2p ..."
-service privoxy restart
+echo "Restarting privoxy-i2p ..." | tee -a /var/libre_config.log
+service privoxy restart | tee -a /var/libre_config.log
 
 }
 
@@ -2281,7 +2286,7 @@ service privoxy restart
 # ---------------------------------------------------------
 configure_tinyproxy()
 {
-	echo "Configuring tinyproxy ..."
+	echo "Configuring tinyproxy ..." | tee -a /var/libre_config.log
 cat << EOF > /etc/tinyproxy.conf
 User nobody
 Group nogroup
@@ -2305,7 +2310,7 @@ ConnectPort 563
 EOF
 
 	# Restarting tinyproxy
-	/etc/init.d/tinyproxy restart
+	/etc/init.d/tinyproxy restart | tee -a /var/libre_config.log
 }
 
 
@@ -2314,27 +2319,27 @@ EOF
 # ---------------------------------------------------------
 configure_squid()
 {
-echo "Configuring squid server ..."
+echo "Configuring squid server ..." | tee -a /var/libre_config.log
 
 # Generating certificates for ssl connection
-echo "Generating certificates ..."
+echo "Generating certificates ..." | tee -a /var/libre_config.log
 if [ ! -e /etc/squid/ssl_cert ]; then
 mkdir /etc/squid/ssl_cert
 openssl req -new -newkey rsa:2048 -days 365 -nodes -x509  \
 -keyout /etc/squid/ssl_cert/squid.key \
--out /etc/squid/ssl_cert/squid.crt -batch
+-out /etc/squid/ssl_cert/squid.crt -batch | tee -a /var/libre_config.log
 chown -R proxy:proxy /etc/squid/ssl_cert
 chmod -R 777 /etc/squid/ssl_cert
 fi
 
-echo "Creating log directory for Squid..."
-rm -rf mkdir /var/log/squid
+echo "Creating log directory for Squid..." | tee -a /var/libre_config.log
+rm -rf mkdir /var/log/squid | tee -a /var/libre_config.log
 mkdir /var/log/squid
 chown -R proxy:proxy /var/log/squid
 chmod -R 777 /var/log/squid
 
-echo "Calling Squid to create swap directories and initialize cert cache dir..."
-squid -z
+echo "Calling Squid to create swap directories and initialize cert cache dir..." | tee -a /var/libre_config.log
+squid -z | tee -a /var/libre_config.log
 if [ -d "/var/cache/squid/ssl_db" ]; then
 rm -rf /var/cache/squid/ssl_db
 fi
@@ -2343,7 +2348,7 @@ chown -R proxy:proxy /var/cache/squid/ssl_db
 chmod -R 777 /var/cache/squid/ssl_db
 
 # squid configuration
-echo "Creating squid conf file ..."
+echo "Creating squid conf file ..." | tee -a /var/libre_config.log
 echo "
 acl SSL_ports port 443
 acl Safe_ports port 80          # http
@@ -2419,9 +2424,9 @@ adaptation_service_chain myChain ecap_service_resp icap_service_resp
 adaptation_access myChain allow all
 " > /etc/squid/squid.conf
 
-echo "Configuring squid startup file ..."
+echo "Configuring squid startup file ..." | tee -a /var/libre_config.log
 if [ ! -e /etc/squid/squid3.rc ]; then
-echo "Could not find squid srartup script. Exiting ..."
+echo "Could not find squid srartup script. Exiting ..." | tee -a /var/libre_config.log
 exit 8
 else
 rm -rf /etc/init.d/squid*
@@ -2437,12 +2442,12 @@ chmod +x /etc/init.d/squid
 fi
 
 update-rc.d squid start defaults
-echo "Restarting squid server ..."
-service squid restart
+echo "Restarting squid server ..." | tee -a /var/libre_config.log
+service squid restart | tee -a /var/libre_config.log
 
 # squid TOR
 
-echo "Creating squid-tor conf file ..."
+echo "Creating squid-tor conf file ..." | tee -a /var/libre_config.log
 cat << EOF > /etc/squid/squid-tor.conf 
 # Tor acl
 acl tor_url dstdomain .onion
@@ -2520,19 +2525,19 @@ icap_service service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/squidc
 adaptation_access service_resp allow all
 EOF
 
-echo "Configuring squid-tor startup file ..."
+echo "Configuring squid-tor startup file ..." | tee -a /var/libre_config.log
 cp /etc/init.d/squid /etc/init.d/squid-tor
 sed "s~Provides:.*~Provides:          squid-tor~g" -i  /etc/init.d/squid-tor
 sed "s~PIDFILE=.*~PIDFILE=/var/run/squid-tor.pid~g" -i  /etc/init.d/squid-tor
 sed "s~CONFIG=.*~CONFIG=/etc/squid/squid-tor.conf~g" -i /etc/init.d/squid-tor
 
 update-rc.d squid-tor start defaults
-echo "Restarting squid-tor ..."
-service squid-tor restart
+echo "Restarting squid-tor ..." | tee -a /var/libre_config.log
+service squid-tor restart | tee -a /var/libre_config.log
 
 #Squid I2P
 
-echo "Creating squid-i2p conf file ..."
+echo "Creating squid-i2p conf file ..." | tee -a /var/libre_config.log
 cat << EOF > /etc/squid/squid-i2p.conf
 cache_peer 127.0.0.1 parent 8118 7 no-query no-digest
 
@@ -2600,15 +2605,15 @@ icap_service service_resp respmod_precache bypass=1 icap://127.0.0.1:1344/squidc
 adaptation_access service_resp allow all
 EOF
 
-echo "Configuring squid-i2p startup file ..."
+echo "Configuring squid-i2p startup file ..." | tee -a /var/libre_config.log
 cp /etc/init.d/squid /etc/init.d/squid-i2p
 sed "s~Provides:.*~Provides:          squid-i2p~g" -i  /etc/init.d/squid-i2p
 sed "s~PIDFILE=.*~PIDFILE=/var/run/squid-i2p.pid~g" -i  /etc/init.d/squid-i2p
 sed "s~CONFIG=.*~CONFIG=/etc/squid/squid-i2p.conf~g" -i /etc/init.d/squid-i2p
 
-update-rc.d squid-i2p start defaults
-echo "Restarting squid-i2p ..."
-service squid-i2p restart
+update-rc.d squid-i2p start defaults 
+echo "Restarting squid-i2p ..." | tee -a /var/libre_config.log
+service squid-i2p restart | tee -a /var/libre_config.log
 }
 
 
@@ -2617,7 +2622,7 @@ service squid-i2p restart
 # ---------------------------------------------------------
 configure_c_icap()
 {
-echo "Configuring c-icap ..."
+echo "Configuring c-icap ..." | tee -a /var/libre_config.log
 
 # Making c-icap daemon run automatically on startup
 echo "
@@ -2681,8 +2686,8 @@ ServicesDir /usr/lib/arm-linux-gnueabihf/c_icap
 " >> /etc/c-icap/c-icap.conf
 fi
 
-echo "Restarting c-icap service ..."
-service c-icap restart
+echo "Restarting c-icap service ..." | tee -a /var/libre_config.log
+service c-icap restart | tee -a /var/libre_config.log
 }
 
 
@@ -2691,7 +2696,7 @@ service c-icap restart
 # ---------------------------------------------------------
 configure_squidclamav()
 {
-echo "Configuring squidclamav ..."
+echo "Configuring squidclamav ..." | tee -a /var/libre_config.log
 echo "
 maxsize 5000000
 redirect http://librerouter.librenet/virus_warning_page.html
@@ -2704,8 +2709,8 @@ dnslookup 1
 safebrowsing 0
 " > /etc/squidclamav.conf
 
-echo "Restarting clamav daemon ..."
-service clamav-daemon restart
+echo "Restarting clamav daemon ..." | tee -a /var/libre_config.log
+service clamav-daemon restart | tee -a /var/libre_config.log
 }
 
 
@@ -2715,7 +2720,7 @@ service clamav-daemon restart
 configure_squidguard()
 {
 
-echo "Configuring squidguard ..."
+echo "Configuring squidguard ..." | tee -a /var/libre_config.log
 
 mkdir -p /etc/squidguard
 
@@ -2766,7 +2771,7 @@ default {
 }
 EOF
 
-squidGuard -C all
+squidGuard -C all 
 chmod -R a+rw /usr/local/squidGuard/db/*
 }
 
@@ -2795,7 +2800,7 @@ EOF
 configure_ecapguardian()
 {
 
-echo "Configuring ecapguardian ..."
+echo "Configuring ecapguardian ..." | tee -a /var/libre_config.log
 
 # Creating user
 useradd e2guardian
@@ -2840,7 +2845,7 @@ crontab /root/libre_scripts/cron_jobs
 configure_postfix()
 {
 # Configurinf postfix mail service
-echo "Configuring postfix ..."
+echo "Configuring postfix ..." | tee -a /var/libre_config.log
 
 # Creating vmail user
 useradd -r -u 150 -g mail -d /var/vmail -s /sbin/nologin -c "Virtual MailDir Handler" vmail
@@ -3059,8 +3064,8 @@ dovecot      unix   -        n      n       -       -   pipe
   flags=DRhu user=vmail:mail argv=/usr/lib/dovecot/dovecot-lda -d \$(recipient)
 EOF
 
-echo "Restarting postfix ..."
-service postfix restart
+echo "Restarting postfix ..." | tee -a /var/libre_config.log
+service postfix restart | tee -a /var/libre_config.log
 }
 
 
@@ -3069,7 +3074,7 @@ service postfix restart
 # ---------------------------------------------------------
 configure_postfixadmin()
 {
-echo "Configuring postfixadmin ..."
+echo "Configuring postfixadmin ..." | tee -a /var/libre_config.log
 
 # Creating database
 echo "Configuring postfixadmin database ..."
@@ -3210,7 +3215,7 @@ EOF
 # ---------------------------------------------------------
 configure_dovecot()
 {
-echo "Configuring dovecot ..."
+echo "Configuring dovecot ..." | tee -a /var/libre_config.log
 
 # Database Config
 cat << EOF > /etc/dovecot/conf.d/auth-sql.conf.ext
@@ -3313,7 +3318,8 @@ chown -R vmail:dovecot /etc/dovecot
 chmod -R o-rwx /etc/dovecot
 
 # Restarting dovecot
-/etc/init.d/dovecot restart
+echo "Restarting dovecot ..." | tee -a /var/libre_config.log
+/etc/init.d/dovecot restart | tee -a /var/libre_config.log
 }
 
 
@@ -3322,7 +3328,7 @@ chmod -R o-rwx /etc/dovecot
 # ---------------------------------------------------------             
 configure_amavis()
 {
-echo "Configureing amavis ..."
+echo "Configureing amavis ..." | tee -a /var/libre_config.log
 cat << EOF > /etc/amavis/conf.d/15-content_filter_mode
 use strict;
 @bypass_virus_checks_maps = (
@@ -3346,7 +3352,8 @@ use strict;
 EOF
 
 # Restarting amavis service
-/etc/init.d/amavis restart
+echo "Restarting amavis ..." | tee -a /var/libre_config.log
+/etc/init.d/amavis restart | tee -a /var/libre_config.log
 }
 
 
@@ -3355,7 +3362,7 @@ EOF
 # ---------------------------------------------------------
 configure_spamassasin()
 {
-echo "Configuring spamassasin ..."
+echo "Configuring spamassasin ..." | tee -a /var/libre_config.log
 cat << EOF > /etc/default/spamassassin
 ENABLED=1
 OPTIONS="--create-prefs --max-children 5 --helper-home-dir"
@@ -3364,7 +3371,8 @@ CRON=1
 EOF
 
 # Restarting spamassasin
-/etc/init.d/spamassassin restart
+echo "Restarting spamassasin ..." | tee -a /var/libre_config.log
+/etc/init.d/spamassassin restart | tee -a /var/libre_config.log
 }
 
 
@@ -3373,7 +3381,7 @@ EOF
 # ---------------------------------------------------------
 configure_roundcube()
 {
-echo "Configuring roundcube ..."
+echo "Configuring roundcube ..." | tee -a /var/libre_config.log
 cat << EOF > /etc/roundcube/config.inc.php
 <?php
 \$config = array();
@@ -3403,7 +3411,7 @@ configure_trac()
 # trac can only be installed on x86_64 (64 bit) architecture
 # So we configure it if architecture is x86_64
 if [ "$ARCH" == "x86_64" ]; then
-        echo "Configuring Trac ..."
+        echo "Configuring Trac ..." | tee -a /var/libre_config.log
 	rm -rf /opt/trac/libretrac
         mkdir -p /opt/trac/libretrac
 
@@ -3421,7 +3429,7 @@ if [ "$ARCH" == "x86_64" ]; then
 	kill -9 `netstat -tulpn | grep 8000 | awk '{print $7}' | awk -F/ '{print $1}'` 2> /dev/null	
         tracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &
 else
-        echo "Trac configuration is skipped as detected architecture: $ARCH"
+        echo "Trac configuration is skipped as detected architecture: $ARCH" | tee -a /var/libre_config.log
 fi
 }
 
@@ -3431,7 +3439,7 @@ fi
 # ---------------------------------------------------------
 configure_redmine()
 {
-        echo "Configuring redmine ..."
+        echo "Configuring redmine ..." | tee -a /var/libre_config.log
 
         # Preparing MySQL
         MYSQL_USER="root"
@@ -3503,7 +3511,7 @@ production:
 # ---------------------------------------------------------
 configure_ntopng()
 {
-	echo "configuring ntopng ..."
+	echo "configuring ntopng ..." | tee -a /var/libre_config.log
 
 	# Interface configuretion
 	# sed -i 's/INTERFACES="none"/INTERFACES="$EXT_INTERFACE"/g' /var/lib/ntop/init.cfg
@@ -3541,8 +3549,8 @@ configure_ntopng()
 " > /etc/ntopng/ntopng.conf
 
 	# Restarting ntopng sevice
-	echo "Restarting ntopng ..."
-	/etc/init.d/ntopng restart
+	echo "Restarting ntopng ..." | tee -a /var/libre_config.log
+	/etc/init.d/ntopng restart | tee -a /var/libre_config.log
 }
 
 
@@ -3551,7 +3559,7 @@ configure_ntopng()
 # ---------------------------------------------------------
 configure_redsocks()
 {
-        echo "Configuring redsocks ..."
+        echo "Configuring redsocks ..." | tee -a /var/libre_config.log
 
         # Creating log file
         rm -rf /var/log/redsocks.log
@@ -3582,13 +3590,14 @@ EOF
 # ---------------------------------------------------------
 configure_prosody()
 {
-	echo "configuring prosody ..."
+	echo "configuring prosody ..." | tee -a /var/libre_config.log
 	if ! cat /etc/prosody/prosody.cfg.lua | grep "interfaces = { \"127.0.0.1\" }"; then
 		sed -i '18iinterfaces = { "127.0.0.1" }' /etc/prosody/prosody.cfg.lua 
 	fi
 	
 	# Restarting prosody
-	/etc/init.d/prosody restart
+	echo "Restarting prosody ..." | tee -a /var/libre_config.log
+	/etc/init.d/prosody restart | tee -a /var/libre_config.log
 }
 
 
@@ -3597,13 +3606,14 @@ configure_prosody()
 # ---------------------------------------------------------
 configure_tomcat()
 {
-        echo "configuring tomcat ..."
+        echo "configuring tomcat ..." | tee -a /var/libre_config.log
         if ! cat /etc/tomcat7/server.xml | grep "address=\"127.0.0.1\""; then
 		sed -i 's/<Connector port="8080" protocol="HTTP\/1.1"/<Connector address="127.0.0.1" port="8080" protocol="HTTP\/1.1"/g' /etc/tomcat7/server.xml
         fi
 
         # Restarting tomcat
-        /etc/init.d/tomcat7 restart
+	echo "Restarting tomcat ..." | tee -a /var/libre_config.log
+        /etc/init.d/tomcat7 restart | tee -a /var/libre_config.log
 }
 
 
@@ -3612,10 +3622,10 @@ configure_tomcat()
 # ---------------------------------------------------------
 configure_mailpile()
 {
-echo "Configuring Mailpile local service ..."
+echo "Configuring Mailpile local service ..." | tee -a /var/libre_config.log
 export MAILPILE_HOME=.local/share/Mailpile
 if [ -e $MAILPIEL_HOME/default/mailpile.cfg ]; then
-echo "Configuration file does not exist. Exiting ..."
+echo "Configuration file does not exist. Exiting ..." | tee -a /var/libre_config.log
 exit 6
 fi
 
@@ -3644,8 +3654,8 @@ echo \"[\`date\`] Mailpile Stopping\" >> /var/log/mailpile.log
 end script
 " > /etc/init/mailpile.conf
 
-echo "Starting Mailpile local service ..."
-/usr/bin/screen -dmS mailpile_init /opt/Mailpile/mp
+echo "Starting Mailpile local service ..." | tee -a /var/libre_config.log
+/usr/bin/screen -dmS mailpile_init /opt/Mailpile/mp | tee -a /var/libre_config.log
 }
 
 
@@ -3654,7 +3664,7 @@ echo "Starting Mailpile local service ..."
 # ---------------------------------------------------------
 configure_modsecurity()
 {
-echo "Configuring modsecurity ..."
+echo "Configuring modsecurity ..." | tee -a /var/libre_config.log
 cp /usr/src/modsecurity/modsecurity.conf-recommended /etc/nginx/modsecurity.conf
 cp /usr/src/modsecurity/unicode.mapping /etc/nginx/
 
@@ -3684,7 +3694,7 @@ EOF
 # ---------------------------------------------------------
 configure_nginx() 
 {
-echo "Configuring Nginx ..."
+echo "Configuring Nginx ..." | tee -a /var/libre_config.log
 
 # Stop and change apache configuration
 /etc/init.d/apache2 stop
@@ -3847,6 +3857,7 @@ systemctl daemon-reload
 
 #--------php-handler----------#
 
+echo "Configuraing php-handler ..." | tee -a /var/libre_config.log
 # Creating virtual hosts
 echo "upstream php-handler {
 server 127.0.0.1:9000;
@@ -3903,7 +3914,7 @@ location /phpMyAdmin {
 #------------search.librerouter.net-----------#
 
 # Configuring Yacy virtual host
-echo "Configuring Yacy virtual host ..."
+echo "Configuring Yacy virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service yacy hostname
 SERVER_YACY="$(cat /var/lib/tor/hidden_service/yacy/hostname 2>/dev/null)"
@@ -3952,7 +3963,7 @@ server {
 #--------social.librerouter.net----------#
 
 # Configuring Friendica virtual host
-echo "Configuring Friendica virtual host ..."
+echo "Configuring Friendica virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service friendica hostname
 SERVER_FRIENDICA="$(cat /var/lib/tor/hidden_service/friendica/hostname 2>/dev/null)"
@@ -4114,7 +4125,7 @@ location ~ /\. {
 #--------storage.librerouter.net----------#
 
 # Configuring Owncloud virtual host
-echo "Configuring Owncloud virtual host ..."
+echo "Configuring Owncloud virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service owncloud hostname
 SERVER_OWNCLOUD="$(cat /var/lib/tor/hidden_service/owncloud/hostname 2>/dev/null)"
@@ -4218,7 +4229,7 @@ server {
 #--------email.librerouter.net----------#
 
 # Configuring Mailpile virtual host
-echo "Configuring Mailpile virtual host ..."
+echo "Configuring Mailpile virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service mailpile hostname
 SERVER_MAILPILE="$(cat /var/lib/tor/hidden_service/mailpile/hostname 2>/dev/null)"
@@ -4288,7 +4299,7 @@ server {
 #--------webmin.librenet----------#
 
 # Configuring Webmin virtual host
-echo "Configuring Webmin virtual host ..."
+echo "Configuring Webmin virtual host ..." | tee -a /var/libre_config.log
 
 # Generating certificates for webmin ssl connection
 echo "Generating keys and certificates for webmin"
@@ -4414,7 +4425,7 @@ fi
 #--------squidguard.librenet----------#
 
 # Configuring squidguard virtual host
-echo "Configuring squidguard virtual host ..."
+echo "Configuring squidguard virtual host ..." | tee -a /var/libre_config.log
 echo '
 # Redirect connections from 10.0.0.246 to squidguardmgr.librenet
 server {
@@ -4447,7 +4458,7 @@ sed -i -e 's@\t# include /etc/nginx/passenger.conf.*@\tinclude /etc/nginx/passen
 #--------conference.librerouter.net----------#
 
 # Configuring EasyRTC virtual host
-echo "Configuring EasyRTC virtual host ..."
+echo "Configuring EasyRTC virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service EasyRTC hostname
 SERVER_EASYRTC="$(cat /var/lib/tor/hidden_service/easyrtc/hostname 2>/dev/null)"
@@ -4534,7 +4545,7 @@ proxy_set_header X-Real-IP \$remote_addr;
 # trac.librerouter.net virtual host configuration
 
 # Configuring Trac virtual host
-echo "Configuring Trac virtual host ..."
+echo "Configuring Trac virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service trac hostname
 SERVER_TRAC="$(cat /var/lib/tor/hidden_service/trac/hostname 2>/dev/null)"
@@ -4574,7 +4585,7 @@ server {
 
 
 # Configuring Redmine virtual host
-echo "Configuring Redmine virtual host ..."
+echo "Configuring Redmine virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service redmine hostname
 SERVER_REDMINE="$(cat /var/lib/tor/hidden_service/redmine/hostname 2>/dev/null)"
@@ -4663,6 +4674,8 @@ server {
 #----------------------ntop.librenet-----------------------#
 #                       10.0.0.244                         #
 ############################################################
+
+echo "Configuring ntop virtual host ..." | tee -a /var/libre_config.log
 echo "
 # Redirect connections from 10.0.0.244 to ntop.librenet
 server {
@@ -4687,7 +4700,7 @@ server {
 ############################################################
 
 # Configuring Roundcube virtual host
-echo "Configuring Roundcube virtual host ..."
+echo "Configuring Roundcube virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service roundcube hostname
 SERVER_ROUNDCUBE="$(cat /var/lib/tor/hidden_service/roundcube/hostname 2>/dev/null)"
@@ -4763,7 +4776,7 @@ EOF
 ############################################################
 
 # Configuring Postfix virtual host
-echo "Configuring Postfix virtual host ..."
+echo "Configuring Postfix virtual host ..." | tee -a /var/libre_config.log
 
 # Getting Tor hidden service roundcube hostname
 # SERVER_POSTFIX="$(cat /var/lib/tor/hidden_service/postfix/hostname 2>/dev/null)"
@@ -4834,10 +4847,10 @@ server {
 EOF
 
 # Restarting Yacy php5-fpm and Nginx services 
-echo "Restarting nginx ..."
-service yacy restart
-service php5-fpm restart
-/etc/init.d/nginx start
+echo "Restarting nginx ..." | tee -a /var/libre_config.log
+service yacy restart | tee -a /var/libre_config.log
+service php5-fpm restart | tee -a /var/libre_config.log
+/etc/init.d/nginx start | tee -a /var/libre_config.log
 }
 
 
@@ -5029,7 +5042,7 @@ crontab /root/libre_scripts/cron_jobs
 # ---------------------------------------------------------
 configure_suricata()
 {
-echo "Configuring Suricata ..."
+echo "Configuring Suricata ..." | tee -a /var/libre_config.log
 
 #prepare network interface to work with suricata
 echo "peparing the network interfaces ..."
@@ -5076,14 +5089,14 @@ NFQUEUE=0
 # Pid file
 PIDFILE=/var/run/suricata.pid
 EOF
-echo "Restarting suricata ..."
-update-rc.d suricata defaults
-service suricata stop
+echo "Restarting suricata ..." | tee -a /var/libre_config.log
+update-rc.d suricata defaults 
+service suricata stop | tee -a /var/libre_config.log
 
 # Starting suricata in loopback 
 kill -9 `cat /var/run/suricata.pid`
 rm -rf /var/run/suricata.pid
-suricata -D -c /etc/suricata/suricata.yaml -i lo 
+suricata -D -c /etc/suricata/suricata.yaml -i lo | tee -a /var/libre_config.log
 
 # checking for ethernet card configuration
 sleep 20
@@ -5110,7 +5123,7 @@ fi
 configure_logstash()
 {
 
-echo "Conifgureing logstash ..."
+echo "Conifgureing logstash ..." | tee -a /var/libre_config.log
 
 # Creating configuration file
 mkdir -p /etc/logstash/conf.d
@@ -5179,7 +5192,7 @@ EOF
 # ---------------------------------------------------------
 configure_kibana()
 {
-echo "Configuring Kibana ..."
+echo "Configuring Kibana ..." | tee -a /var/libre_config.log
 
 # Configure PAM limits
 sed -i -e '/# End of file/d' /etc/security/limits.conf
@@ -5232,13 +5245,13 @@ service elasticsearch restart
 systemctl enable kibana
 systemctl enable logstash
 
-echo "Restarting logstash ..."
-service logstash restart
-echo "Applying Kibana dashboards ..."
+echo "Restarting logstash ..." | tee -a /var/libre_config.log
+service logstash restart | tee -a /var/libre_config.log
+echo "Applying Kibana dashboards ..." 
 sleep 20 && /opt/KTS/load.sh && echo ""
-echo "Kibana dashboards were successfully configured"
-echo "Restarting kibana ..."
-service kibana restart
+echo "Kibana dashboards were successfully configured" | tee -a /var/libre_config.log
+echo "Restarting kibana ..." | tee -a /var/libre_config.log
+service kibana restart | tee -a /var/libre_config.log
 }
 
 
@@ -5250,7 +5263,7 @@ configure_gitlab()
 # Gitlab can only be installed on x86_64 (64 bit) architecture
 # So we configure it if architecture is x86_64
 if [ "$ARCH" == "x86_64" ]; then
-	echo "Configuring Gitlab ..."
+	echo "Configuring Gitlab ..." | tee -a /var/libre_config.log
 
 	# Creating certificate bundle
 	rm -rf /etc/ssl/nginx/gitlab/gitlab_bundle.crt
@@ -5270,12 +5283,14 @@ nginx['ssl_certificate_key'] = \"/etc/ssl/nginx/gitlab/gitlab_librerouter_net.ke
 " >> /etc/gitlab/gitlab.rb
 
 	# Reconfiguring gitlab 
-	gitlab-ctl reconfigure
+	echo "Reconfiguring gitlab ..." | tee -a /var/libre_config.log
+	gitlab-ctl reconfigure | tee -a /var/libre_config.log
 
 	# Restarting gitlab server
-	gitlab-ctl restart
+	echo "Restarting gitlab ..." | tee -a /var/libre_config.log
+	gitlab-ctl restart | tee -a /var/libre_config.log
 else
-	echo "Gitlab configuration is skipped as detected architecture: $ARCH"
+	echo "Gitlab configuration is skipped as detected architecture: $ARCH" | tee -a /var/libre_config.log
 fi
 }
 
@@ -5285,7 +5300,7 @@ fi
 # ---------------------------------------------------------
 configure_snortbarn()
 {
-echo "Configuring Snort + Barnyard2"
+echo "Configuring Snort + Barnyard2" 
 
 # Configure Snort
 sed -i -e 's@ipvar HOME_NET .*@ipvar HOME_NET 10.0.0.0/24@g' /etc/snort/snort.conf
@@ -5508,7 +5523,7 @@ echo $YACY_PID > /sys/fs/cgroup/net_cls/new_route/tasks
 # ---------------------------------------------------------
 add_warning_pages()
 {
-echo "Configuring warning pages ..."
+echo "Configuring warning pages ..." | tee -a /var/libre_config.log
 # Warning page for clamav
 cat << EOF > /var/www/html/virus_warning_page.html
 <!DOCTYPE html>
@@ -5600,7 +5615,7 @@ print_services()
 {
 rm -rf /var/box_services
 touch /var/box_services
-echo "Printing local services info ..."
+echo "Printing local services info ..." | tee -a /var/libre_config.log
 echo ""
 echo "------------------------------------------------------------------------------------" \
 | tee /var/box_services
@@ -5754,7 +5769,7 @@ sleep 2
 # ---------------------------------------------------------
 create_commands()
 {
-echo "Creating configs and logs commands"
+echo "Creating configs and logs commands" | tee -a /var/libre_config.log
 cat << EOF > /var/box_configs
 nginx            /etc/nginx/nginx.conf
 apache2          /etc/apache2/apache2.conf
@@ -5820,8 +5835,8 @@ sleep 2
 # ---------------------------------------------------------
 do_reboot()
 {
-echo "Configuration finished !!!"
-echo "Librerouter needs to restart. Restarting ..."
+echo "Configuration finished !!!" | tee -a /var/libre_config.log
+echo "Librerouter needs to restart. Restarting ..." | tee -a /var/libre_config.log
 reboot
 
 #echo "Librerouter needs to restart. Do restart now? [Y/N]"
