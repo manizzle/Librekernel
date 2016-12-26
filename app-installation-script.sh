@@ -30,7 +30,7 @@ export DEBIAN_FRONTEND=noninteractive
 # ----------------------------------------------
 get_platform () 
 {
-        echo "Detecting platform ..."
+        echo "Detecting platform ..." | tee /var/libre_install.log
 	FILE=/etc/issue
 	if cat $FILE | grep "Ubuntu 12.04" > /dev/null; then
 		PLATFORM="U12"
@@ -43,10 +43,10 @@ get_platform ()
 	elif cat $FILE | grep "Trisquel GNU/Linux 7.0" > /dev/null; then
 		PLATFORM="T7"
 	else 
-		echo "ERROR: UNKNOWN PLATFORM" 
+		echo "ERROR: UNKNOWN PLATFORM" | tee -a /var/libre_install.log
 		exit
 	fi
-	echo "Platform: $PLATFORM"
+	echo "Platform: $PLATFORM" | tee -a /var/libre_install.log
 }
 
 
@@ -60,9 +60,9 @@ check_internet ()
 	iptables -t nat -F
 	iptables -t mangle -F
 	
-	echo "Checking Internet access ..."
+	echo "Checking Internet access ..." | tee -a /var/libre_install.log
 	if ! ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-		echo "You need internet to proceed. Exiting"
+		echo "You need internet to proceed. Exiting" | tee -a /var/libre_install.log
 		exit 1
 	fi
 }
@@ -73,9 +73,9 @@ check_internet ()
 # ----------------------------------------------
 check_root ()
 {
-	echo "Checking user root ..."
+	echo "Checking user root ..." | tee -a /var/libre_install.log
 	if [ "$(whoami)" != "root" ]; then
-		echo "You need to be root to proceed. Exiting"
+		echo "You need to be root to proceed. Exiting" | tee -a /var/libre_install.log
 		exit 2
 	fi
 }
@@ -86,7 +86,7 @@ check_root ()
 # ----------------------------------------------
 configure_repositories () 
 {
-	echo "Time sync ..."
+	echo "Time sync ..." | tee -a /var/libre_install.log
 	
 	# Installing ntpdate package
 	apt-get update > /dev/null
@@ -96,15 +96,15 @@ configure_repositories ()
 	/etc/init.d/ntp stop > /dev/null 2>&1
  	ntpdate -s ntp.ubuntu.com
 	if [ $? -ne 0 ]; then
-        	echo "Error: unable to set time"
+        	echo "Error: unable to set time" | tee -a /var/libre_install.log
                 exit 3
         fi	
 	/etc/init.d/ntp restart > /dev/null 2>&1
-	echo "Date and time have been set"
-	date	
+	echo "Date and time have been set" | tee -a /var/libre_install.log
+	date | tee -a /var/libre_install.log
 	
 	
-	echo "Configuring repositories ... "
+	echo "Configuring repositories ... " | tee -a /var/libre_install.log
 
 	# echo "adding unauthenticated upgrade"
 	apt-get  -y --force-yes --allow-unauthenticated upgrade
@@ -253,12 +253,12 @@ EOF
 
 		# There is a need to install apt-transport-https 
 		# package before preparing third party repositories
-		echo "Updating repositories ..."
+		echo "Updating repositories ..." | tee -a /var/libre_install.log
        		apt-get update 2>&1 > /var/apt-get-update-default.log
- 		echo "Installing apt-transport-https ..."
+ 		echo "Installing apt-transport-https ..." | tee -a /var/libre_install.log
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
-			echo "Error: Unable to install apt-transport-https"
+			echo "Error: Unable to install apt-transport-https" | tee -a /var/libre_install.log
 			exit 3
 		fi
 
@@ -395,9 +395,9 @@ EOF
 # ----------------------------------------------
 install_packages() 
 {
-	echo "Updating repositories packages ... "
+	echo "Updating repositories packages ... " | tee -a /var/libre_install.log
 	apt-get update 2>&1 > /var/apt-get-update.log
-	echo "Installing packages ... "
+	echo "Installing packages ... " | tee -a /var/libre_install.log
 
 # Installing Packages for Debian 7 GNU/Linux
 
@@ -520,33 +520,33 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
 	2>&1 > /var/apt-get-install.log
 fi
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install packages"
+		echo "Error: unable to install packages" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
 # Getting classified domains list from shallalist.de
 if [ ! -e shallalist.tar.gz ]; then
-	echo "Getting classified domains list ..."
+	echo "Getting classified domains list ..." | tee -a /var/libre_install.log
 	wget http://www.shallalist.de/Downloads/shallalist.tar.gz
 	if [ $? -ne 0 ]; then
-       		echo "Error: Unable to download domain list. Exithing"
+       		echo "Error: Unable to download domain list. Exithing" | tee -a /var/libre_install.log
        		exit 5
 	fi
 fi
 
 # Getting Friendica 
-echo "Getting Friendica ..."
+echo "Getting Friendica ..." | tee -a /var/libre_install.log
 if [ ! -e  /var/www/friendica ]; then
 	cd /var/www
 	git clone https://github.com/friendica/friendica.git
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download friendica"
+		echo "Error: unable to download friendica" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd friendica
 	git clone https://github.com/friendica/friendica-addons.git addon
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download friendica addons"
+		echo "Error: unable to download friendica addons" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
@@ -570,7 +570,7 @@ fi
 # ----------------------------------------------
 get_hardware()
 {
-        echo "Detecting hardware ..."
+        echo "Detecting hardware ..." | tee -a /var/libre_install.log
       
         # Checking CPU for ARM and saving
 	# Processor and Hardware types in
@@ -597,9 +597,9 @@ get_hardware()
 
         # Printing Processor Hardware and Architecture types     
 
-	echo "Processor: $PROCESSOR"
-        echo "Hardware: $HARDWARE"
-	echo "Architecture: $ARCH"
+	echo "Processor: $PROCESSOR" | tee -a /var/libre_install.log
+        echo "Hardware: $HARDWARE" | tee -a /var/libre_install.log
+	echo "Architecture: $ARCH" | tee -a /var/libre_install.log
 
 }
 
@@ -617,20 +617,20 @@ get_hardware()
 # ----------------------------------------------
 check_requirements()
 {
-	echo "Checking requirements ..."
+	echo "Checking requirements ..." | tee -a /var/libre_install.log
 
         # This variable contains network interfaces quantity.  
 	# NET_INTERFACES=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | wc -l`
 
         # This variable contains total physical memory size.
-	echo -n "Physical memory size: "
+	echo -n "Physical memory size: " | tee -a /var/libre_install.log
         MEMORY=`grep MemTotal /proc/meminfo | awk '{print $2}'`
-	echo "$MEMORY KB"	
+	echo "$MEMORY KB"	| tee -a /var/libre_install.log
 
 	# This variable contains total free space on root partition.
-	echo -n "Root partition size: "
+	echo -n "Root partition size: " | tee -a /var/libre_install.log
 	STORAGE=`df / | grep -w "/" | awk '{print $4}'`
-	echo "$STORAGE KB" 	
+	echo "$STORAGE KB" 	| tee -a /var/libre_install.log
        
         # Checking network interfaces quantity.
 	# if [ $NET_INTERFACES -le 1 ]; then
@@ -640,7 +640,7 @@ check_requirements()
 	
 	# Checking physical memory size.
         if [ $MEMORY -le 3600000 ]; then 
-		echo "You need at least 4GB of RAM. Exiting"
+		echo "You need at least 4GB of RAM. Exiting" | tee -a /var/libre_install.log
                 exit 5
         fi
 
@@ -648,13 +648,13 @@ check_requirements()
 	MIN_STORAGE=12000000
 	STORAGE2=`echo $STORAGE | awk -F. {'print $1'}`
 	if [ $STORAGE2 -lt $MIN_STORAGE ]; then
-		echo "You need at least 16GB of free space. Exiting"
+		echo "You need at least 16GB of free space. Exiting" | tee -a /var/libre_install.log
 		exit 6
 	fi
 	
 	# Checking architecture.
         if [ "$ARCH" != "x86_64" ]; then
-                echo "You need amd64 architecture to continue. Exiting"
+                echo "You need amd64 architecture to continue. Exiting" | tee -a /var/libre_install.log
                 exit 7
         fi
 }
@@ -705,7 +705,7 @@ get_interfaces()
 	# EXT_INTERFACE variable
 	if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
 		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
-		echo "Internet connection established on interface $EXT_INTERFACE"
+		echo "Internet connection established on interface $EXT_INTERFACE" | tee -a /var/libre_install.log
 	else
 		# Test all available ethernet interfaces for internet connection.
 		# Useful if there are more than two ethernet interfaces.
@@ -727,7 +727,7 @@ get_interfaces()
 			if [ ! -z $EXT_INTERFACE ]; then
 				echo "Warning: Unable to get Internet access on available interfaces"
 				echo "Please plugin Internet cable and enable DHCP on gateway"
-				echo "Error: Unable to get Internet access. Exiting"
+				echo "Error: Unable to get Internet access. Exiting" | tee -a /var/libre_install.log
 				exit 7
 			fi
 		
@@ -772,7 +772,7 @@ get_interfaces()
 
 	# Getting internal interface name
         INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
-        echo "Internal interface: $INT_INTERFACE"
+        echo "Internal interface: $INT_INTERFACE" | tee -a /var/libre_install.log
 }
 
 
@@ -789,7 +789,7 @@ get_interfaces()
 # ----------------------------------------------
 check_assemblance()
 {
-	echo "Checking assemblance ..."
+	echo "Checking assemblance ..." | tee -a /var/libre_install.log
 	
 	echo "Checking network interfaces ..."  
 	# Script should detect 4 network 
@@ -811,7 +811,7 @@ check_assemblance()
 		echo "Error: Interface wlan1 is not connected. Exiting"
 		exit 11  
 	fi
-	echo "Network interfaces checking finished. OK"
+	echo "Network interfaces checking finished. OK" | tee -a /var/libre_install.log
 
 	echo ""
 
@@ -824,20 +824,20 @@ check_assemblance()
 # ----------------------------------------------
 install_libressl()
 {
-        echo "Installing libressl ..."
+        echo "Installing libressl ..." | tee -a /var/libre_install.log
 
         if [ ! -e libressl-2.4.2 ]; then
-        echo "Downloading libressl ..."
+        echo "Downloading libressl ..." | tee -a /var/libre_install.log
         cd $INSTALL_HOME
         wget http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.2.tar.gz
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download libressl"
+                        echo "Error: unable to download libressl" | tee -a /var/libre_install.log
                         exit 3
                 fi
         tar -xzf libressl-2.4.2.tar.gz
         fi
 
-        echo "Building libressl ..."
+        echo "Building libressl ..." | tee -a /var/libre_install.log
         cd $INSTALL_HOME
 
         cd libressl-2.4.2/
@@ -845,7 +845,7 @@ install_libressl()
         make &&  make install 
 
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install libressl. Exiting ..."
+                echo "Error: unable to install libressl. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
         cd ../
@@ -860,19 +860,19 @@ install_libressl()
 # ----------------------------------------------
 install_modsecurity()
 {
-        echo "Installing modsecurity ..."
+        echo "Installing modsecurity ..." | tee -a /var/libre_install.log
 
         if [ ! -e /usr/src/modsecurity ]; then
-        echo "Downloading modsecurity ..."
+        echo "Downloading modsecurity ..." | tee -a /var/libre_install.log
         cd /usr/src/
         git clone https://github.com/SpiderLabs/ModSecurity.git modsecurity
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download modsecurity. Exiting ..."
+                        echo "Error: unable to download modsecurity. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         fi
 
-        echo "Building modsecurity ..."
+        echo "Building modsecurity ..." | tee -a /var/libre_install.log
         cd /usr/src/modsecurity
 
         ./autogen.sh
@@ -880,7 +880,7 @@ install_modsecurity()
         make
 
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install modsecurity. Exiting ..."
+                echo "Error: unable to install modsecurity. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
@@ -899,12 +899,12 @@ install_modsecurity()
 # -----------------------------------------------
 install_certificates()
 {
-        echo "Installing certificates ..."
+        echo "Installing certificates ..." | tee -a /var/libre_install.log
         if [ ! -e certs ]; then
-                echo "Downloading certificates ..."
+                echo "Downloading certificates ..." | tee -a /var/libre_install.log
                 svn co https://github.com/Librerouter/Librekernel/trunk/certs
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download certificates. Exiting ..."
+                        echo "Error: unable to download certificates. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         fi
@@ -924,20 +924,20 @@ install_certificates()
 # ----------------------------------------------
 install_nginx()
 {
-        echo "Installing nginx ..."
+        echo "Installing nginx ..." | tee -a /var/libre_install.log
 
         if [ ! -e nginx-1.8.0 ]; then
-        echo "Downloading nginx ..."
+        echo "Downloading nginx ..." | tee -a /var/libre_install.log
         cd $INSTALL_HOME
         wget http://nginx.org/download/nginx-1.8.0.tar.gz
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download nginx. Exiting ..."
+                        echo "Error: unable to download nginx. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         tar -xzf nginx-1.8.0.tar.gz
         fi
 
-        echo "Building nginx ..."
+        echo "Building nginx ..." | tee -a /var/libre_install.log
         cd $INSTALL_HOME
 	
 	mkdir /etc/nginx/
@@ -967,7 +967,7 @@ install_nginx()
         make &&  make install
 
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install nginx. Exiting ..."
+                echo "Error: unable to install nginx. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
         cd ../
@@ -1004,13 +1004,13 @@ systemctl daemon-reload
 # ----------------------------------------------
 install_mailpile() 
 {
-	echo "Installing Mailpile ..."
+	echo "Installing Mailpile ..." | tee -a /var/libre_install.log
  	if [ ! -e /opt/Mailpile ]; then
-                echo "Downloading mailpile ..." 
+                echo "Downloading mailpile ..." | tee -a /var/libre_install.log
         	git clone --recursive \
 		https://github.com/mailpile/Mailpile.git /opt/Mailpile
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download Mailpile. Exiting ..."
+                        echo "Error: unable to download Mailpile. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
 
@@ -1019,7 +1019,7 @@ install_mailpile()
 	source /opt/Mailpile/mailpile-env/bin/activate
 	pip install -r /opt/Mailpile/requirements.txt
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install Mailpile. Exiting ..."
+		echo "Error: unable to install Mailpile. Exiting ..." | tee -a /var/libre_install.log
 		exit 3
 	fi
 }
@@ -1030,7 +1030,7 @@ install_mailpile()
 # ----------------------------------------------
 install_easyrtc() 
 {
-	echo "Installing EasyRTC package ..."
+	echo "Installing EasyRTC package ..." | tee -a /var/libre_install.log
 
 	# Creating home folder for EasyRTC
 	if [ -e /opt/easyrtc ]; then
@@ -1041,17 +1041,17 @@ install_easyrtc()
 	curl -sL https://deb.nodesource.com/setup | bash -
 	apt-get install -y --force-yes nodejs
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install Node"
+		echo "Error: unable to install Node" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
 	# Getting EasyRTC 
 	if [ ! -e easyrtc ]; then
-		echo "Downloading EasyRTC ..."
+		echo "Downloading EasyRTC ..." | tee -a /var/libre_install.log
 		git clone --recursive \
        		https://github.com/priologic/easyrtc 
 	        if [ $? -ne 0 ]; then
-                echo "Error: Unable to download EasyRTC. Exiting ..."
+                echo "Error: Unable to download EasyRTC. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
  	        fi
 	fi
@@ -1065,7 +1065,7 @@ install_easyrtc()
 	cd /opt/easyrtc/server_example/
 	npm install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install EasyRTC. Exiting"
+		echo "Error: unable to install EasyRTC. Exiting" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd $INSTALL_HOME
@@ -1077,7 +1077,7 @@ install_easyrtc()
 # ---------------------------------------------------------
 install_hublin()
 {
-        echo "installing hublin ..."
+        echo "installing hublin ..." | tee -a /var/libre_install.log
 
         # Install nvm
         curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
@@ -1089,10 +1089,10 @@ install_hublin()
         nvm use 0.10
 
         if [ ! -e meetings ]; then
-                echo "Downloading hublin ..."
+                echo "Downloading hublin ..." | tee -a /var/libre_install.log
                 git clone --recursive https://ci.open-paas.org/stash/scm/meet/meetings.gi
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download hublin. Exiting ..."
+                        echo "Error: unable to download hublin. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
 
@@ -1115,7 +1115,7 @@ install_hublin()
         cd ../../
         npm install
         if [ $? -ne 0 ]; then
-               echo "Error: unable to install hublin. Exiting ..."
+               echo "Error: unable to install hublin. Exiting ..." | tee -a /var/libre_install.log
                exit 3
         fi
 
@@ -1128,16 +1128,16 @@ install_hublin()
 # -----------------------------------------------            
 install_owncloud()
 {
-	echo "Installing owncloud ..."
+	echo "Installing owncloud ..." | tee -a /var/libre_install.log
 	
 	# Deleting previous packages
 	rm -rf /var/www/owncloud
 	
 	if [ ! -e  owncloud-9.1.1.tar.bz2 ]; then
-		echo "Downloading owncloud ..."
+		echo "Downloading owncloud ..." | tee -a /var/libre_install.log
 		wget https://download.owncloud.org/community/owncloud-9.1.1.tar.bz2
                 if [ $? -ne 0 ]; then
-	                echo "Error: Unable to download owncloud. Exiting ..."
+	                echo "Error: Unable to download owncloud. Exiting ..." | tee -a /var/libre_install.log
        		        exit 3
                 fi
 		
@@ -1148,10 +1148,10 @@ install_owncloud()
 
 	# Installing ojsxc xmpp client
 	if [ ! -e ojsxc-3.0.1.zip ]; then
-		echo "Downlouding ojsxc ..."
+		echo "Downlouding ojsxc ..." | tee -a /var/libre_install.log
 		wget https://github.com/owncloud/jsxc.chat/releases/download/v3.0.1/ojsxc-3.0.1.zip
 		if [ $? -ne 0 ]; then 
-                        echo "Error: Unable to download ojsxc. Exiting ..."
+                        echo "Error: Unable to download ojsxc. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
 	fi
@@ -1168,19 +1168,19 @@ install_owncloud()
 # -----------------------------------------------
 install_libecap()
 {
-        echo "Installing libecap ..."
+        echo "Installing libecap ..." | tee -a /var/libre_install.log
 
         if [ ! -e libecap-1.0.0 ]; then
-        echo "Downloading libecap ..."
+        echo "Downloading libecap ..." | tee -a /var/libre_install.log
         wget http://www.measurement-factory.com/tmp/ecap/libecap-1.0.0.tar.gz
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download libecap"
+                        echo "Error: unable to download libecap" | tee -a /var/libre_install.log
                         exit 3
                 fi
 		tar xzf libecap-1.0.0.tar.gz
         fi
 
-        echo "Building libecap ..."
+        echo "Building libecap ..." | tee -a /var/libre_install.log
         
 	cd libecap-1.0.0/
 	
@@ -1188,7 +1188,7 @@ install_libecap()
 	make &&  make install
 
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install libecap"
+                echo "Error: unable to install libecap" | tee -a /var/libre_install.log
                 exit 3
         fi
         cd ../
@@ -1203,18 +1203,18 @@ install_libecap()
 # -----------------------------------------------
 install_fg-ecap()
 {
-        echo "Installing fg-ecap ..."
+        echo "Installing fg-ecap ..." | tee -a /var/libre_install.log
 
         if [ ! -e fg_ecap ]; then
-        echo "Downloading fg-ecap ..."
+        echo "Downloading fg-ecap ..." | tee -a /var/libre_install.log
         git clone https://github.com/androda/fg_ecap $INSTALL_HOME/fg_ecap
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download fg-ecap. Exitingi ..."
+                        echo "Error: unable to download fg-ecap. Exitingi ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         fi
 
-        echo "Building fg-ecap ..."
+        echo "Building fg-ecap ..." | tee -a /var/libre_install.log
 
         cd fg_ecap
 
@@ -1223,7 +1223,7 @@ install_fg-ecap()
         ./configure 
         make && make install
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install fg-ecap"
+                echo "Error: unable to install fg-ecap" | tee -a /var/libre_install.log
                 exit 3
         fi
         cd ../
@@ -1235,21 +1235,21 @@ install_fg-ecap()
 # -----------------------------------------------
 install_squid()
 {
-	echo "Installing squid dependences ..."
+	echo "Installing squid dependences ..." | tee -a /var/libre_install.log
 	aptitude -y build-dep squid
 
-	echo "Installing squid ..."
+	echo "Installing squid ..." | tee -a /var/libre_install.log
 	if [ ! -e /tmp/squid-3.5.21.tar.gz ]; then
-		echo "Downloading squid ..."
+		echo "Downloading squid ..." | tee -a /var/libre_install.log
 		wget -P /tmp/ http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.21.tar.gz
 	fi
 
 	if [ ! -e squid-3.5.21 ]; then
-		echo "Extracting squid ..."
+		echo "Extracting squid ..." | tee -a /var/libre_install.log
 		tar zxvf /tmp/squid-3.5.21.tar.gz
 	fi
 
-	echo "Building squid ..."
+	echo "Building squid ..." | tee -a /var/libre_install.log
 	cd squid-3.5.21
 	./configure --prefix=/usr --localstatedir=/var \
 		--libexecdir=/lib/squid --datadir=/usr/share/squid \
@@ -1260,7 +1260,7 @@ install_squid()
 		--enable-ecap PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install squid"
+		echo "Error: unable to install squid" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
@@ -1291,23 +1291,23 @@ install_squid()
 # ----------------------------------------------
 install_squidclamav()
 {
-	echo "Installing squidclamav ..."
+	echo "Installing squidclamav ..." | tee -a /var/libre_install.log
 	if [ ! -e /tmp/squidclamav-6.15.tar.gz ]; then
-		echo "Downloading squidclamav ..."
+		echo "Downloading squidclamav ..." | tee -a /var/libre_install.log
 		wget -P /tmp/ http://downloads.sourceforge.net/project/squidclamav/squidclamav/6.15/squidclamav-6.15.tar.gz
 	fi
 
 	if [ ! -e squidclamav-6.15 ]; then
-		echo "Extracting squidclamav ..."
+		echo "Extracting squidclamav ..." | tee -a /var/libre_install.log
 		tar zxvf /tmp/squidclamav-6.15.tar.gz
 	fi
 
-	echo "Building squidclamav ..."
+	echo "Building squidclamav ..." | tee -a /var/libre_install.log
 	cd squidclamav-6.15
 	./configure --with-c-icap
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install squidclamav"
+		echo "Error: unable to install squidclamav" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
@@ -1322,7 +1322,7 @@ install_squidclamav()
 # ----------------------------------------------
 install_squidguard_bl()
 {
-	echo "Installing squidguard blacklists ..."
+	echo "Installing squidguard blacklists ..." | tee -a /var/libre_install.log
 
 #	# squidguard-adblock
 #	echo "Downloading squidguard-adblock ..."
@@ -1381,17 +1381,17 @@ install_squidguard_bl()
 # ---------------------------------------------------------
 install_squidguardmgr()
 {
-        echo "Installing squidguardmgr ..."
+        echo "Installing squidguardmgr ..." | tee -a /var/libre_install.log
         if [ ! -e squidguardmgr ]; then
-                echo "Downloading squidguardmgr ..."
+                echo "Downloading squidguardmgr ..." | tee -a /var/libre_install.log
                 git clone https://github.com/darold/squidguardmgr
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download quidguardmgr"
+                        echo "Error: unable to download quidguardmgr" | tee -a /var/libre_install.log
                         exit 3
                 fi
         fi
 
-        echo "Building quidguardmgr ..."
+        echo "Building quidguardmgr ..." | tee -a /var/libre_install.log
         cd squidguardmgr
         perl Makefile.PL \
         CONFFILE=/etc/squidguard/squidGuard.conf \
@@ -1412,18 +1412,18 @@ install_squidguardmgr()
 # ----------------------------------------------
 install_e2guardian()
 {
-	echo "Installing e2guardian ..."
+	echo "Installing e2guardian ..." | tee -a /var/libre_install.log
 
 	if [ ! -e e2guardian ]; then
-		echo "Downloading e2guardian ..."
+		echo "Downloading e2guardian ..." | tee -a /var/libre_install.log
 		git clone https://github.com/e2guardian/e2guardian
 		if [ $? -ne 0 ]; then
-			echo "Error: unable to download e2guardian"
+			echo "Error: unable to download e2guardian" | tee -a /var/libre_install.log
 			exit 3
 		fi
 	fi
 
-	echo "Building e2guardian ..."
+	echo "Building e2guardian ..." | tee -a /var/libre_install.log
 	cd e2guardian
 
 	# Adding ssl options
@@ -1437,7 +1437,7 @@ install_e2guardian()
 	./configure --prefix=/usr --enable-clamd=yes --enable-fancydm=no
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install e2guardian"
+		echo "Error: unable to install e2guardian" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
@@ -1452,18 +1452,18 @@ install_e2guardian()
 # ----------------------------------------------
 install_ecapguardian()
 {
-	echo "Installing ecapguardian ..."
+	echo "Installing ecapguardian ..." | tee -a /var/libre_install.log
         
         if [ ! -e ecapguardian ]; then
 	echo "Downloading ecapguardian ..."
 	git clone https://github.com/androda/ecapguardian
 		if [ $? -ne 0 ]; then
-			echo "Error: unable to download ecapguardian"
+			echo "Error: unable to download ecapguardian" | tee -a /var/libre_install.log
 			exit 3
 		fi
 	fi
 
-	echo "Building ecapguardian ..."
+	echo "Building ecapguardian ..." | tee -a /var/libre_install.log
 
 	cd ecapguardian
 
@@ -1474,7 +1474,7 @@ install_ecapguardian()
 	./configure '--prefix=/usr' '--enable-clamd=yes' '--with-proxyuser=e2guardian' '--with-proxygroup=e2guardian' '--sysconfdir=/etc' '--localstatedir=/var' '--enable-icap=yes' '--enable-commandline=yes' '--enable-email=yes' '--enable-ntlm=yes' '--enable-trickledm=yes' '--mandir=${prefix}/share/man' '--infodir=${prefix}/share/info' 'CXXFLAGS=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security' 'LDFLAGS=-Wl,-z,relro' 'CPPFLAGS=-D_FORTIFY_SOURCE=2' 'CFLAGS=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security' '--enable-pcre=yes' '--enable-locallists=yes' 
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install ecapguardian"
+		echo "Error: unable to install ecapguardian" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
@@ -1489,18 +1489,18 @@ install_ecapguardian()
 # ----------------------------------------------
 install_suricata()
 {
-        echo "Installing suricata ..."
+        echo "Installing suricata ..." | tee -a /var/libre_install.log
 
         # Installing dependencies
         apt-get install -y --force-yes ethtool oinkmaster
 
         apt-get install -y -t jessie-backports ethtool suricata
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install suricata. Exiting ..."
+                echo "Error: unable to install suricata. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
-        echo "Downloading rules ..."
+        echo "Downloading rules ..." | tee -a /var/libre_install.log
 
         # Creating oinkmaster configuration
         echo "
@@ -1512,7 +1512,7 @@ skipfile snort.conf
         >> /etc/oinkmaster.conf 
         oinkmaster -C /etc/oinkmaster.conf -o /etc/suricata/rules
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install suricata rules. Exiting ..."
+                echo "Error: unable to install suricata rules. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 }
@@ -1523,11 +1523,11 @@ skipfile snort.conf
 # -----------------------------------------------
 install_kibana()
 {
-	echo "Installing kibana ..."
+	echo "Installing kibana ..." | tee -a /var/libre_install.log
 	apt-get install -y --force-yes kibana elasticsearch logstash \
         2>&1 > /dev/null
 	if [ $? -ne 0 ]; then
-                echo "Error: unable to install kibaba. Exiting ..."
+                echo "Error: unable to install kibaba. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
@@ -1547,24 +1547,24 @@ install_kibana()
 # ----------------------------------------------
 install_scirius()
 {
-	echo "Installing scirius ..."
+	echo "Installing scirius ..." | tee -a /var/libre_install.log
 
-	echo "Downloading scirius ..."
+	echo "Downloading scirius ..." | tee -a /var/libre_install.log
 	git clone https://github.com/StamusNetworks/scirius /opt/scirius
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download scirius"
+		echo "Error: unable to download scirius" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
-	echo "Installing scirius ..."
+	echo "Installing scirius ..." | tee -a /var/libre_install.log
 	pip install -r /opt/scirius/requirements.txt && pip install pyinotify
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install scirius dependencies"
+		echo "Error: unable to install scirius dependencies" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	python /opt/scirius/manage.py syncdb --noinput
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install scirius"
+		echo "Error: unable to install scirius" | tee -a /var/libre_install.log
 		exit 3
 	fi
 }
@@ -1575,42 +1575,42 @@ install_scirius()
 # ----------------------------------------------
 install_snort()
 {
-	echo "Installing snort ..."
+	echo "Installing snort ..." | tee -a /var/libre_install.log
 
 	# DAQ
-	echo "Downloading daq ..."
+	echo "Downloading daq ..." | tee -a /var/libre_install.log
 	URL="https://www.snort.org/downloads/archive/snort"
 	PKG="daq-2.0.6.tar.gz"
 	wget -P /tmp/ $URL/$PKG
 	tar xvf /tmp/$PKG
 	rm -rf /tmp/$PKG
 
-	echo "Building daq ..."
+	echo "Building daq ..." | tee -a /var/libre_install.log
 	cd daq-2.0.6
 	./configure --prefix=/usr
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install daq"
+		echo "Error: unable to install daq" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
 
 	# Snort
-	echo "Downloading snort ..."
+	echo "Downloading snort ..." | tee -a /var/libre_install.log
 	URL="https://www.snort.org/downloads/archive/snort"
 	PKG="snort-2.9.8.3.tar.gz"
 	wget -P /tmp/ $URL/$PKG
 	tar xvf /tmp/$PKG
 	rm -rf /tmp/$PKG
 
-	echo "Building snort ..."
+	echo "Building snort ..." | tee -a /var/libre_install.log
 	cd snort-2.9.8.3
 	./configure --prefix=/usr --enable-sourcefire \
 		--enable-flexresp --enable-dynamicplugin \
 		--enable-perfprofiling --enable-reload
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install snort"
+		echo "Error: unable to install snort" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
@@ -1628,7 +1628,7 @@ install_snort()
 	echo "Downloading pulledpork ..."
 	git clone https://github.com/shirkdog/pulledpork.git
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download pulledpork"
+		echo "Error: unable to download pulledpork" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd pulledpork
@@ -1639,7 +1639,7 @@ install_snort()
 	mkdir -p /etc/snort/rules/iplists
 	touch /etc/snort/rules/iplists/default.blacklist
 
-	echo "Updating Snort rules ..."
+	echo "Updating Snort rules ..." | tee -a /var/libre_install.log
 	# Comment current includes
 	sed -i -e 's/include \$RULE\_PATH/#include \$RULE\_PATH/' /etc/snort/snort.conf
 	# Fix pulledpork configuration
@@ -1658,7 +1658,7 @@ install_snort()
 	# Download rules
 	pulledpork.pl -c /etc/snort/pulledpork.conf -l
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to update Snort rules"
+		echo "Error: unable to update Snort rules" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
@@ -1674,23 +1674,23 @@ install_snort()
 # ----------------------------------------------
 install_barnyard()
 {
-	echo "Installing Barnyard ..."
+	echo "Installing Barnyard ..." | tee -a /var/libre_install.log
 
-	echo "Downloading Barnyard ..."
+	echo "Downloading Barnyard ..." | tee -a /var/libre_install.log
 	git clone https://github.com/firnsy/barnyard2.git
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download Barnyard"
+		echo "Error: unable to download Barnyard" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
 	cd barnyard2
-	echo "Building Barnyard ..."
+	echo "Building Barnyard ..." | tee -a /var/libre_install.log
 	./autogen.sh
 	./configure --prefix=/usr --with-mysql CFLAGS='-g -O2 -DHAVE_DUMBNET_H' \
 		--with-mysql-libraries=/usr/lib/x86_64-linux-gnu/
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install Barnyard"
+		echo "Error: unable to install Barnyard" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	mv /usr/etc/barnyard2.conf /etc/snort/
@@ -1707,36 +1707,36 @@ install_barnyard()
 # ----------------------------------------------
 install_vortex_ids()
 {
-	echo "Installing vortex-ids ..."
+	echo "Installing vortex-ids ..." | tee -a /var/libre_install.log
 
-	echo "Downloading vortex-ids ..."
+	echo "Downloading vortex-ids ..." | tee -a /var/libre_install.log
 	git clone https://github.com/lmco/vortex-ids
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download vortex-ids"
+		echo "Error: unable to download vortex-ids" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
 	cd vortex-ids
-	echo "Building libbsf ..."
+	echo "Building libbsf ..." | tee -a /var/libre_install.log
 	gcc -Wall -fPIC -shared libbsf/libbsf.c -o libbsf.so
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to build libbsf"
+		echo "Error: unable to build libbsf" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cp libbsf/bsf.h /usr/include/ && cp libbsf.so /usr/lib/
 
-	echo "Building vortex ..."
+	echo "Building vortex ..." | tee -a /var/libre_install.log
 	gcc vortex/vortex.c -lpcap -lnids -lpthread -lbsf -Wall -DWITH_BSF -o vortex.bin -O2
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to build vortex"
+		echo "Error: unable to build vortex" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cp vortex.bin /usr/bin/vortex
 
-	echo "Building xpipes ..."
+	echo "Building xpipes ..." | tee -a /var/libre_install.log
 	gcc xpipes/xpipes.c -lpthread -Wall -o xpipes.bin -O2
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to build xpipes"
+		echo "Error: unable to build xpipes" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cp xpipes.bin /usr/bin/xpipes
@@ -1752,16 +1752,16 @@ install_vortex_ids()
 # ----------------------------------------------
 install_openwips_ng()
 {
-	echo "Installing openwips-ng ..."
+	echo "Installing openwips-ng ..." | tee -a /var/libre_install.log
 
-	echo "Downloading openwips-ng ..."
+	echo "Downloading openwips-ng ..." | tee -a /var/libre_install.log
 	git clone https://github.com/aircrack-ng/OpenWIPS-ng.git
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download openwips-ng"
+		echo "Error: unable to download openwips-ng" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
-	echo "Building openwips-ng ..."
+	echo "Building openwips-ng ..." | tee -a /var/libre_install.log
 	cd OpenWIPS-ng
 	# disable Werror flag
 	sed -i -e 's/-Werror//g' ./common.mak
@@ -1769,7 +1769,7 @@ install_openwips_ng()
 	make LIBS+="-lpcap -lssl -lz -lcrypto -ldl -lm -lpthread -lsqlite3" &&
 	make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install openwips-ng"
+		echo "Error: unable to install openwips-ng" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
@@ -1784,17 +1784,17 @@ install_openwips_ng()
 # ----------------------------------------------
 install_hakabana()
 {
-	echo "Installing hakabana ..."
+	echo "Installing hakabana ..." | tee -a /var/libre_install.log
 
-	echo "Downloading hakabana ..."
+	echo "Downloading hakabana ..." | tee -a /var/libre_install.log
 	URL="https://github.com/haka-security/hakabana/releases/download/0.2.1"
 	PKG="hakabana_0.2.1_all.deb"
 	wget -P /tmp/ $URL/$PKG
 
-	echo "Installing hakabana ..."
+	echo "Installing hakabana ..." | tee -a /var/libre_install.log
 	dpkg -i /tmp/$PKG && apt-get install -f
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install hakabana"
+		echo "Error: unable to install hakabana" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
@@ -1808,9 +1808,9 @@ install_hakabana()
 # ----------------------------------------------
 install_flowviewer()
 {
-	echo "Installing FlowViewer ..."
+	echo "Installing FlowViewer ..." | tee -a /var/libre_install.log
 
-	echo "Downloading SiLK ..."
+	echo "Downloading SiLK ..." | tee -a /var/libre_install.log
 	URL="http://tools.netsa.cert.org/releases"
 	PKG="silk-3.12.2.tar.gz"
 	wget -P /tmp/ $URL/$PKG
@@ -1821,18 +1821,18 @@ install_flowviewer()
 	./configure --prefix=/usr --with-python --with-libfixbuf --enable-ipv6
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install SiLK"
+		echo "Error: unable to install SiLK" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
 
-	echo "Downloading FlowViewer ..."
+	echo "Downloading FlowViewer ..." | tee -a /var/libre_install.log
 	URL="https://sourceforge.net/projects/flowviewer/files"
 	PKG="FlowViewer_4.6.tar"
 	wget -P /tmp/ $URL/$PKG
 	tar xvf /tmp/$PKG
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download FlowViewer"
+		echo "Error: unable to download FlowViewer" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	mv FlowViewer_4.6 /opt/FlowViewer
@@ -1848,16 +1848,16 @@ install_flowviewer()
 # ----------------------------------------------
 install_pmgraph()
 {
-	echo "Installing pmgraph ..."
+	echo "Installing pmgraph ..." | tee -a /var/libre_install.log
 
-	echo "Downloading pmgraph ..."
+	echo "Downloading pmgraph ..." | tee -a /var/libre_install.log
 	git clone https://github.com/aptivate/pmgraph
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download pmgraph"
+		echo "Error: unable to download pmgraph" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
-	echo "Building pmgraph ..."
+	echo "Building pmgraph ..." | tee -a /var/libre_install.log
 	cd pmgraph
 	sed -i -e 's/tomcat6/tomcat7/g' \
 		Installer/pmGraphInstaller.sh debian/pmgraph.postinst \
@@ -1871,13 +1871,13 @@ install_pmgraph()
 
 	debuild -us -uc
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to pack pmgraph"
+		echo "Error: unable to pack pmgraph" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	DEBIAN_FRONTEND=noninteractive dpkg -i ../pmgraph_1.2.3_all.deb && 
 	DEBIAN_FRONTEND=noninteractive apt-get install -f
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install pmgraph"
+		echo "Error: unable to install pmgraph" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
@@ -1893,35 +1893,35 @@ install_pmgraph()
 # ----------------------------------------------
 install_nfsen()
 {
-	echo "Installing nfsen ..."
+	echo "Installing nfsen ..." | tee -a /var/libre_install.log
 
 	# nfdump
-	echo "Downloading nfdump ..."
+	echo "Downloading nfdump ..." | tee -a /var/libre_install.log
 	URL="https://sourceforge.net/projects/nfdump/files/stable/nfdump-1.6.13"
 	PKG="nfdump-1.6.13.tar.gz"
 	wget -P /tmp/ $URL/$PKG
 	tar xvf /tmp/$PKG
 	rm -rf /tmp/$PKG
 
-	echo "Building nfdump ..."
+	echo "Building nfdump ..." | tee -a /var/libre_install.log
 	cd nfdump-1.6.13
 	./configure --enable-nfprofile
 	make && make install
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install nfdump"
+		echo "Error: unable to install nfdump" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
 
 	# nfsen
-	echo "Downloading nfsen ..."
+	echo "Downloading nfsen ..." | tee -a /var/libre_install.log
 	URL="https://sourceforge.net/projects/nfsen/files/stable/nfsen-1.3.6p1"
 	PKG="nfsen-1.3.6p1.tar.gz"
 	wget -P /tmp/ $URL/$PKG
 	tar xvf /tmp/$PKG
 	rm -rf /tmp/$PKG
 
-	echo "Building nfsen ..."
+	echo "Building nfsen ..." | tee -a /var/libre_install.log
 	cd nfsen-1.3.6p1
 	# Fix broken input
 	sed -i -e 's@import Socket6@Socket6->import(qw(pack_sockaddr_in6 unpack_sockaddr_in6 inet_pton getaddrinfo))@g' \
@@ -1937,7 +1937,7 @@ install_nfsen()
 	sed -i -e '/chomp(\$ans = <STDIN>);/d' ./install.pl
 	perl ./install.pl ./etc/nfsen.conf
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install nfsen"
+		echo "Error: unable to install nfsen" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd ../
@@ -1953,14 +1953,14 @@ install_nfsen()
 # ----------------------------------------------
 install_evebox()
 {
-        echo "Installing EveBox ..."
+        echo "Installing EveBox ..." | tee -a /var/libre_install.log
 
         if [ ! -e evebox-0.6.0dev-linux-amd64 ]; then
-        echo "Downloading EveBox ..."
+        echo "Downloading EveBox ..." | tee -a /var/libre_install.log
         wget --no-check-certificat \
         https://bintray.com/jasonish/evebox-development/download_file?file_path=evebox-latest-linux-amd64.zip
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download EveBox. Exiting ..."
+                        echo "Error: unable to download EveBox. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         mv download_file?file_path=evebox-latest-linux-amd64.zip evebox-latest-linux-amd64.zip
@@ -1980,36 +1980,36 @@ install_evebox()
 # ----------------------------------------------
 install_selks()
 {
-	echo "Installing SELKS ..."
+	echo "Installing SELKS ..." | tee -a /var/libre_install.log
 
-	echo "Installing timelion plugin ..."
+	echo "Installing timelion plugin ..." | tee -a /var/libre_install.log
 	touch /opt/kibana/config/kibana.yml
 	/opt/kibana/bin/kibana plugin -i elastic/timelion
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install timelion plugin"
+		echo "Error: unable to install timelion plugin" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
-	echo "Downloading KTS ..."
+	echo "Downloading KTS ..." | tee -a /var/libre_install.log
 	git clone https://github.com/StamusNetworks/KTS.git
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download KTS"
+		echo "Error: unable to download KTS" | tee -a /var/libre_install.log
 		exit 3
 	fi
 
-	echo "Patching Kibana ..."
+	echo "Patching Kibana ..." | tee -a /var/libre_install.log
 	patch -p1 -d /opt/kibana/ < KTS/patches/kibana-integer.patch &&
 	patch -p1 -d /opt/kibana/ < KTS/patches/timelion-integer.patch
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to patch Kibana"
+		echo "Error: unable to patch Kibana" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	mv KTS /opt/
 
-	echo "Downloading SELKS Scripts ..."
+	echo "Downloading SELKS Scripts ..." | tee -a /var/libre_install.log
 	git clone https://github.com/StamusNetworks/selks-scripts.git
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download SELKS Scripts"
+		echo "Error: unable to download SELKS Scripts" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd selks-scripts
@@ -2041,19 +2041,19 @@ install_selks()
 # ----------------------------------------------
 install_snorby()
 {
-	echo "Installing Snorby ..."
+	echo "Installing Snorby ..." | tee -a /var/libre_install.log
 
-	echo "Downloading Snorby ..."
+	echo "Downloading Snorby ..." | tee -a /var/libre_install.log
 	git clone https://github.com/Snorby/snorby.git
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to download Snorby"
+		echo "Error: unable to download Snorby" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cd snorby
-	echo "Installing Gem dependencies ..."
+	echo "Installing Gem dependencies ..." | tee -a /var/libre_install.log
 	bundle install --system
 	if [ $? -ne 0 ]; then
-		echo "Error: unable to install dependencies"
+		echo "Error: unable to install dependencies" | tee -a /var/libre_install.log
 		exit 3
 	fi
 	cp config/snorby_config.yml.example config/snorby_config.yml
@@ -2070,13 +2070,13 @@ install_snorby()
 # ---------------------------------------------------------
 install_glype()
 {
-	echo "Installing glype ..."
+	echo "Installing glype ..." | tee -a /var/libre_install.log
 
 	# Downloading glype-1.4.15
 	if [ ! -e glype-1.4.15.zip ]; then
 	    wget http://netix.dl.sourceforge.net/project/free-proxy-server/glype-1.4.15%20%281%29.zip
 	    if [ $? -ne 0 ]; then
-	        echo "Error: unable to download e2guardian"
+	        echo "Error: unable to download e2guardian" | tee -a /var/libre_install.log
 	        exit 3
 	    fi
 	    mv glype-1.4.15\ \(1\).zip glype-1.4.15.zip
@@ -2102,7 +2102,7 @@ install_gitlab()
 # Gitlab can only be installed on x86_64 (64 bit) architecture
 if [ "$ARCH" == "x86_64" ]; then
 
-	echo "Installing gitlab ..."
+	echo "Installing gitlab ..." | tee -a /var/libre_install.log
 
 	# Check if gitlab is installed or not 
 	which gitlab-ctl > /dev/null 2>&1
@@ -2111,12 +2111,12 @@ if [ "$ARCH" == "x86_64" ]; then
 		apt-get install -y --force-yes curl openssh-server ca-certificates postfix
 
 	        if [ ! -e gitlab-ce_8.12.7-ce.0_amd64.deb ]; then
-	        echo "Downloading Gitlab ..."
+	        echo "Downloading Gitlab ..." | tee -a /var/libre_install.log
 	        wget --no-check-certificat -O gitlab-ce_8.12.7-ce.0_amd64.deb \
 		https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb/download 
 	
 	                if [ $? -ne 0 ]; then
-	                        echo "Error: unable to download Gitlab. Exiting ..."
+	                        echo "Error: unable to download Gitlab. Exiting ..." | tee -a /var/libre_install.log
 	                        exit 3
 	                fi
 	        fi
@@ -2124,7 +2124,7 @@ if [ "$ARCH" == "x86_64" ]; then
 		# Install gitlab 
 		dpkg -i gitlab-ce_8.12.7-ce.0_amd64.deb
 	        if [ $? -ne 0 ]; then
-	                echo "Error: unable to install Gitlab. Exiting ..."
+	                echo "Error: unable to install Gitlab. Exiting ..." | tee -a /var/libre_install.log
 	                exit 3
 	        fi
 
@@ -2134,7 +2134,7 @@ if [ "$ARCH" == "x86_64" ]; then
 		apt-get install -y --force-yes gitlab-ce
 	fi
 else
-	echo "Skipping gitlab installation. x86_64 Needed / Detected: $ARCH"
+	echo "Skipping gitlab installation. x86_64 Needed / Detected: $ARCH" | tee -a /var/libre_install.log
 fi
 }
 
@@ -2145,14 +2145,14 @@ fi
 install_trac()
 {
         if [ "$ARCH" == "x86_64" ]; then
-                echo "Installing trac ..."
+                echo "Installing trac ..." | tee -a /var/libre_install.log
                 apt-get -y --force-yes install trac
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to install trac. Exiting ..."
+                        echo "Error: unable to install trac. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         else
-                echo "Skipping trac installation. x86_64 Needed / Detected: $ARCH"
+                echo "Skipping trac installation. x86_64 Needed / Detected: $ARCH" | tee -a /var/libre_install.log
         fi
 }
 
@@ -2163,7 +2163,7 @@ install_trac()
 install_redmine()
 {
 if [ "$ARCH" == "x86_64" ]; then
-	echo "Installing redmine ..."
+	echo "Installing redmine ..." | tee -a /var/libre_install.log
         apt-get -y --force-yes install \
         mysql-server mysql-client libmysqlclient-dev \
         gcc build-essential zlib1g zlib1g-dev zlibc \
@@ -2171,7 +2171,7 @@ if [ "$ARCH" == "x86_64" ]; then
         ruby ruby2.1 gem libapr1-dev libxslt1-dev checkinstall \
         libxml2-dev ruby-dev vim libmagickwand-dev imagemagick
         if [ $? -ne 0 ]; then
-        	echo "Error: unable to install redmine. Exiting ..."
+        	echo "Error: unable to install redmine. Exiting ..." | tee -a /var/libre_install.log
                 exit
         fi
 
@@ -2181,10 +2181,10 @@ if [ "$ARCH" == "x86_64" ]; then
 	cd /opt/redmine
 	
 	if [ ! -e redmine-3.3.1 ]; then
-                echo "Downloading redmine ..."
+                echo "Downloading redmine ..." | tee -a /var/libre_install.log
                 wget http://www.redmine.org/releases/redmine-3.3.1.tar.gz
                 if [ $? -ne 0 ]; then
-                        echo "Error: unable to download redmine. Exiting ..."
+                        echo "Error: unable to download redmine. Exiting ..." | tee -a /var/libre_install.log
                         exit
                 fi
                 tar xzf redmine-3.3.1.tar.gz
@@ -2194,14 +2194,14 @@ if [ "$ARCH" == "x86_64" ]; then
         # Install bundler
         gem install bundler
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install bundler. Exiting ..."
+                echo "Error: unable to install bundler. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 	
 	# Install thin
         gem install thin 
         if [ $? -ne 0 ]; then
-                echo "Error: unable to install thin. Exiting ..."
+                echo "Error: unable to install thin. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 	
@@ -2216,7 +2216,7 @@ if [ "$ARCH" == "x86_64" ]; then
         #RAILS_ENV=production bundle exec rake db:migrate
         #RAILS_ENV=production bundle exec rake redmine:load_default_data
 else
-        echo "Skipping redmine installation. x86_64 Needed / Detected: $ARCH"
+        echo "Skipping redmine installation. x86_64 Needed / Detected: $ARCH" | tee -a /var/libre_install.log
 fi
 }
 
@@ -2226,7 +2226,7 @@ fi
 # ---------------------------------------------------------
 install_ndpi()
 {
-        echo "Installing ndpi ..."
+        echo "Installing ndpi ..." | tee -a /var/libre_install.log
 
 	# Installing dependencies
 	apt-get install -y --force-yes \
@@ -2238,10 +2238,10 @@ install_ndpi()
 	rm -rf /usr/src/ndpi-netfilter
 
 	if [ ! -e ndpi-netfilter ]; then
-		echo "Downloading ndpi ..."
+		echo "Downloading ndpi ..." | tee -a /var/libre_install.log
 		git clone https://github.com/betolj/ndpi-netfilter
                 if [ $? -ne 0 ]; then
-                        echo "Unable to download ndpi. Exiting ..."
+                        echo "Unable to download ndpi. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
 	fi
@@ -2258,7 +2258,7 @@ install_ndpi()
 	make
 	make install
         if [ $? -ne 0 ]; then
-                echo "Unable to install ndpi. Exiting ..."
+                echo "Unable to install ndpi. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
@@ -2267,7 +2267,7 @@ install_ndpi()
 	NDPI_PATH=/usr/src/ndpi-netfilter/nDPI make
 	make modules_install
         if [ $? -ne 0 ]; then
-                echo "Unable to install ndpi-netfilter. Exiting ..."
+                echo "Unable to install ndpi-netfilter. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
@@ -2283,7 +2283,7 @@ install_ndpi()
 # ----------------------------------------------
 install_redsocks()
 {
-        echo "Installing redsocks ..."
+        echo "Installing redsocks ..." | tee -a /var/libre_install.log
 
         # Installing dependencies
         apt-get install -y --force-yes \
@@ -2294,10 +2294,10 @@ install_redsocks()
         rm -rf redsocks
 
         if [ ! -e redsocks ]; then
-                echo "Downloading redsocks..."
+                echo "Downloading redsocks..." | tee -a /var/libre_install.log
                 git clone https://github.com/darkk/redsocks
                 if [ $? -ne 0 ]; then
-                        echo "Unable to download redsocks. Exiting ..."
+                        echo "Unable to download redsocks. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         fi
@@ -2306,7 +2306,7 @@ install_redsocks()
         cd redsocks/
         make
         if [ $? -ne 0 ]; then
-                echo "Unable to install redsocks. Exiting ..."
+                echo "Unable to install redsocks. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
@@ -2319,10 +2319,10 @@ install_redsocks()
 # -----------------------------------------------
 install_ntopng()
 {
-        echo "Installing ntopng ..."
+        echo "Installing ntopng ..." | tee -a /var/libre_install.log
         sudo apt-get -y --force-yes install ntopng
         if [ $? -ne 0 ]; then
-                echo "Error: Unable to install ntopng. Exiting"
+                echo "Error: Unable to install ntopng. Exiting" | tee -a /var/libre_install.log
                 exit 3
         fi      
 }
@@ -2333,19 +2333,19 @@ install_ntopng()
 # -----------------------------------------------
 install_postfix()
 {
-        echo "Installing postfix ..."
+        echo "Installing postfix ..." | tee -a /var/libre_install.log
         DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install postfix postfixadmin
         if [ $? -ne 0 ]; then
-                echo "Error: Unable to install postfix. Exiting"
+                echo "Error: Unable to install postfix. Exiting" | tee -a /var/libre_install.log
                 exit 3
         fi
 
 	# Download postfixadmin database
         if [ ! -e postfixadmin.txt ]; then
-                echo "Downloading postfixadmin database ..."
+                echo "Downloading postfixadmin database ..." | tee -a /var/libre_install.log
                 wget https://www.nesono.com/sites/default/files/postfixadmin.txt
                 if [ $? -ne 0 ]; then
-                        echo "Unable to download postfixadmin database. Exiting ..."
+                        echo "Unable to download postfixadmin database. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
         fi
@@ -2366,7 +2366,7 @@ install_postfix()
 # -----------------------------------------------  
 save_variables()
 {
-        echo "Saving variables ..."
+        echo "Saving variables ..." | tee -a /var/libre_install.log
 	if [ -e /var/box_variables ]; then
 		if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
  	               MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
