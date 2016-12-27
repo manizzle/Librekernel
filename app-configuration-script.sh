@@ -5818,6 +5818,44 @@ chmod +x /usr/sbin/configs
 
 
 cat << EOF > /var/box_logs
+nginx            /var/log/nginx/access.log
+		 /var/log/nginx/error.log
+apache2          /var/log/apache2/access.log
+		 /var/log/apache2/error.log
+prosody          /var/log/prosody/prosody.log
+		 /var/log/prosody/prosody.err
+roundcube        /var/log/roundcube_access.log
+		 /var/log/roundcube_error.log
+spamassassin     /var/log/syslog
+squid            /var/log/squid/access.log
+		 /var/log/squid/cache.log
+squidclamav      /var/log/clamav/clamav.log
+squidguard       /var/log/squidguard/squidGuard.log
+ssh              /var/log/syslog
+dovecot          /var/log/syslog
+ecapguardian     /var/log/ecapguardian/access.log
+elasticsearch    /var/log/syslog
+mysql            /var/log/mysql.log
+		 /var/log/mysql.err	
+ntopng           /var/log/ntopng/ntopng.log
+thin             /var/log/syslog
+gitlab           /var/log/gitlab/*
+tinyproxy        /var/log/tinyproxy/tinyproxy.log
+tomcat7          /var/log/tomcat7/*
+postfix          /var/log/postfix_access.log
+		 /var/log/postfix_error.log
+postfixadmin     /var/log/syslog
+i2p	         /var/log/i2p/log-router-0.txt
+		 /var/log/i2p/wrapper.log
+privoxy 	 /var/log/privoxy/logfile
+yacy		 /var/log/yacy/queries.log
+		 /var/log/yacy/yacy00.log
+tor		 /var/log/tor/log
+friendica	 /var/log/nginx/friendica.log
+owncloud         /var/log/nginx/owncloud.log
+mailpile         /var/log/nginx/mailpile.log
+redmine          /var/log/nginx/redmine.log
+trac             /var/log/nginx/trac.log
 EOF
 
 # Create logs command
