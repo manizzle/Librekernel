@@ -61,11 +61,14 @@ def get_domains(ip_range):
             continue
             print >>sys.stderr, ip + " is NXDOMAIN"
         except dns.resolver.NoNameservers as e:
-            continue
             print >>sys.stderr, ip + " has server fail"
-        except dns.exception.Timeout as e:
             continue
+        except dns.exception.Timeout as e:
             print >>sys.stderr, ip + " has dns timeout"
+            continue
+        except dns.resolver.NoAnswer as e:
+            print >>sys.stderr, ip + " has no dns answer"
+            continue
 
     return domains
 
