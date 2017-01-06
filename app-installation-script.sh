@@ -465,7 +465,7 @@ elif [ $PLATFORM = "D8" ]; then
         privoxy unbound owncloud isc-dhcp-server \
         yacy c-icap clamav clamav-daemon  squidguard \
 	tor i2p roundcube tinyproxy prosody \
-        memcached \
+        memcached sogo \
         postfix-mysql dovecot-mysql dovecot-imapd postgrey \
         amavis spamassassin php5-imap \
         2>&1 > /var/apt-get-install_2.log
