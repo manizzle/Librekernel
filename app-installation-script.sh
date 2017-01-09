@@ -1012,6 +1012,7 @@ systemctl daemon-reload
 install_mailpile() 
 {
 	echo "Installing Mailpile ..." | tee -a /var/libre_install.log
+        apt-get install -y --force-yes libffi-dev
  	if [ ! -e /opt/Mailpile ]; then
                 echo "Downloading mailpile ..." | tee -a /var/libre_install.log
         	git clone --recursive \
