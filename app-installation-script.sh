@@ -94,15 +94,22 @@ configure_repositories ()
 	
 	# Time synchronization
 	/etc/init.d/ntp stop > /dev/null 2>&1
- 	ntpdate -s ntp.ubuntu.com
-	if [ $? -ne 0 ]; then
-        	echo "Error: unable to set time" | tee -a /var/libre_install.log
-                exit 3
-        fi	
+        if ntpdate -s ntp.ubuntu.com; then
+            echo "Date and time have been set" | tee -a /var/libre_install.log
+        elif ntpdate -s 0.ubuntu.pool.ntp.org; then
+            echo "Date and time have been set" | tee -a /var/libre_install.log
+        elif ntpdate -s 1.ubuntu.pool.ntp.org; then
+            echo "Date and time have been set" | tee -a /var/libre_install.log
+        elif ntpdate -s 2.ubuntu.pool.ntp.org; then
+            echo "Date and time have been set" | tee -a /var/libre_install.log
+        elif ntpdate -s 3.ubuntu.pool.ntp.org; then
+            echo "Date and time have been set" | tee -a /var/libre_install.log
+        elif [ $? -ne 0 ]; then
+            echo "Error: unable to set time" | tee -a /var/libre_install.log
+            exit 3
+        fi
 	/etc/init.d/ntp restart > /dev/null 2>&1
-	echo "Date and time have been set" | tee -a /var/libre_install.log
 	date | tee -a /var/libre_install.log
-	
 	
 	echo "Configuring repositories ... " | tee -a /var/libre_install.log
 
