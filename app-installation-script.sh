@@ -2479,7 +2479,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 #	install_evebox		# Install EveBox package
 #	install_selks		# Install SELKS GUI
 #	install_snorby		# Install Snorby package
-#	install_glype		# Install glype proxy
+	install_glype		# Install glype proxy
 	install_gitlab		# Install gitlab packae
 	install_trac		# Install trac package
 	install_redmine		# Install redmine package
