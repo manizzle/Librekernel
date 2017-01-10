@@ -287,20 +287,13 @@ cat << EOF > /etc/hosts
 10.0.0.1        librerouter.librenet
 10.0.0.11       kibana.librenet
 10.0.0.12       snorby.librenet
+10.0.0.240      glype.librerouter.net
 10.0.0.241      sogo.librerouter.net
 10.0.0.242      postfix.librerouter.net
 10.0.0.243      roundcube.librerouter.net
 10.0.0.244      ntop.librenet
 10.0.0.245      webmin.librenet
 10.0.0.246      squidguard.librenet
-10.0.0.247      gitlab.librenet
-10.0.0.248	trac.librenet
-10.0.0.249      redmine.librenet
-10.0.0.250      easyrtc.librenet
-10.0.0.251      yacy.librenet
-10.0.0.252      friendica.librenet
-10.0.0.253      owncloud.librenet
-10.0.0.254      mailpile.librenet
 10.0.0.247	gitlab.librerouter.net
 10.0.0.248      trac.librerouter.net
 10.0.0.249      redmine.librerouter.net
@@ -520,6 +513,13 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         #allow-hotplug $INT_INTERFACE:16
         iface $INT_INTERFACE:16 inet static
             address 10.0.0.241
+            netmask 255.255.255.0
+
+        #Glype
+        auto $INT_INTERFACE:17
+        #allow-hotplug $INT_INTERFACE:17
+        iface $INT_INTERFACE:17 inet static
+            address 10.0.0.240
             netmask 255.255.255.0
 EOF
 
@@ -804,6 +804,7 @@ iptables -t filter -F
 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.240 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.241 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.242 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.243 -j ACCEPT
@@ -1774,6 +1775,7 @@ local-data: "ntop.librenet. IN A 10.0.0.244"
 local-data: "webmin.librenet. IN A 10.0.0.245"
 local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
+local-data: "glype.librerouter.net. IN A 10.0.0.240"
 local-data: "sogo.librerouter.net. IN A 10.0.0.241"
 local-data: "postfix.librerouter.net. IN A 10.0.0.242"
 local-data: "roundcube.librerouter.net. IN A 10.0.0.243"
@@ -4974,6 +4976,39 @@ server
       proxy_pass http://127.0.0.1:20000/SOGo/Microsoft-Server-ActiveSync;
       proxy_redirect http://127.0.0.1:20000/SOGo/Microsoft-Server-ActiveSync /;
    }
+}
+EOF
+
+
+#------------------glype.librerouter.net-------------------#
+#                       10.0.0.240                         #
+############################################################
+
+# Configuring Glype virtual host
+echo "Configuring Glype virtual host ..." | tee -a /var/libre_config.log
+
+# Getting Tor hidden service glype hostname
+# SERVER_GLYPE="$(cat /var/lib/tor/hidden_service/glype/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+##rm -rf /etc/ssl/nginx/glype/glype_bundle.crt
+##cat /etc/ssl/nginx/glype/glype_librerouter_net.crt /etc/ssl/nginx/glype/glype_librerouter_net.ca-bundle >> /etc/ssl/nginx/glype/glype_bundle.crt
+
+cat << EOF > /etc/nginx/sites-enabled/glype
+# Redirect connections from 10.0.0.240 to glype.librerouter.net
+##server {
+##listen 10.0.0.240:80;
+##server_name _;
+##return 301 https://glype.librerouter.net;
+##}
+
+##server {
+##listen 10.0.0.240:443 ssl;
+##server_name glype.librerouter.net;
+##root /var/www/glype/;
+##ssl on;
+##ssl_certificate /etc/ssl/nginx/glype/glype_bundle.crt;
+##ssl_certificate_key /etc/ssl/nginx/glype/glype_librerouter_net.key;
 }
 EOF
 
