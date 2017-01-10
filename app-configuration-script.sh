@@ -638,6 +638,9 @@ option routers 10.0.0.1;
 }
 " > /etc/dhcp/dhcpd.conf
 
+# Configuring listen interface
+sed "s~INTERFACES=\"\".*~INTERFACES=\"$INT_INTERFACE\"~g" -i /etc/default/isc-dhcp-server
+
 # Restarting dhcp server
 service isc-dhcp-server restart | tee -a /var/libre_config.log
 }
