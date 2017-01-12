@@ -2240,47 +2240,52 @@ install_ndpi()
 	apt-get install -y --force-yes \
 	autogen automake make gcc \
 	linux-source libtool autoconf pkg-config subversion \
-	libpcap-dev iptables-dev linux-headers-amd64
+	libpcap-dev iptables-dev linux-headers-amd64 linux-headers-$(uname -r)
 	
 	# Removing old source
-	rm -rf /usr/src/ndpi-netfilter
+	rm -rf nDPI
 
-	if [ ! -e ndpi-netfilter ]; then
+	if [ ! -e nDPI ]; then
 		echo "Downloading ndpi ..." | tee -a /var/libre_install.log
-		git clone https://github.com/betolj/ndpi-netfilter
+		git clone https://github.com/vel21ripn/nDPI
                 if [ $? -ne 0 ]; then
                         echo "Unable to download ndpi. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
                 fi
 	fi
-	cp -r ndpi-netfilter /usr/src/
 	
 	# Extracting nDPI
-	cd /usr/src/ndpi-netfilter
-	tar xvfz nDPI.tar.gz
 	cd nDPI
 
 	# Building nDPI
 	./autogen.sh
-	./configure --with-pic
+	./configure 
 	make
-	make install
+	#make install
         if [ $? -ne 0 ]; then
                 echo "Unable to install ndpi. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
 	# Building nDPI-netfilter
-	cd ..
-	NDPI_PATH=/usr/src/ndpi-netfilter/nDPI make
-	make modules_install
+        ./autogen.sh
+        cd ndpi-netfilter
+        make
+	# Install the nDPI module for the given Linux kernel.
+        make modules_install
+	# Copy the iptables module into the corresponding directory.
+        make install	
         if [ $? -ne 0 ]; then
                 echo "Unable to install ndpi-netfilter. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
         fi
 
-	# Connecting to xtables
-	cp /usr/src/ndpi-netfilter/ipt/libxt_ndpi.so /lib/xtables/
+	# Load ndpi module
+        modprobe xt_ndpi
+        if [ $? -ne 0 ]; then
+                echo "Unable to load ndpi module. Exiting ..." | tee -a /var/libre_install.log
+                exit 3
+        fi
 
 	cd $INSTALL_HOME
 }
