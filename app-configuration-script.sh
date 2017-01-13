@@ -936,6 +936,21 @@ chmod +x /etc/rc.local
 
 
 # ---------------------------------------------------------
+# Function to configure ssh  
+# ---------------------------------------------------------
+configure_ssh()
+{
+echo "Configuring ssh ..."
+
+# Allowing only V2 protocole
+sed '/Protocol/c\Protocol 2' -i /etc/ssh/sshd_config
+
+# Restarting ssh service
+/etc/init.d/ssh restart
+}
+
+
+# ---------------------------------------------------------
 # Function to configure TOR
 # ---------------------------------------------------------
 configure_tor()
@@ -6174,6 +6189,7 @@ configure_dhcp			# Configuring DHCP server
 configure_mysql			# Configuring mysql password
 configure_banks_access		# Configuring banks access
 configure_iptables		# Configuring iptables rules
+configure_ssh			# Configuring ssh server
 configure_tor			# Configuring TOR server
 configure_i2p			# Configuring i2p services
 configure_unbound		# Configuring Unbound DNS server
