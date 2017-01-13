@@ -285,15 +285,15 @@ cat << EOF > /etc/hosts
 #<ip-address>   <hostname.domain.org>   <hostname>
 127.0.0.1       localhost.librenet librerouter localhost
 10.0.0.1        librerouter.librenet
-10.0.0.11       kibana.librenet
 10.0.0.12       snorby.librenet
+10.0.0.239      kibana.librerouter.net
 10.0.0.240      glype.librerouter.net
 10.0.0.241      sogo.librerouter.net
 10.0.0.242      postfix.librerouter.net
 10.0.0.243      roundcube.librerouter.net
-10.0.0.244      ntop.librenet
-10.0.0.245      webmin.librenet
-10.0.0.246      squidguard.librenet
+10.0.0.244      ntop.librerouter.net
+10.0.0.245      webmin.librerouter.net
+10.0.0.246      squidguard.librerouter.net
 10.0.0.247	gitlab.librerouter.net
 10.0.0.248      trac.librerouter.net
 10.0.0.249      redmine.librerouter.net
@@ -449,7 +449,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	auto $INT_INTERFACE:7
 	#allow-hotplug $INT_INTERFACE:7
 	iface $INT_INTERFACE:7 inet static
-	    address 10.0.0.11
+	    address 10.0.0.239
 	    netmask 255.255.255.0
 
 	#Snorby
@@ -763,6 +763,10 @@ echo "192.229.182.219
 195.21.32.34
 195.21.32.40
 192.229.182.219
+217.148.69.165
+217.148.69.240
+217.148.71.165
+217.148.71.240
 " > /var/banks_ips.txt
 
 touch /var/banks_access.sh
@@ -1771,14 +1775,15 @@ local-zone: "librenet" static
 local-data: "librerouter.librenet. IN A 10.0.0.1"
 local-data: "i2p.librenet. IN A 10.0.0.1"
 local-data: "tahoe.librenet. IN A 10.0.0.1"
-local-data: "ntop.librenet. IN A 10.0.0.244"
-local-data: "webmin.librenet. IN A 10.0.0.245"
-local-data: "kibana.librenet. IN A 10.0.0.11"
 local-data: "snorby.librenet. IN A 10.0.0.12"
+local-data: "kibana.librerouter.net. IN A 10.0.0.239"
 local-data: "glype.librerouter.net. IN A 10.0.0.240"
 local-data: "sogo.librerouter.net. IN A 10.0.0.241"
 local-data: "postfix.librerouter.net. IN A 10.0.0.242"
 local-data: "roundcube.librerouter.net. IN A 10.0.0.243"
+local-data: "ntop.librerouter.net. IN A 10.0.0.244"
+local-data: "webmin.librerouter.net. IN A 10.0.0.245"
+local-data: "squidguard.librerouter.net. IN A 10.0.0.246"
 local-data: "gitlab.librerouter.net. IN A 10.0.0.247"
 local-data: "trac.librerouter.net. IN A 10.0.0.248"
 local-data: "redmine.librerouter.net. IN A 10.0.0.249"
@@ -1786,8 +1791,7 @@ local-data: "conference.librerouter.net. IN A 10.0.0.250"
 local-data: "search.librerouter.net. IN A 10.0.0.251"
 local-data: "social.librerouter.net. IN A 10.0.0.252"
 local-data: "storage.librerouter.net. IN A 10.0.0.253"
-local-data: "email.librerouter.net. IN A 10.0.0.254"
-local-data: "squidguard.librenet. IN A 10.0.0.246"' > /etc/unbound/unbound.conf
+local-data: "email.librerouter.net. IN A 10.0.0.254"' > /etc/unbound/unbound.conf
 
 for i in $(ls /var/lib/tor/hidden_service/)
 do
@@ -3927,6 +3931,8 @@ location /phpMyAdmin {
 
 
 #------------search.librerouter.net-----------#
+#                  10.0.0.251                 #                           
+#---------------------------------------------#
 
 # Configuring Yacy virtual host
 echo "Configuring Yacy virtual host ..." | tee -a /var/libre_config.log
@@ -3975,7 +3981,9 @@ server {
 " > /etc/nginx/sites-enabled/yacy
 
 
-#--------social.librerouter.net----------#
+#-----------social.librerouter.net-------------#
+#                 10.0.0.252                   #  
+#----------------------------------------------#
 
 # Configuring Friendica virtual host
 echo "Configuring Friendica virtual host ..." | tee -a /var/libre_config.log
@@ -4137,7 +4145,9 @@ location ~ /\. {
 " > /etc/nginx/sites-enabled/friendica 
 
 
-#--------storage.librerouter.net----------#
+#-------------storage.librerouter.net-------------#
+#                  10.0.0.253                     #
+#-------------------------------------------------#
 
 # Configuring Owncloud virtual host
 echo "Configuring Owncloud virtual host ..." | tee -a /var/libre_config.log
@@ -4241,7 +4251,9 @@ server {
 " > /etc/nginx/sites-enabled/owncloud
 
 
-#--------email.librerouter.net----------#
+#-------------email.librerouter.net-----------------#
+#                   10.0.0.254                      # 
+#---------------------------------------------------# 
 
 # Configuring Mailpile virtual host
 echo "Configuring Mailpile virtual host ..." | tee -a /var/libre_config.log
@@ -4311,16 +4323,21 @@ server {
 " > /etc/nginx/sites-enabled/mailpile
 
 
-#--------webmin.librenet----------#
+#----------webmin.librerouter.net------------#
+#                10.0.0.245                  #
+#--------------------------------------------#
 
 # Configuring Webmin virtual host
 echo "Configuring Webmin virtual host ..." | tee -a /var/libre_config.log
 
-# Generating certificates for webmin ssl connection
-echo "Generating keys and certificates for webmin"
-if [ ! -e /etc/ssl/nginx/webmin.key -o ! -e  /etc/ssl/nginx/webmin.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/webmin.key -out /etc/ssl/nginx/webmin.crt -subj '/CN=librerouter' -batch
-fi
+# Getting Tor hidden service EasyRTC hostname
+#SERVER_WEBMIN="$(cat /var/lib/tor/hidden_service/webmin/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+#rm -rf /etc/ssl/nginx/webmin/webmin_bundle.crt
+#cat /etc/ssl/nginx/webmin/webmin_librerouter_net.crt /etc/ssl/nginx/webmin/webmin_librerouter_net.ca-bundle >> /etc/ssl/nginx/webmin/webmin_bundle.crt
+
+
 
 # Creating Webmin virtual host configuration
 echo "
@@ -4328,63 +4345,68 @@ echo "
 server {
 listen 10.0.0.245;
 server_name _;
-return 301 https://webmin.librenet;
+return 301 https://webmin.librerouter.net;
 }
 
 # Redirect connections to webmin running on 127.0.0.1:10000
-server {
-listen 10.0.0.245:443 ssl;
-server_name webmin.librenet;
-
-ssl on;
-ssl_certificate /etc/ssl/nginx/webmin.crt;
-ssl_certificate_key /etc/ssl/nginx/webmin.key;
-ssl_session_timeout 5m;
-ssl_protocols SSLv3 TLSv1;
-ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-ssl_prefer_server_ciphers on;
-
-location / {
-proxy_pass       https://127.0.0.1:10000;
-proxy_set_header Host      \$host;
-proxy_set_header X-Real-IP \$remote_addr;
-}
-
-}
+#server {
+#listen 10.0.0.245:443 ssl;
+#server_name webmin.librerouter.net;
+#
+#  ssl_certificate /etc/ssl/nginx/webmin/webmin_bundle.crt;
+#  ssl_certificate_key /etc/ssl/nginx/webmin/webmin_librerouter_net.key;
+#  ssl_prefer_server_ciphers On;
+#  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+#  ssl_session_cache shared:SSL:20m;
+#  ssl_session_timeout 10m;
+#  add_header Strict-Transport-Security "max-age=31536000";
+#
+#location / {
+#proxy_pass       https://127.0.0.1:10000;
+#proxy_set_header Host      \$host;
+#proxy_set_header X-Real-IP \$remote_addr;
+#}
+#
+#}
 " > /etc/nginx/sites-enabled/webmin
+
+
+#------------kibana.librerouter.net-------------#
+#                 10.0.0.239                    #
+#-----------------------------------------------#
 
 # Configuring Kibana virtual host
 echo "Configuring Kibana virtual host ..."
 
-# Generating certificates for Kibana ssl connection
-echo "Generating keys and certificates for Kibana"
-if [ ! -e /etc/ssl/nginx/kibana.key -o ! -e  /etc/ssl/nginx/kibana.crt ]; then
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/nginx/kibana.key -out /etc/ssl/nginx/kibana.crt -subj '/CN=librerouter' -batch
-fi
+# Getting Tor hidden service EasyRTC hostname
+#SERVER_KIBANA="$(cat /var/lib/tor/hidden_service/kibana/hostname 2>/dev/null)"
 
-
-#--------kibana.librenet----------#
+# Creating certificate bundle
+#rm -rf /etc/ssl/nginx/kiabana/kibana_bundle.crt
+#cat /etc/ssl/nginx/kibana/kibana_librerouter_net.crt /etc/ssl/nginx/kibana/kibana_librerouter_net.ca-bundle >> /etc/ssl/nginx/kibana/kibana_bundle.crt
 
 # Creating Kibana virtual host configuration
 #echo '
 #server {
-#listen 10.0.0.11;
+#listen 10.0.0.239;
 #server_name _;
-#return 301 https://kibana.librenet;
+#return 301 https://kibana.librerouter.net;
 #}
 #
 #server {
-#listen 80;
-#listen 443 ssl;
-#server_name kibana.librenet;
+#listen 10.0.0.239:443 ssl;
+#server_name kibana.librerouter.net;
 #
-#ssl on;
-#ssl_certificate /etc/ssl/nginx/kibana.crt;
-#ssl_certificate_key /etc/ssl/nginx/kibana.key;
-#ssl_session_timeout 5m;
-#ssl_protocols SSLv3 TLSv1;
-#ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
-#ssl_prefer_server_ciphers on;
+#  ssl_certificate /etc/ssl/nginx/kibana/kibana_bundle.crt;
+#  ssl_certificate_key /etc/ssl/nginx/kibana/kibana_librerouter_net.key;
+#  ssl_prefer_server_ciphers On;
+#  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+#  ssl_session_cache shared:SSL:20m;
+#  ssl_session_timeout 10m;
+#  add_header Strict-Transport-Security "max-age=31536000";
+#
 #access_log /var/log/nginx/kibana.access.log;
 #error_log /var/log/nginx/kibana.error.log;
 #
@@ -4437,40 +4459,61 @@ fi
 #' > /etc/nginx/sites-enabled/snorby
 
 
-#--------squidguard.librenet----------#
+#---------------squidguard.librerouter.net--------------#
+#                    10.0.0.246                         # 
+#-------------------------------------------------------#
 
 # Configuring squidguard virtual host
+
+# Getting Tor hidden service EasyRTC hostname
+#SERVER_SQUIDGUARD="$(cat /var/lib/tor/hidden_service/squidguard/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+#rm -rf /etc/ssl/nginx/squidguard/squidguard_bundle.crt
+#cat /etc/ssl/nginx/squidguard/squidguard_librerouter_net.crt /etc/ssl/nginx/squidguard/squidguard_librerouter_net.ca-bundle >> /etc/ssl/nginx/squidguard/squidguard_bundle.crt
+
 echo "Configuring squidguard virtual host ..." | tee -a /var/libre_config.log
 echo '
-# Redirect connections from 10.0.0.246 to squidguardmgr.librenet
+# Redirect connections from 10.0.0.246 to squidguard.librerouter.net
 server {
 listen 10.0.0.246:80;
 server_name _;
-return 301 http://squidguard.librenet;
+return 301 https://squidguard.librerouter.net;
 }
 
-server {
-listen 10.0.0.246:80;
-server_name squidguard.librenet;
-
-index squidguardmgr.cgi;
-charset utf-8;
-root /var/www/squidguardmgr;
-access_log /var/log/nginx/squidguardmgr.log;
-
-location ~ .cgi\$ {
-include uwsgi_params;
-uwsgi_modifier1 9;
-uwsgi_pass 127.0.0.1:9000;
-}
-}
-' > /etc/nginx/sites-enabled/squidguard
+#server {
+#listen 10.0.0.246:443 ssl;
+#server_name squidguard.librenet;
+#
+#  ssl_certificate /etc/ssl/nginx/squidguard/squidguard_bundle.crt;
+#  ssl_certificate_key /etc/ssl/nginx/squidguard/squidguard_librerouter_net.key;
+#  ssl_prefer_server_ciphers On;
+#  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+#  ssl_session_cache shared:SSL:20m;
+#  ssl_session_timeout 10m;
+#  add_header Strict-Transport-Security "max-age=31536000";
+#
+#index squidguardmgr.cgi;
+#charset utf-8;
+#root /var/www/squidguardmgr;
+#access_log /var/log/nginx/squidguardmgr.log;
+#
+#location ~ .cgi\$ {
+#include uwsgi_params;
+#uwsgi_modifier1 9;
+#uwsgi_pass 127.0.0.1:9000;
+#}
+#}
+#' > /etc/nginx/sites-enabled/squidguard
 
 # Include passenger in nginx
 sed -i -e 's@\t# include /etc/nginx/passenger.conf.*@\tinclude /etc/nginx/passenger.conf;@g' /etc/nginx/nginx.conf
 
 
 #--------conference.librerouter.net----------#
+#               10.0.0.250                   #       
+#--------------------------------------------#
 
 # Configuring EasyRTC virtual host
 echo "Configuring EasyRTC virtual host ..." | tee -a /var/libre_config.log
@@ -4555,9 +4598,9 @@ proxy_set_header X-Real-IP \$remote_addr;
 #" > /etc/nginx/sites-enabled/tahoe
 
 
-# -----------trac.librerouter.net------------ #
-#
-# trac.librerouter.net virtual host configuration
+#--------------trac.librerouter.net-------------#
+#                  10.0.0.248                   #
+#-----------------------------------------------#
 
 # Configuring Trac virtual host
 echo "Configuring Trac virtual host ..." | tee -a /var/libre_config.log
@@ -4594,10 +4637,9 @@ server {
 " > /etc/nginx/sites-enabled/trac 
 
 
-# -------------redmine.librerouter.net------------- #
-#
-# redmine.librerouter.net virtual host configuration
-
+#-------------redmine.librerouter.net-------------#
+#                   10.0.0.249                    #
+#-------------------------------------------------#
 
 # Configuring Redmine virtual host
 echo "Configuring Redmine virtual host ..." | tee -a /var/libre_config.log
@@ -4686,33 +4728,50 @@ server {
 }
 " > /etc/nginx/sites-enabled/redmine
 
-#----------------------ntop.librenet-----------------------#
+#------------------ntop.librerouter.net--------------------#
 #                       10.0.0.244                         #
-############################################################
+#----------------------------------------------------------#
+
+# Getting Tor hidden service ntop hostname
+#SERVER_NTOP="$(cat /var/lib/tor/hidden_service/ntop/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+#rm -rf /etc/ssl/nginx/ntop/ntop_bundle.crt
+#cat /etc/ssl/nginx/ntop/ntop_librerouter_net.crt /etc/ssl/nginx/ntop/ntop_librerouter_net.ca-bundle >> /etc/ssl/nginx/ntop/ntop_bundle.crt
 
 echo "Configuring ntop virtual host ..." | tee -a /var/libre_config.log
 echo "
-# Redirect connections from 10.0.0.244 to ntop.librenet
+# Redirect connections from 10.0.0.244 to ntop.librerouter.net
 server {
 	listen 10.0.0.244;
 	server_name _;
-	return 301 http://ntop.librenet;
+	return 301 https://ntop.librerouter.net;
 }
-server {
-	listen 10.0.0.244:80;
-	server_name ntop.librenet;
-	location / {
-		proxy_pass       http://127.0.0.1:3000;
-		proxy_set_header Host      \$host;
-		proxy_set_header X-Real-IP \$remote_addr;
-	}
-}
+#server {
+#	listen 10.0.0.244:443 ssl;
+#	server_name ntop.librenet;
+#
+#	ssl_certificate /etc/ssl/nginx/ntop/ntop_bundle.crt;
+#	ssl_certificate_key /etc/ssl/nginx/ntop/ntop_librerouter_net.key;
+#	ssl_prefer_server_ciphers On;
+#	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#	ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+#	ssl_session_cache shared:SSL:20m;
+#	ssl_session_timeout 10m;
+#	add_header Strict-Transport-Security "max-age=31536000";
+#
+#	location / {
+#		proxy_pass       http://127.0.0.1:3000;
+#		proxy_set_header Host      \$host;
+#		proxy_set_header X-Real-IP \$remote_addr;
+#	}
+#}
 " > /etc/nginx/sites-enabled/ntop
 
 
 #----------------roundcube.librerouter.net-----------------#
 #                       10.0.0.243                         #
-############################################################
+#----------------------------------------------------------#
 
 # Configuring Roundcube virtual host
 echo "Configuring Roundcube virtual host ..." | tee -a /var/libre_config.log
@@ -4788,7 +4847,7 @@ EOF
 
 #------------------postfix.librerouter.net-----------------#
 #                       10.0.0.242                         #
-############################################################
+#----------------------------------------------------------#
 
 # Configuring Postfix virtual host
 echo "Configuring Postfix virtual host ..." | tee -a /var/libre_config.log
@@ -4864,7 +4923,7 @@ EOF
 
 #-------------------sogo.librerouter.net-------------------#
 #                       10.0.0.241                         #
-############################################################
+#----------------------------------------------------------#
 
 # Configuring Sogo virtual host
 echo "Configuring Sogo virtual host ..." | tee -a /var/libre_config.log
@@ -4982,7 +5041,7 @@ EOF
 
 #------------------glype.librerouter.net-------------------#
 #                       10.0.0.240                         #
-############################################################
+#----------------------------------------------------------#
 
 # Configuring Glype virtual host
 echo "Configuring Glype virtual host ..." | tee -a /var/libre_config.log
@@ -4991,25 +5050,31 @@ echo "Configuring Glype virtual host ..." | tee -a /var/libre_config.log
 # SERVER_GLYPE="$(cat /var/lib/tor/hidden_service/glype/hostname 2>/dev/null)"
 
 # Creating certificate bundle
-##rm -rf /etc/ssl/nginx/glype/glype_bundle.crt
-##cat /etc/ssl/nginx/glype/glype_librerouter_net.crt /etc/ssl/nginx/glype/glype_librerouter_net.ca-bundle >> /etc/ssl/nginx/glype/glype_bundle.crt
+#rm -rf /etc/ssl/nginx/glype/glype_bundle.crt
+#cat /etc/ssl/nginx/glype/glype_librerouter_net.crt /etc/ssl/nginx/glype/glype_librerouter_net.ca-bundle >> /etc/ssl/nginx/glype/glype_bundle.crt
 
 cat << EOF > /etc/nginx/sites-enabled/glype
 # Redirect connections from 10.0.0.240 to glype.librerouter.net
-##server {
-##listen 10.0.0.240:80;
-##server_name _;
-##return 301 https://glype.librerouter.net;
-##}
-
-##server {
-##listen 10.0.0.240:443 ssl;
-##server_name glype.librerouter.net;
-##root /var/www/glype/;
-##ssl on;
-##ssl_certificate /etc/ssl/nginx/glype/glype_bundle.crt;
-##ssl_certificate_key /etc/ssl/nginx/glype/glype_librerouter_net.key;
-}
+#server {
+#listen 10.0.0.240:80;
+#server_name _;
+#return 301 https://glype.librerouter.net;
+#}
+#
+#server {
+#listen 10.0.0.240:443 ssl;
+#server_name glype.librerouter.net;
+#root /var/www/glype/;
+#ssl on;
+#ssl_certificate /etc/ssl/nginx/glype/glype_bundle.crt;
+#ssl_certificate_key /etc/ssl/nginx/glype/glype_librerouter_net.key;
+#ssl_prefer_server_ciphers On;
+#ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+#ssl_session_cache shared:SSL:20m;
+#ssl_session_timeout 10m;
+#add_header Strict-Transport-Security "max-age=31536000";
+#}
 EOF
 
 
@@ -5784,11 +5849,11 @@ rm -rf /var/box_services
 touch /var/box_services
 echo "Printing local services info ..." | tee -a /var/libre_config.log
 echo ""
-echo "------------------------------------------------------------------------------------" \
+echo "-------------------------------------------------------------------------------------" \
 | tee /var/box_services
-echo "| Service Name |       Tor domain       |       Direct access       |  IP Address  |" \
+echo "| Service Name |       Tor domain       |       Direct access        |  IP Address  |" \
 | tee -a /var/box_services
-echo "------------------------------------------------------------------------------------" \
+echo "-------------------------------------------------------------------------------------" \
 | tee -a /var/box_services
 for i in $(ls /var/lib/tor/hidden_service/)
 do
@@ -5860,6 +5925,23 @@ fi
 #| tee -a /var/box_services
 
 done
+echo "|  squidguard  |                        | squidguard.librerouter.net |   10.0.0.246 |" \
+| tee -a /var/box_services
+echo "|      webmin  |                        |     webmin.librerouter.net |   10.0.0.245 |" \
+| tee -a /var/box_services
+echo "|        ntop  |                        |       ntop.librerouter.net |   10.0.0.244 |" \
+| tee -a /var/box_services
+echo "|   roundcube  |                        |  roundcube.librerouter.net |   10.0.0.243 |" \
+| tee -a /var/box_services
+echo "|     postfix  |                        |    postfix.librerouter.net |   10.0.0.242 |" \
+| tee -a /var/box_services
+echo "|        sogo  |                        |       sogo.librerouter.net |   10.0.0.241 |" \
+| tee -a /var/box_services
+echo "|       glype  |                        |      glype.librerouter.net |   10.0.0.240 |" \
+| tee -a /var/box_services
+echo "|      kibana  |                        |     kibana.librerouter.net |   10.0.0.239 |" \
+| tee -a /var/box_services
+
 echo "------------------------------------------------------------------------------------" \
 | tee -a /var/box_services
 
@@ -5905,7 +5987,7 @@ cat << EOF >> /var/box_services
 |    services name    |        username        |        password             |
 ------------------------------------------------------------------------------
 |    mysql            |          root          |       $MYSQL_PASS            |
-|    postfix          |          admin         |       $POSTFIX_PASS           |
+|    postfix          |          admin         |       $POSTFIX_PASS            |
 |    roundcube        |      (Please Register mailbox in postfix)            |
 |    easyrtc          |                    (No Need)                         |
 |    friendica        |                (Please Register)                     |
@@ -5917,6 +5999,9 @@ cat << EOF >> /var/box_services
 |    yacy             |                    (No Need)                         |
 |    ssh              |         (Your machine root login and pass)           |
 |    webmin           |         (Your machine root login and pass)           |
+|    sogo             |                                                      |
+|    glype            |                                                      |
+|    kibana           |                                                      |
 ------------------------------------------------------------------------------
 EOF
 
