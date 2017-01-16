@@ -4466,14 +4466,14 @@ echo "Configuring Webmin virtual host ..." | tee -a /var/libre_config.log
 #SERVER_WEBMIN="$(cat /var/lib/tor/hidden_service/webmin/hostname 2>/dev/null)"
 
 # Creating certificate bundle
-#rm -rf /etc/ssl/nginx/webmin/webmin_bundle.crt
-#cat /etc/ssl/nginx/webmin/webmin_librerouter_net.crt /etc/ssl/nginx/webmin/webmin_librerouter_net.ca-bundle >> /etc/ssl/nginx/webmin/webmin_bundle.crt
+rm -rf /etc/ssl/nginx/webmin/webmin_bundle.crt
+cat /etc/ssl/nginx/webmin/webmin_librerouter_net.crt /etc/ssl/nginx/webmin/webmin_librerouter_net.ca-bundle >> /etc/ssl/nginx/webmin/webmin_bundle.crt
 
 
 
 # Creating Webmin virtual host configuration
 echo "
-# Redirect connections from 10.0.0.245 to webmin.librenet
+# Redirect connections from 10.0.0.245 to webmin.librerouter.net
 server {
 listen 10.0.0.245;
 server_name _;
@@ -4481,26 +4481,26 @@ return 301 https://webmin.librerouter.net;
 }
 
 # Redirect connections to webmin running on 127.0.0.1:10000
-#server {
-#listen 10.0.0.245:443 ssl;
-#server_name webmin.librerouter.net;
-#
-#  ssl_certificate /etc/ssl/nginx/webmin/webmin_bundle.crt;
-#  ssl_certificate_key /etc/ssl/nginx/webmin/webmin_librerouter_net.key;
-#  ssl_prefer_server_ciphers On;
-#  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-#  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
-#  ssl_session_cache shared:SSL:20m;
-#  ssl_session_timeout 10m;
-#  add_header Strict-Transport-Security "max-age=31536000";
-#
-#location / {
-#proxy_pass       https://127.0.0.1:10000;
-#proxy_set_header Host      \$host;
-#proxy_set_header X-Real-IP \$remote_addr;
-#}
-#
-#}
+server {
+listen 10.0.0.245:443 ssl;
+server_name webmin.librerouter.net;
+
+  ssl_certificate /etc/ssl/nginx/webmin/webmin_bundle.crt;
+  ssl_certificate_key /etc/ssl/nginx/webmin/webmin_librerouter_net.key;
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+  ssl_session_cache shared:SSL:20m;
+  ssl_session_timeout 10m;
+  add_header Strict-Transport-Security "max-age=31536000";
+
+location / {
+proxy_pass       https://127.0.0.1:10000;
+proxy_set_header Host      \$host;
+proxy_set_header X-Real-IP \$remote_addr;
+}
+
+}
 " > /etc/nginx/sites-enabled/webmin
 
 
@@ -4868,8 +4868,8 @@ server {
 #SERVER_NTOP="$(cat /var/lib/tor/hidden_service/ntop/hostname 2>/dev/null)"
 
 # Creating certificate bundle
-#rm -rf /etc/ssl/nginx/ntop/ntop_bundle.crt
-#cat /etc/ssl/nginx/ntop/ntop_librerouter_net.crt /etc/ssl/nginx/ntop/ntop_librerouter_net.ca-bundle >> /etc/ssl/nginx/ntop/ntop_bundle.crt
+rm -rf /etc/ssl/nginx/ntop/ntop_bundle.crt
+cat /etc/ssl/nginx/ntop/ntop_librerouter_net.crt /etc/ssl/nginx/ntop/ntop_librerouter_net.ca-bundle >> /etc/ssl/nginx/ntop/ntop_bundle.crt
 
 echo "Configuring ntop virtual host ..." | tee -a /var/libre_config.log
 echo "
@@ -4879,25 +4879,25 @@ server {
 	server_name _;
 	return 301 https://ntop.librerouter.net;
 }
-#server {
-#	listen 10.0.0.244:443 ssl;
-#	server_name ntop.librenet;
-#
-#	ssl_certificate /etc/ssl/nginx/ntop/ntop_bundle.crt;
-#	ssl_certificate_key /etc/ssl/nginx/ntop/ntop_librerouter_net.key;
-#	ssl_prefer_server_ciphers On;
-#	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-#	ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
-#	ssl_session_cache shared:SSL:20m;
-#	ssl_session_timeout 10m;
-#	add_header Strict-Transport-Security "max-age=31536000";
-#
-#	location / {
-#		proxy_pass       http://127.0.0.1:3000;
-#		proxy_set_header Host      \$host;
-#		proxy_set_header X-Real-IP \$remote_addr;
-#	}
-#}
+server {
+	listen 10.0.0.244:443 ssl;
+	server_name ntop.librenet;
+
+	ssl_certificate /etc/ssl/nginx/ntop/ntop_bundle.crt;
+	ssl_certificate_key /etc/ssl/nginx/ntop/ntop_librerouter_net.key;
+	ssl_prefer_server_ciphers On;
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+	ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+	ssl_session_cache shared:SSL:20m;
+	ssl_session_timeout 10m;
+	add_header Strict-Transport-Security "max-age=31536000";
+
+	location / {
+		proxy_pass       http://127.0.0.1:3000;
+		proxy_set_header Host      \$host;
+		proxy_set_header X-Real-IP \$remote_addr;
+	}
+}
 " > /etc/nginx/sites-enabled/ntop
 
 
@@ -5182,31 +5182,31 @@ echo "Configuring Glype virtual host ..." | tee -a /var/libre_config.log
 # SERVER_GLYPE="$(cat /var/lib/tor/hidden_service/glype/hostname 2>/dev/null)"
 
 # Creating certificate bundle
-#rm -rf /etc/ssl/nginx/glype/glype_bundle.crt
-#cat /etc/ssl/nginx/glype/glype_librerouter_net.crt /etc/ssl/nginx/glype/glype_librerouter_net.ca-bundle >> /etc/ssl/nginx/glype/glype_bundle.crt
+rm -rf /etc/ssl/nginx/glype/glype_bundle.crt
+cat /etc/ssl/nginx/glype/glype_librerouter_net.crt /etc/ssl/nginx/glype/glype_librerouter_net.ca-bundle >> /etc/ssl/nginx/glype/glype_bundle.crt
 
 cat << EOF > /etc/nginx/sites-enabled/glype
 # Redirect connections from 10.0.0.240 to glype.librerouter.net
-#server {
-#listen 10.0.0.240:80;
-#server_name _;
-#return 301 https://glype.librerouter.net;
-#}
-#
-#server {
-#listen 10.0.0.240:443 ssl;
-#server_name glype.librerouter.net;
-#root /var/www/glype/;
-#ssl on;
-#ssl_certificate /etc/ssl/nginx/glype/glype_bundle.crt;
-#ssl_certificate_key /etc/ssl/nginx/glype/glype_librerouter_net.key;
-#ssl_prefer_server_ciphers On;
-#ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-#ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
-#ssl_session_cache shared:SSL:20m;
-#ssl_session_timeout 10m;
-#add_header Strict-Transport-Security "max-age=31536000";
-#}
+server {
+listen 10.0.0.240:80;
+server_name _;
+return 301 https://glype.librerouter.net;
+}
+
+server {
+listen 10.0.0.240:443 ssl;
+server_name glype.librerouter.net;
+root /var/www/glype/;
+ssl on;
+ssl_certificate /etc/ssl/nginx/glype/glype_bundle.crt;
+ssl_certificate_key /etc/ssl/nginx/glype/glype_librerouter_net.key;
+ssl_prefer_server_ciphers On;
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+ssl_session_cache shared:SSL:20m;
+ssl_session_timeout 10m;
+add_header Strict-Transport-Security "max-age=31536000";
+}
 EOF
 
 
