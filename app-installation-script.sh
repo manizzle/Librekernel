@@ -464,7 +464,7 @@ elif [ $PLATFORM = "D8" ]; then
         pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
         librrds-perl libapache2-mod-php5- apache2-prefork-dev \
         libmysqlclient-dev wkhtmltopdf libpcre3 mysql-server \
-	mysql-client-5.5 \
+	mysql-client-5.5 iw rfkill \
         2>&1 > /var/apt-get-install_1.log
 
 	# services
