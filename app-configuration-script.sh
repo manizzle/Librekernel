@@ -359,7 +359,53 @@ configure_apd()
 				echo "wpa=$wpa2$wpa" >> hostapd.conf
 				echo "wpa_passphrase=$key" >> hostapd.conf
 			fi
-			cat hostapd.conf.base >> hostapd.conf
+
+			cat << EOF >> hostapd.conf
+hw_mode=g
+channel=1
+beacon_int=100
+dtim_period=2
+max_num_sta=255
+rts_threshold=2347
+fragm_threshold=2346
+
+macaddr_acl=0
+# for further mac filtering once we know the hardware address of clients allowed ( from dhcpd.conf if configured by mac )
+#accept_mac_file=/etc/hostapd.accept
+#deny_mac_file=/etc/hostapd.deny
+
+auth_algs=3
+ignore_broadcast_ssid=0
+wmm_enabled=1
+# Low priority / AC_BK = background
+wmm_ac_bk_cwmin=4
+wmm_ac_bk_cwmax=10
+wmm_ac_bk_aifs=7
+wmm_ac_bk_txop_limit=0
+wmm_ac_bk_acm=0
+# Note: for IEEE 802.11b mode: cWmin=5 cWmax=10
+#
+# Normal priority / AC_BE = best effort
+wmm_ac_be_aifs=3
+wmm_ac_be_cwmin=4
+wmm_ac_be_cwmax=10
+wmm_ac_be_txop_limit=0
+wmm_ac_be_acm=0
+wmm_ac_vi_aifs=2
+wmm_ac_vi_cwmin=3
+wmm_ac_vi_cwmax=4
+wmm_ac_vi_txop_limit=94
+wmm_ac_vi_acm=0
+wmm_ac_vo_aifs=2
+wmm_ac_vo_cwmin=2
+wmm_ac_vo_cwmax=3
+wmm_ac_vo_txop_limit=47
+wmm_ac_vo_acm=0
+eapol_key_index_workaround=0
+eap_server=0
+device_name=Librerouter AP
+friendly_name=Librerouter Access Point
+EOF
 
 
 			# Update /etc/init.d/hostpad file
