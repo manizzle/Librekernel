@@ -415,6 +415,7 @@ EOF
 			mv hostapd.conf /etc/hostapd.$iname.conf
 			rfkill unblock all
 			hostapd /etc/hostapd.$iname.conf &
+			chmod u+x /etc/init.d/hostapd
 		done
 
         else
