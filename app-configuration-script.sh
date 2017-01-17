@@ -1,4 +1,4 @@
-#!/bin/bash
+/!/bin/bash
 # ---------------------------------------------------------
 # This script aims to configure all the packages and 
 # services which have been installed by test.sh script.
@@ -353,7 +353,7 @@ configure_apd()
                         echo "rsn_pairwise=CCMP" >> hostapd.conf
 			echo "ap_isolate=1" >> hostapd.conf
 
-                        if [ $wep = "1" ]; then
+                        if [ "$wep" = "1" ]; then
 				echo "wep_key0=\"$key\"" >> hostapd.conf
 			else
 				echo "wpa=$wpa2$wpa" >> hostapd.conf
@@ -5110,7 +5110,7 @@ server
       # forward users IP address
       proxy_set_header X-Real-IP \$remote_addr;
       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-      proxy_set_header Host $host;
+      proxy_set_header Host \$host;
       proxy_set_header x-webobjects-server-protocol HTTP/1.0;
       proxy_set_header x-webobjects-remote-host 127.0.0.1;
       proxy_set_header x-webobjects-server-name \$server_name;
@@ -5161,7 +5161,7 @@ server
       proxy_read_timeout 3600;
       proxy_buffers 64 256k;
 
-      proxy_set_header Host $host;
+      proxy_set_header Host \$host;
       proxy_set_header X-Real-IP \$remote_addr;
       proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
 
@@ -5195,18 +5195,42 @@ return 301 https://glype.librerouter.net;
 }
 
 server {
-listen 10.0.0.240:443 ssl;
-server_name glype.librerouter.net;
-root /var/www/glype/;
-ssl on;
-ssl_certificate /etc/ssl/nginx/glype/glype_bundle.crt;
-ssl_certificate_key /etc/ssl/nginx/glype/glype_librerouter_net.key;
-ssl_prefer_server_ciphers On;
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
-ssl_session_cache shared:SSL:20m;
-ssl_session_timeout 10m;
-add_header Strict-Transport-Security "max-age=31536000";
+  listen 10.0.0.240:443 ssl;
+  server_name glype.librerouter.net;
+  root /var/www/glype/;
+
+  index index.php index.html index.htm;
+
+  location / {
+        if (!-e \$request_filename){
+            rewrite ^(.*)$ /index.php last;
+        }
+  }  
+
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/glype/glype_bundle.crt;
+  ssl_certificate_key /etc/ssl/nginx/glype/glype_librerouter_net.key;
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+  ssl_session_cache shared:SSL:20m;
+  ssl_session_timeout 10m;
+  add_header Strict-Transport-Security "max-age=31536000";
+
+  location ~* \.php$ {
+    try_files \$uri =404;
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    # With php5-cgi alone:
+    # fastcgi_pass 127.0.0.1:9000;
+    # With php5-fpm:
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+
+    include fastcgi_params;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+}
+
+
 }
 EOF
 
