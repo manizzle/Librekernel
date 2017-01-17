@@ -3248,7 +3248,7 @@ POSTFIX_PASS_ENCRYPT=`openssl passwd -1 $POSTFIX_PASS`
 echo "insert into admin (username, password, created, modified, active ) values ('admin', '$POSTFIX_PASS_ENCRYPT', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '1')" |  mysql -u root -p"$MYSQL_PASS" mail        
 fi
 echo "insert into domain_admins (username, domain, created, active) values ('admin', 'ALL', '0000-00-00 00:00:00', '1')" | mysql -u root -p"$MYSQL_PASS" mail
-echo"insert into domain (domain, description, aliases, mailboxes, maxquota, quota, transport, backupmx, created, modified, active) values ('ALL', '', '0', '0', '0', '0', '', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '1')" | mysql -u root -p"$MYSQL_PASS" mail
+echo "insert into domain (domain, description, aliases, mailboxes, maxquota, quota, transport, backupmx, created, modified, active) values ('ALL', '', '0', '0', '0', '0', '', '0', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '1')" | mysql -u root -p"$MYSQL_PASS" mail
 
 cat << EOF > /etc/postfixadmin/config.inc.php
 <?php
