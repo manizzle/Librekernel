@@ -901,6 +901,71 @@ install_modsecurity()
 }
 
 
+# ---------------------------------------------------------
+# Function to install WAF-FLE (Modsecurity GUI)
+# ---------------------------------------------------------
+install_waffle() {
+        echo "Installing WAF-FLE ..." | tee -a /var/libre_install.log
+
+        # installing dependencies
+        apt-get install -y --force-yes php5-geoip
+
+        if [ ! -e waf-fle-master.zip ]; then
+                echo "Downloading waf-fle ..." | tee -a /var/libre_install.log
+                wget https://github.com/klaubert/waf-fle/archive/master.zip
+                if [ $? -ne 0 ]; then
+                        echo "Unable to download waf-fle. Exiting ..." | tee -a /var/libre_install.log
+                        exit 3
+                fi
+        fi
+
+        # Download MaxMind GeoIP Database
+
+        mkdir /usr/share/GeoIP/
+        cd /usr/share/GeoIP/
+
+        if [ ! -e GeoIP.dat.gz ]; then
+                echo "Downloading GeoIP.dat ..." | tee -a /var/libre_install.log 
+                wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
+                if [ $? -ne 0 ]; then
+                        echo "Unable to download GeoIP.dat. Exiting ..." | tee -a /var/libre_install.log
+                        exit 3
+                fi
+        fi
+
+        if [ ! -e GeoLiteCity.dat.gz ]; then
+                echo "Downloading GeoLiteCity.dat ..." | tee -a /var/libre_install.log
+                wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+                if [ $? -ne 0 ]; then
+                        echo "Unable to download GeoLiteCity.dat. Exiting ..." | tee -a /var/libre_install.log
+                        exit 3
+                fi
+        fi
+
+        if [ ! -e GeoIPASNum.dat.gz ]; then
+                echo "Downloading GeoIPASNum.dat ..." | tee -a /var/libre_install.log
+                wget http://geolite.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz
+                if [ $? -ne 0 ]; then
+                        echo "Unable to download GeoIPASNum.dat. Exiting ..." | tee -a /var/libre_install.log
+                        exit 3
+                fi
+        fi
+
+        # Decompressing packages
+        gzip -d GeoIP.dat.gz
+        gzip -d GeoLiteCity.dat.gz
+        gzip -d GeoIPASNum.dat.gz
+
+        mv GeoLiteCity.dat GeoIPCity.dat
+        # To make php GeoIP extension work with ASNum database
+        cp GeoIPASNum.dat GeoIPISP.dat
+
+        mkdir -p /usr/local/waf-fle/
+        rm -rf /usr/local/waf-fle/*
+        unzip waf-fle-master.zip -d /usr/local/waf-fle/
+}
+
+
 # -----------------------------------------------
 # Function to install ssl certificates
 # -----------------------------------------------
@@ -2456,6 +2521,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_packages       	# Download and install packages	
 #	install_libressl	# Install Libressl package
 	install_modsecurity     # Install modsecurity package
+#	install_waffle		# Install modsecurity GUI WAF-FLE package
 	install_certificates	# Install ssl certificates
 	install_nginx		# Install nginx package
 	install_mailpile	# Install Mailpile package
