@@ -3842,6 +3842,31 @@ EOF
 
 
 # ---------------------------------------------------------
+# Function to configure modesecurity GUI WAF-FLE
+# ---------------------------------------------------------
+configure_waffle()
+{
+   # Import "waffle.mysql" scheme to created the database on MySQL:
+   cd /usr/local/waf-fle/
+
+   echo "Configuring waf-fle ..." | tee -a /var/libre_config.log
+   if [ ! -e  /var/lib/mysql/waffle ]; then
+
+      # Defining MySQL user and password variables
+      # MYSQL_PASS="librerouter"
+      MYSQL_USER="root"
+
+      # Creating MySQL database frnd for waffle
+      echo "CREATE DATABASE waffle;" \
+      | mysql -u "$MYSQL_USER" -p"$MYSQL_PASS"
+   fi
+
+   # Inserting waffle database
+   mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" waffle < /usr/local/waf-fle/waffle.sql
+}
+
+
+# ---------------------------------------------------------
 # Function to configure nginx web server
 # ---------------------------------------------------------
 configure_nginx() 
@@ -6341,6 +6366,7 @@ configure_easyrtc		# Configuring EasyRTC local service
 configure_owncloud		# Configuring Owncloud local service
 configure_mailpile		# Configuring Mailpile local service
 configure_modsecurity		# Configuring modsecurity 
+#configure_waffle		# Configuring modsecurity GUI WAF-FLE
 configure_nginx                 # Configuring Nginx web server
 configure_privoxy		# Configuring Privoxy proxy server
 configure_tinyproxy             # Configuring Tinyproxy proxy server
