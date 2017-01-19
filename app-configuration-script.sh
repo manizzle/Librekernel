@@ -1,4 +1,4 @@
-/!/bin/bash
+#!/bin/bash
 # ---------------------------------------------------------
 # This script aims to configure all the packages and 
 # services which have been installed by test.sh script.
@@ -286,6 +286,7 @@ cat << EOF > /etc/hosts
 127.0.0.1       localhost.librenet librerouter localhost
 10.0.0.1        librerouter.librenet
 10.0.0.12       snorby.librenet
+10.0.0.238      waffle.librerouter.net
 10.0.0.239      kibana.librerouter.net
 10.0.0.240      glype.librerouter.net
 10.0.0.241      sogo.librerouter.net
@@ -638,6 +639,13 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         #allow-hotplug $INT_INTERFACE:17
         iface $INT_INTERFACE:17 inet static
             address 10.0.0.240
+            netmask 255.255.255.0
+
+        #WAF-FLE
+        auto $INT_INTERFACE:18
+        #allow-hotplug $INT_INTERFACE:18
+        iface $INT_INTERFACE:18 inet static
+            address 10.0.0.238
             netmask 255.255.255.0
 EOF
 
@@ -1909,6 +1917,7 @@ local-data: "librerouter.librenet. IN A 10.0.0.1"
 local-data: "i2p.librenet. IN A 10.0.0.1"
 local-data: "tahoe.librenet. IN A 10.0.0.1"
 local-data: "snorby.librenet. IN A 10.0.0.12"
+local-data: "waffle.librerouter.net. IN A 10.0.0.238"
 local-data: "kibana.librerouter.net. IN A 10.0.0.239"
 local-data: "glype.librerouter.net. IN A 10.0.0.240"
 local-data: "sogo.librerouter.net. IN A 10.0.0.241"
@@ -3846,12 +3855,9 @@ EOF
 # ---------------------------------------------------------
 configure_waffle()
 {
-   # Import "waffle.mysql" scheme to created the database on MySQL:
-   cd /usr/local/waf-fle/
-
    echo "Configuring waf-fle ..." | tee -a /var/libre_config.log
    if [ ! -e  /var/lib/mysql/waffle ]; then
-
+   
       # Defining MySQL user and password variables
       # MYSQL_PASS="librerouter"
       MYSQL_USER="root"
@@ -3859,10 +3865,43 @@ configure_waffle()
       # Creating MySQL database frnd for waffle
       echo "CREATE DATABASE waffle;" \
       | mysql -u "$MYSQL_USER" -p"$MYSQL_PASS"
-   fi
+      if [ $? -ne 0 ]; then
+            echo "Error: Unable to create waf-fle database. Exiting" | tee -a /var/libre_config.log
+            exit 3
+      fi    
 
-   # Inserting waffle database
-   mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" waffle < /usr/local/waf-fle/waffle.sql
+      # Inserting waffle database
+      mysql -u "$MYSQL_USER" -p"$MYSQL_PASS" waffle < /usr/local/waf-fle/waf-fle-master/extra/waffle.mysql
+      if [ $? -ne 0 ]; then
+            echo "Error: Unable to insert waf-fle database. Exiting" | tee -a /var/libre_config.log
+            exit 3
+      fi    
+   fi 
+   
+# WAF-FLE Configuration File
+cat << EOF > /usr/local/waf-fle/waf-fle-master/config.php
+<?PHP
+\$DB_HOST  = "localhost";
+\$DB_USER  = "root";
+\$DB_PASS  = "$MYSQL_PASS";
+\$DATABASE = "waffle";
+\$COMPRESSION = true;
+\$timePreference = 'mili';
+\$APC_ON = true; 
+\$max_event_number = "25";
+\$deleteLimit = 2000;
+\$deleteWait = 2;
+\$CACHE_TIMEOUT   = 30;
+\$SESSION_TIMEOUT = 600;
+\$GetSensorInfo = true;
+\$PcreErrRuleId = 99999;
+\$DEBUG = false;
+\$SETUP = false;
+?>
+EOF
+
+# Apache configuration 
+/usr/local/waf-fle/extra/waf-fle.conf /etc/apache2/conf-enabled/
 }
 
 
@@ -5253,11 +5292,70 @@ server {
     include fastcgi_params;
     fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-}
-
-
+  }
 }
 EOF
+
+
+#------------------waffle.librerouter.net------------------#
+#                       10.0.0.238                         #
+#----------------------------------------------------------#
+
+# Configuring waffle virtual host
+echo "Configuring waffle virtual host ..." | tee -a /var/libre_config.log
+
+# Getting Tor hidden service waffle hostname
+# SERVER_WAFFLE="$(cat /var/lib/tor/hidden_service/waffle/hostname 2>/dev/null)"
+
+# Creating certificate bundle
+#rm -rf /etc/ssl/nginx/glype/glype_bundle.crt
+#cat /etc/ssl/nginx/glype/glype_librerouter_net.crt /etc/ssl/nginx/glype/glype_librerouter_net.ca-bundle >> /etc/ssl/nginx/glype/glype_bundle.crt
+
+cat << EOF > /etc/nginx/sites-enabled/waffle
+# Redirect connections from 10.0.0.238 to waffle.librerouter.net
+server {
+listen 10.0.0.238:80;
+server_name _;
+return 301 https://waffle.librerouter.net;
+}
+
+#server {
+#  listen 10.0.0.240:443 ssl;
+#  server_name waffle.librerouter.net;
+#
+#  ssl on;
+#  ssl_certificate /etc/ssl/nginx/waffle/waffle_bundle.crt;
+#  ssl_certificate_key /etc/ssl/nginx/waffle/waffle_librerouter_net.key;
+#  ssl_prefer_server_ciphers On;
+#  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+#  ssl_session_cache shared:SSL:20m;
+#  ssl_session_timeout 10m;
+#  add_header Strict-Transport-Security "max-age=31536000";
+#
+#
+#  location / {
+#    proxy_pass       http://127.0.0.1:88/waf-fle;
+#    proxy_set_header Host      \$host;
+#    proxy_set_header X-Real-IP \$remote_addr;
+#  }
+#
+#
+#  location ~* \.php$ {
+#    try_files \$uri =404;
+#    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+#    # With php5-cgi alone:
+#    # fastcgi_pass 127.0.0.1:9000;
+#    # With php5-fpm:
+#    fastcgi_pass unix:/var/run/php5-fpm.sock;
+#
+#    include fastcgi_params;
+#    fastcgi_index index.php;
+#    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+#  }
+#}
+EOF
+
 
 
 # Restarting Yacy php5-fpm and Nginx services 
@@ -6122,6 +6220,8 @@ echo "|        sogo  |                        |       sogo.librerouter.net |   1
 echo "|       glype  |                        |      glype.librerouter.net |   10.0.0.240 |" \
 | tee -a /var/box_services
 echo "|      kibana  |                        |     kibana.librerouter.net |   10.0.0.239 |" \
+| tee -a /var/box_services
+echo "|      waffle  |                        |     waffle.librerouter.net |   10.0.0.238 |" \
 | tee -a /var/box_services
 
 echo "------------------------------------------------------------------------------------" \
