@@ -907,8 +907,14 @@ install_modsecurity()
 install_waffle() {
         echo "Installing WAF-FLE ..." | tee -a /var/libre_install.log
 
-        # installing dependencies
-        apt-get install -y --force-yes php5-geoip
+	# installing dependencies
+        apt-get install -y --force-yes php5-geoip php-apc
+
+
+        mkdir -p /usr/local/waf-fle/
+        cd /usr/local/waf-fle/
+        rm -rf /usr/local/waf-fle/*
+
 
         if [ ! -e waf-fle-master.zip ]; then
                 echo "Downloading waf-fle ..." | tee -a /var/libre_install.log
@@ -916,16 +922,22 @@ install_waffle() {
                 if [ $? -ne 0 ]; then
                         echo "Unable to download waf-fle. Exiting ..." | tee -a /var/libre_install.log
                         exit 3
-                fi
+                fi 
         fi
+      
+        # Decompressing package
+        unzip master.zip -d /usr/local/waf-fle/
+        cp -r /usr/local/waf-fle/waf-fle-master/* /usr/local/waf-fle/
+        rm -rf /usr/local/waf-fle/waf-fle-master/
 
         # Download MaxMind GeoIP Database
-
+	
         mkdir /usr/share/GeoIP/
         cd /usr/share/GeoIP/
+        rm -r /usr/share/GeoIP/*
 
         if [ ! -e GeoIP.dat.gz ]; then
-                echo "Downloading GeoIP.dat ..." | tee -a /var/libre_install.log 
+                echo "Downloading GeoIP.dat ..." | tee -a /var/libre_install.log
                 wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
                 if [ $? -ne 0 ]; then
                         echo "Unable to download GeoIP.dat. Exiting ..." | tee -a /var/libre_install.log
@@ -959,10 +971,6 @@ install_waffle() {
         mv GeoLiteCity.dat GeoIPCity.dat
         # To make php GeoIP extension work with ASNum database
         cp GeoIPASNum.dat GeoIPISP.dat
-
-        mkdir -p /usr/local/waf-fle/
-        rm -rf /usr/local/waf-fle/*
-        unzip waf-fle-master.zip -d /usr/local/waf-fle/
 }
 
 
