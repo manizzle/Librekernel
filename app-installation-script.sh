@@ -2562,7 +2562,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_gitlab		# Install gitlab packae
 	install_trac		# Install trac package
 	install_redmine		# Install redmine package
-#	install_ndpi		# Install ndpi package
+	install_ndpi		# Install ndpi package
 	install_redsocks	# Install redsocks package
 	install_ntopng		# Install ntopng package
 	install_postfix		# Install postfixadmin package
