@@ -6004,6 +6004,100 @@ service snorby restart
 service snortbarn restart
 }
 
+# ---------------------------------------------------------
+# Function to configure fail2ban
+# ---------------------------------------------------------
+configure_fail2ban()
+{
+rm -rf /etc/fail2ban/jail.conf
+touch /etc/fail2ban/jail.conf
+chmod 660 /etc/fail2ban/jail.conf
+cat << EOF > /etc/fail2ban/jail.conf
+[DEFAULT]
+ignoreip = 127.0.0.1/8 10.0.0.0/24
+bantime = 1200
+findtime = 300
+maxretry = 5
+
+backend = auto
+usedns = warn
+destemail = root@localhost.librerouter
+sendername = Fail2Ban Alerts
+sender = fail2ban@localhost.librerouter
+banaction = iptables-multiport
+mta = sendmail
+protocol = tcp
+chain = INPUT
+
+#Types of Bans
+action_ = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+action_mw = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+		%(mta)s-whois[name=%(__name__)s, dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s", sendername="%(sendername)s"]
+action_mwl = %(banaction)s[name=%(__name__)s, port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+		%(mta)s-whois-lines[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s", sendername="%(sendername)s"]
+
+#Default method of ban
+action = %(action_)s
+
+#Jails - Securing services..
+
+[ssh]
+enabled = true
+port 	= ssh
+filter 	= sshd
+logpath = /var/log/auth.log
+maxretry = 4
+
+[nginx-http-auth]
+enabled = false
+filter	= ngin-http-auth
+port	= http,https
+logpath = /var/log/nginx/error.log
+
+[roundcube-auth]
+enabled = false
+filter  = roundcube-auth
+port	 = http,https
+logpath = /var/log/roundcube/userlogins
+
+[sogo-auth]
+enabled	= false
+filter	= sogo-auth
+port	= http,https
+#Without proxy would be 20000
+logpath = /var/log/sogo/sogo.log
+
+[postfix]
+enabled	= true
+port	= smtp,ssmtp,submission
+filter	= postfix
+logpath = /var/log/mail.log
+
+[dovecot]
+enabled	= true
+port	= smtp,ssmtp,submission,imap2,imap3,imaps,pop3,pop3s
+filter	= dovecot
+logpath = /var/log/mail.log
+
+[sasl]
+enabled  = true
+port     = smtp,ssmtp,submission,imap2,imap3,imaps,pop3,pop3s
+filter   = postfix-sasl
+logpath  = /var/log/mail.warn
+
+[mysqld-auth]
+
+enabled  = true
+filter   = mysqld-auth
+port     = 3306
+logpath  = /var/log/mysql.log
+
+EOF
+service mysql restart &> /dev/null
+service fail2ban stop &> /dev/null
+service fail2ban start &> /dev/null
+
+}
 
 # ---------------------------------------------------------
 # Function to redirect yacy and prosody traffic to tor
@@ -6341,6 +6435,8 @@ owncloud         /var/www/owncloud/config/config.php
 mailpile         /opt/Mailpile/setup.cfg
 redmine          /opt/redmine/redmine-3.3.1/config/configuration.yml
 trac             /opt/trac/libretrac/conf/trac.ini
+fail2ban	 /etc/fail2ban/fail2ban.conf
+		 /etc/fail2ban/jail.conf
 EOF
 
 # Create configs command
@@ -6476,6 +6572,7 @@ configure_squidclamav		# Configuring squidclamav service
 configure_squidguard		# Configuring squidguard
 configure_squidguardmgr		# Configuring squidguardmgr
 configure_ecapguardian		# Configuring ecapguardian
+configure_fail2ban		# Configuring Fail2Ban
 
 # ------ Mail server Config ------
 
