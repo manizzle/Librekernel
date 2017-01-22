@@ -6093,7 +6093,6 @@ port     = 3306
 logpath  = /var/log/mysql.log
 
 EOF
-service mysql restart &> /dev/null
 service fail2ban stop &> /dev/null
 service fail2ban start &> /dev/null
 
