@@ -14,6 +14,12 @@ echo "Running installation scirpt"
 chmod +x app-installation-script.sh
 ./app-installation-script.sh
 
+# Checking status
+if [ $? -ne 0 ]; then
+        echo "Erron in installtaion script. Exiting ..."
+        exit 1
+fi
+
 
 # -----------------------------------------------
 # Configuration part
@@ -28,3 +34,11 @@ fi
 echo "Running configuraiton script"
 chmod +x app-configuration-script.sh
 ./app-configuration-script.sh
+
+# Checking status 
+if [ $? -ne 0 ]; then
+        echo "Erron in configuration script. Exiting ..."
+        exit 1
+fi
+
+
