@@ -2979,6 +2979,9 @@ ecapguardian &
 # Setting sockets permissions 
 chmod -R a+rw /etc/ecapguardian/ecap
 
+# Phrase config
+sed "s/phrasefiltermode = 2/phrasefiltermode = 3/g" -i /etc/ecapguardian/ecapguardian.conf
+
 # Preparing files 
 rm -rf /root/libre_scripts/
 mkdir /root/libre_scripts/
