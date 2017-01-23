@@ -1548,6 +1548,9 @@ install_ecapguardian()
 
 	cd ecapguardian
 
+	# Adding category
+	sed -i  "s/N\/A/Pornography/g" src/HTMLTemplate.cpp
+
 	# Adding subdir for automake
         sed -i '/AM_INIT_AUTOMAKE/c\AM_INIT_AUTOMAKE([subdir-objects])' configure.ac
 
