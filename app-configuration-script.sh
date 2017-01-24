@@ -934,6 +934,8 @@ iptables -t filter -F
 
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.11 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.12 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.238 -j ACCEPT
+iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.239 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.240 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.241 -j ACCEPT
 iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp -d 10.0.0.242 -j ACCEPT
@@ -5311,8 +5313,8 @@ echo "Configuring waffle virtual host ..." | tee -a /var/libre_config.log
 # SERVER_WAFFLE="$(cat /var/lib/tor/hidden_service/waffle/hostname 2>/dev/null)"
 
 # Creating certificate bundle
-#rm -rf /etc/ssl/nginx/glype/glype_bundle.crt
-#cat /etc/ssl/nginx/glype/glype_librerouter_net.crt /etc/ssl/nginx/glype/glype_librerouter_net.ca-bundle >> /etc/ssl/nginx/glype/glype_bundle.crt
+rm -rf /etc/ssl/nginx/waffle/waffle_bundle.crt
+cat /etc/ssl/nginx/waffle/waffle_librerouter_net.crt /etc/ssl/nginx/waffle/waffle_librerouter_net.ca-bundle >> /etc/ssl/nginx/waffle/waffle_bundle.crt
 
 cat << EOF > /etc/nginx/sites-enabled/waffle
 # Redirect connections from 10.0.0.238 to waffle.librerouter.net
@@ -5322,41 +5324,41 @@ server_name _;
 return 301 https://waffle.librerouter.net;
 }
 
-#server {
-#  listen 10.0.0.240:443 ssl;
-#  server_name waffle.librerouter.net;
-#
-#  ssl on;
-#  ssl_certificate /etc/ssl/nginx/waffle/waffle_bundle.crt;
-#  ssl_certificate_key /etc/ssl/nginx/waffle/waffle_librerouter_net.key;
-#  ssl_prefer_server_ciphers On;
-#  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-#  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
-#  ssl_session_cache shared:SSL:20m;
-#  ssl_session_timeout 10m;
-#  add_header Strict-Transport-Security "max-age=31536000";
-#
-#
-#  location / {
-#    proxy_pass       http://127.0.0.1:88/waf-fle;
-#    proxy_set_header Host      \$host;
-#    proxy_set_header X-Real-IP \$remote_addr;
-#  }
-#
-#
-#  location ~* \.php$ {
-#    try_files \$uri =404;
-#    fastcgi_split_path_info ^(.+\.php)(/.+)$;
-#    # With php5-cgi alone:
-#    # fastcgi_pass 127.0.0.1:9000;
-#    # With php5-fpm:
-#    fastcgi_pass unix:/var/run/php5-fpm.sock;
-#
-#    include fastcgi_params;
-#    fastcgi_index index.php;
-#    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-#  }
-#}
+server {
+  listen 10.0.0.238:443 ssl;
+  server_name waffle.librerouter.net;
+
+  ssl on;
+  ssl_certificate /etc/ssl/nginx/waffle/waffle_bundle.crt;
+  ssl_certificate_key /etc/ssl/nginx/waffle/waffle_librerouter_net.key;
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+  ssl_session_cache shared:SSL:20m;
+  ssl_session_timeout 10m;
+  add_header Strict-Transport-Security "max-age=31536000";
+
+
+  location / {
+    proxy_pass       http://127.0.0.1:88/waf-fle;
+    proxy_set_header Host      \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+  }
+
+
+  location ~* \.php$ {
+    try_files \$uri =404;
+    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+    # With php5-cgi alone:
+    # fastcgi_pass 127.0.0.1:9000;
+    # With php5-fpm:
+    fastcgi_pass unix:/var/run/php5-fpm.sock;
+
+    include fastcgi_params;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+  }
+}
 EOF
 
 
