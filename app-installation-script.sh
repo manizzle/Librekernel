@@ -2378,6 +2378,11 @@ install_ndpi()
                 exit 3
         fi
 
+	# Load Module at Startup
+	if ! grep xt_ndpi /etc/modules > /dev/null ; then
+	    echo "xt_ndpi" >> /etc/modules
+	fi
+
 	cd $INSTALL_HOME
 }
 
