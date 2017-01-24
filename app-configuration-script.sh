@@ -5321,7 +5321,7 @@ cat << EOF > /etc/nginx/sites-enabled/waffle
 server {
 listen 10.0.0.238:80;
 server_name _;
-return 301 https://waffle.librerouter.net;
+return 301 https://waffle.librerouter.net/waf-fle;
 }
 
 server {
@@ -5340,24 +5340,25 @@ server {
 
 
   location / {
-    proxy_pass       http://127.0.0.1:88/waf-fle;
+    proxy_pass       http://127.0.0.1:88;
     proxy_set_header Host      \$host;
     proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$remote_addr;
   }
 
 
-  location ~* \.php$ {
-    try_files \$uri =404;
-    fastcgi_split_path_info ^(.+\.php)(/.+)$;
-    # With php5-cgi alone:
-    # fastcgi_pass 127.0.0.1:9000;
-    # With php5-fpm:
-    fastcgi_pass unix:/var/run/php5-fpm.sock;
-
-    include fastcgi_params;
-    fastcgi_index index.php;
-    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-  }
+#  location ~* \.php$ {
+#    try_files \$uri =404;
+#    fastcgi_split_path_info ^(.+\.php)(/.+)$;
+#    # With php5-cgi alone:
+#    # fastcgi_pass 127.0.0.1:9000;
+#    # With php5-fpm:
+#    fastcgi_pass unix:/var/run/php5-fpm.sock;
+#
+#    include fastcgi_params;
+#    fastcgi_index index.php;
+#    fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+#  }
 }
 EOF
 
