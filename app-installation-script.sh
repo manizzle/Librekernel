@@ -137,6 +137,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' > /etc/apt/sources.list.d/owncloud.list
 		wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/Release.key -O- | apt-key add -
+		
+		# Prepare Sogo repo
+                apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
+                echo 'deb http://packages.inverse.ca/SOGo/nightly/3/ubuntu/ precise precise' > /etc/apt/sources.list.d/sogo.list
 
 		# Preparing yacy repo
 		echo 'deb http://debian.yacy.net ./' > /etc/apt/sources.list.d/yacy.list
@@ -170,6 +174,10 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' > /etc/apt/sources.list.d/owncloud.list
 		wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/Release.key -O- | apt-key add -
 
+		# Prepare Sogo repo
+                apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
+                echo 'deb http://packages.inverse.ca/SOGo/nightly/3/ubuntu/ trusty trusty' > /etc/apt/sources.list.d/sogo.list
+		
 		# Preparing yacy repo
 		echo 'deb http://debian.yacy.net ./' > /etc/apt/sources.list.d/yacy.list
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
@@ -207,7 +215,11 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/ /' > /etc/apt/sources.list.d/owncloud.list
 		wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_7.0/Release.key -O- | apt-key add -
-
+		
+		# Prepare Sogo repo
+                apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
+                echo 'deb http://packages.inverse.ca/SOGo/nightly/3/debian/ wheezy wheezy' > /etc/apt/sources.list.d/sogo.list
+		
 		# Prepare prosody repo
 		# echo 'deb http://packages.prosody.im/debian wheezy main' > /etc/apt/sources.list.d/prosody.list
 		# wget https://prosody.im/files/prosody-debian-packages.key -O- | apt-key add -
@@ -272,8 +284,11 @@ EOF
 		# Prepare owncloud repo
 		echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/ /' > /etc/apt/sources.list.d/owncloud.list
 		wget http://download.opensuse.org/repositories/isv:/ownCloud:/community/Debian_8.0/Release.key -O- | apt-key add -
-        
-
+		
+		# Prepare Sogo repo
+                apt-key adv --keyserver keys.gnupg.net --recv-key 0x810273C4
+                echo 'deb http://packages.inverse.ca/SOGo/nightly/3/debian/ jessie jessie' > /etc/apt/sources.list.d/sogo.list
+		
 		# Prepare prosody repo
 #		echo 'deb http://packages.prosody.im/debian wheezy main' > /etc/apt/sources.list.d/prosody.list
 #		wget https://prosody.im/files/prosody-debian-packages.key -O- | apt-key add -
