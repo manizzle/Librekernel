@@ -1,6 +1,5 @@
 ![](http://circuitosaljarafe.com/librerouter/draw2.png)
 
-![initial-setup-workflow](http://www.circuitosaljarafe.com/librerouter/draw2.png)
 
 #General Purpose
 Once the system is installed and configured from first time, all configuration files are copied to DFS based on Tahoe-LAFS over Tor.
