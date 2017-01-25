@@ -33,16 +33,21 @@ to reboot, these tasks:
   
 The /var/spool/cront MUST be included on files for backup.
 
-INSTALL SCRIPT
+#INSTALL SCRIPT
 Does, 
 Check Python version, create new Python enviroment
 Install rsync
 Install py tahoe-lafs[tor]
+Install shhfs
 Install inotify ( this is for futher utilization )
 
+#CONFIGURATION SCRIPT
+
+Configure the Tahone Private node
+Add init script to launch Tahoe Private node ONCE Tor is ready
 
 
-BACKING
+#BACKING
 
 Copy files from local to Tahoe Private space
 This does:
@@ -56,9 +61,9 @@ Backing procedure is called from CRON periodically, upgrading backup
 
 
 
-RESTORE
+#RESTORE
 
-The restore procedure is initiated ONLisY if the user selects RECOVERY mode. 
+The restore procedure is initiated ONLY if the user selects RECOVERY mode. 
 In this case the configuration_script is not executed, and is executed the recover_script does:
  a) Mount local mounpoint connecting with Tahoe Public area and collect a list of files
  b) Prompt user to select file from the list that matches who is 
@@ -67,5 +72,11 @@ In this case the configuration_script is not executed, and is executed the recov
  e) Mount Tahoe Private area on local mountpoint
  f) Extract from mountpoint/SysBackup.tar.gz all required configuration files with full path to /
  g) Reboot
- 
- 
+
+
+
+#NOTES
+ Tahoe will works with configuration hiden_ip=true and over Tor. 
+ I2P will be not YET implemented due a persistance of bug on SSL23 handshake on Tahoe-lafs v1.12.1 
+ Due limitations on public test Tor grid ( lack of nodes and low speed ) is highly recomended install and run
+ at least 2 nodes as INTRODUCER over Tor. ( This will be our own private grid, for Public and Private storage areas )
