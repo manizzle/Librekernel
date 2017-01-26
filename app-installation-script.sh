@@ -661,7 +661,7 @@ check_requirements()
         # fi
 	
 	# Checking physical memory size.
-        if [ $MEMORY -le 2097152 ]; then 
+        if [ $MEMORY -le 2000000 ]; then 
 		echo "You need at least 2GB of RAM. Exiting" | tee -a /var/libre_install.log
                 exit 5
         fi
@@ -1113,6 +1113,11 @@ install_mailpile()
 	fi
 	virtualenv -p /usr/bin/python2.7 --system-site-packages /opt/Mailpile/mailpile-env
 	source /opt/Mailpile/mailpile-env/bin/activate
+	
+	pip install packaging
+        pip install appdirs
+        pip install --upgrade six
+
 	pip install -r /opt/Mailpile/requirements.txt
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install Mailpile. Exiting ..." | tee -a /var/libre_install.log
