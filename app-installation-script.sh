@@ -413,6 +413,28 @@ EOF
 
 
 # ----------------------------------------------
+# Function to configure WLAN AP
+# ----------------------------------------------
+install_apmode()
+{
+echo "Preparing wlan AP script ..."
+
+mkdir -p /root/libre_scripts/
+rm -rf /root/libre_scripts/apmode.sh
+
+echo "Downloading apmode script ..."
+wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/apmode.sh
+if [ $? -ne 0 ]; then
+	echo "Unable to download apmode script. Exiting ..."
+	exit 1
+fi
+
+# Moving script to permanent location
+mv apmode.sh /root/libre_scripts/
+}
+
+
+# ----------------------------------------------
 # install_packages
 # ----------------------------------------------
 install_packages() 
@@ -2554,6 +2576,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         get_interfaces  	# Get DHCP on eth0 or eth1 and 
 				# connect to Internet
 	configure_repositories	# Prepare and update repositories
+	install_apmode		# Prepare wlan AP script
 	install_packages       	# Download and install packages	
 #	install_libressl	# Install Libressl package
 	install_modsecurity     # Install modsecurity package
