@@ -6271,7 +6271,28 @@ EOF
 # Create services command
 cat << EOF > /usr/sbin/services
 #!/bin/bash
-cat /var/box_services
+key=\$1
+  case \$key in
+    -p|--print)
+      cat /var/box_services
+      ;;
+    -w|--wlan)
+      /root/libre_scripts/apmode.sh
+      ;;
+    -h|--help|*)
+      echo ""
+      echo "    Usage: services  [OPTION]"
+      echo ""
+      echo "    -p   print servicese information"
+      echo "    -w   run wlan AP configuration"
+      echo "    -h   print help"
+      echo ""
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      exit 1
+      ;;
+  esac
 EOF
 
 chmod +x /usr/sbin/services
