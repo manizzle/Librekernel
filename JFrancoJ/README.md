@@ -21,7 +21,8 @@ This flow chart shows the proccess of installation or re-intallation recovering 
 
 # REQUIREMENTS 
 Are covered by app_install_tahoe.sh script.
- Tahoe-LAFS version 1.12.0 or newer ( recomended 1.12.1 , latest )
- sshfs ( support for FUSE )
- rsync ( support for backing restoring )
+
+1 Tahoe-LAFS version 1.12.0 or newer ( recomended 1.12.1 , latest )
+2 sshfs ( support for FUSE )
+3 rsync ( support for backing restoring )
 
