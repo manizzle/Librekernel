@@ -76,11 +76,9 @@ Resume of steps:
 - Or any physical machine like https://www.debian.org/doc/manuals/debian-handbook/sect.installation-steps.ru.html
 - In the Debian please do a Snapshot in the Virtual machine just after being install.
 - go shell command console in debian and execute as root:
-- wget -no-check-certificate http://bit.ly/2gbKstn | bash
-
-or
 
 - apt-get install curl
+all yes yes continue
 - curl -L http://bit.ly/2gbKstn | bash
 
 Important note before testing : 
