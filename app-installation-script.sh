@@ -111,6 +111,10 @@ configure_repositories ()
 	/etc/init.d/ntp restart > /dev/null 2>&1
 	date | tee -a /var/libre_install.log
 	
+	# Configuring hostname and domain name
+	echo "librerouter" > /etc/hostname
+	echo "127.0.0.1 localhost.librenet librerouter localhost" > /etc/hosts
+	
 	echo "Configuring repositories ... " | tee -a /var/libre_install.log
 
 	# echo "adding unauthenticated upgrade"
