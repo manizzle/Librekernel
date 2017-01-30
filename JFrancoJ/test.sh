@@ -131,8 +131,8 @@ echo Clave $mysecondpass
 # Convert this alias to encrypted key with pass=$myfirstpass and save as $myalias
 
 # creates PEM 
-ssh-keygen -N '' -f /tmp/ssh_keys
-openssl rsa  -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
+ssh-keygen -N '$myfirstpass' -f /tmp/ssh_keys
+openssl rsa  passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
 
 # create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
 # the $phrase is the entry point to the private area (pb:/ from /usr/node_1/tahoe.cfg )
@@ -141,7 +141,7 @@ frase=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1
 echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /var/public_node/$myalias
 
 # Decrypt will be used for restore only, and will discover the requied URI:DIR2 value for the private area node
-# decrypt | openssl rsautl -decrypt -inkey /tmp/ssh_keys
+# cat /var/public_node/$myalias | openssl rsautl -decrypt -inkey /tmp/ssh_keys # < Will prompt for password to decrypt it
 
 
 
