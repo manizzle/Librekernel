@@ -132,7 +132,7 @@ echo Clave $mysecondpass
 
 # creates PEM 
 ssh-keygen -N '$myfirstpass' -f /tmp/ssh_keys
-openssl rsa  passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
+openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
 
 # create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
 # the $phrase is the entry point to the private area (pb:/ from /usr/node_1/tahoe.cfg )
