@@ -3,7 +3,8 @@
 # This scirpt will prompt user for ALIAS name and PASSWORD on clean installation.
 # This clean ALIAS will be saved to Public tahoe area with contents an encrypted string
 # The decrypted string will point to the Private tahoe area for this box
-
+#
+# This script must be launched AFTER app_install_tahoe.sh and AFTER app_start_tahoe.sh
 
 #if [ -f /tmp/.X0-lock ];
 #then
@@ -133,9 +134,9 @@ echo Clave $mysecondpass
 ssh-keygen -N '' -f /tmp/ssh_keys
 openssl rsa  -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
 
-# create a key phrase for the private backup Tahoe node config
-echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl | openssl rsautl -decrypt -inkey /tmp/ssh_keys
-
+# create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
+echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /var/public_node/$myalias
+# decrypt | openssl rsautl -decrypt -inkey /tmp/ssh_keys
 
 
 
