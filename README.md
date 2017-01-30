@@ -87,6 +87,16 @@ Important note before testing :
 - The scripts FAIL if you do that, due to problems with ethernet connection.
 - install the scripts via direct console access.
 
+log files are in /var
+
+apt-get-install-aptth.log
+apt-get-update.log
+apt-get-install_1.log
+apt-get-install_2.log
+apt-get-update-default.log
+libre_install.log
+libre_config.log
+
 Lab done!
 
 Try to navigate normally from the windows 10
