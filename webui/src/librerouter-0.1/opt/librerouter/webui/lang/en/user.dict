@@ -1,7 +1,0 @@
-title="User Settings"
-instr="Change the Admin account password"
-mainh="Choose a strong password."
-submit="Submit"
-oldpass="Old Password"
-newpass="New Password"
-cnewpass="Confirm Password"

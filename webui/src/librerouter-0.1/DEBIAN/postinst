@@ -1,9 +1,0 @@
-#! /bin/bash
-
-mv /etc/lighttpd/ /etc/lighttpd_bak/
-mv /etc/lighttpd_librerouter/ /etc/lighttpd/
-update-rc.d cgid defaults
-update-rc.d cgid enable
-systemctl daemon-reload
-/etc/init.d/cgid start
-chown -Rf www-data:www-data /var/lib/librerouter/

@@ -1,6 +1,0 @@
-name="WAN Settings"
-version="1.0"
-description="Allow Admin change between DHCP/Static connection to WAN, as well as change static connection parameters."
-license="GPLv3"
-menuname="WAN Settings"
-queryname="wanconf"

@@ -1,6 +1,0 @@
-name="User Settings"
-version="1.0"
-description="Allow Admin to change login password."
-license="GPLv3"
-menuname="User Settings"
-queryname="user"

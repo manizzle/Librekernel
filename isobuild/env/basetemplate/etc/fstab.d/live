@@ -1,2 +1,0 @@
-aufs / aufs rw 0 0
-tmpfs /tmp tmpfs nosuid,nodev 0 0

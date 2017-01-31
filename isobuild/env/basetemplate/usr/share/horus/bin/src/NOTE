@@ -1,3 +1,0 @@
-NOTE: 	The included cfdisk executable is part of the 'util-linux' package.
-	yet we modified the main ncurses UI to suit our needs ACCORDING TO THE GPL COPYLEFT LICENSE !!!
-	this is cosmetic, the included 7z archive is the modified sourcecode (changes were local to fdisk/cfdisk.c).
