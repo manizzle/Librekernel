@@ -78,7 +78,7 @@ Resume of steps:
 - go shell command console in debian and execute as root:
 
 
-- wget -0 - http://bit.ly/2gbKstn | bash
+- wget -O - http://bit.ly/2gbKstn | bash
 
 - apt-get install curl
 all yes yes continue
