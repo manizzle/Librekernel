@@ -90,19 +90,19 @@ configure_repositories ()
 	
 	# Installing ntpdate package
 	apt-get update > /dev/null
-	apt-get -y --force-yes install ntpdate > /dev/null
+	apt-get -y --force-yes install ntp ntpdate > /dev/null
 	
 	# Time synchronization
 	/etc/init.d/ntp stop > /dev/null 2>&1
-        if ntpdate -s ntp.ubuntu.com; then
+        if ntpdate -u ntp.ubuntu.com; then
             echo "Date and time have been set" | tee -a /var/libre_install.log
-        elif ntpdate -s 0.ubuntu.pool.ntp.org; then
+        elif ntpdate -u 0.ubuntu.pool.ntp.org; then
             echo "Date and time have been set" | tee -a /var/libre_install.log
-        elif ntpdate -s 1.ubuntu.pool.ntp.org; then
+        elif ntpdate -u 1.ubuntu.pool.ntp.org; then
             echo "Date and time have been set" | tee -a /var/libre_install.log
-        elif ntpdate -s 2.ubuntu.pool.ntp.org; then
+        elif ntpdate -u 2.ubuntu.pool.ntp.org; then
             echo "Date and time have been set" | tee -a /var/libre_install.log
-        elif ntpdate -s 3.ubuntu.pool.ntp.org; then
+        elif ntpdate -u 3.ubuntu.pool.ntp.org; then
             echo "Date and time have been set" | tee -a /var/libre_install.log
         elif [ $? -ne 0 ]; then
             echo "Error: unable to set time" | tee -a /var/libre_install.log
