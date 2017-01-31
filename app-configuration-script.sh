@@ -626,6 +626,14 @@ fi
 /etc/init.d/networking restart
 }
 
+# ---------------------------------------------------------
+# Disable reboot (CTRL + ALT + DEL)
+# ---------------------------------------------------------
+configure_reboot()
+{
+systemctl mask ctrl-alt-del.target
+systemctl daemon-reload
+}
 
 # ---------------------------------------------------------
 # Function to configure DHCP server
@@ -6452,6 +6460,7 @@ get_hdd				# Getting hdd info
 configure_hosts			# Configuring hostname and /etc/hosts
 #configure_bridges		# Configure bridges
 configure_interfaces		# Configuring external and internal interfaces
+configure_reboot		# Configuring Reboot (Disabling Keyboard reboot, ctrl+alt+del)
 configure_dhcp			# Configuring DHCP server 
 
 
