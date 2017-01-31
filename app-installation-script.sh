@@ -114,6 +114,7 @@ configure_repositories ()
 	# Configuring hostname and domain name
 	echo "librerouter" > /etc/hostname
 	echo "127.0.0.1 localhost.librenet librerouter localhost" > /etc/hosts
+	sysctl kernel.hostname=librerouter
 	
 	echo "Configuring repositories ... " | tee -a /var/libre_install.log
 
