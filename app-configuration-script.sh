@@ -633,6 +633,8 @@ configure_reboot()
 {
 systemctl mask ctrl-alt-del.target
 systemctl daemon-reload
+# Disable power button
+sed -i 's/^/#/' /etc/acpi/powerbtn-acpi-support.sh
 }
 
 # ---------------------------------------------------------
