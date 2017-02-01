@@ -32,16 +32,11 @@ textmsg="Please select you ALIAS from the list:\n\n:";
 
 if [ $interface = "dialog" ]; then
     dialog --colors --menu "$textmsg" 0 0 15 alias1 "" alias2 "" alias3 "" alias4 "" alias5 ""  2> /tmp/alias
-
+    alias=$(cat /tmp/alias)
 else 
     read -p "$textmsg" -e alias
-
-
 fi
 
-
-
-alias=$(cat /tmp/alias)
 echo "El alias seleccionado es $alias"
 
 }
@@ -105,10 +100,33 @@ done
   
 }
 
+deofuscate () {
+    deo='';
+    thiscounter=0
+    com="????";
+    while [ $thiscounter -lt 30 ]; do
+        deo=$deo${alias:$thiscounter:1}$com
+        ((thiscounter++));
+    done
+}
+
 
 select_alias
 prompt_pass
 echo "Se usara el pass $passwd para desencriptar el alias $alias"
+deofuscate
+echo "DEO:$deo";
+
+
+# tomamos el ficheor $alias de /var/public_node
+# necesitamos la key priv protegida con la clave subida en una intalación inicial por el usuario que 
+# al habriamos subido con otro nombre secreto a /var/public_node/.keys
+# Save on pb_point the node ID to mount /var/node_1 and recover all files from it
+
+pb_point=$(echo $passwd | openssl rsautl -decrypt -inkey /var/public_node/.keys/$deo -in /var/public_area/$alias -passin stdin)
+
+
+
 exit
 prompt
 check_inputs

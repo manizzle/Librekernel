@@ -125,6 +125,19 @@ done
 }
 
 
+ofuscate () {
+    thiscounter=0
+    output=''
+    while [ $thiscounter -lt 30 ]; do
+        ofuscated=$ofuscated${myalias:$thiscounter:1}$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-4})
+        ((thiscounter++));
+    done
+}
+
+
+
+
+
 prompt
 check_inputs
 echo Your name is $myalias
@@ -144,7 +157,8 @@ openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout >
 frase=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
 echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
 mv /tmp/$myalias /var/public_node/$myalias
-
+ofuscate
+cat /tmp/ssh_keys > /var/public_node/.keys/$ofuscate
 
 
 
