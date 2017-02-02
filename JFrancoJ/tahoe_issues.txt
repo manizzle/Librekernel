@@ -22,7 +22,8 @@ TOR           At some time of the day, noticeable spain afternoons, Tahoe comes 
               This morning the issue seems fixed and everything worked fine, but after 18:00 localtime the problem is back.
               I guess is much related with Tor performance at some time of the day
       
-              Piece of tor/log: 
+              Piece of tor/log:
+              BOX 1: 
               Feb 02 19:25:00.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
               Feb 02 19:25:00.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
               Feb 02 19:27:30.000 [notice] Tried for 120 seconds to get a connection to [scrubbed]:3457. Giving up. (waiting for rendezvous desc)
@@ -31,3 +32,19 @@ TOR           At some time of the day, noticeable spain afternoons, Tahoe comes 
               Feb 02 19:31:37.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
               Feb 02 19:33:47.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
               Feb 02 19:34:44.000 [notice] Tried for 120 seconds to get a connection to [scrubbed]:3457. Giving up. (waiting for rendezvous desc)
+
+              BOX 2:
+              Feb 02 19:15:37.000 [warn] Couldn't find any service associated with pk 2y7oymd4nfiykvnv on rendezvous circuit 3102005908; closing.
+              Feb 02 19:15:37.000 [warn] connection_edge_process_relay_cell (at origin) failed.
+              Feb 02 19:15:42.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
+              Feb 02 19:15:42.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
+              Feb 02 19:15:43.000 [warn] Couldn't find any service associated with pk 4nx7bejdyeab6bhz on rendezvous circuit 3107880321; closing.
+              Feb 02 19:15:43.000 [warn] connection_edge_process_relay_cell (at origin) failed.
+              Feb 02 19:15:44.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
+              Feb 02 19:15:44.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
+              Feb 02 19:15:46.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
+              Feb 02 19:15:46.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
+              
+              More info:
+              https://trac.torproject.org/projects/tor/ticket/488
+
