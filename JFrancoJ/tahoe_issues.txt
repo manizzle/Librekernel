@@ -17,3 +17,17 @@ TOR           At some time of the day, noticeable spain afternoons, Tahoe comes 
               and unabe to complete some updates ( backing to the grid or restoring from grid )
               Tor traffic comes really VERY litle ( whatched with tcpdump ) on port 9001 , not enough to support the Tahoe service.
               This MAY be much related with SSHFS/SFTP failures on mutable/inmutable files due to timeouts inside the sshfs server.
+              Yesterday seems like a bug on Tahoe/SSHFS discovered at around 16:00 localtime, and still there until 04:00 localtime, then the issues
+              seems gone away.
+              This morning the issue seems fixed and everything worked fine, but after 18:00 localtime the problem is back.
+              I guess is much related with Tor performance at some time of the day
+      
+              Piece of tor/log: 
+              Feb 02 19:25:00.000 [warn] Fetching v2 rendezvous descriptor failed. Retrying at another directory.
+              Feb 02 19:25:00.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
+              Feb 02 19:27:30.000 [notice] Tried for 120 seconds to get a connection to [scrubbed]:3457. Giving up. (waiting for rendezvous desc)
+              Feb 02 19:29:20.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
+              Feb 02 19:30:31.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
+              Feb 02 19:31:37.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
+              Feb 02 19:33:47.000 [notice] Closing stream for '[scrubbed].onion': hidden service is unavailable (try again later).
+              Feb 02 19:34:44.000 [notice] Tried for 120 seconds to get a connection to [scrubbed]:3457. Giving up. (waiting for rendezvous desc)
