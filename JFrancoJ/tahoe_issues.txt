@@ -12,3 +12,8 @@ SSHFS/SFTP    On mounted points caps are not always good passed, failing in crea
               Restarting the node sometimes fix it.
 
               Metadata are also wrong. No patch available yet
+
+TOR           At some time of the day, noticeable spain afternoons, Tahoe comes failing a lot, uncompleted simple tasks as just tahoe ls -l and so on,
+              and unabe to complete some updates ( backing to the grid or restoring from grid )
+              Tor traffic comes really VERY litle ( whatched with tcpdump ) on port 9001 , not enough to support the Tahoe service.
+              This MAY be much related with SSHFS/SFTP failures on mutable/inmutable files due to timeouts inside the sshfs server.
