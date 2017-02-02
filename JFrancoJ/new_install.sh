@@ -153,12 +153,13 @@ openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout >
 
 # create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
 # the $phrase is the entry point to the private area (pb:/ from /usr/node_1/tahoe.cfg )
-# $phrase will be like "URI:DIR2:guq3z6e68pf2bvwe6vdouxjptm:d2mvquow4mxoaevorf236cjajkid5ypg2dgti4t3wgcbunfway2a"
-frase=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
+# $phrase will be like "user pass URI:DIR2:guq3z6e68pf2bvwe6vdouxjptm:d2mvquow4mxoaevorf236cjajkid5ypg2dgti4t3wgcbunfway2a"
+#frase=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
+frase=$(cat /usr/node_1/private/accounts | head -n 1)
 echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
 mv /tmp/$myalias /var/public_node/$myalias
 ofuscate
-cat /tmp/ssh_keys > /var/public_node/.keys/$ofuscate
+cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
 
 
 

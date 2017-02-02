@@ -123,11 +123,48 @@ echo "DEO:$deo";
 # al habriamos subido con otro nombre secreto a /var/public_node/.keys
 # Save on pb_point the node ID to mount /var/node_1 and recover all files from it
 
-pb_point=$(echo $passwd | openssl rsautl -decrypt -inkey /var/public_node/.keys/$deo -in /var/public_area/$alias -passin stdin)
+pb_point=$(echo $passwd | openssl rsautl -decrypt -inkey /var/public_node/.keys/$deo -in /var/public_node/$alias -passin stdin)
+
+# if running, stop private node
+/home/tahoe-lafs/venv/bin/tahoe stop node_1
+
+# reconfigure node_1 mapping point
+# we need no just to restore my files, also my storage that contents file chunks from others to rebuild the full lost node
+# and avoid damages in the grid performance and realibility
+# we need to check there not existing node with same node_1 directory mounted in other box
+
+echo $pb_point | cut -d \  -f 1,2 > /root/.tahoe/node_1  # save credentials for node_1 restoration
+echo $pb_point > /usr/node_1/private/accounts            # save cap for node_1 restoration
+
+# now we will able start to node_1 ,mount /var/node_1 and first of all recover node_1.tar.gz for the full node_1 restoration
+# including the shares 
+
+/home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
+umount /var/node_1
+user=$(cat /root/.tahoe/node_1 | cut -d \  -f 1)
+pass=$(cat /root/.tahoe/node_1 | cut -d \  -f 2)
+sleep 20s
+echo $pass | sshfs $user@127.0.0.1:  /var/node_1  -p 8022 -o no_check_root -o password_stdin -o StrictHostKeyChecking=no
+
+cp /var/node_1/node_1.tar.gz /tmp/.
+cp /var/node_1/box.tar.gz /tmp/.
+
+# stop node_1 and umount it
+umount /var/node_1
+/home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
+
+# decompress :
+# node_1.tar.gz is a backup of full node_1 /usr/node_1 
+#               created : tar -czpPf /tmp/node_1.tar.gz /usr/node_1 && cp /tmp/node_1.tar.gz /usr/node_1/. &&  tahoe cp -u https://127.0.0.1:3456 node_1: /tmp/node_1.tar.gz /.
+# box.tar.gz    is a backup of other required files. This is based on the /etc/backup/backup.cfg file used by app_backup.sh
+#               where app_backup.sh is called from crond
 
 
 
 exit
+
+
+
 prompt
 check_inputs
 echo Your name is $myalias

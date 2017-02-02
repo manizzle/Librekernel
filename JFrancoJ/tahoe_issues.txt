@@ -1,0 +1,14 @@
+tahoe v1.12.1 still not working over I2P due to TLS handshake failure. This causes both sides thinks they are the client side, then fails
+              this is an older issue, no well documented.
+              WARNER is working on it.
+
+SSHFS/SFTP    On mounted points caps are not always good passed, failing in creating inmutable files that are bigger than 55 bytes size.
+              A workaround is to patch /inmutable/upload.py 
+              patching=$(sed -e "s/URI_LIT_SIZE_THRESHOLD = 55/URI_LIT_SIZE_THRESHOLD = 55555/g" upload.py > /tmp/upload.py.patched)
+              mv /tmp/upload.py.patched /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable/upload.py
+              cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable
+              python -m py_compile upload.py
+
+              Restarting the node sometimes fix it.
+
+              Metadata are also wrong. No patch available yet
