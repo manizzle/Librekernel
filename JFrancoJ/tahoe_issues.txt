@@ -47,4 +47,4 @@ TOR           At some time of the day, noticeable spain afternoons, Tahoe comes 
               
               More info:
               https://trac.torproject.org/projects/tor/ticket/488
-
+              http://tor.stackexchange.com/questions/1263/tried-for-120-seconds-to-get-a-connection-to-scrubbed6667-waiting-for-contro
