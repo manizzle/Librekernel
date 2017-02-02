@@ -951,7 +951,7 @@ EOF
 
 chmod +x /etc/rc.local
 
-/etc/rc.local | tee -a /var/libre_config.log
+#/etc/rc.local | tee -a /var/libre_config.log
 }
 
 
