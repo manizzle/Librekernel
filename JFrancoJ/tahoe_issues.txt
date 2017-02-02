@@ -49,3 +49,4 @@ TOR           At some time of the day, noticeable spain afternoons, Tahoe comes 
               https://trac.torproject.org/projects/tor/ticket/488
               http://tor.stackexchange.com/questions/1263/tried-for-120-seconds-to-get-a-connection-to-scrubbed6667-waiting-for-contro
               https://torstatus.blutmagie.de/
+              https://torstatus.blutmagie.de/router_detail.php?FP=ade45da3a6d318feb07e2e099bcccfea8adac8dc
