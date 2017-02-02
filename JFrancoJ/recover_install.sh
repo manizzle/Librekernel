@@ -140,6 +140,7 @@ echo $pb_point > /usr/node_1/private/accounts            # save cap for node_1 r
 # including the shares 
 
 /home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
+tahoe deep-check --repair -u http://127.0.0.1:3456 node_1:
 umount /var/node_1
 user=$(cat /root/.tahoe/node_1 | cut -d \  -f 1)
 pass=$(cat /root/.tahoe/node_1 | cut -d \  -f 2)
