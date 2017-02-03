@@ -41,7 +41,7 @@ for lines in $livenodes; do
 done
 
 echo $exclusions > /tmp/Tor_excludes.csv
-wipeout=$(sed -e "s/ExcludeNodes ,//g" /tmp/Tor_excludes.csv > /tmp/Tor_excludes.csv.tmp)
+wipeout=$(sed -e "s/ExcludeNodes ,/ExcludeNodes /g" /tmp/Tor_excludes.csv > /tmp/Tor_excludes.csv.tmp)
 mv /tmp/Tor_excludes.csv.tmp /tmp/Tor_excludes.csv
 cp /etc/tor/torrc.base /etc/tor/torrc
 cat /tmp/Tor_excludes.csv >> /etc/tor/torrc
