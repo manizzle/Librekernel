@@ -10,7 +10,7 @@ minimum_bw=2000
 minimum_uptime=48
 
 # First go to collect updated status of Tor nodes
-##########curl https://torstatus.blutmagie.de/query_export.php/Tor_query_EXPORT.csv > /tmp/Tor_query_EXPORT.csv
+curl https://torstatus.blutmagie.de/query_export.php/Tor_query_EXPORT.csv > /tmp/Tor_query_EXPORT.csv
 
 # We get CSV like those
 # Router Name,Country Code,Bandwidth (KB/s),Uptime (Hours),IP Address,Hostname,ORPort,DirPort,Flag - Authority,Flag - Exit,Flag - Fast,Flag - Guard,Flag - Named,Flag - Stable,Flag - Running,Flag - Valid,$
@@ -25,6 +25,7 @@ mv /tmp/Tor_query_EXPORT.csv.tmp /tmp/Tor_query_EXPORT.csv
 IFS='
 '
 
+exclusions="ExcludeNodes "
 thiscounter=0
 livenodes=$(cat /tmp/Tor_query_EXPORT.csv)
 for lines in $livenodes; do 
@@ -33,8 +34,14 @@ for lines in $livenodes; do
       uptime=$(echo $lines | cut -d , -f 4)
       ip=$(echo $lines | cut -d , -f 5)
       if [ $bw -lt $minimum_bw ] || [ $uptime -lt $minimum_uptime ]; then
-          echo "$ip"
+          exclusions=$exclusions,$ip
       fi
     fi
     ((thiscounter++))    
 done
+
+echo $exclusions > /tmp/Tor_excludes.csv
+wipeout=$(sed -e "s/ExcludeNodes ,//g" /tmp/Tor_excludes.csv > /tmp/Tor_excludes.csv.tmp)
+mv /tmp/Tor_excludes.csv.tmp /tmp/Tor_excludes.csv
+cp /etc/tor/torrc.base /etc/tor/torrc
+cat /tmp/Tor_excludes.csv >> /etc/tor/torrc
