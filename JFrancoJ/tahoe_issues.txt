@@ -50,3 +50,8 @@ TOR           At some time of the day, noticeable spain afternoons, Tahoe comes 
               http://tor.stackexchange.com/questions/1263/tried-for-120-seconds-to-get-a-connection-to-scrubbed6667-waiting-for-contro
               https://torstatus.blutmagie.de/
               https://torstatus.blutmagie.de/router_detail.php?FP=ade45da3a6d318feb07e2e099bcccfea8adac8dc
+              
+              
+              UPDATES
+If node_1 is using i.e. just 1 server ( see tahoe status Per-Server Fetch Response Times) where was backed some files, the retrieving tehse files from just one server would take very long time ( over 1 minute )
+May be we need to ensure how much servers are connected BEFORE start backing
