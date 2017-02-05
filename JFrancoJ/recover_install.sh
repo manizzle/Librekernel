@@ -111,12 +111,62 @@ deofuscate () {
 }
 
 
+moving () {
+
+    if [ "$moving_char" == "-" ]; then
+        moving_char="\\"
+        return
+    fi
+    if [ "$moving_char" == "|" ]; then
+        moving_char="/"
+        return
+    fi
+    if [ "$moving_char" == "\\" ]; then
+        moving_char="|"
+        return
+    fi
+    if [ "$moving_char" == "/" ]; then
+        moving_char="-"
+        return
+    fi
+
+}
+
+
+check_tahoe_cpu_load () {
+    moving_char="-"
+    # if cpu load used by tahoe instances are higher than 10% all operations through tahoe services
+    # are too slow
+    # we would need to wait until there enough resources to start tasks on tahoe services
+    # usually on idle status ( only offered space ) CPU load must be < 2%
+
+    # This is also notciable on tcpdump -n port 9001 or port 443 , tracking the Tor entry point IP
+
+    tahoe_node_1_load=99
+    while [ $tahoe_node_1_load -gt 10 ]; do
+        tahoe_node_1_load=$(ps auxwwww | grep tahoe | grep -v grep | grep node_1 | cut -c 15-19 | cut -d \. -f 1)
+        echo -n -e "\rTahoe node_1 load is $tahoe_node_1_load ... please wait $moving_char"
+        sleep 5
+        moving
+    done
+
+    tahoe_public_node_load=99
+    while [ $tahoe_public_node_load -gt 10 ]; do
+        tahoe_public_node_load=$(ps auxwwww | grep tahoe | grep -v grep | grep public_node  | cut -c 15-19 | cut -d \. -f 1)
+        echo -n -e "\rTahoe public_node load is $tahoe_public_node_load ... please wait $moving_char"
+        sleep 5
+        moving
+    done
+}
+
+
+
 select_alias
 prompt_pass
 echo "Se usara el pass $passwd para desencriptar el alias $alias"
 deofuscate
 echo "DEO:$deo";
-
+check_tahoe_cpu_load
 
 # tomamos el ficheor $alias de /var/public_node
 # necesitamos la key priv protegida con la clave subida en una intalación inicial por el usuario que 
@@ -156,7 +206,8 @@ umount /var/node_1
 
 # decompress :
 # node_1.tar.gz is a backup of full node_1 /usr/node_1 
-#               created : tar -czpPf /tmp/node_1.tar.gz /usr/node_1 && cp /tmp/node_1.tar.gz /usr/node_1/. &&  tahoe cp -u https://127.0.0.1:3456 node_1: /tmp/node_1.tar.gz /.
+#               created : tar -czpPf /tmp/node_1.tar.gz /usr/node_1 && cp /tmp/node_1.tar.gz /var/node_1/. 
+#               &&  tahoe cp -u https://127.0.0.1:3456 node_1: /tmp/node_1.tar.gz /.
 # box.tar.gz    is a backup of other required files. This is based on the /etc/backup/backup.cfg file used by app_backup.sh
 #               where app_backup.sh is called from crond
 

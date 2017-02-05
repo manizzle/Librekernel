@@ -1,5 +1,14 @@
 
 #====================================================
+/home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
+/home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
+rm -rf /home/tahoe-lafs
+rm -rf /usr/node_1
+rm -rf /root/.tahoe
+rm -rf /usr/public_node
+
+
+
 
 # Setup new py env and install required packages if not existing
 
@@ -20,11 +29,9 @@
 # The fix is /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable/upload.py file line 1519 must:
 # -URI_LIT_SIZE_THRESHOLD = 55
 # +URI_LIT_SIZE_THRESHOLD = 55555 
-# cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable; python -m py_compile upload.py
-# 
-patching=$(sed -e "s/URI_LIT_SIZE_THRESHOLD = 55/URI_LIT_SIZE_THRESHOLD = 55555/g" upload.py > /tmp/upload.py.patched)
+cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable; python -m py_compile upload.py
+patching=$(sed -e "s/URI_LIT_SIZE_THRESHOLD = 55/URI_LIT_SIZE_THRESHOLD = 9999999999/g" upload.py > /tmp/upload.py.patched)
 mv /tmp/upload.py.patched /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable/upload.py
-cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable
 python -m py_compile upload.py
 
 
@@ -45,7 +52,6 @@ echo "$random_user $random_pass" > /root/.tahoe/node_1
 # This of course must be done AFTER the node is started and connected, so we will need
 # to restart the node after update private/accounts
 
-# Create private node
 cd /home/tahoe-lafs 
 nickname="liberouter_client1"
 introducer="pb://hootxde72nklvu2de3n57a3szfkbazrd@tor:3h3ap6f4b62dvh3m.onion:3457/7jho3gaqpsarnvieg7iszqm7zsffvzic"
@@ -64,12 +70,12 @@ echo "Generamos keys para node_1"
 ssh-keygen -q -N '' -f private/ssh_host_rsa_key
 mkdir /var/node_1
 
+# Create public node ( common to all boxes ) with rw permisions
 
 random_user=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
 random_pass=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
 echo "$random_user $random_pass" > /root/.tahoe/public_node
 
-# Create public node ( common to all boxes ) with rw permisions
 cd /home/tahoe-lafs
 nickname=public
 introducer="pb://hootxde72nklvu2de3n57a3szfkbazrd@tor:3h3ap6f4b62dvh3m.onion:3457/7jho3gaqpsarnvieg7iszqm7zsffvzic"
@@ -89,19 +95,21 @@ ssh-keygen -q -N '' -f private/ssh_host_rsa_key
 mkdir /var/public_node
 
 
-# Now we need to start both nodes, to allow discoveing on URL:DIR2 for each
+# Now we need to start both nodes, to allow discoveing on URL:DIR2 for node_1
 
 /home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
 /home/tahoe-lafs/venv/bin/tahoe start /usr/public_node
-sleep 5;
+# this waiting time is required, otherwise sometimes nodes even started are not yet ready to create aliases and fails conneting with http with "500 Internal Server Error"
+sleep 30;
 
 # Let's go to discover it
+echo "Creating aliases for Tahoe..."
 mkdir /root/.tahoe/private
 /home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:3456 node_1:
 /home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:9456 public_node:
 
 URI1=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
-URI2=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:9456 public_node: | head -n 1)
+# URI2=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:9456 public_node: | head -n 1)
 
 # Update the /private/accounts
 echo -n $URI1 >> /usr/node_1/private/accounts
@@ -113,9 +121,7 @@ echo $updatedpubic_node > /usr/public_node/private/accounts
 
 
 # Local access funtions (SSH support or SSHFS )
-ssh-keyscan -H -p 8022 127.0.0.1 | grep \|1\| |grep -v "no hostkey" |grep -v Twisted >> /root/.ssh/known_hosts
-ssh-keyscan -H -p 8024 127.0.0.1 | grep \|1\| |grep -v "no hostkey" |grep -v Twisted >> /root/.ssh/known_hosts
-
+# REMOVED. Now is used -o StrictHostKeyChecking=no
 
 
 
