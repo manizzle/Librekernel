@@ -2475,7 +2475,7 @@ install_postfix()
 # -----------------------------------------------
 install_upnp()
 {
-echo "Installing upnp ..."
+echo "Installing upnp ..."  | tee -a /var/libre_install.log
 
 if [ ! -e /usr/bin/upnpc ]; then
     mkdir /usr/src/upnpc
@@ -2625,7 +2625,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_redsocks	# Install redsocks package
 	install_ntopng		# Install ntopng package
 	install_postfix		# Install postfixadmin package
-	install_upnp		# Install miniupnp package
+#	install_upnp		# Install miniupnp package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
