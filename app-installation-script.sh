@@ -32,15 +32,15 @@ get_platform ()
 {
         echo "Detecting platform ..." | tee /var/libre_install.log
 	FILE=/etc/issue
-	if cat $FILE | grep "Ubuntu 12.04" > /dev/null; then
+	if cat $FILE | grep "Ubuntu 12.04" >> /var/libre_install.log; then
 		PLATFORM="U12"
-	elif cat $FILE | grep "Ubuntu 14.04" > /dev/null; then
+	elif cat $FILE | grep "Ubuntu 14.04" >> /var/libre_install.log; then
 		PLATFORM="U14"
-	elif cat $FILE | grep "Debian GNU/Linux 7" > /dev/null; then
+	elif cat $FILE | grep "Debian GNU/Linux 7" >> /var/libre_install.log; then
 		PLATFORM="D7"
-	elif cat $FILE | grep "Debian GNU/Linux 8" > /dev/null; then
+	elif cat $FILE | grep "Debian GNU/Linux 8" >> /var/libre_install.log; then
 		PLATFORM="D8"
-	elif cat $FILE | grep "Trisquel GNU/Linux 7.0" > /dev/null; then
+	elif cat $FILE | grep "Trisquel GNU/Linux 7.0" >> /var/libre_install.log; then
 		PLATFORM="T7"
 	else 
 		echo "ERROR: UNKNOWN PLATFORM" | tee -a /var/libre_install.log
@@ -61,7 +61,7 @@ check_internet ()
 	iptables -t mangle -F
 	
 	echo "Checking Internet access ..." | tee -a /var/libre_install.log
-	if ! ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+	if ! ping -c1 8.8.8.8 >> /var/libre_install.log; then
 		echo "You need internet to proceed. Exiting" | tee -a /var/libre_install.log
 		exit 1
 	fi
@@ -89,11 +89,11 @@ configure_repositories ()
 	echo "Time sync ..." | tee -a /var/libre_install.log
 	
 	# Installing ntpdate package
-	apt-get update > /dev/null
-	apt-get -y --force-yes install ntp ntpdate > /dev/null
+	apt-get update >> /var/libre_install.log
+	apt-get -y --force-yes install ntp ntpdate >> /var/libre_install.log
 	
 	# Time synchronization
-	/etc/init.d/ntp stop > /dev/null 2>&1
+	/etc/init.d/ntp stop >> /var/libre_install.log 2>> /var/libre_install.log
         if ntpdate -u ntp.ubuntu.com; then
             echo "Date and time have been set" | tee -a /var/libre_install.log
         elif ntpdate -u 0.ubuntu.pool.ntp.org; then
@@ -108,7 +108,7 @@ configure_repositories ()
             echo "Error: unable to set time" | tee -a /var/libre_install.log
             exit 3
         fi
-	/etc/init.d/ntp restart > /dev/null 2>&1
+	/etc/init.d/ntp restart >> /var/libre_install.log 2>> /var/libre_install.log
 	date | tee -a /var/libre_install.log
 	
 	# Configuring hostname and domain name
@@ -638,19 +638,19 @@ get_hardware()
         # Checking CPU for ARM and saving
 	# Processor and Hardware types in
 	# PROCESSOR and HARDWARE variables
-	if grep ARM /proc/cpuinfo > /dev/null 2>&1; then    
+	if grep ARM /proc/cpuinfo >> /var/libre_install.log 2>>/var/libre_install.log; then    
            PROCESSOR="ARM"	                           
            HARDWARE=`cat /proc/cpuinfo | grep Hardware | awk {'print $3'}`   
         # Checking CPU for Intel and saving
 	# Processor and Hardware types in
 	# PROCESSOR and HARDWARE variables
-	elif grep Intel /proc/cpuinfo > /dev/null 2>&1;  then 
+	elif grep Intel /proc/cpuinfo >> /var/libre_install.log 2>>/var/libre_install.log;  then 
            PROCESSOR="Intel"	                             
            HARDWARE=`dmidecode -s system-product-name`       
         # Checking CPU for AMD and saving
 	# Processor and Hardware types in
 	# PROCESSOR and HARDWARE variables
-	elif grep AMD /proc/cpuinfo > /dev/null 2>&1;  then 
+	elif grep AMD /proc/cpuinfo >> /var/libre_install.log 2>>/var/libre_install.log;  then 
            PROCESSOR="AMD"	                             
            HARDWARE=`dmidecode -s system-product-name`       
 	fi
@@ -766,7 +766,7 @@ get_interfaces()
 	# Check internet Connection. If Connection exist then get 
 	# and save Internet side network interface name in 
 	# EXT_INTERFACE variable
-	if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+	if ping -c1 8.8.8.8 >> /var/libre_install.log 2>>/var/libre_install.log; then
 		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
 		echo "Internet connection established on interface $EXT_INTERFACE" | tee -a /var/libre_install.log
 	else
@@ -781,7 +781,7 @@ get_interfaces()
 			echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
 			echo -e  "auto $iface\niface $iface inet dhcp" >> /etc/network/interfaces
 			/etc/init.d/networking restart 
-			if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
+			if ping -c1 8.8.8.8 >> /var/libre_install.log 2>>/var/libre_install.log; then
 				echo "Internet conection established on: $iface"	
 				EXT_INTERFACE="$iface"
 				break
@@ -795,42 +795,6 @@ get_interfaces()
 			fi
 		
 	fi
-
-
-# Older version
-#	if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-#		EXT_INTERFACE=`route -n | awk {'print $1 " " $8'} | grep "0.0.0.0" | awk {'print $2'} | sed -n '1p'`
-#		echo "Internet connection established on interface $EXT_INTERFACE"
-#	else
-#		# Checking eth0 for Internet connection
-#        	echo "Getting Internet access on eth0"
-#		echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-#		echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-#		echo -e  "auto eth0\niface eth0 inet dhcp" >> /etc/network/interfaces
-#		/etc/init.d/networking restart 
-#		if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-#			echo "Internet conection established on: eth0"	
-#			EXT_INTERFACE="eth0"
-#		else
-#			echo "Warning: Unable to get Internet access on eth0"
-#        		# Checking eth1 for Internet connection
-#			echo "Getting Internet access on eth1"
-#	        	echo "# interfaces(5) file used by ifup(8) and ifdown(8) " > /etc/network/interfaces
-#			echo -e "auto lo\niface lo inet loopback\n" >> /etc/network/interfaces
-#			echo -e "auto eth1\niface eth1 inet dhcp" >> /etc/network/interfaces
-#			/etc/init.d/networking restart 
-#			if ping -c1 8.8.8.8 >/dev/null 2>/dev/null; then
-#				echo "Internet conection established on: eth1"	
-#				EXT_INTERFACE="eth1"
-#			else
-#				echo "Warning: Unable to get Internet access on eth1"
-#				echo "Please plugin Internet cable to eth0 or eth1 and enable DHCP on gateway"
-#				echo "Error: Unable to get Internet access. Exiting"
-#				exit 7
-#			fi
-#		fi
-#	fi
-
 
 
 	# Getting internal interface name
@@ -1669,8 +1633,7 @@ skipfile snort.conf
 install_kibana()
 {
 	echo "Installing kibana ..." | tee -a /var/libre_install.log
-	apt-get install -y --force-yes kibana elasticsearch logstash \
-        2>&1 > /dev/null
+	apt-get install -y --force-yes kibana elasticsearch logstash >> /var/libre_install.log
 	if [ $? -ne 0 ]; then
                 echo "Error: unable to install kibaba. Exiting ..." | tee -a /var/libre_install.log
                 exit 3
@@ -2250,7 +2213,7 @@ if [ "$ARCH" == "x86_64" ]; then
 	echo "Installing gitlab ..." | tee -a /var/libre_install.log
 
 	# Check if gitlab is installed or not 
-	which gitlab-ctl > /dev/null 2>&1
+	which gitlab-ctl >> /var/libre_install.log 
 	if [ $? -ne 0 ]; then 
 		# Install the necessary dependencies
 		apt-get install -y --force-yes curl openssh-server ca-certificates postfix
@@ -2425,7 +2388,7 @@ install_ndpi()
         fi
 
 	# Load Module at Startup
-	if ! grep xt_ndpi /etc/modules > /dev/null ; then
+	if ! grep xt_ndpi /etc/modules >> /var/libre_install.log ; then
 	    echo "xt_ndpi" >> /etc/modules
 	fi
 
@@ -2523,7 +2486,7 @@ save_variables()
 {
         echo "Saving variables ..." | tee -a /var/libre_install.log
 	if [ -e /var/box_variables ]; then
-		if grep "DB_PASS" /var/box_variables > /dev/null 2>&1; then
+		if grep "DB_PASS" /var/box_variables >> /var/libre_install.log 2>>/var/libre_install.log ; then
  	               MYSQL_PASS=`cat /var/box_variables | grep "DB_PASS" | awk {'print $2'}`
 		       echo -e \
 "Platform: $PLATFORM\n\
