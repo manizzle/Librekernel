@@ -469,7 +469,7 @@ if [ $PLATFORM = "D7" ]; then
 	deb.torproject.org-keyring u-boot-tools console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
         libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
-        postfix mailutils aptitude fail2ban libsodium-dev \
+        postfix mailutils aptitude fail2ban libsodium-dev libsystemd-dev \
 	2>&1 > /var/apt-get-install.log
 
 # Installing Packages for Debian 8 GNU/Linux
@@ -516,7 +516,7 @@ elif [ $PLATFORM = "D8" ]; then
 	tor i2p roundcube tinyproxy prosody \
         memcached sogo \
         postfix-mysql dovecot-mysql dovecot-imapd postgrey \
-        amavis spamassassin php5-imap fail2ban libsodium-dev \
+        amavis spamassassin php5-imap fail2ban libsodium-dev libsystemd-dev \
         2>&1 > /var/apt-get-install_2.log
 
         #bro passenger logstash kibana nginx nginx-extras libcurl4-openssl-dev \
@@ -564,7 +564,7 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
 	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev \
 	libicapapi-dev u-boot-tools console-tools* squidguard \
         gnupg openssl python-virtualenv python-pip python-lxml git \
-         zlib1g-dev python-dev webmin fail2ban \
+         zlib1g-dev python-dev webmin fail2ban libsystemd-dev \
         postfix mailutils aptitude \
 	2>&1 > /var/apt-get-install.log
 fi
