@@ -2471,6 +2471,32 @@ install_postfix()
 
 
 # -----------------------------------------------
+# Function to install miniupnp
+# -----------------------------------------------
+install_upnp()
+{
+echo "Installing upnp ..."
+
+if [ ! -e /usr/bin/upnpc ]; then
+    mkdir /usr/src/upnpc
+    cd /usr/src/upnpc
+    curl http://miniupnp.tuxfamily.org/files/miniupnpc-2.0.20161216.tar.gz > miniupnpc-2.0.20161216.tar.gz
+    tar xzf miniupnpc-2.0.20161216.tar.gz
+
+    cd miniupnpc-2.0.20161216
+    make && make install
+    if [ $? -ne 0 ]; then
+            echo "Unable to install upnp. Exiting ..." | tee -a /var/libre_install.log
+            exit 3
+    fi
+
+    # Cleanup
+    rm miniupnpc-2.0.20161216.tar.gz
+fi
+}
+
+
+# -----------------------------------------------
 # This function saves variables in file, so
 # parametization script can read and use these 
 # values
@@ -2599,6 +2625,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_redsocks	# Install redsocks package
 	install_ntopng		# Install ntopng package
 	install_postfix		# Install postfixadmin package
+	install_upnp		# Install miniupnp package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
