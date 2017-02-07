@@ -1,5 +1,17 @@
 
 #====================================================
+
+
+if [ -e /home/tahoe-lafs ]; then
+    textmsg="Thee already installed, do you want to delete and re-install a new one [no/yes]?"
+    read -p "$textmsg" -e install
+    if [ "$install" != "yes" ]; then
+       exit
+    fi
+fi
+
+
+
 /home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
 /home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
 rm -rf /home/tahoe-lafs
@@ -121,8 +133,16 @@ echo $updatedpubic_node > /usr/public_node/private/accounts
 
 
 # Local access funtions (SSH support or SSHFS )
-# REMOVED. Now is used -o StrictHostKeyChecking=no
-
+echo "Host 127.0.0.1" >> /etc/ssh/ssh_config
+echo "  HostName localhost"  >> /etc/ssh/ssh_config
+echo "  Port 8022"  >> /etc/ssh/ssh_config
+echo "  StrictHostKeyChecking no"  >> /etc/ssh/ssh_config
+echo  >> /etc/ssh/ssh_config
+echo "Host 127.0.0.1" >> /etc/ssh/ssh_config
+echo "  HostName localhost"  >> /etc/ssh/ssh_config
+echo "  Port 8024"  >> /etc/ssh/ssh_config
+echo "  StrictHostKeyChecking no"  >> /etc/ssh/ssh_config
+echo  >> /etc/ssh/ssh_config
 
 
 # Done, now we can restart the nodes
