@@ -1935,7 +1935,7 @@ forward-addr: 127.0.0.1@9053
 # Forward rest of zones to DjDNS
 forward-zone:
 name: "."
-forward-addr: 8.8.8.8@53
+forward-addr: 10.0.0.1@43
 
 ' >> /etc/unbound/unbound.conf
 
@@ -2049,6 +2049,36 @@ exit 3
 fi
 }
 
+# ---------------------------------------------------------
+# Function to configure DNSCrypt
+# ---------------------------------------------------------
+configure_dnscrypt()
+{
+echo 'Configuring DNSCrypt server ...' | tee -a /var/libre_config.log
+sed -i '/Daemonize/d' /usr/local/etc/dnscrypt-proxy.conf
+sed -i '/ResolverName/d' /usr/local/etc/dnscrypt-proxy.conf
+sed -i '/LocalAddress/d' /usr/local/etc/dnscrypt-proxy.conf
+sed -i '/QueryLogFile/d' /usr/local/etc/dnscrypt-proxy.conf
+sed -i '/LogFile/d' /usr/local/etc/dnscrypt-proxy.conf
+echo 'ResolverName fvz-anyone
+Daemonize yes
+LocalAddress 10.0.0.1:43' >> /usr/local/etc/dnscrypt-proxy.conf
+echo 'Starting DNSCrypt server ...' | tee -a /var/libre_config.log
+/usr/local/sbin/dnscrypt-proxy /usr/local/etc/dnscrypt-proxy.conf &>> /var/libre_config.log
+chattr -i /etc/resolv.conf
+echo 'nameserver 10.0.0.1' > /etc/resolv.conf
+chattr +i /etc/resolv.conf
+
+# Run after boot (We need add dnscrypt to systemd)
+echo '
+#!/bin/bash
+/usr/local/sbin/dnscrypt-proxy /usr/local/etc/dnscrypt-proxy.conf' > /usr/bin/dnscrypt-proxy.sh
+chmod +x /usr/bin/dnscrypt-proxy.sh
+sed -i '/exit/d' /etc/rc.local
+sed -i 'dnscrypt-proxy/d' /etc/rc.local
+echo '/bin/bash /usr/bin/dnscrypt-proxy.sh
+exit 0' >> /etc/rc.local
+}
 
 # ---------------------------------------------------------
 # Function to configure Friendica local service
@@ -6519,6 +6549,7 @@ configure_ssh			# Configuring ssh server
 configure_tor			# Configuring TOR server
 configure_i2p			# Configuring i2p services
 configure_unbound		# Configuring Unbound DNS server
+configure_dnscrypt		# Configurint DNSCrypt server
 configure_friendica		# Configuring Friendica local service
 configure_easyrtc		# Configuring EasyRTC local service
 configure_owncloud		# Configuring Owncloud local service
