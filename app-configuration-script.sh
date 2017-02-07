@@ -1102,6 +1102,7 @@ echo "Configuring i2p server ..." | tee -a /var/libre_config.log
 sed "s~RUN_DAEMON=.*~RUN_DAEMON=\"true\"~g" -i /etc/default/i2p
 
 # i2p hidden services
+touch /var/lib/i2p/i2p-config/i2ptunnel.config
 cat << EOF > /var/lib/i2p/i2p-config/i2ptunnel.config
 # NOTE: This I2P config file must use UTF-8 encoding
 tunnel.0.description=HTTP proxy for browsing eepsites and the web
