@@ -502,7 +502,7 @@ elif [ $PLATFORM = "D8" ]; then
         apache2.2-common- rpcbind- exim4- \
         openjdk-7-jre-headless uwsgi \
         php5-gd php5-imap smarty3 git ntpdate macchanger \
-        bridge-utils hostapd hostapd bridge-utils librrd-dev \
+        bridge-utils hostapd librrd-dev \
         curl macchanger ntpdate bc sudo lsb-release dnsutils \
         ca-certificates-java openssh-server ssh wireless-tools usbutils \
         unzip debian-keyring subversion build-essential libncurses5-dev \
