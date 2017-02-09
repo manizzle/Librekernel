@@ -335,18 +335,6 @@ EOF
 # ----------------------------------------------
 configure_bridges()
 {
-        # Updating and installing bridge-utils package
-        echo "Updating repositories ..."
-        apt-get update 2>&1 > /var/apt-get-update-bridge.log
-        echo "Installing bridge-utils ..."
-        apt-get install bridge-utils 2>&1 > /var/apt-get-install-bridge.log
-
-        # Checking if bridge-utils is installed successfully
-        if [ $? -ne 0 ]; then
-                echo "Error: Unable to install bridge-utils"
-                exit 8
-        else
-
         EXT_BR_INT=`echo $EXT_INTERFACE | tail -c 2`
         INT_BR_INT=`echo $INT_INTERFACE | tail -c 2`
 
