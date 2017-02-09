@@ -238,6 +238,25 @@ get_interfaces()
                         fi
                 fi
         fi
+			echo "Checking DNS resolution ..." | tee -a /var/libre_config.log
+                        if ! nslookup duckduckgo.com >> /var/libre_config.log; then
+                        echo "You need DNS resolution to proceed... Exiting" | tee -a /var/libre_config.log
+                        exit 1
+                        fi
+                        echo "Showing the interface configuration ..." | tee -a /var/libre_config.log
+                        CLINKUP=$(ip link |grep UP |grep eth | cut -d: -f2 |sed -n 1p)
+                        CWANIP=$(wget -qO- ipinfo.io/ip)
+                        CLANIP=$(ifconfig $CLINKUP | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+                        CNETMASK=$(ifconfig $CLINKUP | grep 'Mask:' | cut -d: -f4 | awk '{ print $1}')
+                        CGWIP=$(route -n | grep 'UG[ \t]' | awk '{print $2}')
+                        CDNS=$(cat /etc/resolv.conf | cut -d: -f2 | awk '{ print $2}')
+			echo 'Wired interface:' $CLINKUP
+                        echo 'Public IP:' $CWANIP
+                        echo 'LAN IP:' $CLANIP
+                        echo 'Netmask:' $CNETMASK
+                        echo 'Gateway:' $CGWIP
+                        echo 'DNS Servers:' $CDNS
+
         # Getting internal interface name
         INT_INTERFACE=`ls /sys/class/net/ | grep -w 'eth0\|eth1\|wlan0\|wlan1' | grep -v "$EXT_INTERFACE" | sed -n '1p'`
         echo "Internal interface: $INT_INTERFACE" | tee -a /var/libre_config.log
