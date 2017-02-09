@@ -71,13 +71,13 @@ check_internet ()
                 exit 1
 	fi
         echo "Showing the interface configuration ..." | tee -a /var/libre_install.log
-	LINKUP=$(ip link |grep UP |grep eth | cut -d: -f2 |sed -n 1p)
+	CLINKUP=$(ip link |grep UP |grep eth | cut -d: -f2 |sed -n 1p)
         CWANIP=$(wget -qO- ipinfo.io/ip)
-        CLANIP=$(ifconfig $LINKUP | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
-        CNETMASK=$(ifconfig $LINKUP | grep 'Mask:' | cut -d: -f4 | awk '{ print $1}')
+        CLANIP=$(ifconfig $CLINKUP | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+        CNETMASK=$(ifconfig $CLINKUP | grep 'Mask:' | cut -d: -f4 | awk '{ print $1}')
         CGWIP=$(route -n | grep 'UG[ \t]' | awk '{print $2}')
         CDNS=$(cat /etc/resolv.conf | cut -d: -f2 | awk '{ print $2}')
-        echo 'Wired interface:' $LINKUP
+        echo 'Wired interface:' $CLINKUP
         echo 'Public IP:' $CWANIP
         echo 'LAN IP:' $CLANIP
         echo 'Netmask:' $CNETMASK
