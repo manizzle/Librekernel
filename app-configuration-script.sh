@@ -380,7 +380,6 @@ configure_bridges()
         echo "    address 10.0.0.1" >> /etc/network/interfaces
         echo "    netmask 255.255.255.0" >> /etc/network/interfaces
         echo "    network 10.0.0.0" >> /etc/network/interfaces
-        fi
 }
 
 
