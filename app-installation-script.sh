@@ -718,7 +718,7 @@ check_requirements()
         # fi
 	
 	# Checking physical memory size.
-        if [ $MEMORY -le 2000000 ]; then 
+        if [ $MEMORY -le 1900000 ]; then 
 		echo "You need at least 2GB of RAM. Exiting" | tee -a /var/libre_install.log
                 exit 5
         fi
