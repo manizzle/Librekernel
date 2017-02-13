@@ -12,7 +12,7 @@ LOOP_N=1
 echo "Commiting ..."
 
 # Get Current Date
-name=$(date '+%y-%m-%d')
+name=$(date '+%y-%m-%d_%H-%M')
 
 # Clone the repository
 rm -rf librereports
