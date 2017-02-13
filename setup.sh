@@ -20,23 +20,23 @@ git clone https://github.com/librerouter/librereports
 cd librereports
 
 # Run scripts and get logs
-echo "********************* SETUP LOG *******************************"
-cat /var/libre_setup.log > "report.$name.log"
+echo "********************* SETUP LOG *******************************" > "report.$name.log"
+cat /var/libre_setup.log >> "report.$name.log"
 
-echo "********************* INSTALLATION LOG ************************"
-cat /var/libre_install.log > "report.$name.log"
+echo "********************* INSTALLATION LOG ************************" >> "report.$name.log"
+cat /var/libre_install.log >> "report.$name.log"
 
-echo "********************* PACKAGES INSTALLATION  *******************"
+echo "********************* PACKAGES INSTALLATION  *******************" >> "report.$name.log"
 cat /var/apt-get-update.log >> "report.$name.log"
 cat /var/apt-get-update-default.log >> "report.$name.log"
 cat /var/apt-get-install-aptth.log >> "report.$name.log"
 cat /var/apt-get-install_1.log >> "report.$name.log"
 cat /var/apt-get-install_2.log >> "report.$name.log"
 
-echo "********************* CONFIGURATION LOG ************************"
+echo "********************* CONFIGURATION LOG ************************" >> "report.$name.log"
 cat /var/libre_config.log >> "report.$name.log"
 
-echo "********************* SYSTEM INFORMATION ************************"
+echo "********************* SYSTEM INFORMATION ************************" >> "report.$name.log"
 uname -a >> "report.$name.log"
 cat /proc/cpuinfo | grep model >> "report.$name.log"
 ifconfig >> "report.$name.log"
