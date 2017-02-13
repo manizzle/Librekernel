@@ -983,7 +983,7 @@ configure_tor()
 {
 echo "Configuring Tor server ..." | tee -a /var/libre_config.log
 tordir=/var/lib/tor/hidden_service
-for i in yacy owncloud friendica mailpile easyrtc ssh gitlab trac redmine  
+for i in yacy owncloud friendica mailpile easyrtc ssh gitlab trac redmine roundcube 
 do
 
 # Setting user and group to debian-tor
@@ -1064,6 +1064,10 @@ HiddenServicePort 443 10.0.0.248:443
 HiddenServiceDir /var/lib/tor/hidden_service/redmine
 HiddenServicePort 80 10.0.0.249:80
 HiddenServicePort 443 10.0.0.249:443
+
+HiddenServiceDir /var/lib/tor/hidden_service/roundcube
+HiddenServicePort 80 10.0.0.243:80
+HiddenServicePort 443 10.0.0.243:443
 
 # ----- Tor DNS ----- #
 
@@ -6271,6 +6275,14 @@ printf "|%12s  |%23s |    redmine.librerouter.net |%13s |\n" $i $hn $IP_ADD \
 | tee -a /var/box_services
 fi
 
+if [ $i == "roundcube" ]; then
+IP_ADD="10.0.0.243"
+hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
+printf "|%12s  |%23s |  roundcube.librerouter.net |%13s |\n" $i $hn $IP_ADD \
+| tee -a /var/box_services
+fi
+
+
 #hn="$(cat /var/lib/tor/hidden_service/$i/hostname 2>/dev/null )"
 #printf "|%12s  |%23s |%18s.librenet |%13s |\n" $i $hn $i $IP_ADD \
 #| tee -a /var/box_services
@@ -6281,8 +6293,6 @@ echo "|  squidguard  |                        | squidguard.librerouter.net |   1
 echo "|      webmin  |                        |     webmin.librerouter.net |   10.0.0.245 |" \
 | tee -a /var/box_services
 echo "|        ntop  |                        |       ntop.librerouter.net |   10.0.0.244 |" \
-| tee -a /var/box_services
-echo "|   roundcube  |                        |  roundcube.librerouter.net |   10.0.0.243 |" \
 | tee -a /var/box_services
 echo "|     postfix  |                        |    postfix.librerouter.net |   10.0.0.242 |" \
 | tee -a /var/box_services
