@@ -2645,7 +2645,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_redsocks	# Install redsocks package
 	install_ntopng		# Install ntopng package
 	install_postfix		# Install postfixadmin package
-#	install_upnp		# Install miniupnp package
+	install_upnp		# Install miniupnp package
 	save_variables	        # Save detected variables
 
 # ---------------------------------------------
