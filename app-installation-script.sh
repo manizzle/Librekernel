@@ -65,11 +65,13 @@ check_internet ()
 		echo "You need internet to proceed. Exiting" | tee -a /var/libre_install.log
 		exit 1
 	fi
+	
 	echo "Checking DNS resolution ..." | tee -a /var/libre_install.log
-	if ! nc -zw1 duckduckgo.com 443 >> /var/libre_install.log; then
+	if ! nslookup github.com >> /var/libre_install.log; then
                 echo "You need DNS resolution to proceed... Exiting" | tee -a /var/libre_install.log
                 exit 1
 	fi
+	
         echo "Showing the interface configuration ..." | tee -a /var/libre_install.log
 	CLINKUP=$(ip link |grep UP |grep eth | cut -d: -f2 |sed -n 1p)
         CWANIP=$(wget -qO- ipinfo.io/ip)
@@ -85,6 +87,7 @@ check_internet ()
         echo 'DNS Servers:' $CDNS
 }
 
+
 # ----------------------------------------------
 # check_root
 # ----------------------------------------------
@@ -96,6 +99,7 @@ check_root ()
 		exit 2
 	fi
 }
+
 
 # ----------------------------------------------
 # configure_repositories
