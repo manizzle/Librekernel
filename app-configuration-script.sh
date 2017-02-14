@@ -1111,6 +1111,10 @@ echo "Configuring i2p server ..." | tee -a /var/libre_config.log
 # $EDITOR /etc/default/i2p
 sed "s~RUN_DAEMON=.*~RUN_DAEMON=\"true\"~g" -i /etc/default/i2p
 
+# Restarting i2p
+/etc/init.d/i2p restart
+sleep 10
+
 # i2p hidden services
 cat << EOF > /var/lib/i2p/i2p-config/i2ptunnel.config
 # NOTE: This I2P config file must use UTF-8 encoding
