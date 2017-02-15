@@ -285,14 +285,14 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		#echo "deb http://ftp.es.debian.org/debian/ jessie-updates main" >> /etc/apt/sources.list
 		#echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
 		cat << EOF >  /etc/apt/sources.list
-deb http://ftp.debian.org/debian jessie main #contrib non-free
-deb http://ftp.debian.org/debian jessie-updates main #contrib non-free
-deb http://security.debian.org jessie/updates main #contrib non-free
-deb http://ftp.debian.org/debian jessie-backports main #ontrib non-free
-deb-src http://ftp.debian.org/debian jessie main #contrib non-free
-deb-src http://ftp.debian.org/debian jessie-updates main #contrib non-free
-deb-src http://security.debian.org jessie/updates main #contrib non-free
-deb-src http://ftp.debian.org/debian jessie-backports main #contrib non-free
+deb http://ftp.debian.org/debian jessie main contrib non-free
+deb http://ftp.debian.org/debian jessie-updates main contrib non-free
+deb http://security.debian.org jessie/updates main contrib non-free
+deb http://ftp.debian.org/debian jessie-backports main ontrib non-free
+deb-src http://ftp.debian.org/debian jessie main contrib non-free
+deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free
+deb-src http://security.debian.org jessie/updates main contrib non-free
+deb-src http://ftp.debian.org/debian jessie-backports main contrib non-free
 EOF
 
 		# There is a need to install apt-transport-https 
