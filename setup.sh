@@ -3,12 +3,9 @@
 git_commit()
 {
 
-echo "Setup failed! Do you want to report this in github? [Y/N]"
-LOOP_N=0
-while [ $LOOP_N -eq 0 ]; do
-read ANSWER
-if [ "$ANSWER" = "Y" -o "$ANSWER" = "y" ]; then
-LOOP_N=1
+echo "Setup failed! We are going to report this in github. Press Crtl+C to exit."
+sleep 5
+
 echo "Commiting ..."
 
 # Get Current Date
@@ -44,15 +41,6 @@ ifconfig >> "report.$name.log"
 git add report.$name.log
 git commit report.$name.log -m "Report $date"
 git push origin
-
-elif [ "$ANSWER" = "N" -o "$ANSWER" = "n" ]; then
-LOOP_N=1
-echo "Exiting ..."
-else
-LOOP_N=0
-echo "Please type \"Y\" or \"N\""
-fi
-done
 
 }
 
