@@ -67,7 +67,7 @@ check_internet ()
 	fi
 	
 	echo "Checking DNS resolution ..." | tee -a /var/libre_install.log
-	if ! nslookup github.com >> /var/libre_install.log; then
+	if ! getent hosts github.com >> /var/libre_install.log; then
                 echo "You need DNS resolution to proceed... Exiting" | tee -a /var/libre_install.log
                 exit 1
 	fi
