@@ -106,6 +106,18 @@ check_root ()
 # ----------------------------------------------
 configure_repositories () 
 {
+	# Configuring main repositories before any installation
+        cat << EOF >  /etc/apt/sources.list
+deb http://ftp.debian.org/debian jessie main contrib non-free
+deb http://ftp.debian.org/debian jessie-updates main contrib non-free
+deb http://security.debian.org jessie/updates main contrib non-free
+deb http://ftp.debian.org/debian jessie-backports main contrib non-free
+deb-src http://ftp.debian.org/debian jessie main contrib non-free
+deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free
+deb-src http://security.debian.org jessie/updates main contrib non-free
+deb-src http://ftp.debian.org/debian jessie-backports main contrib non-free
+EOF
+
 	echo "Time sync ..." | tee -a /var/libre_install.log
 	
 	# Installing ntpdate package
