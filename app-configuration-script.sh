@@ -2921,8 +2921,8 @@ chmod -R a+rw /etc/ecapguardian/ecap
 sed "s/phrasefiltermode = 2/phrasefiltermode = 3/g" -i /etc/ecapguardian/ecapguardian.conf
 
 # Preparing files 
-rm -rf /root/libre_scripts/
-mkdir /root/libre_scripts/
+rm -rf /root/libre_scripts/ecapguardian.sh
+mkdir -p /root/libre_scripts/
 touch /root/libre_scripts/ecapguardian.sh
 chmod +x /root/libre_scripts/ecapguardian.sh
 
