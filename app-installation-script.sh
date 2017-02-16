@@ -456,6 +456,7 @@ fi
 
 # Moving script to permanent location
 mv apmode.sh /root/libre_scripts/
+chmod +x /root/libre_scripts/apmode.sh
 }
 
 
