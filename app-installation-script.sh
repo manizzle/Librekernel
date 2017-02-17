@@ -2524,7 +2524,10 @@ if [ ! -e /usr/bin/upnpc ]; then
     fi
 
     # Cleanup
-    rm miniupnpc-2.0.20161216.tar.gz
+    cd ../
+    rm -rf miniupnpc-2.0.20161216.tar.gz
+
+    cd $INSTALL_HOME
 fi
 }
 
