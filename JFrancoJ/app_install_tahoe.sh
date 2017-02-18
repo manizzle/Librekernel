@@ -109,11 +109,22 @@ mkdir /var/public_node
 
 
 # Now we need to start both nodes, to allow discoveing on URL:DIR2 for node_1
-
+echo "Starting nodes to allow URL:DIR2 discovering for node_1" 
 /home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
 /home/tahoe-lafs/venv/bin/tahoe start /usr/public_node
 # this waiting time is required, otherwise sometimes nodes even started are not yet ready to create aliases and fails conneting with http with "500 Internal Server Error"
 sleep 30;
+
+# Extra check both nodes are OK and connected through Tor
+# via tor: failed to connect: could not use config.SocksPort
+connection_status_node_1=$(curl http://127.0.0.1:3456 | grep -v grep | grep "via tor: failed to connect: could not use config.SocksPort")
+connection_status_public_node=$(curl http://127.0.0.1:9456 | grep -v grep | grep "via tor: failed to connect: could not use config.SocksPort")
+
+if [ ${#connection_status_node_1} -gt 3 ] || [ ${#connection_status_public_node} -gt 3 ]; then 
+   echo "Error: Can NOT connect to TOR. Please check tor configuration file. This is ussualy due to SocksPort 127.0.0.1:port, use just port "
+   echo "Fix this issue, restart TOR and try again."
+   exit;
+fi
 
 # Let's go to discover it
 echo "Creating aliases for Tahoe..."
@@ -121,8 +132,10 @@ mkdir /root/.tahoe/private
 /home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:3456 node_1:
 /home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:9456 public_node:
 
+echo "Fetching URL:DIR2 for node_1"
 URI1=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
 # URI2=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:9456 public_node: | head -n 1)
+echo "$URI1 fetched"
 
 # Update the /private/accounts
 echo -n $URI1 >> /usr/node_1/private/accounts
