@@ -26,6 +26,7 @@ rm -rf /usr/public_node
 
 #if [ ! -x /home/tahoe-lafs]; then
     apt-get install sshpass
+    apt-get install sshfs
     mkdir /home/tahoe-lafs
     cd /home/tahoe-lafs
     virtualenv venv
