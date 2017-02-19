@@ -108,14 +108,14 @@ configure_repositories ()
 {
 	# Configuring main repositories before any installation
         cat << EOF >  /etc/apt/sources.list
-deb http://ftp.debian.org/debian jessie main contrib non-free
-deb http://ftp.debian.org/debian jessie-updates main contrib non-free
-deb http://security.debian.org jessie/updates main contrib non-free
-deb http://ftp.debian.org/debian jessie-backports main contrib non-free
-deb-src http://ftp.debian.org/debian jessie main contrib non-free
-deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free
-deb-src http://security.debian.org jessie/updates main contrib non-free
-deb-src http://ftp.debian.org/debian jessie-backports main contrib non-free
+deb http://ftp.debian.org/debian jessie main 
+deb http://ftp.debian.org/debian jessie-updates main 
+deb http://security.debian.org jessie/updates main 
+deb http://ftp.debian.org/debian jessie-backports main 
+deb-src http://ftp.debian.org/debian jessie main 
+deb-src http://ftp.debian.org/debian jessie-updates main 
+deb-src http://security.debian.org jessie/updates main 
+deb-src http://ftp.debian.org/debian jessie-backports main 
 EOF
 
 	echo "Time sync ..." | tee -a /var/libre_install.log
@@ -297,14 +297,14 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		#echo "deb http://ftp.es.debian.org/debian/ jessie-updates main" >> /etc/apt/sources.list
 		#echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list
 		cat << EOF >  /etc/apt/sources.list
-deb http://ftp.debian.org/debian jessie main contrib non-free
-deb http://ftp.debian.org/debian jessie-updates main contrib non-free
-deb http://security.debian.org jessie/updates main contrib non-free
-deb http://ftp.debian.org/debian jessie-backports main contrib non-free
-deb-src http://ftp.debian.org/debian jessie main contrib non-free
-deb-src http://ftp.debian.org/debian jessie-updates main contrib non-free
-deb-src http://security.debian.org jessie/updates main contrib non-free
-deb-src http://ftp.debian.org/debian jessie-backports main contrib non-free
+deb http://ftp.debian.org/debian jessie main 
+deb http://ftp.debian.org/debian jessie-updates main 
+deb http://security.debian.org jessie/updates main
+deb http://ftp.debian.org/debian jessie-backports main 
+deb-src http://ftp.debian.org/debian jessie main
+deb-src http://ftp.debian.org/debian jessie-updates main 
+deb-src http://security.debian.org jessie/updates main
+deb-src http://ftp.debian.org/debian jessie-backports main 
 EOF
 
 		# There is a need to install apt-transport-https 
