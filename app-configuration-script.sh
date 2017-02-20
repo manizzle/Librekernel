@@ -6612,7 +6612,7 @@ check_services			# Checking services
 configure_gitlab 		# Configure gitlab servies (only for amd64)
 #configure_snortbarn		# Configure Snort and Barnyard services
 #configure_snorby		# Configure Snorby
-#configure_upnp                 # configure miniupnp
+configure_upnp                  # configure miniupnp
 #services_to_tor                # Redirect yacy and prosody traffic to tor
 add_warning_pages		# Added warning pages for clamav and squidguard
 print_services			# Print info about service accessibility
