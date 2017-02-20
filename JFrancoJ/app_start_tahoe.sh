@@ -1,5 +1,4 @@
 
-/usr/bin/tor --defaults-torrc /usr/share/tor/tor-service-defaults-torrc -f /etc/tor/torrc_tahoe --RunAsDaemon 0 &
 
 # Start nodes
 /home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
