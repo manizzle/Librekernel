@@ -40,6 +40,20 @@ EOT
 
 fi
 
+
+# Local access funtions (SSH support or SSHFS )
+echo "Host 127.0.0.1" >> /etc/ssh/ssh_config
+echo "  HostName localhost"  >> /etc/ssh/ssh_config
+echo "  Port 8022"  >> /etc/ssh/ssh_config
+echo "  StrictHostKeyChecking no"  >> /etc/ssh/ssh_config
+echo  >> /etc/ssh/ssh_config
+echo "Host 127.0.0.1" >> /etc/ssh/ssh_config
+echo "  HostName localhost"  >> /etc/ssh/ssh_config
+echo "  Port 8024"  >> /etc/ssh/ssh_config
+echo "  StrictHostKeyChecking no"  >> /etc/ssh/ssh_config
+echo  >> /etc/ssh/ssh_config
+
+
 /usr/bin/tor --defaults-torrc /usr/share/tor/tor-service-defaults-torrc -f /etc/tor/torrc_tahoe --RunAsDaemon 0 &
 
 
@@ -80,7 +94,6 @@ ssh-keygen -f "/root/.ssh/known_hosts" -R [localhost]:8024
 #mv /tmp/upload.py.patched /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable/upload.py
 #cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable; python -m py_compile upload.py
 
-
 # python -m py_compile upload.py
 
 
@@ -90,115 +103,4 @@ ssh-keygen -f "/root/.ssh/known_hosts" -R [localhost]:8024
 # /var/private_node is a mount point for node public_node FUSE
 
 mkdir /root/.tahoe
-
-# Create private node
-# Prepare random user/pass for mount this node
-random_user=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
-random_pass=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
-echo "$random_user $random_pass" > /root/.tahoe/node_1
-
-# Discover URI:DIR2 for the root
-# This of course must be done AFTER the node is started and connected, so we will need
-# to restart the node after update private/accounts
-
-cd /home/tahoe-lafs 
-nickname="liberouter_client1"
-introducer="pb://hootxde72nklvu2de3n57a3szfkbazrd@tor:3h3ap6f4b62dvh3m.onion:3457/7jho3gaqpsarnvieg7iszqm7zsffvzic"
-
-
-/home/tahoe-lafs/venv/bin/tahoe create-node --listen=tor --nickname=$nickname --introducer=$introducer --hide-ip --webport=tcp:3456:interface=127.0.0.1 --tor-control-port=unix:/var/run/tor_tahoe/control /usr/node_1
-cd /usr/node_1
-echo "$random_user $random_pass FALSE" > private/accounts
-cat <<EOT  | grep -v EOT>> tahoe.cfg
-[sftpd]
-enabled = true
-port = tcp:8022:interface=127.0.0.1
-host_pubkey_file = private/ssh_host_rsa_key.pub
-host_privkey_file = private/ssh_host_rsa_key
-accounts.file = private/accounts
-EOT
-echo "Generamos keys para node_1"
-ssh-keygen -q -N '' -f private/ssh_host_rsa_key
-mkdir /var/node_1
-
-# Create public node ( common to all boxes ) with rw permisions
-
-random_user=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
-random_pass=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
-echo "$random_user $random_pass" > /root/.tahoe/public_node
-
-cd /home/tahoe-lafs
-nickname=public
-introducer="pb://hootxde72nklvu2de3n57a3szfkbazrd@tor:3h3ap6f4b62dvh3m.onion:3457/7jho3gaqpsarnvieg7iszqm7zsffvzic"
-/home/tahoe-lafs/venv/bin/tahoe create-node --listen=tor --nickname=$nickname --introducer=$introducer --hide-ip --webport=tcp:9456:interface=127.0.0.1 --tor-control-port=unix:/var/run/tor_tahoe/control /usr/public_node
-cd /usr/public_node
-echo "$random_user $random_pass FALSE" > private/accounts
-cat <<EOT  | grep -v EOT>> tahoe.cfg
-[sftpd]
-enabled = true
-port = tcp:8024:interface=127.0.0.1
-host_pubkey_file = private/ssh_host_rsa_key.pub
-host_privkey_file = private/ssh_host_rsa_key
-accounts.file = private/accounts
-EOT
-
-ssh-keygen -q -N '' -f private/ssh_host_rsa_key
-mkdir /var/public_node
-
-
-# Now we need to start both nodes, to allow discoveing on URL:DIR2 for node_1
-echo "Starting nodes to allow URL:DIR2 discovering for node_1" 
-/home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
-/home/tahoe-lafs/venv/bin/tahoe start /usr/public_node
-# this waiting time is required, otherwise sometimes nodes even started are not yet ready to create aliases and fails conneting with http with "500 Internal Server Error"
-sleep 30;
-
-# Extra check both nodes are OK and connected through Tor
-# via tor: failed to connect: could not use config.SocksPort
-connection_status_node_1=$(curl http://127.0.0.1:3456 | grep -v grep | grep "via tor: failed to connect: could not use config.SocksPort")
-connection_status_public_node=$(curl http://127.0.0.1:9456 | grep -v grep | grep "via tor: failed to connect: could not use config.SocksPort")
-
-if [ ${#connection_status_node_1} -gt 3 ] || [ ${#connection_status_public_node} -gt 3 ]; then 
-   echo "Error: Can NOT connect to TOR. Please check tor configuration file. This is ussualy due to SocksPort 127.0.0.1:port, use just port "
-   echo "Fix this issue, restart TOR and try again."
-   exit;
-fi
-
-# Let's go to discover it
-echo "Creating aliases for Tahoe..."
-mkdir /root/.tahoe/private
-/home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:3456 node_1:
-/home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:9456 public_node:
-
-echo "Fetching URL:DIR2 for node_1"
-URI1=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
-# URI2=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:9456 public_node: | head -n 1)
-echo "$URI1 fetched"
-
-# Update the /private/accounts
-echo -n $URI1 >> /usr/node_1/private/accounts
-echo -n URI:DIR2:rjxappkitglshqppy6mzo3qori:nqvfdvuzpfbldd7zonjfjazzjcwomriak3ixinvsfrgua35y4qzq >> /usr/public_node/private/accounts
-updatednode_1=$(sed -e "s/FALSE/ /g" /usr/node_1/private/accounts )
-updatedpubic_node=$(sed -e "s/FALSE/ /g" /usr/public_node/private/accounts )
-echo $updatednode_1 > /usr/node_1/private/accounts
-echo $updatedpubic_node > /usr/public_node/private/accounts
-
-
-# Local access funtions (SSH support or SSHFS )
-echo "Host 127.0.0.1" >> /etc/ssh/ssh_config
-echo "  HostName localhost"  >> /etc/ssh/ssh_config
-echo "  Port 8022"  >> /etc/ssh/ssh_config
-echo "  StrictHostKeyChecking no"  >> /etc/ssh/ssh_config
-echo  >> /etc/ssh/ssh_config
-echo "Host 127.0.0.1" >> /etc/ssh/ssh_config
-echo "  HostName localhost"  >> /etc/ssh/ssh_config
-echo "  Port 8024"  >> /etc/ssh/ssh_config
-echo "  StrictHostKeyChecking no"  >> /etc/ssh/ssh_config
-echo  >> /etc/ssh/ssh_config
-
-
-# Done, now we can restart the nodes
-
-
-
 
