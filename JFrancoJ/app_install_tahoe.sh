@@ -2,6 +2,7 @@
 #====================================================
 
 
+
 if [ -e /home/tahoe-lafs ]; then
     textmsg="Thee already installed, do you want to delete and re-install a new one [no/yes]?"
     read -p "$textmsg" -e install
@@ -11,6 +12,36 @@ if [ -e /home/tahoe-lafs ]; then
 fi
 
 
+if [ ! -e /var/run/tor_tahoe ]; then
+    # Crear instancia de Tor solo para Tahoe
+
+    mkdir /var/run/tor_tahoe
+    chown debian-tor.debian-tor /var/run/tor_tahoe
+    cp -dpR /var/lib/tor /var/lib/tor_tahoe
+    # ******* Crer fichero de configuracion y de arranque posterior de tor_tahoe *************
+    cat <<EOT  | grep -v EOT>> /etc/tor/torrc_tahoe
+DataDirectory /var/lib/tor_tahoe
+PidFile /var/run/tor_tahoe/tahoe_tor.pid
+RunAsDaemon 1
+User debian-tor
+
+ControlSocket /var/run/tor_tahoe/control GroupWritable RelaxDirModeCheck
+ControlSocketsGroupWritable 1
+SocksPort unix:/var/run/tor_tahoe/socks WorldWritable
+SocksPort 9052
+
+CookieAuthentication 1
+CookieAuthFileGroupReadable 1
+CookieAuthFile /var/run/tor_tahoe/control.authcookie
+
+Log notice file /var/log/tor/tahoe_log
+EOT
+
+
+fi
+
+/usr/bin/tor --defaults-torrc /usr/share/tor/tor-service-defaults-torrc -f /etc/tor/torrc_tahoe --RunAsDaemon 0 &
+
 
 /home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
 /home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
@@ -19,7 +50,8 @@ rm -rf /usr/node_1
 rm -rf /root/.tahoe
 rm -rf /usr/public_node
 
-
+ssh-keygen -f "/root/.ssh/known_hosts" -R [localhost]:8022
+ssh-keygen -f "/root/.ssh/known_hosts" -R [localhost]:8024
 
 
 # Setup new py env and install required packages if not existing
@@ -42,10 +74,14 @@ rm -rf /usr/public_node
 # The fix is /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable/upload.py file line 1519 must:
 # -URI_LIT_SIZE_THRESHOLD = 55
 # +URI_LIT_SIZE_THRESHOLD = 55555 
-cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable; python -m py_compile upload.py
-patching=$(sed -e "s/URI_LIT_SIZE_THRESHOLD = 55/URI_LIT_SIZE_THRESHOLD = 9999999999/g" upload.py > /tmp/upload.py.patched)
-mv /tmp/upload.py.patched /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable/upload.py
-python -m py_compile upload.py
+
+#cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable
+#patching=$(sed -e "s/URI_LIT_SIZE_THRESHOLD = 55/URI_LIT_SIZE_THRESHOLD = 55/g" upload.py > /tmp/upload.py.patched)
+#mv /tmp/upload.py.patched /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable/upload.py
+#cd /home/tahoe-lafs/venv/lib/python2.7/site-packages/allmydata/immutable; python -m py_compile upload.py
+
+
+# python -m py_compile upload.py
 
 
 # /usr/node_1 is used to store PRIVATE Tahoe node_1
@@ -68,7 +104,9 @@ echo "$random_user $random_pass" > /root/.tahoe/node_1
 cd /home/tahoe-lafs 
 nickname="liberouter_client1"
 introducer="pb://hootxde72nklvu2de3n57a3szfkbazrd@tor:3h3ap6f4b62dvh3m.onion:3457/7jho3gaqpsarnvieg7iszqm7zsffvzic"
-/home/tahoe-lafs/venv/bin/tahoe create-node --listen=tor --nickname=$nickname --introducer=$introducer --hide-ip --webport=tcp:3456:interface=127.0.0.1 /usr/node_1
+
+
+/home/tahoe-lafs/venv/bin/tahoe create-node --listen=tor --nickname=$nickname --introducer=$introducer --hide-ip --webport=tcp:3456:interface=127.0.0.1 --tor-control-port=unix:/var/run/tor_tahoe/control /usr/node_1
 cd /usr/node_1
 echo "$random_user $random_pass FALSE" > private/accounts
 cat <<EOT  | grep -v EOT>> tahoe.cfg
@@ -92,7 +130,7 @@ echo "$random_user $random_pass" > /root/.tahoe/public_node
 cd /home/tahoe-lafs
 nickname=public
 introducer="pb://hootxde72nklvu2de3n57a3szfkbazrd@tor:3h3ap6f4b62dvh3m.onion:3457/7jho3gaqpsarnvieg7iszqm7zsffvzic"
-/home/tahoe-lafs/venv/bin/tahoe create-node --listen=tor --nickname=$nickname --introducer=$introducer --hide-ip --webport=tcp:9456:interface=127.0.0.1 /usr/public_node
+/home/tahoe-lafs/venv/bin/tahoe create-node --listen=tor --nickname=$nickname --introducer=$introducer --hide-ip --webport=tcp:9456:interface=127.0.0.1 --tor-control-port=unix:/var/run/tor_tahoe/control /usr/public_node
 cd /usr/public_node
 echo "$random_user $random_pass FALSE" > private/accounts
 cat <<EOT  | grep -v EOT>> tahoe.cfg
