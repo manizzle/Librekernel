@@ -19,7 +19,7 @@
 # This user interface will detect the enviroment and will chose a method based
 # on this order : X no GTK, X with GTK , dialaog, none )
 
-if [ -x /usr/bin/dialog  | /bin/dialog ]; then
+if [ -x /usr/bin/dialog ] || [ -x /bin/dialog ]; then
     interface=dialog
 else 
     inteface=none

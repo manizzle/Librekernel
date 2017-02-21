@@ -12,33 +12,6 @@ if [ -e /home/tahoe-lafs ]; then
 fi
 
 
-if [ ! -e /var/run/tor_tahoe ]; then
-    # Crear instancia de Tor solo para Tahoe
-
-    mkdir /var/run/tor_tahoe
-    chown debian-tor.debian-tor /var/run/tor_tahoe
-    cp -dpR /var/lib/tor /var/lib/tor_tahoe
-    # ******* Crer fichero de configuracion y de arranque posterior de tor_tahoe *************
-    cat <<EOT  | grep -v EOT>> /etc/tor/torrc_tahoe
-DataDirectory /var/lib/tor_tahoe
-PidFile /var/run/tor_tahoe/tahoe_tor.pid
-RunAsDaemon 1
-User debian-tor
-
-ControlSocket /var/run/tor_tahoe/control GroupWritable RelaxDirModeCheck
-ControlSocketsGroupWritable 1
-SocksPort unix:/var/run/tor_tahoe/socks WorldWritable
-SocksPort 9052
-
-CookieAuthentication 1
-CookieAuthFileGroupReadable 1
-CookieAuthFile /var/run/tor_tahoe/control.authcookie
-
-Log notice file /var/log/tor/tahoe_log
-EOT
-
-
-fi
 
 
 # Local access funtions (SSH support or SSHFS )

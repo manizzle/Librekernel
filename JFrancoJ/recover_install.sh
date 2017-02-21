@@ -12,7 +12,9 @@
 # This user interface will detect the enviroment and will chose a method based
 # on this order : X no GTK, X with GTK , dialaog, none )
 
-if [ -x /usr/bin/dialog  | /bin/dialog ]; then
+
+select_dialog() {
+if [ -x /usr/bin/dialog ] || [ -x /bin/dialog ]; then
     interface=dialog
 else 
     inteface=none
@@ -23,7 +25,7 @@ else
         fi
     fi
 fi
-
+}
 
 select_alias() {
 
@@ -31,6 +33,7 @@ select_alias() {
 textmsg="Please select you ALIAS from the list:\n\n:";
 
 if [ $interface = "dialog" ]; then
+    
     dialog --colors --menu "$textmsg" 0 0 15 alias1 "" alias2 "" alias3 "" alias4 "" alias5 ""  2> /tmp/alias
     alias=$(cat /tmp/alias)
 else 
@@ -160,7 +163,7 @@ check_tahoe_cpu_load () {
 }
 
 
-
+select_dialog
 select_alias
 prompt_pass
 echo "Se usara el pass $passwd para desencriptar el alias $alias"
@@ -216,7 +219,7 @@ umount /var/node_1
 exit
 
 
-
+select_dialog
 prompt
 check_inputs
 echo Your name is $myalias
