@@ -3,6 +3,11 @@
 rm -rf /usr/node_1
 rm -rf /usr/public_node
 
+# Sanity SSH keys
+ssh-keygen -f "/root/.ssh/known_hosts" -R [localhost]:8022
+ssh-keygen -f "/root/.ssh/known_hosts" -R [localhost]:8024
+
+
 # Create private node
 # Prepare random user/pass for mount this node
 random_user=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
@@ -166,3 +171,38 @@ EOT
 
 chmod u+x /etc/init.d/start_tahoe
 update-rc.d start_tahoe defaults
+
+
+# Creamos /root/start_backup.sh
+# This script will be check if no any other instance of backup is running
+# Then will compress predefined directories and files into tar.gz sys backup file
+# Then compare with actual backup contents and do a serialization of backups up to N 
+# As default N=1 while Tahoe does 3/7/10 or better, otherwise to do more serialization more shared space would be required
+cat <<EOT  | grep -v EOT> /root/start_backup.sh
+
+# Create a /tmp/sys.backup.tar.gz
+rm -f /tmp/sys.backup.tar.gz
+tar -cpPf /tmp/sys.backup.tar /etc
+tar -rpPf /tmp/sys.backup.tar /root/.aptitude
+tar -rpPf /tmp/sys.backup.tar /root/.bundle
+tar -rpPf /tmp/sys.backup.tar /root/.cache
+tar -rpPf /tmp/sys.backup.tar /root/.gem
+tar -rpPf /tmp/sys.backup.tar /root/.gnupg
+tar -rpPf /tmp/sys.backup.tar /root/.local
+tar -rpPf /tmp/sys.backup.tar /root/.npm
+tar -rpPf /tmp/sys.backup.tar /root/.ssh
+tar -rpPf /tmp/sys.backup.tar /root/.subversion
+tar -rpPf /tmp/sys.backup.tar /root/.tahoe
+# tar -rpPf /tmp/sys.backup.tar /var/www
+tar -rpPf /tmp/sys.backup.tar /var/lib/mysql
+gzip /tmp/sys.backup.tar
+/home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:3456 /tmp/sys.backup.tar.gz node_1:
+
+EOT
+chmod u+x /root/start_backup.sh
+
+
+# Now are going to insert into cron a call for the sys backup
+if [ ! $(cat /var/spool/cron/crontabs/root | grep start_backup) ] 2>/dev/null ; then
+    echo "0 0 * * mon /root/start_backup.sh" >> /var/spool/cron/crontabs/root
+fi

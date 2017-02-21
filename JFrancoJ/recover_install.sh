@@ -13,6 +13,49 @@
 # on this order : X no GTK, X with GTK , dialaog, none )
 
 
+collect_alias() {
+    # Creates a hash with ALL existing alias, instead to fetch every time from the /var/public_node
+    # this is going to be used as help  to remember your alias from entered characters, no case sensitive
+    aliasesdb=$(dir /var/public_node -l  | grep ^- | cut -c 42-)
+    # for names in $aliasdb; do echo $names; done
+}
+
+alias_help() {
+    textmsg="Please select you ALIAS from the list:";
+    echo -n "Enter your ALIAS:"
+    while [[ $alias != *$'\n'* ]]; do
+        read -s -n 1  myalias2
+        if [[ $myalias2 == $'' ]]; then
+           break
+        fi
+        if [[ $myalias2 == $'\b' ]]; then
+           alias=${alias::-1}
+           echo -n -e "\r$alias "
+        fi
+        if [[ $myalias2 == [Aa-Zz,.,-,0-9,_] ]]; then
+           alias=$alias$myalias2
+        fi
+        clear
+        alias_lc=${alias,,}
+        for names in $aliasesdb; do
+           names=${names,,}
+           if [[ $names == *$alias_lc* ]]; then
+              echo -n -e "$names\t"
+              
+           fi
+        done
+        echo
+        echo -n $textmsg
+        echo -n -e "$alias"
+
+    done
+    echo "has metido alias=$alias"
+    exit
+    # Show some alias that can match yours
+}
+
+
+
 select_dialog() {
 if [ -x /usr/bin/dialog ] || [ -x /bin/dialog ]; then
     interface=dialog
@@ -162,9 +205,10 @@ check_tahoe_cpu_load () {
     done
 }
 
-
+collect_alias
 select_dialog
-select_alias
+#select_alias
+alias_help
 prompt_pass
 echo "Se usara el pass $passwd para desencriptar el alias $alias"
 deofuscate
@@ -193,7 +237,43 @@ echo $pb_point > /usr/node_1/private/accounts            # save cap for node_1 r
 # including the shares 
 
 /home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
-tahoe deep-check --repair -u http://127.0.0.1:3456 node_1:
+
+# Check connected enough good nodes before to continue 
+
+connnode_1=0
+while [ $connnode_1 -lt 7 ]; do
+    connnode_1=$(curl http://127.0.0.1:3456/ 2> /dev/null| grep "Connected to tor" | wc -l)
+done
+
+# Now we know node_1 is ready, let's go to do paranoic check/repair on it
+
+/home/tahoe-lafs/venv/bin/tahoe deep-check --repair -u http://127.0.0.1:3456 node_1:
+
+# Recover the backup file 
+echo "Please wait. This will take over 30 minutes..."
+/home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:3456 node_1:sys.backup.tar.gz /tmp/. &
+
+# Mostramos progreso del download 
+progress="00.00.00"
+while [ ${#progress} -gt 5 ];do
+    progress=$(curl http://127.0.0.1:3456/status/down-1 2> /dev/null | grep Progress:)
+    echo -e -n "\r$progress"
+    if [[ $progress =~ "100.0" ]]; then
+        progress=""
+    fi
+    sleep 10
+done
+
+# Gracefully stop all Tahoe nodes before to extract files from backup
+/home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
+/home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
+
+
+
+
+
+
+
 umount /var/node_1
 user=$(cat /root/.tahoe/node_1 | cut -d \  -f 1)
 pass=$(cat /root/.tahoe/node_1 | cut -d \  -f 2)
@@ -217,42 +297,4 @@ umount /var/node_1
 
 
 exit
-
-
-select_dialog
-prompt
-check_inputs
-echo Your name is $myalias
-echo Clave $myfirstpass
-echo Clave $mysecondpass
-
-# Convert this alias to encrypted key with pass=$myfirstpass and save as $myalias
-
-# creates PEM 
-rm /tmp/ssh_keys*
-ssh-keygen -N $myfirstpass -f /tmp/ssh_keys
-openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
-
-# create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
-# the $phrase is the entry point to the private area (pb:/ from /usr/node_1/tahoe.cfg )
-# $phrase will be like "URI:DIR2:guq3z6e68pf2bvwe6vdouxjptm:d2mvquow4mxoaevorf236cjajkid5ypg2dgti4t3wgcbunfway2a"
-frase=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
-echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
-mv /tmp/$myalias /var/public_node/$myalias
-
-
-
-
-# now let's go to schedulled our first backup
-# this will be launched for first time and then schedulle on crond
-
-
-# Decrypt will be used for restore only, and will discover the requied URI:DIR2 value for the private area node
-# cat /var/public_node/$myalias | openssl rsautl -decrypt -inkey /tmp/ssh_keys # < Will prompt for password to decrypt it
-
-
-
-
-exit
-
 

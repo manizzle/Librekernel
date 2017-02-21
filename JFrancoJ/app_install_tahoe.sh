@@ -27,7 +27,6 @@ echo "  StrictHostKeyChecking no"  >> /etc/ssh/ssh_config
 echo  >> /etc/ssh/ssh_config
 
 
-/usr/bin/tor --defaults-torrc /usr/share/tor/tor-service-defaults-torrc -f /etc/tor/torrc_tahoe --RunAsDaemon 0 &
 
 
 /home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
