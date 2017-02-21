@@ -239,7 +239,7 @@ get_interfaces()
                 fi
         fi
 			echo "Checking DNS resolution ..." | tee -a /var/libre_config.log
-                        if ! nslookup duckduckgo.com >> /var/libre_config.log; then
+                        if ! getent hosts github.com >> /var/libre_config.log; then
                         echo "You need DNS resolution to proceed... Exiting" | tee -a /var/libre_config.log
                         exit 1
                         fi
