@@ -19,7 +19,8 @@
 # This user interface will detect the enviroment and will chose a method based
 # on this order : X no GTK, X with GTK , dialaog, none )
 
-if [ -x /usr/bin/dialog ] || [ -x /bin/dialog ]; then
+interface=0
+if [ -x n/usr/bin/dialog ] || [ -x n/bin/dialog ]; then
     interface=dialog
 else 
     inteface=none
@@ -31,7 +32,6 @@ else
     fi
 fi
 
-echo "INTERFACE $interface";
 
 
 prompt() {
@@ -41,7 +41,9 @@ This id may be public visible\n\n\
 Use an enough hard password with minimum 8 bytes and write down in a safe place.\n\n";
 
 if [ ${#errmsg} -gt 0 ]; then
-    textmsg=$textmsg\\Z1$errmsg
+    color='\033[0;31m'
+    nocolor='\033[0m'
+    textmsg="${nocolor}$textmsg ${color} $errmsg"
     errmsg=""
 fi
 
@@ -49,11 +51,7 @@ fi
 
 if [ $interface = "dialog" ]; then
 
-dialog --colors \
---form "$textmsg" 0 0 3 \
-"Enter your alias:" 1 2 "$myalias"  1 20 20 20 \
-"Passwod:" 2 2 "" 2 20 20 20 \
-"Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
+dialog --colors --form "$textmsg" 0 0 3 "Enter your alias:" 1 2 "$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
 
 credentials=$(cat /tmp/inputbox.tmp)
 rm /tmp/inputbox.tmp
@@ -75,13 +73,12 @@ for lines in $credentials; do
 done 
 
 else
+echo -e $textmsg${nocolor}
+# echo -e "Enter some easy to remember ID here. \nThis will be used in case you need to recover your full system configuration from backup\nThis id may be public visible\n\n"
+read -p "What is your username? " -e myalias
 
-read -p "Enter some easy to remember ID here. \nThis will be used in case you need to recover your full system configuration from backup\n\
-This id may be public visible\n\n\
-What is your username? " -e myalias
-
-read -p "Use an enough hard password with minimum 8 bytes and write down in a safe place.\n\n
-Passwod:" -e myfirstpass
+echo -e "Use an enough hard password with minimum 8 bytes and write down in a safe place.\n\n"
+read -p "Passwod:" -e myfirstpass
 
 read -p "Repeat Passwod:" -e mysecondpass
 
@@ -120,6 +117,7 @@ fi
 while [ ${#errmsg} -gt 0 ]; do
     echo "ERROR: $errmsg$errmsg2"
     prompt
+    check_inputs
 done
   
 }
@@ -135,20 +133,15 @@ ofuscate () {
 }
 
 
-
-
-
+/etc/init.d/start_tahoe
 prompt
 check_inputs
-echo Your name is $myalias
-echo Clave $myfirstpass
-echo Clave $mysecondpass
 
 # Convert this alias to encrypted key with pass=$myfirstpass and save as $myalias
 
 # creates PEM 
 rm /tmp/ssh_keys*
-ssh-keygen -N $myfirstpass -f /tmp/ssh_keys
+ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
 openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
 
 # create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
@@ -160,11 +153,6 @@ echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tm
 mv /tmp/$myalias /var/public_node/$myalias
 ofuscate
 cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
-
-
-
-# now let's go to schedulled our first backup
-# this will be launched for first time and then schedulle on crond
 
 
 # Decrypt will be used for restore only, and will discover the requied URI:DIR2 value for the private area node

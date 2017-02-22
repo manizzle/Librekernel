@@ -166,6 +166,7 @@ if [ -e /root/.tahoe/public_node ]; then
   echo \$pass | sshfs \$user@127.0.0.1:  /var/public_node  -p 8024 -o no_check_root -o password_stdin
 fi
 
+echo 0 > /var/run/backup
 
 EOT
 
@@ -179,25 +180,22 @@ update-rc.d start_tahoe defaults
 # Then compare with actual backup contents and do a serialization of backups up to N 
 # As default N=1 while Tahoe does 3/7/10 or better, otherwise to do more serialization more shared space would be required
 cat <<EOT  | grep -v EOT> /root/start_backup.sh
+# Do not allow more than one instance
+sem=$(cat /var/run/backup)
 
+if [ \$sem -gt 0 ]; then
+  exit
+fi
+echo 1 > /var/run/backup
 # Create a /tmp/sys.backup.tar.gz
 rm -f /tmp/sys.backup.tar.gz
 tar -cpPf /tmp/sys.backup.tar /etc
-tar -rpPf /tmp/sys.backup.tar /root/.aptitude
-tar -rpPf /tmp/sys.backup.tar /root/.bundle
-tar -rpPf /tmp/sys.backup.tar /root/.cache
-tar -rpPf /tmp/sys.backup.tar /root/.gem
-tar -rpPf /tmp/sys.backup.tar /root/.gnupg
-tar -rpPf /tmp/sys.backup.tar /root/.local
-tar -rpPf /tmp/sys.backup.tar /root/.npm
-tar -rpPf /tmp/sys.backup.tar /root/.ssh
-tar -rpPf /tmp/sys.backup.tar /root/.subversion
-tar -rpPf /tmp/sys.backup.tar /root/.tahoe
-# tar -rpPf /tmp/sys.backup.tar /var/www
+tar -rpPf /tmp/sys.backup.tar /root
+tar -rpPf /tmp/sys.backup.tar /var/www
 tar -rpPf /tmp/sys.backup.tar /var/lib/mysql
 gzip /tmp/sys.backup.tar
 /home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:3456 /tmp/sys.backup.tar.gz node_1:
-
+echo 0 > /var/run/backup
 EOT
 chmod u+x /root/start_backup.sh
 
