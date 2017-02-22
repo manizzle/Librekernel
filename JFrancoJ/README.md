@@ -15,7 +15,7 @@ We enabled our own Tor INTRODUCER in a way this grid is using a dedicated storag
 
 # INSTALLATION 
 
-![](http://circuitosaljarafe.com/librerouter/draw3.png)
+![](http://circuitosaljarafe.com/librerouter/draw5.png)
 
 This flow chart shows the proccess of installation or re-intallation recovering an existing and lost Librerouter box.
 
