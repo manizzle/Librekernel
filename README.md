@@ -201,8 +201,7 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 
 #Temporary architecture
 
-![network_diagram_2](https://cloud.githubusercontent.com/assets/13025157/18578293/695f395a-7bef-11e6-8d83-82d88b6b0feb.png)
-
+![arch_new](https://cloud.githubusercontent.com/assets/13025157/23234526/a49e2a54-f952-11e6-8042-d5acebbdb757.png)
 
 #Engines especifications and configuration dependencies:
 
