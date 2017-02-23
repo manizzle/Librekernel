@@ -6301,7 +6301,12 @@ fi
 # ---------------------------------------------------------
 configure_tahoe2()
 {
-# This scirpt will prompt user for ALIAS name and PASSWORD on clean installation.
+# Will create /root/libre_scripts/id_tahoe.sh to be called ONCE only 
+# through ton next reboot or manually from the wizard.sh
+#
+
+cat >>EOT | grep -v EOT> /root/libre_scripts/id_tahoe.sh
+# will prompt user for ALIAS name and PASSWORD on clean installation.
 # This clean ALIAS will be saved to Public tahoe area with contents an encrypted string
 # The decrypted string will point to the Private tahoe area for this box
 #
@@ -6341,40 +6346,40 @@ textmsg="Enter some easy to remember ID here. \nThis will be used in case you ne
 This id may be public visible\n\n\
 Use an enough hard password with minimum 8 bytes and write down in a safe place.\n\n";
 
-if [ ${#errmsg} -gt 0 ]; then
+if [ \${#errmsg} -gt 0 ]; then
     color='\033[0;31m'
     nocolor='\033[0m'
-    textmsg="${nocolor}$textmsg ${color} $errmsg"
+    textmsg="\${nocolor}$textmsg ${color} $errmsg"
     errmsg=""
 fi
 
 
 
-if [ $interface = "dialog" ]; then
+if [ \$interface = "dialog" ]; then
 
-dialog --colors --form "$textmsg" 0 0 3 "Enter your alias:" 1 2 "$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
+dialog --colors --form "\$textmsg" 0 0 3 "Enter your alias:" 1 2 "\$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
 
-credentials=$(cat /tmp/inputbox.tmp)
+credentials=\$(cat /tmp/inputbox.tmp)
 rm /tmp/inputbox.tmp
 thiscounter=0
 local IFS='
 '
-for lines in $credentials; do
+for lines in \$credentials; do
 #while IFS= read -r lines; do
-    if [ $thiscounter = "0" ]; then 
-        myalias="$lines"
+    if [ \$thiscounter = "0" ]; then 
+        myalias="\$lines"
     fi
-    if [ $thiscounter = "1" ]; then 
-        myfirstpass="$lines"
+    if [ \$thiscounter = "1" ]; then 
+        myfirstpass="\$lines"
     fi
     if [ $thiscounter = "2" ]; then 
-        mysecondpass="$lines"
+        mysecondpass="\$lines"
     fi
     ((thiscounter++));    
 done 
 
 else
-echo -e $textmsg${nocolor}
+echo -e \$textmsg\${nocolor}
 # echo -e "Enter some easy to remember ID here. \nThis will be used in case you need to recover your full system configuration from backup\nThis id may be public visible\n\n"
 read -p "What is your username? " -e myalias
 
@@ -6393,30 +6398,30 @@ check_inputs() {
 
 errmsg="";
 # Are valid all these inputs ?
-if [ -z "${myalias##*" "*}" ]; then
+if [ -z "\${myalias##*" "*}" ]; then
     errmsg="Spaces are not allowed";
 fi
 
-strleng=${#myalias}
-if [[ $strleng -lt 8 ]]; then
-    errmsg="$myalias ${#myalias} Must be at least 8 characters long"
+strleng=\${#myalias}
+if [[ \$strleng -lt 8 ]]; then
+    errmsg="\$myalias \${#myalias} Must be at least 8 characters long"
 fi
 
-if [ -z "${myfirstpass##*" "*}" ]; then
+if [ -z "\${myfirstpass##*" "*}" ]; then
     errmsg="Spaces are not allowed";
 fi
 
-strleng=${#myfirstpass}
-if [[ $strleng -lt 8 ]]; then
-    errmsg="$myfirstpass ${#myalias} Must be at least 8 characters long"
+strleng=\${#myfirstpass}
+if [[ \$strleng -lt 8 ]]; then
+    errmsg="\$myfirstpass \${#myalias} Must be at least 8 characters long"
 fi
 
-if [ $myfirstpass != $mysecondpass ]; then
+if [ \$myfirstpass != \$mysecondpass ]; then
     errmsg="Please repeat same password"
 fi
 
-while [ ${#errmsg} -gt 0 ]; do
-    echo "ERROR: $errmsg$errmsg2"
+while [ \${#errmsg} -gt 0 ]; do
+    echo "ERROR: \$errmsg\$errmsg2"
     prompt
     check_inputs
 done
@@ -6427,8 +6432,8 @@ done
 ofuscate () {
     thiscounter=0
     output=''
-    while [ $thiscounter -lt 30 ]; do
-        ofuscated=$ofuscated${myalias:$thiscounter:1}$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-4})
+    while [ \$thiscounter -lt 30 ]; do
+        ofuscated=\$ofuscated\${myalias:\$thiscounter:1}\$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c\${1:-4})
         ((thiscounter++));
     done
 }
@@ -6442,22 +6447,24 @@ check_inputs
 
 # creates PEM 
 rm /tmp/ssh_keys*
-ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
-openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
+ssh-keygen -N \$myfirstpass -f /tmp/ssh_keys 2> /dev/null
+openssl rsa  -passin pass:\$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
 
 # create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
 # the $phrase is the entry point to the private area (pb:/ from /usr/node_1/tahoe.cfg )
 # $phrase will be like "user pass URI:DIR2:guq3z6e68pf2bvwe6vdouxjptm:d2mvquow4mxoaevorf236cjajkid5ypg2dgti4t3wgcbunfway2a"
 #frase=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
-frase=$(cat /usr/node_1/private/accounts | head -n 1)
-echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
-mv /tmp/$myalias /var/public_node/$myalias
+frase=\$(cat /usr/node_1/private/accounts | head -n 1)
+echo \$frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/\$myalias
+mv /tmp/\$myalias /var/public_node/\$myalias
 ofuscate
-cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
+cp /tmp/ssh_keys  /var/public_node/.keys/\$ofuscated
 
 
 # Decrypt will be used for restore only, and will discover the requied URI:DIR2 value for the private area node
 # cat /var/public_node/$myalias | openssl rsautl -decrypt -inkey /tmp/ssh_keys # < Will prompt for password to decrypt it
+EOT
+
 }
 
 
