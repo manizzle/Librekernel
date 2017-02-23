@@ -6307,7 +6307,7 @@ configure_tahoe2()
 # through ton next reboot or manually from the wizard.sh
 #
 
-cat >>EOT | grep -v EOT> /root/libre_scripts/id_tahoe.sh
+cat <<EOT | grep -v EOT> /root/libre_scripts/id_tahoe.sh
 # will prompt user for ALIAS name and PASSWORD on clean installation.
 # This clean ALIAS will be saved to Public tahoe area with contents an encrypted string
 # The decrypted string will point to the Private tahoe area for this box
