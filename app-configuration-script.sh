@@ -6047,43 +6047,48 @@ service fail2ban start &> /dev/null
 configure_upnp()
 {
 echo "Configuring miniupnp ..." | tee -a /var/libre_config.log 
+cat <<EOT | grep -v EOT> /root/libre_scripts/upnp.sh
 # Get my own IP
-myprivip=$(ifconfig eth0  | grep " addr" | grep -v grep  | cut -d : -f 2 | cut -d  \  -f 1)
+myprivip=\$(ifconfig eth0  | grep " addr" | grep -v grep  | cut -d : -f 2 | cut -d  \  -f 1)
 
 # Get my gw lan IP
 # This is required to force to select ONLY the UPNP server same where we are ussing as default gateway
 # First seek for my default gw IP and then seek for the desc value of the UPNP device
 # Use UPNP device desc value as key for send delete/add rules
-my_gw_ip=$(route -n | grep UG | cut -c 17-32)
+my_gw_ip=\$(route -n | grep UG | cut -c 17-32)
 
 # Get list of all UPNP devices in lan filtered by my_gw_ip
-myupnpdevicedescription=$(upnpc -l | grep desc: | grep $my_gw_ip | grep -v grep | sed -e "s/desc: //g")
+myupnpdevicedescription=\$(upnpc -l | grep desc: | grep \$my_gw_ip | grep -v grep | sed -e "s/desc: //g")
 
 # now collect ports to configure on router portforwarding, from live iptables
-iptlist=$(iptables -L -n -t nat | grep REDIRECT | grep -v grep | cut -c 63- | sed -e "s/dpt://g" | sed -e "s/spt://g" | cut -d \  -f 1,2 | sed -e "s/tcp/TCP/g" | sed -e "s/udp/UDP/g" | sed -e "s/ //g" | sort | uniq )
-roulist=$(upnpc -l -u $myupnpdevicedescription | tail -n +17 | grep -v GetGeneric | cut -d \- -f 1 | cut -d \  -f 3- | sed -e "s/ //g")
-for lines in $iptlist; do
+iptlist=\$(iptables -L -n -t nat | grep REDIRECT | grep -v grep | cut -c 63- | sed -e "s/dpt://g" | sed -e "s/spt://g" | cut -d \  -f 1,2 | sed -e "s/tcp/TCP/g" | sed -e "s/udp/UDP/g" | sed -e "s/ //g" | sort | uniq )
+roulist=\$(upnpc -l -u \$myupnpdevicedescription | tail -n +17 | grep -v GetGeneric | cut -d \- -f 1 | cut -d \  -f 3- | sed -e "s/ //g")
+for lines in \$iptlist; do
     passed=0;
     # check if this port was already forwarded on router
-    for routforward in $roulist; do
-       if [ "$routforwad" = "$lines" ]; then
-            echo "port $lines was already forwarded" 
+    for routforward in \$roulist; do
+       if [ "\$routforwad" = "\$lines" ]; then
+            echo "port \$lines was already forwarded" 
        else
-         if [ $passed = 0 ]; then
+         if [ \$passed = 0 ]; then
             # Remove older portforwarding is required when this libreroute is reconnected to internet router and get a different IP from router DHCP service
-            protocol=${lines:0:3}
-            port=${lines:3:8}
-            upnpc -u $myupnpdevicedescription -d $port $protocol
-            upnpc -u $myupnpdevicedescription -a $myprivip $port $port $protocol
+            protocol=\${lines:0:3}
+            port=\${lines:3:8}
+            upnpc -u \$myupnpdevicedescription -d \$port \$protocol
+            upnpc -u \$myupnpdevicedescription -a \$myprivip \$port \$port \$protocol
             passed=1;  # swap semaphore to void send repeated queries to UPNP server
          fi
        fi
     done
-    echo $lines
+    echo \$lines
 done
+
+EOT
+
+if [ ! $(cat /var/spool/crontabs/root | grep upnp) ]; then
+    echo "0 * * * * /root/libre_scripts/upnp.sh" >> /var/spool/crontabs/root
+fi
 }
-
-
 # ---------------------------------------------------------
 # Function to configure tahoe
 # ---------------------------------------------------------
