@@ -6085,6 +6085,7 @@ done
 
 EOT
 
+chmod u+x /root/libre_scripts/upnp.sh
 if [ ! $(cat /var/spool/crontabs/root | grep upnp) ]; then
     echo "0 * * * * /root/libre_scripts/upnp.sh" >> /var/spool/crontabs/root
 fi
