@@ -1955,6 +1955,7 @@ forward-addr: 10.0.0.1@43
 
 # Extracting classified domain list package
 echo "Extracting files ..." | tee -a /var/libre_config.log
+cp /opt/shallalist.tar.gz .
 tar -xf shallalist.tar.gz
 if [ $? -ne 0 ]; then
 echo "Error: Unable to extract domains list. Exithing" | tee -a /var/libre_config.log
@@ -1974,6 +1975,7 @@ find BL/tracker -name domains -exec cat {} \; >> block_domain.list
 
 # Deleting old files
 rm -rf shallalist 	
+rm -rf shallalist.tar.gz
 
 # Creating chat domains list configuration file
 cat chat_domain.list | \
