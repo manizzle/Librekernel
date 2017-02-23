@@ -607,9 +607,9 @@ fi
 	fi
 
 # Getting classified domains list from shallalist.de
-if [ ! -e shallalist.tar.gz ]; then
+if [ ! -e /opt/shallalist.tar.gz ]; then
 	echo "Getting classified domains list ..." | tee -a /var/libre_install.log
-	wget http://www.shallalist.de/Downloads/shallalist.tar.gz
+	wget -P /opt/ http://www.shallalist.de/Downloads/shallalist.tar.gz
 	if [ $? -ne 0 ]; then
        		echo "Error: Unable to download domain list. Exithing" | tee -a /var/libre_install.log
        		exit 5
