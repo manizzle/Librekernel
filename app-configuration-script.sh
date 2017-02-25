@@ -5388,6 +5388,10 @@ EOF
 # Creating cron job
 echo "@reboot sleep 20 && /root/libre_scripts/check_interfaces.sh" >> /root/libre_scripts/cron_jobs
 crontab /root/libre_scripts/cron_jobs
+
+# Make script to run when network interface goes down
+rm -rf /etc/network/if-post-down.d/check_interfaces.sh
+cp /root/libre_scripts/check_interfaces.sh /etc/network/if-post-down.d/
 }
 
 
