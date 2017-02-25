@@ -2571,8 +2571,8 @@ ssh-keygen -f "/root/.ssh/known_hosts" -R [localhost]:8024
 # Setup new py env and install required packages if not existing
 
 #if [ ! -x /home/tahoe-lafs]; then
-    apt-get install sshpass
-    apt-get install sshfs
+    apt-get install -y --force-yes sshpass
+    apt-get install -y --force-yes sshfs
     mkdir /home/tahoe-lafs
     cd /home/tahoe-lafs
     virtualenv venv
