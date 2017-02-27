@@ -5178,6 +5178,9 @@ server
 }
 EOF
 
+# Deleting apache2 configuration
+rm -rf /etc/apache2/conf-enabled/SOGo.conf
+
 
 #------------------glype.librerouter.net-------------------#
 #                       10.0.0.240                         #
