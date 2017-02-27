@@ -19,4 +19,4 @@ cp /root/passroot /cdrom/passroot.$(date '+%Y-%m-%d_%H-%M')
 #cat /target/root/pass1 | chroot /target chpasswd
 cat /root/pass1 | chpasswd
 
-echo "End script installation"
+echo "End script"
