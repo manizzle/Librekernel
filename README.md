@@ -16,9 +16,15 @@ As software can be installed either on ARM boards or Physical/Virtual x86 64b ma
  - Step 4. Checking requirements
 There are a list of minimum requirements that Physical/Virtual machine needs to meet.
     2 at least network interfaces (ethernet or wlan)
-    1 GB of Physical memory
+    4 GB of Physical memory
     16 GB of Free disk space
 If machine meets the requirements then script goes to next step, otherwise it will warn and exit.
+
+
+ - Step 4.2. Check if the ARM board assembled.
+There are list of modules that need to be connected to ARM boards, so script will check if that modules are connected.
+You can fine information about necessary modules later. If any module is missed user will get warning and script will exit.
+
 
  - Step 5. Getting DHCP client on interfaces
 In this step script first DHCP request from ethX to get an ip address. If succeed, it will check for Internet connection and if Internet connection is established this step is done successfully. In any case of failure (no DHCP response or on Internet connection) script will try the same scenario for next interface. Order to try is - eth1, wlan1, eth0, wlan0 (list of available interfaces are available from step 4). Of no success in any interface, then script will warn user to plug the machine to Internet and will exit.
@@ -26,16 +32,15 @@ In this step script first DHCP request from ethX to get an ip address. If succee
  - Step 6. Preparing repositories and updating sources
 In this step script adds repository links for necessary packages into package manager sources and updates them. Script will output an error ant exit if it is not possible to add repositories or update sources.
 
+
+ - Step 6.2. Preparing repositories and updating sources
+The same as in Physical/Virtual machine case.
+
+
  - Step 7. Downloading and Installing packages
 As we already have repository sources updated in step 6, so at this point script will download and install packages using package manager tools. If something goes wrong during download or installation, script will output an error ant exit.
 If step 7 finished successfully it's time to run the next script “app-installation-script.sh”.
 
- - Step 4.2. Check if the ARM board assembled.
-There are list of modules that need to be connected to ARM boards, so script will check if that modules are connected.
-You can fine information about necessary modules later. If any module is missed user will get warning and script will exit.
-
- - Step 6.2. Preparing repositories and updating sources
-The same as in Physical/Virtual machine case.
 
  - Step 7.2. Downloading and Installing packages
 The same as in Physical/Virtual machine case.
@@ -72,11 +77,12 @@ As shown in the following figure.
 
 Resume of steps:
 
-- In Virtualbox in ubuntu like: https://jtreminio.com/2012/07/setting-up-a-debian-vm-step-by-step/
+- In Virtualbox in debian like: https://jtreminio.com/2012/07/setting-up-a-debian-vm-step-by-step/
 - Or any physical machine like https://www.debian.org/doc/manuals/debian-handbook/sect.installation-steps.ru.html
 - In the Debian please do a Snapshot in the Virtual machine just after being install.
 - go shell command console in debian and execute as root:
 
+(Choose the wget o curl command that you prefer)
 
 - wget -O - http://bit.ly/2gbKstn | bash
 
@@ -102,8 +108,8 @@ libre_config.log
 
 Lab done!
 
-Try to navigate normally from the windows 10
-Report us problems
+Try to navigate normally from the windows 10.
+Report us problems.
 Investigate and play while we continue developing it.
 New version of the instalaltion-configuration scripts,ISOs and OVA virtual machine export will be upcoming.
 
@@ -126,7 +132,7 @@ There are two bridges with two interfaces each in the machine like two bridges (
  - Server (no protection but services)
  - Network Router (services and network protection) (dont mix with NIC bridges that we have to separate 4 interfaces in 2 zones)
  
- - Pasive Security Sensor (not yet done)
+ - Passive Security Sensor (not yet done)
  - Transparent Man in the Middle Interception (hacking pentesting security testers) (not yet done)
  
 ##Server mode
@@ -135,7 +141,7 @@ The way networking works in Librerouter will be:
 
 ![servermode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/36.png)
  -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
- -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not hable to defend against web browsing leaks,tracking,ads and malware)
+ -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not able to defend against web browsing leaks,tracking,ads and malware)
 ![server](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/37.png)
 ![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
 
@@ -157,7 +163,7 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
  - d) Offering decentralized alternatives of the such called cloud services. 
  - e) Will clean files in storage erasing metadata Sanitization (optional to classified and personal information) 
  - f) Will protect the access to your webs publically in TOR-I2P and clearnet.(normal internet).
- - d) Will selfhost search engine,email,storage,conference,collaborative,git,project managing,socialnetwork, TOR shop.
+ - g) Will selfhost search engine,email,storage,conference,collaborative,git,project managing,socialnetwork, TOR shop.
 
 ![protocols policy](https://cloud.githubusercontent.com/assets/13025157/20144114/d6fe682e-a69b-11e6-8036-a0f12e717650.png)
 
