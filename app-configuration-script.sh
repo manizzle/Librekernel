@@ -6505,6 +6505,22 @@ echo $YACY_PID > /sys/fs/cgroup/net_cls/new_route/tasks
 
 
 # ---------------------------------------------------------
+# Function to configure router warnings
+# ---------------------------------------------------------
+configure_warnings()
+{
+echo "Configuring router warnings ..." | tee -a /var/libre_config.log
+
+# Disabling thermal warnings
+sed 's/GRUB_CMDLINE_LINUX_DEFAULT.*/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet splash thermal.off=1\"/g' -i /etc/default/grub
+
+# Updating grub
+update-grub
+update-grub2
+}
+
+
+# ---------------------------------------------------------
 # Function to add warning pages for clamav and squidguard
 # ---------------------------------------------------------
 add_warning_pages()
@@ -7011,6 +7027,7 @@ configure_upnp                  # configure miniupnp
 configure_tahoe			# Configure tahoe
 configure_tahoe2                # Configure tahoe 2
 #services_to_tor                # Redirect yacy and prosody traffic to tor
+configure_warnings		# Configure router warnings
 add_warning_pages		# Added warning pages for clamav and squidguard
 print_services			# Print info about service accessibility
 create_commands                 # Create configs and logs commands
