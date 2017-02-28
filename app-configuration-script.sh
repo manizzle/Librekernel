@@ -2065,6 +2065,7 @@ exit 3
 fi
 }
 
+
 # ---------------------------------------------------------
 # Function to configure DNSCrypt
 # ---------------------------------------------------------
@@ -2095,6 +2096,21 @@ sed -i 'dnscrypt-proxy/d' /etc/rc.local
 echo '/bin/bash /usr/bin/dnscrypt-proxy.sh
 exit 0' >> /etc/rc.local
 }
+
+
+# ---------------------------------------------------------
+# Configure yacy search engine
+# ---------------------------------------------------------
+configure_yacy()
+{
+echo "Configuring yacy search engine ..." | tee -a /var/libre_config.log
+
+# Yacy connect to Tor
+sed 's/remoteProxyUse.*/remoteProxyUse=true/g' -i /etc/yacy/yacy.conf
+sed 's/remoteProxyHost.*/remoteProxyHost=127.0.0.1/g' -i /etc/yacy/yacy.conf
+sed 's/remoteProxyPort.*/remoteProxyPort=3129/g' -i /etc/yacy/yacy.conf
+}
+
 
 # ---------------------------------------------------------
 # Function to configure Friendica local service
@@ -6980,7 +6996,8 @@ configure_ssh			# Configuring ssh server
 configure_tor			# Configuring TOR server
 configure_i2p			# Configuring i2p services
 configure_unbound		# Configuring Unbound DNS server
-configure_dnscrypt		# Configurint DNSCrypt server
+configure_dnscrypt		# Configuring DNSCrypt server
+configure_yacy			# Configuring yacy search engine
 configure_friendica		# Configuring Friendica local service
 configure_easyrtc		# Configuring EasyRTC local service
 configure_owncloud		# Configuring Owncloud local service
