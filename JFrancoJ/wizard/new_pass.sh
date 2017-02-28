@@ -137,8 +137,62 @@ update_public_node_method2() {
 update_def() {
   # cryptsetup luksOpen /dev/xvdc backup2
   # TODO add update def
+  # cryptsetup luksChangeKey <target device> -S <target key slot number>
   echo "TODO: add update DEF"
 }
+
+check_internet() {
+  processed=0
+  (items=2;while [ $processed -le $items ]; do pct=$processed ; echo "Checking Internet..."   ;echo "$pct"; processed=$((processed+1)); sleep 0.1; done; ) | dialog --title "Librerouter Setup" --gauge "Checking Internet" 10 60 0
+  if [ ! $(ntpdate -q hora.rediris.es | grep "no server") ]; then
+    internet=1
+    (items=25;while [ $processed -le $items ]; do pct=$processed ; echo "Checking Internet..."   ;echo "$pct"; processed=$((processed+1)); sleep 0.1; done; ) | dialog --title "Librerouter Setup " --gauge "Checking internet..." 10 60 0
+
+  fi
+  sleep 1
+}
+
+check_ifaces() {
+  options=""
+  concat=" - "
+  wireds=$(ls /sys/class/net/eth* | grep /sys/class/net | cut -d / -f 5) 
+  for wired in $wireds ; do
+     wired=${wired::-1}
+     ups=$(cat /sys/class/net/$wired/operstate)
+     #if [ ${#options} -lt 1 ]; then
+           options="$options $wired $ups"
+     #else 
+     #      options=$options$concat$wired
+     #fi
+     echo $wired $ups
+  done
+
+  wireds=$(ls /sys/class/net/wlan* | grep /sys/class/net | cut -d / -f 5) 
+  for wired in $wireds ; do
+     wired=${wired::-1}
+     ups=$(cat /sys/class/net/$wired/operstate)
+     if [ ${#options} -lt 1 ]; then
+           options=$wired
+     else 
+           options=$options$concat$wired
+     fi
+     echo $wired $ups
+  done
+}
+
+no_internet() {
+  # We have NOT internet connection, but we have detected wired and/or wlan devices
+  # so we will ask user what device will be use for connect to his/her internet router
+  # once selected :
+  # if wlan : scanning, show AP, prompt for AP password, try to connect and dhclient
+  # if eth: try dhclient
+  # if dhclient fails : ask user to enter IP, mask and default gw IP for the selected interface ( any ) 
+  # 
+  dialog --colors --menu "Please select the interface you are using to connect to internet router (wan): " 25 0 45 $options 2> /tmp/inet_iface
+}
+
+
+
 
 
 # This user interface will detect the enviroment and will chose a method based
@@ -157,7 +211,11 @@ else
     fi
 fi
 
-
+check_internet
+echo $internet
+check_ifaces
+no_internet
+exit
 
 prompt
 check_inputs
