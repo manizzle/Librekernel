@@ -906,7 +906,7 @@ iptables -P FORWARD DROP
 /var/banks_access.sh
 
 # Stopping dnsmasq
-kill -9 \`ps aux | grep dnsmasq | awk {'print \$2'} | sed -n '1p'\` \
+kill -9 \`ps aux | grep dnsmasq | grep -v grep | awk {'print \$2'} | sed -n '1p'\` \
 2> /dev/null
 service unbound restart
 
@@ -2044,7 +2044,7 @@ unbound-anchor -a "/var/lib/unbound/root.key"
 # There is a need to stop dnsmasq before starting unbound
 echo "Stoping dnsmasq ..."
 if ps aux | grep -w "dnsmasq" | grep -v "grep" > /dev/null;   then
-kill -9 `ps aux | grep dnsmasq | awk {'print $2'} | sed -n '1p'`
+kill -9 `ps aux | grep dnsmasq | grep -v grep | awk {'print $2'} | sed -n '1p'`
 fi
 
 #     echo "
