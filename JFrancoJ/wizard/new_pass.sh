@@ -155,28 +155,13 @@ check_internet() {
 check_ifaces() {
   options=""
   concat=" - "
-  wireds=$(ls /sys/class/net/eth* | grep /sys/class/net | cut -d / -f 5) 
+  wireds=$(ls /sys/class/net) 
   for wired in $wireds ; do
-     wired=${wired::-1}
+   if [[ $wired =~ "eth" ]] || [[ $wired =~ "wlan" ]]; then
      ups=$(cat /sys/class/net/$wired/operstate)
-     #if [ ${#options} -lt 1 ]; then
-           options="$options $wired $ups"
-     #else 
-     #      options=$options$concat$wired
-     #fi
-     echo $wired $ups
-  done
+     options="$options $wired $ups"
+   fi
 
-  wireds=$(ls /sys/class/net/wlan* | grep /sys/class/net | cut -d / -f 5) 
-  for wired in $wireds ; do
-     wired=${wired::-1}
-     ups=$(cat /sys/class/net/$wired/operstate)
-     if [ ${#options} -lt 1 ]; then
-           options=$wired
-     else 
-           options=$options$concat$wired
-     fi
-     echo $wired $ups
   done
 }
 
@@ -188,7 +173,68 @@ no_internet() {
   # if eth: try dhclient
   # if dhclient fails : ask user to enter IP, mask and default gw IP for the selected interface ( any ) 
   # 
-  dialog --colors --menu "Please select the interface you are using to connect to internet router (wan): " 25 0 45 $options 2> /tmp/inet_iface
+
+  if [ ! $inet_iface ]; then
+    dialog --colors --title "Librerouter Setup" --menu "Please select the interface you are using to connect to internet router (wan): " 25 40 55 $options 2> /tmp/inet_iface
+    retval=$?
+    if [ $retval == "1" ]; then
+      exit
+    fi
+    inet_iface=$(cat /tmp/inet_iface)
+  fi
+  if [[ $inet_iface =~ "wlan" ]]; then
+    # Here the user have selected WAN interface
+    # We need to offer available ESSID and prompt for AP password
+    # Let's go to fetch all AP's ESSID  in the area and quality of each one
+    ifconfig $inet_iface up
+    scanning=$(iwlist $inet_iface scanning)
+    essids=$(echo "$scanning" | grep ESSID | cut -d : -f 2 | cut -d '"' -f 2)
+    qualities=$(echo "$scanning" | grep Quality | cut -d = -f 2 | cut -d / -f 1)
+    o=0
+    for q in $qualities; do
+      quality[$o]=$q
+      o=$((o+1))
+    done
+
+    o=0
+    options=""
+    for essid in $essids; do
+      options="$options $essid ${quality[$o]}"
+      o=$((o + 1))
+    done
+  fi
+ 
+  dialog --colors --title "Librerouter Setup" --extra-button --extra-label "Re-scan" --menu "Please select your Access Point : " 25 40 55 $options 2> /tmp/essid
+  retval=$?
+  if [ $retval == "3" ]; then
+    check_ifaces
+    no_internet
+  fi
+  if [ $retval == "1" ]; then
+    exit
+  fi
+  essid=$(cat /tmp/essid)
+
+  while [ ${#wifi_pass} -lt 8 ]; do
+    
+    dialog --colors --title "Librerouter Setup" --extra-button --extra-label "Back" --form "Enter your WIFI Access Point password, minimun 8 characters" 0 0 1 "WIFI Password:" 1 2 "" 1 20 20 20 2> /tmp/wifipass
+    retval=$?
+    if [ $retval == "3" ]; then
+      check_ifaces
+      no_internet
+    fi
+    wifi_pass=$(cat /tmp/wifipass)
+  done
+
+
+  echo "$essid $wifi_pass"
+
+
+
+  mkdir /etc/wpa 2> /dev/null
+  echo 'ctrl_interface=/var/run/wpa_supplicant\nctrl_interface_group=root\n' > /etc/wpa/_supplicant.conf
+  wpa_passphrase $essid $wifi_pass >> /etc/wpa/_supplicant.conf
+
 }
 
 
