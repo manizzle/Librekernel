@@ -6537,6 +6537,63 @@ update-grub2
 
 
 # ---------------------------------------------------------
+# Function to configure defense against ARP Spoofing
+# ---------------------------------------------------------
+configure_arp()
+{
+echo "Configuring arp security ..." | tee -a /var/libre_config.log
+
+# configuring hosts
+echo "
+order hosts,bind
+multi on
+nospoof on
+spoofalert on
+" > /etc/host.conf
+
+# Turn on Source Address Verification in all interfaces to prevent some spoofing attacks.
+echo 1 > /proc/sys/net/ipv4/conf/all/rp_filter
+echo 1 > /proc/sys/net/ipv4/conf/default/rp_filter
+
+# Disables TCP Window Scaling.
+echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+
+# Do not accept ICMP redirects.
+echo 0 > /proc/sys/net/ipv4/conf/all/accept_redirects
+echo 0 > /proc/sys/net/ipv4/conf/default/accept_redirects
+
+# Ignore ICMP broadcasts will stop gateway from responding to broadcast pings.
+echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts
+
+# Ignore bogus ICMP errors.
+echo 1 > /proc/sys/net/ipv4/icmp_ignore_bogus_error_responses
+
+# Do not send ICMP redirects.
+echo 0 > /proc/sys/net/ipv4/conf/all/send_redirects
+echo 0 > /proc/sys/net/ipv4/conf/default/send_redirects
+
+# Do not accept IP source route packets.
+echo 0 > /proc/sys/net/ipv4/conf/all/accept_source_route
+echo 0 > /proc/sys/net/ipv4/conf/default/accept_source_route
+
+# Turn on log Martian Packets with impossible addresses.
+echo 1 > /proc/sys/net/ipv4/conf/all/log_martians
+echo 1 > /proc/sys/net/ipv4/conf/default/log_martians
+
+# Provide IP restrictions based on the client MAC address.
+HWADDR=`arp $CGWIP | grep $CGWIP | awk '{print $3}'`
+arp -s $CGWIP $HWADDR
+
+# Blocking Historical Broadcasts.
+iptables -A INPUT -j DROP -s 0.0.0.0/8
+iptables -A INPUT -j DROP -d 0.0.0.0/8
+iptables -A FORWARD -j DROP -s 0.0.0.0/8
+iptables -A FORWARD -j DROP -d 0.0.0.0/8
+iptables -A OUTPUT -j DROP -d 0.0.0.0/8
+}
+
+
+# ---------------------------------------------------------
 # Function to add warning pages for clamav and squidguard
 # ---------------------------------------------------------
 add_warning_pages()
@@ -7045,6 +7102,7 @@ configure_tahoe			# Configure tahoe
 configure_tahoe2                # Configure tahoe 2
 #services_to_tor                # Redirect yacy and prosody traffic to tor
 configure_warnings		# Configure router warnings
+configure_arp			# Function to configure defense against ARP Spoofing
 add_warning_pages		# Added warning pages for clamav and squidguard
 print_services			# Print info about service accessibility
 create_commands                 # Create configs and logs commands
