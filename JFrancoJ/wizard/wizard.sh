@@ -228,7 +228,7 @@ no_internet() {
 
 
     mkdir /etc/wpa 2> /dev/null
-    echo 'ctrl_interface=/var/run/wpa_supplicant\nctrl_interface_group=root\n' > /etc/wpa/_supplicant.conf
+    echo -e "ctrl_interface=/var/run/wpa_supplicant\nctrl_interface_group=root\n" > /etc/wpa/_supplicant.conf
     wpa_passphrase $essid $wifi_pass >> /etc/wpa/_supplicant.conf
 
     # Conectamos al AP 
@@ -366,6 +366,34 @@ save_network() {
     
   fi
 
+  if [[ $inet_iface =~ "wlan" ]]; then
+     cat <<EOT  | grep -v EOT> /etc/init.d/start_wifi_client
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: librerouter_wifi_client
+# Required-Start: $syslog
+# Required-Stop: $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: wifi_client
+# Description:
+#
+### END INIT INFO
+
+# Start WIFI internet connection as client of AP
+
+    while [[ \$(ps auxwww) =~ "wpa_supplicant" ]]; do
+       killall wpa_supplicant
+       sleep 1
+    done
+    wpa_supplicant -B -c/etc/wpa/_supplicant.conf -Dwext -i$inet_iface
+  fi
+
+EOT
+
+      chmod u+x /etc/init.d/start_wifi_client
+      update-rc.d start_wifi_client defaults
+  fi
 }
 
 
