@@ -158,8 +158,12 @@ check_ifaces() {
   wireds=$(ls /sys/class/net) 
   for wired in $wireds ; do
    if [[ $wired =~ "eth" ]] || [[ $wired =~ "wlan" ]]; then
-     ups=$(cat /sys/class/net/$wired/operstate)
-     options="$options $wired $ups"
+      if [[ $wired =~ $excluded_if ]]; then
+         echo 
+      else
+         ups=$(cat /sys/class/net/$wired/operstate)
+         options="$options $wired $ups"
+      fi
    fi
 
   done
@@ -318,11 +322,12 @@ bcastcalc(){
 
 check_gw() {
     # Check if gw address is valid
+    dhcp=0
     local IFS='.' ip i
     local -a oct msk
     read -ra oct <<<"$1"
     dec_gw=$((256*256*256*oct[0]+256*256*oct[1]+256*oct[2]+oct[3]))
-    echo "Valores GW:$dec_gw NET:$dec_net BC:$dec_bcast"
+    # echo "Valores GW:$dec_gw NET:$dec_net BC:$dec_bcast"
     if [ ! $(expr "$gw" : "^[0-9.]*$") -gt 0 ];then
         err="\Z1\ZbError: Gateway $gw Invalid value.\ZB\Zn"
         set_ipmaskgw
@@ -351,19 +356,21 @@ check_gw() {
 
 save_network() {
   if [[ $inet_iface =~ "eth" ]]; then
-    networks=$(cat /etc/network/interfaces)
-    # netcalc $iface_ip $mask
-    if [[ $networks =~ "iface $inet_iface inet dhcp" ]]; then
-      patching=$(sed -e "s/iface $inet_iface inet dhcp/        iface $inet_iface inet static
+    if [ $dhcp == "0" ]; then
+       cat << EOT >  /tmp/EXT_interfaces
+        auto $inet_iface
+        iface $inet_iface inet static\n
             address $iface_ip
             netmask $mask
             network $net
-      /g" /etc/network/interfaces /tmp/interfaces)
+
+EOT
     else
-     echo -e "$networks" > /tmp/interfaces
-     echo -e "\n        iface $inet_iface inet static\n            address $iface_ip\n            netmask $mask\n            network $net" >> /tmp/interfaces
+       cat << EOT >  /tmp/EXT_interfaces
+        auto $inet_iface
+        iface $inet_iface inet dhcp\n
+EOT
     fi
-    
   fi
 
   if [[ $inet_iface =~ "wlan" ]]; then
@@ -387,24 +394,294 @@ save_network() {
        sleep 1
     done
     wpa_supplicant -B -c/etc/wpa/_supplicant.conf -Dwext -i$inet_iface
-  fi
-
+  
 EOT
 
       chmod u+x /etc/init.d/start_wifi_client
       update-rc.d start_wifi_client defaults
   fi
+  excluded_if=$inet_iface
+}
+
+
+config_hostapd() {
+    wpa=1
+    wpa2=1
+    wep=0
+    # generates random ESSID
+    essid=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
+    echo "ESSID: $essid"
+    # generates random plain key
+    key=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-13})
+    echo "KEY: $key"
+
+    echo "interface=$iname" > hostapd.conf
+    chmod go-rwx hostapd.conf
+    echo "#bridge=eth0" >> hostapd.conf
+    echo "logger_syslog=-1" >> hostapd.conf
+    echo "logger_syslog_level=2" >> hostapd.conf
+    echo "logger_stdout=0" >> hostapd.conf
+    echo "logger_stdout_level=2" >> hostapd.conf
+    echo "ctrl_interface=/var/run/hostapd.$iname" >> hostapd.conf
+    echo "ctrl_interface_group=0" >> hostapd.conf
+    echo "ssid=$essid" >> hostapd.conf
+    echo "rsn_pairwise=CCMP" >> hostapd.conf
+
+    if [ $wep = "1" ]; then
+      echo "wep_key0=\"$key\"" >> hostapd.conf
+    else
+      echo "wpa=$wpa2$wpa" >> hostapd.conf
+      echo "wpa_passphrase=$key" >> hostapd.conf
+    fi
+    cat hostapd.conf.base >> hostapd.conf
+    # Update /etc/init.d/hostpad file
+    updatehostpad=$(sed -e "s/DAEMON_CONF=/DAEMON_CONF=\/etc\/hostapd.$lan_iface.conf/g" /etc/init.d/hostapd > /etc/init.d/hostapd.tmp)
+    mv /etc/init.d/hostapd.tmp /etc/init.d/hostapd
+    # start AP daemon on interface
+    mv hostapd.conf /etc/hostapd.$lan_iface.conf
+    rfkill unblock all
+    hostapd /etc/hostapd.$lan_iface.conf &
+    chmod u+x /etc/init.d/hostapd
+    update-rc.d hostapd defaults
+}
+
+
+lan_config() {
+  if [ ! $lan_iface ]; then
+    dialog --colors --title "Librerouter Setup" --menu "Please select the interface for your internal (lan): " 25 40 55 $options 2> /tmp/lan_iface
+    retval=$?
+    if [ $retval == "1" ]; then
+      exit
+    fi
+    lan_iface=$(cat /tmp/lan_iface)
+  fi
+  if [[ $lan_iface =~ "wlan" ]]; then
+    config_hostapd
+  fi
+  # Remove all old entries in /etc/network/interfaces
+
+  # Add new interface for lan in /etc/network/interfaces
+  INT_INTERFACE="$lan_iface"
+  cat << EOT >  /tmp/INT_interfaces
+
+        #Internal network interface
+        auto $INT_INTERFACE
+        #allow-hotplug $INT_INTERFACE
+        iface $INT_INTERFACE inet static
+            address 10.0.0.1
+            netmask 255.255.255.0
+            network 10.0.0.0
+
+        #Yacy
+        auto $INT_INTERFACE:1
+        #allow-hotplug $INT_INTERFACE:1
+        iface $INT_INTERFACE:1 inet static
+            address 10.0.0.251
+            netmask 255.255.255.0
+
+        #Friendica
+        auto $INT_INTERFACE:2
+        #allow-hotplug $INT_INTERFACE:2
+        iface $INT_INTERFACE:2 inet static
+            address 10.0.0.252
+            netmask 255.255.255.0
+
+        #OwnCloud
+        auto $INT_INTERFACE:3
+        #allow-hotplug $INT_INTERFACE:3
+        iface $INT_INTERFACE:3 inet static
+            address 10.0.0.253
+            netmask 255.255.255.0
+
+        #Mailpile
+        auto $INT_INTERFACE:4
+        #allow-hotplug $INT_INTERFACE:4
+        iface $INT_INTERFACE:4 inet static
+            address 10.0.0.254
+            netmask 255.255.255.0
+
+        #Webmin
+        auto $INT_INTERFACE:5
+        #allow-hotplug $INT_INTERFACE:5
+        iface $INT_INTERFACE:5 inet static
+            address 10.0.0.245
+            netmask 255.255.255.0
+
+        #EasyRTC
+        auto $INT_INTERFACE:6
+        #allow-hotplug $INT_INTERFACE:6
+        iface $INT_INTERFACE:6 inet static
+            address 10.0.0.250
+            netmask 255.255.255.0
+
+        #Kibana
+        auto $INT_INTERFACE:7
+        #allow-hotplug $INT_INTERFACE:7
+        iface $INT_INTERFACE:7 inet static
+            address 10.0.0.239
+            netmask 255.255.255.0
+
+        #Snorby
+        auto $INT_INTERFACE:8
+        #allow-hotplug $INT_INTERFACE:8
+        iface $INT_INTERFACE:8 inet static
+            address 10.0.0.12
+            netmask 255.255.255.0
+
+        #squidguard
+        auto $INT_INTERFACE:9
+        #allow-hotplug $INT_INTERFACE:9
+        iface $INT_INTERFACE:9 inet static
+            address 10.0.0.246
+            netmask 255.255.255.0
+
+        #gitlab
+        auto $INT_INTERFACE:10
+        #allow-hotplug $INT_INTERFACE:10
+        iface $INT_INTERFACE:10 inet static
+            address 10.0.0.247
+            netmask 255.255.255.0
+
+        #trac
+        auto $INT_INTERFACE:11
+        #allow-hotplug $INT_INTERFACE:11
+        iface $INT_INTERFACE:11 inet static
+            address 10.0.0.248
+            netmask 255.255.255.0
+
+        #redmine
+        auto $INT_INTERFACE:12
+        #allow-hotplug $INT_INTERFACE:12
+        iface $INT_INTERFACE:12 inet static
+            address 10.0.0.249
+            netmask 255.255.255.0
+
+        #Webmin
+        auto $INT_INTERFACE:13
+        #allow-hotplug $INT_INTERFACE:13
+        iface $INT_INTERFACE:13 inet static
+            address 10.0.0.244
+            netmask 255.255.255.0
+
+        #Roundcube
+        auto $INT_INTERFACE:14
+        #allow-hotplug $INT_INTERFACE:14
+        iface $INT_INTERFACE:14 inet static
+            address 10.0.0.243
+            netmask 255.255.255.0
+
+        #Postfix
+        auto $INT_INTERFACE:15
+        #allow-hotplug $INT_INTERFACE:15
+        iface $INT_INTERFACE:15 inet static
+            address 10.0.0.242
+            netmask 255.255.255.0
+
+        #Sogo
+        auto $INT_INTERFACE:16
+        #allow-hotplug $INT_INTERFACE:16
+        iface $INT_INTERFACE:16 inet static
+            address 10.0.0.241
+            netmask 255.255.255.0
+
+        #Glype
+        auto $INT_INTERFACE:17
+        #allow-hotplug $INT_INTERFACE:17
+        iface $INT_INTERFACE:17 inet static
+            address 10.0.0.240
+            netmask 255.255.255.0
+
+        #WAF-FLE
+        auto $INT_INTERFACE:18
+        #allow-hotplug $INT_INTERFACE:18
+        iface $INT_INTERFACE:18 inet static
+            address 10.0.0.238
+            netmask 255.255.255.0
+
+EOT
+  # Reconfigure in the air without reboot
+
+
 }
 
 
 
+main_menu() {
+    dialog --colors --title "Librerouter Setup" --menu "" 0 0 4 1 "Configure my WAN interface" 2 "Configure my LAN interface" 3 "Change my password" 4 "Configure services"   2> /tmp/main_menu
+    main_option=$(cat /tmp/main_menu)
+
+    # Config WLAN INTERFACE
+    if [ $main_option == "1" ]; then
+      check_internet
+      if [ $internet == "1" ]; then
+        dialog --colors --defaultno --title "Librerouter Setup" --yesno  "Your internet is already working.\nDo you want to re-configure it ?" 7 40  2> /tmp/reconf_internet
+        retval=$?
+        if [ $retval == "1" ]; then
+           main_menu
+        fi
+        if [ $retval == "0" ]; then
+           check_ifaces
+           no_internet
+           try_dhcp
+           check_internet
+#           if [ $internet == "0" ]; then
+             set_ipmaskgw
+             check_internet
+             if [ $internet == "0" ]; then
+                dialog --title "Librerouter Setup"  --infobox "Something gone wrong. May be you entered wrong password for your WIFI, or may be you have not plugged the ethernet wire in the right slot" 0 0
+             exit
+             else
+                save_network
+             fi
+#           fi
+        fi
+      
+      else
+
+           check_ifaces
+           no_internet
+           try_dhcp
+           check_internet
+           if [ $internet == "0" ]; then
+             set_ipmaskgw
+             check_internet
+             if [ $internet == "0" ]; then
+                dialog --title "Librerouter Setup"  --infobox "Something gone wrong. May be you entered wrong password for your WIFI, or may be you have not plugged the ethernet wire in the right slot" 0 0
+             exit
+             else
+                save_network
+             fi
+           fi
+      fi
+      main_menu
+    fi
 
 
+    # Config LAN INTERFACE
+    if [ $main_option == "2" ]; then
+        # Much more complicated as we need to setup the LAN and put there all subinterface and rules
+            check_ifaces
+            lan_config
+
+        # cat << EOF >  /etc/network/interfaces
+        #         #Internal network interface
+        #auto $INT_INTERFACE
+        #allow-hotplug $INT_INTERFACE
+        #iface $INT_INTERFACE inet static
+        #    address 10.0.0.1
+        #    netmask 255.255.255.0
+        #    network 10.0.0.0
+
+    fi
+
+
+}
 
 # This user interface will detect the enviroment and will chose a method based
 # on this order : X no GTK, X with GTK , dialaog, none )
 
 interface=0
+excluded_if="ninguna"
 if [ -x n/usr/bin/dialog ] || [ -x n/bin/dialog ]; then
     interface=dialog
 else
@@ -417,6 +694,9 @@ else
     fi
 fi
 
+dhcp=1
+main_menu
+exit
 check_internet
 echo $internet
 if [ $internet == "1" ]; then
