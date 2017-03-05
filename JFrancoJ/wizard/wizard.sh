@@ -405,6 +405,19 @@ EOT
 
 
 config_hostapd() {
+    # Check AP capabilities
+    AP_cap=$(iw list | grep "* AP" | grep -v grep)
+    if [ "$AP_cap" = "" ]; then
+       dialog --colors --defaultno --title "Librerouter Setup" "This WLAN device does NOT support AP mode" 7 40
+       retval=$?
+       if [ $retval == "0" ]; then
+          lan_config
+       fi
+       if [ $retval == "1" ]; then
+          main_menu
+       fi
+    fi
+
     wpa=1
     wpa2=1
     wep=0
@@ -414,7 +427,7 @@ config_hostapd() {
     # generates random plain key
     key=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-13})
     echo "KEY: $key"
-
+dialog --colors --defaultno --title "Librerouter Setup" "IMPORTANT" 7 40 
     echo "interface=$iname" > hostapd.conf
     chmod go-rwx hostapd.conf
     echo "#bridge=eth0" >> hostapd.conf
@@ -604,10 +617,97 @@ EOT
 
 }
 
+new_install() {
+               # This is a new install
+               dialog --title "Librerouter Setup"  --infobox "Waiting for Tahoe and Onion comes ready. Be patient, this can take up to 5 minutes" 0 0
+               /etc/init.d/start_tahoe 
+echo "Finlizamos el start_thaoe"
+               dialog --colors --title "Librerouter Setup" --form "$textmsg" 0 0 3 "Enter your alias:" 1 2 "$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
+               retval=$?
+               if [ $retval == "1" ]; then
+                   main_menu
+               fi
+               credentials=$(cat /tmp/inputbox.tmp)
+               rm /tmp/inputbox.tmp
+               thiscounter=0
+               for lines in $credentials; do
+                  #while IFS= read -r lines; do
+                  if [ $thiscounter = "0" ]; then 
+                      myalias="$lines"
+                  fi
+                  if [ $thiscounter = "1" ]; then 
+                      myfirstpass="$lines"
+                  fi
+                  if [ $thiscounter = "2" ]; then 
+                      mysecondpass="$lines"
+                  fi
+                  ((thiscounter++));    
+               done
+               strleng=${#myalias}
+               if [[ $strleng -lt 8 ]]; then
+                   errmsg="$myalias ${#myalias} Must be at least 8 characters long"
+               fi
+               if [ -z "${myfirstpass##*" "*}" ]; then
+                   errmsg="Spaces are not allowed";
+               fi
+               strleng=${#myfirstpass}
+               if [[ $strleng -lt 8 ]]; then
+                   errmsg="$myfirstpass ${#myalias} Must be at least 8 characters long"
+               fi
+               if [ $myfirstpass != $mysecondpass ]; then
+                   errmsg="Please repeat same password"
+               fi
+
+               while [ ${#errmsg} -gt 0 ]; do
+
+                   dialog --colors --form "$textmsg" 0 0 3 "Enter your alias:" 1 2 "$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
+                   retval=$?
+                   if [ $retval == "1" ]; then
+                       main_menu
+                   fi
+                   credentials=$(cat /tmp/inputbox.tmp)
+                   rm /tmp/inputbox.tmp
+                   thiscounter=0
+                   for lines in $credentials; do
+                      #while IFS= read -r lines; do
+                      if [ $thiscounter = "0" ]; then 
+                          myalias="$lines"
+                      fi
+                      if [ $thiscounter = "1" ]; then 
+                          myfirstpass="$lines"
+                      fi
+                      if [ $thiscounter = "2" ]; then 
+                          mysecondpass="$lines"
+                      fi
+                      ((thiscounter++));    
+                   done
+               done
+               # creates PEM 
+               rm /tmp/ssh_keys*
+               ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
+               openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
+               frase=$(cat /usr/node_1/private/accounts | head -n 1)
+               echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
+               mv /tmp/$myalias /var/public_node/$myalias
+               thiscounter=0
+               output=''
+               while [ $thiscounter -lt 30 ]; do
+                   ofuscated=$ofuscated${myalias:$thiscounter:1}$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-4})
+                   ((thiscounter++));
+               done
+               cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
+
+}
+
+
 
 
 main_menu() {
-    dialog --colors --title "Librerouter Setup" --menu "" 0 0 4 1 "Configure my WAN interface" 2 "Configure my LAN interface" 3 "Change my password" 4 "Configure services"   2> /tmp/main_menu
+    dialog --colors --title "Librerouter Setup" --menu "" 0 0 5 1 "Configure my WAN interface" 2 "Configure my LAN interface" 3 "Recover from backup" 4 "Change my password" 5 "Configure services"   2> /tmp/main_menu
+    retval=$?
+    if [ $retval == "1" ]; then
+      exit;
+    fi
     main_option=$(cat /tmp/main_menu)
 
     # Config WLAN INTERFACE
@@ -662,19 +762,119 @@ main_menu() {
         # Much more complicated as we need to setup the LAN and put there all subinterface and rules
             check_ifaces
             lan_config
-
-        # cat << EOF >  /etc/network/interfaces
-        #         #Internal network interface
-        #auto $INT_INTERFACE
-        #allow-hotplug $INT_INTERFACE
-        #iface $INT_INTERFACE inet static
-        #    address 10.0.0.1
-        #    netmask 255.255.255.0
-        #    network 10.0.0.0
-
+            main_menu
     fi
 
 
+    # Prompt for Tahoe setup identity or recover from backup
+    if [ $main_option == "3" ]; then
+               dialog --title "Librerouter Setup"  --infobox "Waiting for Tahoe and Onion comes ready.\nBe patient, this can take up to 5 minutes" 0 0
+               /etc/init.d/start_tahoe 1> /dev/null 2> /dev/null
+               # collect aliases
+               aliasesdb=$(dir /var/public_node -l  | grep ^- | cut -c 42-74)
+               concat=" - "
+               for names in $aliasesdb; do
+                   names=${names,,}
+                   if [[ $names == *$alias_lc* ]]; then
+                       if [ ${#options} -lt 1 ]; then
+                          options=$names
+                       else 
+                          options=$options$concat$names
+                       fi
+                   fi
+               done
+               options="$options $concat"
+               while [ ! $alias ]; do
+                 dialog --colors --menu "Please select you ALIAS from the list: " 25 0 45 $options 2> /tmp/alias
+                 retval=$?
+                 if [ $retval == "1" ]; then
+                   main_menu
+                 fi
+                 alias=$(cat /tmp/alias)
+               done
+               dialog --colors --form "$textmsg" 0 0 1 "Passwod:" 1 2 "" 1 20 20 20 2> /tmp/inputbox.tmp
+               passwd=$(cat /tmp/inputbox.tmp)
+               rm /tmp/inputbox.tmp
+               deo='';
+               thiscounter=0
+               com="????";
+               while [ $thiscounter -lt 30 ]; do
+                   deo=$deo${alias:$thiscounter:1}$com
+                   ((thiscounter++));
+               done
+               # if cpu load used by tahoe instances are higher than 10% all operations through tahoe services are too slow
+               # we would need to wait until there enough resources to start tasks on tahoe services
+               # usually on idle status ( only offered space ) CPU load must be < 2%
+               # This is also notciable on tcpdump -n port 9001 or port 443 , tracking the Tor entry point IP
+               tahoe_node_1_load=99
+               while [ $tahoe_node_1_load -gt 10 ]; do
+                   tahoe_node_1_load=$(ps auxwwww | grep tahoe | grep -v grep | grep node_1 | cut -c 15-19 | cut -d \. -f 1)
+                   echo -n -e "\rTahoe node_1 load is $tahoe_node_1_load ... please wait $moving_char"
+                   sleep 5
+                   moving
+               done
+
+               tahoe_public_node_load=99
+               while [ $tahoe_public_node_load -gt 10 ]; do
+                   tahoe_public_node_load=$(ps auxwwww | grep tahoe | grep -v grep | grep public_node  | cut -c 15-19 | cut -d \. -f 1)
+                   echo -n -e "\rTahoe public_node load is $tahoe_public_node_load ... please wait $moving_char"
+                   sleep 5
+                   moving
+               done
+
+               pb_point=$(echo $passwd | openssl rsautl -decrypt -inkey /var/public_node/.keys/$deo -in /var/public_node/$alias -passin stdin)
+
+               # if running, stop private node
+               /home/tahoe-lafs/venv/bin/tahoe stop node_1
+
+               # reconfigure node_1 mapping point
+               # we need no just to restore my files, also my storage that contents file chunks from others to rebuild the full lost node
+               # and avoid damages in the grid performance and realibility
+               # we need to check there not existing node with same node_1 directory mounted in other box
+
+               echo $pb_point | cut -d \  -f 1,2 > /root/.tahoe/node_1  # save credentials for node_1 restoration
+               echo $pb_point > /usr/node_1/private/accounts            # save cap for node_1 restoration
+
+               # now we will able start to node_1 ,mount /var/node_1 and first of all recover node_1.tar.gz for the full node_1 restoration
+               # including the shares 
+
+               /home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
+
+              # Check connected enough good nodes before to continue 
+
+              connnode_1=0
+              while [ $connnode_1 -lt 7 ]; do
+                   connnode_1=$(curl http://127.0.0.1:3456/ 2> /dev/null| grep "Connected to tor" | wc -l)
+              done
+
+              # Now we know node_1 is ready, let's go to do paranoic check/repair on it
+
+              /home/tahoe-lafs/venv/bin/tahoe deep-check --repair -u http://127.0.0.1:3456 node_1:
+              # Recover the backup file 
+              echo "Please wait. This will take over 30 minutes..."
+              /home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:3456 node_1:sys.backup.tar.gz /tmp/. &
+
+              # Mostramos progreso del download 
+              progress="00.00.00"
+              while [ ${#progress} -gt 5 ];do
+                  progress=$(curl http://127.0.0.1:3456/status/down-1 2> /dev/null | grep Progress:)
+                  echo -e -n "\r$progress"
+                  if [[ $progress =~ "100.0" ]]; then
+                  progress=""
+                  fi
+                  sleep 10
+              done
+
+              # Gracefully stop all Tahoe nodes before to extract files from backup
+              /home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
+             /home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
+
+
+              # Let's go to install the files from sys.backup.tar.gz 
+              mv /tmp/sys.backup.tar.gz /.
+              cd /
+              tar xzf sys.backup.tar.gz
+    fi
 }
 
 # This user interface will detect the enviroment and will chose a method based
