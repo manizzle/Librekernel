@@ -36,14 +36,32 @@ local IFS='
 
 }
 
+wellcome() {
+    # This dialog is prompted only first time you boot your new Librerouter
+    # Let's check if your password still the factory default "librerouter"
+    salt=$(cat /etc/shadow | head -n 1 | cut -d \$ -f 3 | cut -d : -f 1)
+    hashpass_a=$(cat /etc/shadow | head -n 1 | cut -d \$ -f 4 | cut -d : -f 1)
+    hashpass_b=$(mkpasswd  -msha-512 "librerouter" $salt | cut -d \$ -f 4 | cut -d : -f 1)
+
+    if [ $hashpass_a == $hashpass_b ]; then 
+      dialog --colors --title "Librerouter Setup"  --yes-label Continue --no-label Cancel --yesno "\Zb\Z1Welcome\ZB\Zn to your first Librerouter\n\nWe are going now to configure basic installation, including checking your internet and network configurations.\nYou will be able to excute again this Setup at anytime you need.\n\nFirst of all let's go to change your \ZbNAME\ZB and \ZbPASSWORD\ZB.\n\nPlease write in safe place the NAME and PASSWORD you chose here." 0 0
+      retval=$?
+      if [ $retval == "1" ]; then
+        exit
+      fi
+      if [ $retval == "0" ]; then
+        new_install
+      fi
+    fi
+}
+
 
 
 update_root_pass() {
   salt=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8})
   method_name="-msha-512"
-  new_enc=$(mkpasswd $method_name $plain_pass $salt)
-  echo $new_enc
-  usermod -p "$new_enc" joa2
+  new_enc=$(mkpasswd $method_name $myfirstpass $salt)
+  usermod -p "$new_enc" root
 }
 
 
@@ -617,11 +635,22 @@ EOT
 
 }
 
+update_disk_pass() {
+  # First of all we need to know the last used LUKS slot, old password and LUKS partition
+  # update_def()
+  echo
+}
+
+
+
 new_install() {
-               # This is a new install
-               dialog --title "Librerouter Setup"  --infobox "Waiting for Tahoe and Onion comes ready. Be patient, this can take up to 5 minutes" 0 0
-               /etc/init.d/start_tahoe 
-echo "Finlizamos el start_thaoe"
+    # This is a new install
+    start=1
+    errmsg=""
+    dialog --colors --title "Librerouter Setup"  --infobox "Waiting for Tahoe and Onion comes ready. Be patient, this can take up to 5 minutes" 0 0
+    /etc/init.d/start_tahoe 
+    while [ ${#errmsg} -gt 0 ] || [ $start == "1" ]; do
+               textmsg="Use a new name for your \ZbALIAS\ZB like \Z4Peter.Pan5\Zn\nUse enough strong \ZbPASSWORD\ZB \Z1minimum 8 digits long\Zn and write down in a safe place.\n\Z1$errmsg\Zn\n"
                dialog --colors --title "Librerouter Setup" --form "$textmsg" 0 0 3 "Enter your alias:" 1 2 "$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
                retval=$?
                if [ $retval == "1" ]; then
@@ -629,6 +658,7 @@ echo "Finlizamos el start_thaoe"
                fi
                credentials=$(cat /tmp/inputbox.tmp)
                rm /tmp/inputbox.tmp
+               errmsg=""
                thiscounter=0
                for lines in $credentials; do
                   #while IFS= read -r lines; do
@@ -645,8 +675,69 @@ echo "Finlizamos el start_thaoe"
                done
                strleng=${#myalias}
                if [[ $strleng -lt 8 ]]; then
-                   errmsg="$myalias ${#myalias} Must be at least 8 characters long"
+                   errmsg="\Zb$myalias ${#myalias} Must be at least 8 characters long\ZB"
                fi
+               if [ -z "${myfirstpass##*" "*}" ]; then
+                   errmsg="\ZbSpaces are not allowed\ZB";
+               fi
+               strleng=${#myfirstpass}
+               if [[ $strleng -lt 8 ]]; then
+                   errmsg="\Zb$myfirstpass ${#myalias} Must be at least 8 characters long\ZB"
+               fi
+               if [ $myfirstpass != $mysecondpass ]; then
+                   errmsg="\ZbPlease repeat same password\ZB"
+               fi
+               start=0
+    done
+    # creates PEM 
+    rm /tmp/ssh_keys*
+    ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
+    openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
+    frase=$(cat /usr/node_1/private/accounts | head -n 1)
+    echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
+    mv /tmp/$myalias /var/public_node/$myalias
+    thiscounter=0
+    output=''
+    while [ $thiscounter -lt 30 ]; do
+       ofuscated=$ofuscated${myalias:$thiscounter:1}$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-4})
+       ((thiscounter++));
+    done
+    cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
+    update_root_pass
+    update_disk_pass
+    echo $myalias > /root/alias
+    main_menu
+}
+
+new_pass() {
+    myalias=$(cat /root/alias)
+    if [ ${#myalias} -lt 4 ]; then
+        new_install
+        main_menu
+    fi
+    start=1
+    errmsg=""
+    while [ ${#errmsg} -gt 0 ] || [ $start == "1" ]; do
+               textmsg="Use enough strong \ZbPASSWORD\ZB \Z1minimum 8 digits long\Zn and write down in a safe place.\n\Z1$errmsg\Zn\n"
+               dialog --colors --title "Librerouter Setup" --form "$textmsg" 0 0 2 "Passwod:" 1 2 "" 1 20 20 20 "Repeat Password:" 2 2 "" 2 20 20 20 2> /tmp/inputbox.tmp
+               retval=$?
+               if [ $retval == "1" ]; then
+                   main_menu
+               fi
+               credentials=$(cat /tmp/inputbox.tmp)
+               rm /tmp/inputbox.tmp
+               errmsg=""
+               thiscounter=0
+               for lines in $credentials; do
+                  #while IFS= read -r lines; do
+                  if [ $thiscounter = "0" ]; then 
+                      myfirstpass="$lines"
+                  fi
+                  if [ $thiscounter = "1" ]; then 
+                      mysecondpass="$lines"
+                  fi
+                  ((thiscounter++));    
+               done
                if [ -z "${myfirstpass##*" "*}" ]; then
                    errmsg="Spaces are not allowed";
                fi
@@ -657,53 +748,30 @@ echo "Finlizamos el start_thaoe"
                if [ $myfirstpass != $mysecondpass ]; then
                    errmsg="Please repeat same password"
                fi
-
-               while [ ${#errmsg} -gt 0 ]; do
-
-                   dialog --colors --form "$textmsg" 0 0 3 "Enter your alias:" 1 2 "$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
-                   retval=$?
-                   if [ $retval == "1" ]; then
-                       main_menu
-                   fi
-                   credentials=$(cat /tmp/inputbox.tmp)
-                   rm /tmp/inputbox.tmp
-                   thiscounter=0
-                   for lines in $credentials; do
-                      #while IFS= read -r lines; do
-                      if [ $thiscounter = "0" ]; then 
-                          myalias="$lines"
-                      fi
-                      if [ $thiscounter = "1" ]; then 
-                          myfirstpass="$lines"
-                      fi
-                      if [ $thiscounter = "2" ]; then 
-                          mysecondpass="$lines"
-                      fi
-                      ((thiscounter++));    
-                   done
-               done
-               # creates PEM 
-               rm /tmp/ssh_keys*
-               ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
-               openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
-               frase=$(cat /usr/node_1/private/accounts | head -n 1)
-               echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
-               mv /tmp/$myalias /var/public_node/$myalias
-               thiscounter=0
-               output=''
-               while [ $thiscounter -lt 30 ]; do
-                   ofuscated=$ofuscated${myalias:$thiscounter:1}$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-4})
-                   ((thiscounter++));
-               done
-               cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
-
+               start=0
+    done
+    # creates PEM 
+    rm /tmp/ssh_keys*
+    ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
+    openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
+    frase=$(cat /usr/node_1/private/accounts | head -n 1)
+    echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
+    mv /tmp/$myalias /var/public_node/$myalias
+    thiscounter=0
+    output=''
+    while [ $thiscounter -lt 30 ]; do
+        ofuscated=$ofuscated${myalias:$thiscounter:1}$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-4})
+        ((thiscounter++));
+    done
+    cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
+    update_root_pass
+    update_disk_pass
+    main_menu
 }
 
 
-
-
 main_menu() {
-    dialog --colors --title "Librerouter Setup" --menu "" 0 0 5 1 "Configure my WAN interface" 2 "Configure my LAN interface" 3 "Recover from backup" 4 "Change my password" 5 "Configure services"   2> /tmp/main_menu
+    dialog --colors --title "Librerouter Setup" --menu "" 0 0 5 1 "Configure my internet conection cable " 2 "Configure my Secure internal new area cable " 3 "Recover from backup" 4 "Change my password" 5 "Configure services"   2> /tmp/main_menu
     retval=$?
     if [ $retval == "1" ]; then
       exit;
@@ -875,6 +943,13 @@ main_menu() {
               cd /
               tar xzf sys.backup.tar.gz
     fi
+
+    # change password for root, tahoe and disk encryption
+    if [ $main_option == "4" ]; then
+        new_pass
+        main_menu
+    fi
+
 }
 
 # This user interface will detect the enviroment and will chose a method based
@@ -895,6 +970,7 @@ else
 fi
 
 dhcp=1
+wellcome
 main_menu
 exit
 check_internet
