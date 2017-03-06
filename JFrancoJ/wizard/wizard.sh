@@ -932,9 +932,9 @@ main_menu() {
                   # Mostramos progreso del download 
                   progress="00.00.00"
                   while [ ${#progress} -gt 5 ];do
-                      progress=$(curl http://127.0.0.1:3456/status/ 2> /dev/null | grep "%</td>" | head -n 1)
+                      progress=$(curl http://127.0.0.1:3456/status/ 2> /dev/null | grep "%</td>" | head -n 1 | cut -d \> -f 2 | cut -d % -f 1)
                       # progress=$(curl http://127.0.0.1:3456/status/down-1 2> /dev/null | grep Progress:)
-                      echo "Downloading..."   ;echo "$pct" | dialog --title "Librerouter Backup restore" --gauge "Checking internet..." 10 60 0
+                      echo "Downloading..."   ;echo "$progress" | dialog --title "Librerouter Backup restore" --gauge "Downloading ..." 10 60 0
                       # echo -e -n "\r$progress"
                       if [[ $progress =~ "100.0" ]]; then
                           progress=""
