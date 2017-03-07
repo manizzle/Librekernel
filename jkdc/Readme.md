@@ -56,13 +56,16 @@ WantedBy=default.target
 
 -Configure and Install. Run this commands:
 
+
 chmod 744 /root/setup.sh
 
 chmod 664 /etc/systemd/system/setup.service
 
 systemctl enable setup.service
 
+
 -Disable after run the script for not run never again:
+
 
 systemctl disable setup.service
 
