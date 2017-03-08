@@ -2616,6 +2616,21 @@ mkdir /root/.tahoe
 #   INT_INTERFACE
 #   ARCH
 # -----------------------------------------------  
+
+install_atheros_firmware()
+{
+    apt-get install -y --force-install cmake >> /var/libre_install.log
+    cd /usr/src
+    git clone https://github.com/qca/open-ath9k-htc-firmware.git
+    cd open-ath9k-htc-firmware
+    make toolchain
+    make -C target_firmware
+    cp target_firmware/*.fw /lib/firmware/
+}
+
+
+
+
 save_variables()
 {
         echo "Saving variables ..." | tee -a /var/libre_install.log
@@ -2736,7 +2751,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_upnp		# Install miniupnp package
 	install_tahoe           # Install tahoe
 	save_variables	        # Save detected variables
-
+        install_atheros_firmware # Install the free firmware from Github repo for Atheros devices
 # ---------------------------------------------
 # If script detects odroid board then next 
 # steps will be
