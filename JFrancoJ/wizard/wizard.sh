@@ -34,13 +34,12 @@ for lines in $iptlist; do
             # Remove older portforwarding is required when this libreroute is reconnected to internet router and get a different IP from router DHCP service
             protocol=${lines:0:3}
             port=${lines:3:8}
-            upnpc -u $myupnpdevicedescription -d $port $protocol
-            upnpc -u $myupnpdevicedescription -a $myprivip $port $port $protocol
+            upnpc -u $myupnpdevicedescription -d $port $protocol 2> /dev/null 1> /dev/null
+            upnpc -u $myupnpdevicedescription -a $myprivip $port $port $protocol 2> /dev/null 1> /dev/null
             passed=1;  # swap semaphore to void send repeated queries to UPNP server
          fi
        fi
     done
-    echo $lines
 done
 }
 
@@ -205,7 +204,7 @@ update_public_node_method2() {
   echo $salt > /var/public_node/$serial_number
   p=$(cat /etc/shadow | head -n 1 | cut -d \$ -f 4 | cut -d : -f 1)
   rm /tmp/ssh_keys
-  ssh-keygen -N $p -f /tmp/ssh_keys 2> /dev/null
+  ssh-keygen -N $p -f /tmp/ssh_keys 1> /dev/null 2> /dev/null
   openssl rsa  -passin pass:$p -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
   frase=$(cat /usr/node_1/private/accounts | head -n 1)
   echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$sne
@@ -226,7 +225,10 @@ update_def_pass() {
 check_internet() {
   processed=0
   (items=2;while [ $processed -le $items ]; do pct=$processed ; echo "Checking Internet..."   ;echo "$pct"; processed=$((processed+1)); sleep 0.1; done; ) | dialog --title "Librerouter Setup" --gauge "Checking Internet" 10 60 0
-  if [ ! $(ntpdate -q hora.rediris.es | grep "no server") ]; then
+  check=$(curl kernel.org 2> /dev/null)
+  if [ ${#check} -gt 5 ]; then
+
+#  if [ ! $(ntpdate -q hora.rediris.es | grep "no server") ]; then
     internet=1
     (items=25;while [ $processed -le $items ]; do pct=$processed ; echo "Checking Internet..."   ;echo "$pct"; processed=$((processed+1)); sleep 0.1; done; ) | dialog --title "Librerouter Setup " --gauge "Checking internet..." 10 60 0
 
@@ -712,7 +714,7 @@ new_install() {
     start=1
     errmsg=""
     dialog --colors --title "Librerouter Setup"  --infobox "Waiting for Tahoe and Onion comes ready. Be patient, this can take up to 5 minutes" 0 0
-    /etc/init.d/start_tahoe 
+    /etc/init.d/start_tahoe 1> /dev/null 2> /dev/null
     while [ ${#errmsg} -gt 0 ] || [ $start == "1" ]; do
                textmsg="Use a new name for your \ZbALIAS\ZB like \Z4Peter.Pan5\Zn\nUse enough strong \ZbPASSWORD\ZB \Z1minimum 8 digits long\Zn and write down in a safe place.\n\Z1$errmsg\Zn\n"
                dialog --colors --title "Librerouter Setup" --form "$textmsg" 0 0 3 "Enter your alias:" 1 2 "$myalias"  1 20 20 20 "Passwod:" 2 2 "" 2 20 20 20 "Repeat Password:" 3 2 "" 3 20 20 20 2> /tmp/inputbox.tmp
@@ -755,7 +757,7 @@ new_install() {
     done
     # creates PEM 
     rm /tmp/ssh_keys*
-    ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
+    ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 1> /dev/null 2> /dev/null
     openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
     frase=$(cat /usr/node_1/private/accounts | head -n 1)
     echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
