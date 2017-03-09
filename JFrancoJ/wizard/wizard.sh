@@ -1,3 +1,52 @@
+configure_upnp()
+{
+dialog --title "Librerouter Setup"  --infobox "\n\nChecking uPnP capabilities ... Please wait" 10 50
+# Get my own IP
+myprivip=$(ifconfig eth0  | grep " addr" | grep -v grep  | cut -d : -f 2 | cut -d  \  -f 1)
+
+# Get my gw lan IP
+# This is required to force to select ONLY the UPNP server same where we are ussing as default gateway
+# First seek for my default gw IP and then seek for the desc value of the UPNP device
+# Use UPNP device desc value as key for send delete/add rules
+my_gw_ip=$(route -n | grep UG | cut -c 17-32)
+
+# Get list of all UPNP devices in lan filtered by my_gw_ip
+myupnpdevicedescription=""
+myupnpdevicedescription=$(upnpc -l | grep desc: | grep $my_gw_ip | grep -v grep | sed -e "s/desc: //g")
+
+while [ "$myupnpdevicedescription" == "" ]; do
+    myupnpdevicedescription=$(upnpc -l | grep desc: | grep $my_gw_ip | grep -v grep | sed -e "s/desc: //g")
+    dialog --colors --title "Librerouter Setup" --msgbox  "Your internet router doesn't have UPNP enabled.  \nThis is usually under UPnP Configuration in your router web configuration.\nPlease enable it and click OK when done." 10 50
+done
+
+
+# now collect ports to configure on router portforwarding, from live iptables
+iptlist=$(iptables -L -n -t nat | grep REDIRECT | grep -v grep | cut -c 63- | sed -e "s/dpt://g" | sed -e "s/spt://g" | cut -d \  -f 1,2 | sed -e "s/tcp/TCP/g" | sed -e "s/udp/UDP/g" | sed -e "s/ //g" | sort | uniq )
+roulist=$(upnpc -l -u $myupnpdevicedescription | tail -n +17 | grep -v GetGeneric | cut -d \- -f 1 | cut -d \  -f 3- | sed -e "s/ //g")
+for lines in $iptlist; do
+    passed=0;
+    # check if this port was already forwarded on router
+    for routforward in $roulist; do
+       if [ "$routforwad" = "$lines" ]; then
+            echo "port $lines was already forwarded" > /dev/null 
+       else
+         if [ $passed = 0 ]; then
+            # Remove older portforwarding is required when this libreroute is reconnected to internet router and get a different IP from router DHCP service
+            protocol=${lines:0:3}
+            port=${lines:3:8}
+            upnpc -u $myupnpdevicedescription -d $port $protocol
+            upnpc -u $myupnpdevicedescription -a $myprivip $port $port $protocol
+            passed=1;  # swap semaphore to void send repeated queries to UPNP server
+         fi
+       fi
+    done
+    echo $lines
+done
+}
+
+
+
+
 
 prompt() {
       
@@ -44,13 +93,22 @@ wellcome() {
     hashpass_b=$(mkpasswd  -msha-512 "librerouter" $salt | cut -d \$ -f 4 | cut -d : -f 1)
 
     if [ $hashpass_a == $hashpass_b ]; then 
+      configure_upnp
       dialog --colors --title "Librerouter Setup"  --yes-label Continue --no-label Cancel --yesno "\Zb\Z1Welcome\ZB\Zn to your first Librerouter\n\nWe are going now to configure basic installation, including checking your internet and network configurations.\nYou will be able to excute again this Setup at anytime you need.\n\nFirst of all let's go to change your \ZbNAME\ZB and \ZbPASSWORD\ZB.\n\nPlease write in safe place the NAME and PASSWORD you chose here." 0 0
       retval=$?
       if [ $retval == "1" ]; then
         exit
       fi
       if [ $retval == "0" ]; then
-        new_install
+        check_internet
+
+
+      if [ $internet == "1" ]; then
+           new_install
+        fi
+        if [ "$internet" == "0" ]; then
+           no_internet
+        fi
       fi
     fi
 }
@@ -58,10 +116,14 @@ wellcome() {
 
 
 update_root_pass() {
-  salt=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8})
   method_name="-msha-512"
-  new_enc=$(mkpasswd $method_name $myfirstpass $salt)
+  new_enc=""
+  while [ ${#new_enc} -lt 10 ]; do
+    salt=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-8})
+    new_enc=$(mkpasswd $method_name $myfirstpass $salt)
+  done
   usermod -p "$new_enc" root
+  echo "$myfirstpass" usermod -p "$new_enc" root >> log
 }
 
 
@@ -119,9 +181,9 @@ check_inputs() {
 
 update_public_node_method1() {
   # creates PEM
-  rm /tmp/ssh_keys*
-  ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
-  openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
+  rm /tmp/ssh_keys* 2> /dev/null
+  ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 1> /dev/null 2> /dev/null
+  openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub 2> /dev/null
     
   # create a key phrase for the private backup Tahoe node config and upload to public/$myalias file
   # the $phrase is the entry point to the private area (pb:/ from /usr/node_1/tahoe.cfg )
@@ -152,10 +214,12 @@ update_public_node_method2() {
 
 }
 
-update_def() {
+update_def_pass() {
   # cryptsetup luksOpen /dev/xvdc backup2
   # TODO add update def
   # cryptsetup luksChangeKey <target device> -S <target key slot number>
+  echo -e "$oldpass\n$myfirstpass\n$myfirstpass\n" | cryptsetup luksAddKey /dev/sdb5
+  echo -e "$oldpass\n" | cryptsetup luksRemoveKey /dev/sdb5
   echo "TODO: add update DEF"
 }
 
@@ -707,6 +771,7 @@ new_install() {
     # cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
     update_root_pass
     update_disk_pass
+    update_def_pass
     echo $myalias > /root/alias
     main_menu
 }
@@ -753,8 +818,8 @@ new_pass() {
                start=0
     done
     # creates PEM 
-    rm /tmp/ssh_keys*
-    ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 2> /dev/null
+    rm /tmp/ssh_keys* 2> /dev/null
+    ssh-keygen -N $myfirstpass -f /tmp/ssh_keys 1> /dev/null 2> /dev/null
     openssl rsa  -passin pass:$myfirstpass -outform PEM  -in /tmp/ssh_keys -pubout > /tmp/rsa.pem.pub
     frase=$(cat /usr/node_1/private/accounts | head -n 1)
     echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
@@ -925,32 +990,37 @@ main_menu() {
                   # Now we know node_1 is ready, let's go to do paranoic check/repair on it
 
                   /home/tahoe-lafs/venv/bin/tahoe deep-check --repair -u http://127.0.0.1:3456 node_1:
-                  # Recover the backup file 
-                  echo "Please wait. This will take over 30 minutes..."
-                  /home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:3456 node_1:sys.backup.tar.gz /tmp/sys.backup.tar.gz &
 
-                  # Mostramos progreso del download 
-                  progress="00.00.00"
-                  while [ ${#progress} -gt 5 ];do
-                      progress=$(curl http://127.0.0.1:3456/status/ 2> /dev/null | grep "%</td>" | head -n 1 | cut -d \> -f 2 | cut -d % -f 1)
-                      # progress=$(curl http://127.0.0.1:3456/status/down-1 2> /dev/null | grep Progress:)
-                      echo "Downloading..."   ;echo "$progress" | dialog --title "Librerouter Backup restore" --gauge "Downloading ..." 10 60 0
-                      # echo -e -n "\r$progress"
-                      if [[ $progress =~ "100.0" ]]; then
-                          progress=""
-                      fi
-                      sleep 10
-                  done
+                  # Check for available backup file
 
-                  # Gracefully stop all Tahoe nodes before to extract files from backup
-                  # ########/home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
-                  # ########/home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
+                  if [[ $(/home/tahoe-lafs/venv/bin/tahoe ls -l  -u http://127.0.0.1:3456 node_1:) =~ "sys.backup.tar.gz" ]]; then 
+                      # Recover the backup file 
+                      echo "Please wait. This will take over 30 minutes..."
+                      /home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:3456 node_1:sys.backup.tar.gz /tmp/sys.backup.tar.gz &
 
+                      # Mostramos progreso del download 
+                      progress="00.00.00"
+                      while [ ${#progress} -gt 0 ];do
+                          progress=$(curl http://127.0.0.1:3456/status/ 2> /dev/null | grep "%</td>" | head -n 1 | cut -d \> -f 2 | cut -d \. -f 1)
+                          echo "Downloading..."   ;echo "$progress" | dialog --title "Librerouter Backup restore" --gauge "Downloading ..." 10 60 0
+                          if [[ $progress =~ "100" ]]; then
+                              progress=""
+                          fi
+                          sleep 10
+                      done
 
-                  # Let's go to install the files from sys.backup.tar.gz 
-                  # ############mv /tmp/sys.backup.tar.gz /.
-                  # ############cd /
-                  # ############tar xzf sys.backup.tar.gz
+                      # Gracefully stop all Tahoe nodes before to extract files from backup
+                      # ########/home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1
+                      # ########/home/tahoe-lafs/venv/bin/tahoe stop /usr/public_node
+
+                      # Let's go to install the files from sys.backup.tar.gz 
+                      # ############mv /tmp/sys.backup.tar.gz /.
+                      # ############cd /
+                      # ############tar xzf sys.backup.tar.gz
+                  else
+                      dialog --colors --title "Librerouter Setup" --msgbox  "There no any backup for this node." 7 40
+                      main_menu
+                  fi
                fi
     fi
 
@@ -983,6 +1053,10 @@ dhcp=1
 wellcome
 main_menu
 exit
+
+
+
+
 check_internet
 echo $internet
 if [ $internet == "1" ]; then
