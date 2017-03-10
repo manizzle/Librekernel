@@ -1,3 +1,177 @@
+create_default_interfaces() {
+
+  # In event /tmp/EXT_interfaces doesnt exist, create a default one on eth0 as was before to run wizard
+  if [ ! -e /tmp/LO_interfaces ]; then
+    echo -e "        # interfaces(5) file used by ifup(8) and ifdown(8)\n        auto lo\n        iface lo inet loopback\n\n" > /tmp/LO_interfaces
+
+  fi
+  if [ ! -e /tmp/EXT_interfaces ]; then
+    echo -e "        #External network interface\n        auto eth0\n        #allow-hotplug eth0\n        iface eth0 inet dhcp\n\n" > /tmp/EXT_interfaces
+  fi
+  # in event /tmp/INT_interfaces doesn't exist, creates a default one with eth1 as was before
+  if [ ! -e /tmp/INT_interfaces ]; then
+  INT_INTERFACE="eth1"
+  cat << EOT >  /tmp/INT_interfaces
+
+        #Internal network interface
+        auto $INT_INTERFACE
+        #allow-hotplug $INT_INTERFACE
+        iface $INT_INTERFACE inet static
+            address 10.0.0.1
+            netmask 255.255.255.0
+            network 10.0.0.0
+
+        #Yacy
+        auto $INT_INTERFACE:1
+        #allow-hotplug $INT_INTERFACE:1
+        iface $INT_INTERFACE:1 inet static
+            address 10.0.0.251
+            netmask 255.255.255.0
+
+        #Friendica
+        auto $INT_INTERFACE:2
+        #allow-hotplug $INT_INTERFACE:2
+        iface $INT_INTERFACE:2 inet static
+            address 10.0.0.252
+            netmask 255.255.255.0
+
+        #OwnCloud
+        auto $INT_INTERFACE:3
+        #allow-hotplug $INT_INTERFACE:3
+        iface $INT_INTERFACE:3 inet static
+            address 10.0.0.253
+            netmask 255.255.255.0
+
+        #Mailpile
+        auto $INT_INTERFACE:4
+        #allow-hotplug $INT_INTERFACE:4
+        iface $INT_INTERFACE:4 inet static
+            address 10.0.0.254
+            netmask 255.255.255.0
+
+        #Webmin
+        auto $INT_INTERFACE:5
+        #allow-hotplug $INT_INTERFACE:5
+        iface $INT_INTERFACE:5 inet static
+            address 10.0.0.245
+            netmask 255.255.255.0
+
+        #EasyRTC
+        auto $INT_INTERFACE:6
+        #allow-hotplug $INT_INTERFACE:6
+        iface $INT_INTERFACE:6 inet static
+            address 10.0.0.250
+            netmask 255.255.255.0
+
+        #Kibana
+        auto $INT_INTERFACE:7
+        #allow-hotplug $INT_INTERFACE:7
+        iface $INT_INTERFACE:7 inet static
+            address 10.0.0.239
+            netmask 255.255.255.0
+
+        #Snorby
+        auto $INT_INTERFACE:8
+        #allow-hotplug $INT_INTERFACE:8
+        iface $INT_INTERFACE:8 inet static
+            address 10.0.0.12
+            netmask 255.255.255.0
+
+        #squidguard
+        auto $INT_INTERFACE:9
+        #allow-hotplug $INT_INTERFACE:9
+        iface $INT_INTERFACE:9 inet static
+            address 10.0.0.246
+            netmask 255.255.255.0
+
+        #gitlab
+        auto $INT_INTERFACE:10
+        #allow-hotplug $INT_INTERFACE:10
+        iface $INT_INTERFACE:10 inet static
+            address 10.0.0.247
+            netmask 255.255.255.0
+
+        #trac
+        auto $INT_INTERFACE:11
+        #allow-hotplug $INT_INTERFACE:11
+        iface $INT_INTERFACE:11 inet static
+            address 10.0.0.248
+            netmask 255.255.255.0
+
+        #redmine
+        auto $INT_INTERFACE:12
+        #allow-hotplug $INT_INTERFACE:12
+        iface $INT_INTERFACE:12 inet static
+            address 10.0.0.249
+            netmask 255.255.255.0
+
+        #Webmin
+        auto $INT_INTERFACE:13
+        #allow-hotplug $INT_INTERFACE:13
+        iface $INT_INTERFACE:13 inet static
+            address 10.0.0.244
+            netmask 255.255.255.0
+
+        #Roundcube
+        auto $INT_INTERFACE:14
+        #allow-hotplug $INT_INTERFACE:14
+        iface $INT_INTERFACE:14 inet static
+            address 10.0.0.243
+            netmask 255.255.255.0
+
+        #Postfix
+        auto $INT_INTERFACE:15
+        #allow-hotplug $INT_INTERFACE:15
+        iface $INT_INTERFACE:15 inet static
+            address 10.0.0.242
+            netmask 255.255.255.0
+
+        #Sogo
+        auto $INT_INTERFACE:16
+        #allow-hotplug $INT_INTERFACE:16
+        iface $INT_INTERFACE:16 inet static
+            address 10.0.0.241
+            netmask 255.255.255.0
+
+        #Glype
+        auto $INT_INTERFACE:17
+        #allow-hotplug $INT_INTERFACE:17
+        iface $INT_INTERFACE:17 inet static
+            address 10.0.0.240
+            netmask 255.255.255.0
+
+        #WAF-FLE
+        auto $INT_INTERFACE:18
+        #allow-hotplug $INT_INTERFACE:18
+        iface $INT_INTERFACE:18 inet static
+            address 10.0.0.238
+            netmask 255.255.255.0
+
+EOT
+ fi
+}
+
+
+write_root_pass() {
+    if [ ! -e /root/fixed.pem ]; then
+      # Generates a PEM from /etc/ssh/priv.key and save it in /root/fixed.pem
+      # This is required ONLY once. May be move it to app-configuration-script.sh
+      openssl rsa  -passin pass:"" -outform PEM  -in /etc/ssh/ssh_host_rsa_key -pubout > /root/fixed.pem 2> /dev/null
+      chmod a-rwx /root/fixed.pem
+      chmod u+r /root/fixed.pem
+      chattr +i /root/fixed.pem
+      chattr +i /etc/ssh/ssh_host_rsa_key
+    fi
+    echo $myfirstpass | openssl rsautl -encrypt -pubin -inkey /root/fixed.pem -ssl > /root/.enc 2> /dev/null
+}
+
+
+read_root_pass() {
+    oldpass=$(openssl rsautl -decrypt -inkey /etc/ssh/ssh_host_rsa_key -in /root/.enc)
+
+}
+
+
 configure_upnp()
 {
 dialog --title "Librerouter Setup"  --infobox "\n\nChecking uPnP capabilities ... Please wait" 10 50
@@ -18,7 +192,7 @@ while [ "$myupnpdevicedescription" == "" ]; do
     myupnpdevicedescription=$(upnpc -l | grep desc: | grep $my_gw_ip | grep -v grep | sed -e "s/desc: //g")
     dialog --colors --title "Librerouter Setup" --msgbox  "Your internet router doesn't have UPNP enabled.  \nThis is usually under UPnP Configuration in your router web configuration.\nPlease enable it and click OK when done." 10 50
 done
-
+mypublicip=$(upnpc -l | grep ExternalIPAddress | cut -d = -f 2)
 
 # now collect ports to configure on router portforwarding, from live iptables
 iptlist=$(iptables -L -n -t nat | grep REDIRECT | grep -v grep | cut -c 63- | sed -e "s/dpt://g" | sed -e "s/spt://g" | cut -d \  -f 1,2 | sed -e "s/tcp/TCP/g" | sed -e "s/udp/UDP/g" | sed -e "s/ //g" | sort | uniq )
@@ -40,6 +214,17 @@ for lines in $iptlist; do
          fi
        fi
     done
+
+    # check if really the ports have been forwarding
+    for routforward in $iptlist; do
+            protocol=${routforward:0:3}
+            port=${routforward:3:8}
+            result=$(nmap $mypublicip -p $port)
+            if [[ $result =~ "filtered" ]]; then
+               echo "Opppsssss the port $port seems not OK forwared" >> log
+            fi
+    done
+
 done
 }
 
@@ -217,9 +402,13 @@ update_def_pass() {
   # cryptsetup luksOpen /dev/xvdc backup2
   # TODO add update def
   # cryptsetup luksChangeKey <target device> -S <target key slot number>
-  echo -e "$oldpass\n$myfirstpass\n$myfirstpass\n" | cryptsetup luksAddKey /dev/sdb5
-  echo -e "$oldpass\n" | cryptsetup luksRemoveKey /dev/sdb5
+  read_root_pass
+  echo -e "$oldpass\n$myfirstpass\n$myfirstpass\n" | cryptsetup luksAddKey /dev/sda1
+  echo -e "$oldpass\n" | cryptsetup luksRemoveKey /dev/sda1
+  echo -e "$oldpass\n$myfirstpass\n$myfirstpass\n" | cryptsetup luksAddKey /dev/sda5
+  echo -e "$oldpass\n" | cryptsetup luksRemoveKey /dev/sda5
   echo "TODO: add update DEF"
+  write_root_pass
 }
 
 check_internet() {
@@ -257,6 +446,7 @@ no_internet() {
   # We have NOT internet connection, but we have detected wired and/or wlan devices
   # so we will ask user what device will be use for connect to his/her internet router
   # once selected :
+
   # if wlan : scanning, show AP, prompt for AP password, try to connect and dhclient
   # if eth: try dhclient
   # if dhclient fails : ask user to enter IP, mask and default gw IP for the selected interface ( any ) 
@@ -507,12 +697,12 @@ config_hostapd() {
     wep=0
     # generates random ESSID
     essid=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-12})
-    echo "ESSID: $essid"
+    #echo "ESSID: $essid"
     # generates random plain key
     key=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-13})
-    echo "KEY: $key"
-dialog --colors --defaultno --title "Librerouter Setup" "IMPORTANT" 7 40 
-    echo "interface=$iname" > hostapd.conf
+    # echo "KEY: $key"
+dialog --colors --defaultno --title "Librerouter Setup" --msgbox "\ZbIMPORTANT\ZB\n\nWrite your Access Point values:\n\nESSID: \Zb$essid\ZB\nKEY: \Zb$key\ZB\n\nYou will need it to configure your WIFI clients" 17 40 
+    echo "interface=$lan_iface" > hostapd.conf
     chmod go-rwx hostapd.conf
     echo "#bridge=eth0" >> hostapd.conf
     echo "logger_syslog=-1" >> hostapd.conf
@@ -530,6 +720,52 @@ dialog --colors --defaultno --title "Librerouter Setup" "IMPORTANT" 7 40
       echo "wpa=$wpa2$wpa" >> hostapd.conf
       echo "wpa_passphrase=$key" >> hostapd.conf
     fi
+    cat << EOT >>  hostapd.conf
+hw_mode=g
+channel=1
+beacon_int=100
+dtim_period=2
+max_num_sta=255
+rts_threshold=2347
+fragm_threshold=2346
+
+macaddr_acl=0
+# for further mac filtering once we know the hardware address of clients allowed ( from dhcpd.conf if configured by mac )
+#accept_mac_file=/etc/hostapd.accept
+#deny_mac_file=/etc/hostapd.deny
+
+auth_algs=3
+ignore_broadcast_ssid=0
+wmm_enabled=1
+# Low priority / AC_BK = background
+wmm_ac_bk_cwmin=4
+wmm_ac_bk_cwmax=10
+wmm_ac_bk_aifs=7
+wmm_ac_bk_txop_limit=0
+wmm_ac_bk_acm=0
+# Note: for IEEE 802.11b mode: cWmin=5 cWmax=10
+#
+# Normal priority / AC_BE = best effort
+wmm_ac_be_aifs=3
+wmm_ac_be_cwmin=4
+wmm_ac_be_cwmax=10
+wmm_ac_be_txop_limit=0
+wmm_ac_be_acm=0
+wmm_ac_vi_aifs=2
+wmm_ac_vi_cwmin=3
+wmm_ac_vi_cwmax=4
+wmm_ac_vi_txop_limit=94
+wmm_ac_vi_acm=0
+wmm_ac_vo_aifs=2
+wmm_ac_vo_cwmin=2
+wmm_ac_vo_cwmax=3
+wmm_ac_vo_txop_limit=47
+wmm_ac_vo_acm=0
+eapol_key_index_workaround=0
+eap_server=0
+device_name=Librerouter AP
+friendly_name=Librerouter Access Point
+EOT
     cat hostapd.conf.base >> hostapd.conf
     # Update /etc/init.d/hostpad file
     updatehostpad=$(sed -e "s/DAEMON_CONF=/DAEMON_CONF=\/etc\/hostapd.$lan_iface.conf/g" /etc/init.d/hostapd > /etc/init.d/hostapd.tmp)
@@ -537,13 +773,14 @@ dialog --colors --defaultno --title "Librerouter Setup" "IMPORTANT" 7 40
     # start AP daemon on interface
     mv hostapd.conf /etc/hostapd.$lan_iface.conf
     rfkill unblock all
-    hostapd /etc/hostapd.$lan_iface.conf &
+    hostapd /etc/hostapd.$lan_iface.conf  1> /dev/null 2> /dev/null & 
     chmod u+x /etc/init.d/hostapd
     update-rc.d hostapd defaults
 }
 
 
 lan_config() {
+
   if [ ! $lan_iface ]; then
     dialog --colors --title "Librerouter Setup" --menu "Please select the interface for your internal (lan): " 25 40 55 $options 2> /tmp/lan_iface
     retval=$?
@@ -837,6 +1074,7 @@ new_pass() {
     # cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
     update_root_pass
     update_disk_pass
+    update_def_pass
     main_menu
 }
 
@@ -1052,41 +1290,8 @@ else
 fi
 
 dhcp=1
+create_default_interfaces
 wellcome
 main_menu
 exit
 
-
-
-
-check_internet
-echo $internet
-if [ $internet == "1" ]; then
-  check_ifaces
-  no_internet
-  try_dhcp
-  check_internet
-  if [ $internet == "1" ]; then
-    set_ipmaskgw
-    check_internet
-    if [ $internet == "0" ]; then
-      dialog --title "Librerouter Setup"  --infobox "Something gone wrong. May be you entered wrong password for your WIFI, or may be you have not plugged the ethernet wire in the right slot" 0 0
-      exit
-    else
-      save_network
-    fi
-  fi
-fi
-
-
-exit
-
-
-
-
-
-prompt
-check_inputs
-update_root_pass
-update_public_node_method1
-#update_def
