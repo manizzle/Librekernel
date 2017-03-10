@@ -2619,7 +2619,7 @@ mkdir /root/.tahoe
 
 install_atheros_firmware()
 {
-    apt-get install cmake -y --force-install >> /var/libre_install.log
+    apt-get install cmake -y --force-yes >> /var/libre_install.log
     cd /usr/src
     git clone https://github.com/qca/open-ath9k-htc-firmware.git
     cd open-ath9k-htc-firmware
