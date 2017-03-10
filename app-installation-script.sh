@@ -2251,23 +2251,23 @@ if [ "$ARCH" == "x86_64" ]; then
 		# Install the necessary dependencies
 		apt-get install -y --force-yes curl openssh-server ca-certificates postfix
 
-	        if [ ! -e gitlab-ce_8.12.7-ce.0_amd64.deb ]; then
-	        echo "Downloading Gitlab ..." | tee -a /var/libre_install.log
-	        wget --no-check-certificat -O gitlab-ce_8.12.7-ce.0_amd64.deb \
-		https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb/download 
-	
-	                if [ $? -ne 0 ]; then
-	                        echo "Error: unable to download Gitlab. Exiting ..." | tee -a /var/libre_install.log
-	                        exit 3
-	                fi
-	        fi
-        
-		# Install gitlab 
-		dpkg -i gitlab-ce_8.12.7-ce.0_amd64.deb
-	        if [ $? -ne 0 ]; then
-	                echo "Error: unable to install Gitlab. Exiting ..." | tee -a /var/libre_install.log
-	                exit 3
-	        fi
+#	        if [ ! -e gitlab-ce_8.12.7-ce.0_amd64.deb ]; then
+#	        echo "Downloading Gitlab ..." | tee -a /var/libre_install.log
+#	        wget --no-check-certificat -O gitlab-ce_8.12.7-ce.0_amd64.deb \
+#		https://packages.gitlab.com/gitlab/gitlab-ce/packages/debian/wheezy/gitlab-ce_8.12.7-ce.0_amd64.deb/download 
+#	
+#	                if [ $? -ne 0 ]; then
+#	                        echo "Error: unable to download Gitlab. Exiting ..." | tee -a /var/libre_install.log
+#	                        exit 3
+#	                fi
+#	        fi
+#        
+#		# Install gitlab 
+#		dpkg -i gitlab-ce_8.12.7-ce.0_amd64.deb
+#	        if [ $? -ne 0 ]; then
+#	                echo "Error: unable to install Gitlab. Exiting ..." | tee -a /var/libre_install.log
+#	                exit 3
+#	        fi
 
 		# Installing from packages for dependencies
 		curl -LO https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
@@ -2750,8 +2750,10 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_postfix		# Install postfixadmin package
 	install_upnp		# Install miniupnp package
 	install_tahoe           # Install tahoe
-	save_variables	        # Save detected variables
         install_atheros_firmware # Install the free firmware from Github repo for Atheros devices
+	save_variables	        # Save detected variables
+
+
 # ---------------------------------------------
 # If script detects odroid board then next 
 # steps will be
