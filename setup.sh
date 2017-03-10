@@ -13,7 +13,8 @@ name=$(date '+%y-%m-%d_%H-%M')
 
 # Clone the repository
 rm -rf librereports
-git clone https://github.com/librerouter/librereports
+export GIT_SSL_NO_VERIFY=1
+git clone https://github.com/nikdavnik/librereports
 cd librereports
 
 # Run scripts and get logs
@@ -38,9 +39,13 @@ uname -a >> "report.$name.log"
 cat /proc/cpuinfo | grep model >> "report.$name.log"
 ifconfig >> "report.$name.log"
 
+# Git global configs
+git config --global user.email "nikdavnik@mail.ru"
+git config --global user.name "libreroot"
+
 git add report.$name.log
 git commit report.$name.log -m "Report $date"
-git push origin
+git push --repo https://libreroot:Librepass1@github.com/nikdavnik/librereports.git
 
 }
 
