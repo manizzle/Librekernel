@@ -2624,6 +2624,7 @@ install_atheros_firmware()
     git clone https://github.com/qca/open-ath9k-htc-firmware.git
     cd open-ath9k-htc-firmware
     make toolchain
+    mkdir /lib/firmware
     make -C target_firmware
     cp target_firmware/*.fw /lib/firmware/
 }
@@ -2750,9 +2751,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
 	install_postfix		# Install postfixadmin package
 	install_upnp		# Install miniupnp package
 	install_tahoe           # Install tahoe
-        install_atheros_firmware # Install the free firmware from Github repo for Atheros devices
-	save_variables	        # Save detected variables
-
+        save_variables	        # Save detected variables
+        install_atheros_firmware # Install free firmware for atheros devices from Github
 
 # ---------------------------------------------
 # If script detects odroid board then next 
