@@ -2097,22 +2097,21 @@ install_evebox()
         echo "Installing EveBox ..." | tee -a /var/libre_install.log
 
         if [ ! -e evebox-0.6.0dev-linux-amd64 ]; then
-        echo "Downloading EveBox ..." | tee -a /var/libre_install.log
-        wget --no-check-certificat \
-        https://bintray.com/jasonish/evebox-development/download_file?file_path=evebox-latest-linux-amd64.zip
-                if [ $? -ne 0 ]; then
-                        echo "Error: unable to download EveBox. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
-                fi
-        mv download_file?file_path=evebox-latest-linux-amd64.zip evebox-latest-linux-amd64.zip
-        unzip evebox-latest-linux-amd64.zip
+        	echo "Downloading EveBox ..." | tee -a /var/libre_install.log
+        	wget --no-check-certificat \
+        	https://dl.bintray.com/jasonish/evebox-development/evebox-latest-linux-x64.zip
+                	if [ $? -ne 0 ]; then
+                        	echo "Error: unable to download EveBox. Exiting ..." | tee -a /var/libre_install.log
+                        	exit 3
+                	fi
+        	unzip evebox-latest-linux-x64.zip
         fi
 
-	# Moving bin 
-	sudo mv evebox-0.6.0dev-linux-amd64/evebox /sbin/
+        # Moving bin
+        sudo mv evebox-latest-linux-x64/evebox /sbin/
 
         # Cleanup
-        rm -rf evebox-latest-linux-amd64.zip
+        rm -rf evebox-latest-linux-x64.zip
 }
 
 
@@ -2705,81 +2704,58 @@ get_hardware  	# Getting hardware info
 # 7. Download and Install packages
 # ----------------------------------------------
 if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; then 
-	check_internet          # Check Internet access
-#	check_assemblance
-	check_requirements      # Checking requirements for 
-        get_interfaces  	# Get DHCP on eth0 or eth1 and 
-				# connect to Internet
-	configure_repositories	# Prepare and update repositories
-	install_apmode		# Prepare wlan AP script
-	install_packages       	# Download and install packages	
-#	install_libressl	# Install Libressl package
-	install_modsecurity     # Install modsecurity package
-#	install_waffle		# Install modsecurity GUI WAF-FLE package
-	install_certificates	# Install ssl certificates
-	install_nginx		# Install nginx package
-	install_mailpile	# Install Mailpile package
-	install_easyrtc		# Install EasyRTC package
-#	install_hublin		# Install hublin package
-	install_owncloud	# Install Owncloud package
-	install_libecap		# Install libecap package
-	install_fg-ecap		# Install fg-ecap package
-	install_squid		# Install squid package
-	install_squidclamav	# Install SquidClamav package
-	install_squidguard_bl	# Install Squidguard blacklists
-	install_squidguardmgr	# Install Squidguardmgr (Manager Gui) 
-	install_ecapguardian	# Inatall ecapguardian package
-#	install_e2guardian	# Inatall e2guardian package
-	install_suricata	# Install Suricata package
-#	install_kibana		# Install Kibana,elasticsearch,logstash packages
-#	install_scirius		# Install Scirius package
-#	install_snort		# Install Snort package
-#	install_barnyard	# Install Barnyard package
-#	install_vortex_ids	# Install Vortex-ids package
-#	install_openwips_ng	# Install Openwips-ng package
-#	install_hakabana	# Install hakabana package
-#	install_flowviewer	# Install FlowViewer package
-#	install_pmgraph		# Install pmgraph package
-#	install_nfsen		# Install nfsen package
-#	install_evebox		# Install EveBox package
-#	install_selks		# Install SELKS GUI
-#	install_snorby		# Install Snorby package
-	install_glype		# Install glype proxy
-	install_gitlab		# Install gitlab packae
-	install_trac		# Install trac package
-	install_redmine		# Install redmine package
-	install_ndpi		# Install ndpi package
-	install_redsocks	# Install redsocks package
-	install_ntopng		# Install ntopng package
-	install_postfix		# Install postfixadmin package
-	install_upnp		# Install miniupnp package
-	install_tahoe           # Install tahoe
-        save_variables	        # Save detected variables
+	check_internet           # Check Internet access
+#	check_assemblance        # Check router assemblance
+	check_requirements       # Checking requirements for 
+        get_interfaces  	 # Get DHCP on eth0 or eth1 and 
+				 # connect to Internet
+	configure_repositories	 # Prepare and update repositories
+	install_apmode		 # Prepare wlan AP script
+	install_packages       	 # Download and install packages	
+#	install_libressl	 # Install Libressl package
+	install_modsecurity      # Install modsecurity package
+#	install_waffle		 # Install modsecurity GUI WAF-FLE package
+	install_certificates	 # Install ssl certificates
+	install_nginx		 # Install nginx package
+	install_mailpile	 # Install Mailpile package
+	install_easyrtc		 # Install EasyRTC package
+#	install_hublin		 # Install hublin package
+	install_owncloud	 # Install Owncloud package
+	install_libecap		 # Install libecap package
+	install_fg-ecap		 # Install fg-ecap package
+	install_squid		 # Install squid package
+	install_squidclamav	 # Install SquidClamav package
+	install_squidguard_bl	 # Install Squidguard blacklists
+	install_squidguardmgr	 # Install Squidguardmgr (Manager Gui) 
+	install_ecapguardian	 # Inatall ecapguardian package
+#	install_e2guardian	 # Inatall e2guardian package
+	install_suricata	 # Install Suricata package
+	install_kibana		 # Install Kibana,elasticsearch,logstash packages
+#	install_scirius		 # Install Scirius package
+#	install_snort		 # Install Snort package
+#	install_barnyard	 # Install Barnyard package
+#	install_vortex_ids	 # Install Vortex-ids package
+#	install_openwips_ng	 # Install Openwips-ng package
+#	install_hakabana	 # Install hakabana package
+#	install_flowviewer	 # Install FlowViewer package
+#	install_pmgraph		 # Install pmgraph package
+#	install_nfsen		 # Install nfsen package
+	install_evebox		 # Install EveBox package
+#	install_selks		 # Install SELKS GUI
+#	install_snorby		 # Install Snorby package
+	install_glype		 # Install glype proxy
+	install_gitlab		 # Install gitlab packae
+	install_trac		 # Install trac package
+	install_redmine		 # Install redmine package
+	install_ndpi		 # Install ndpi package
+	install_redsocks	 # Install redsocks package
+	install_ntopng		 # Install ntopng package
+	install_postfix		 # Install postfixadmin package
+	install_upnp	 	 # Install miniupnp package
+	install_tahoe            # Install tahoe
+        save_variables	         # Save detected variables
         install_atheros_firmware # Install free firmware for atheros devices from Github
-        install_dialog          # This is the dialog, used for wizard.sh user menus
-# ---------------------------------------------
-# If script detects odroid board then next 
-# steps will be
-#
-# 4. Checking if board is assembled
-# 5. Configure bridge interfaces
-# 6. Check Internet Connection
-# 7. Configure repositories
-# 8. Download and Install packages
-# ---------------------------------------------
-#elif [ "$PROCESSOR" = "ARM" ]; then 
-	#check_assemblance
-	#configure_bridges      # Configure bridge interfacers
-	#check_internet         # Check Internet access
-        #get_interfaces		# Get DHCP on eth0 or eth1 and 
-				# connect to Internet
-	#configure_repositories # Prepare and update repositories
-	#install_packages       # Download and install packages
-	#install_mailpile	# Install Mailpile package
-	#install_easyrtc	# Install EasyRTC package
-	#install_squid		# Install squid package
-	#install_squidclamav	# install SquidClamav package
-	#save_variables	        # Save detected variables
+        install_dialog           # This is the dialog, used for wizard.sh user menus
 fi
 
 # ---------------------------------------------
