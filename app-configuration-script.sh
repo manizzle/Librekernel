@@ -6226,8 +6226,8 @@ fi
 echo "Creating aliases for Tahoe..."
 mkdir /root/.tahoe/private
 /home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:3456 node_1:
-echo "Creating public_node alias for Tahoe..."
-/home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:9456 public_node:
+# echo "Creating public_node alias for Tahoe..."
+# /home/tahoe-lafs/venv/bin/tahoe create-alias -u http://127.0.0.1:9456 public_node:
 
 echo "Fetching URL:DIR2 for node_1"
 URI1=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
@@ -6237,6 +6237,7 @@ echo "$URI1 fetched"
 # Update the /private/accounts
 echo -n $URI1 >> /usr/node_1/private/accounts
 echo -n URI:DIR2:rjxappkitglshqppy6mzo3qori:nqvfdvuzpfbldd7zonjfjazzjcwomriak3ixinvsfrgua35y4qzq >> /usr/public_node/private/accounts
+echo "public_node: URI:DIR2:rjxappkitglshqppy6mzo3qori:nqvfdvuzpfbldd7zonjfjazzjcwomriak3ixinvsfrgua35y4qzq" >> /root/.tahoe/private/aliases
 updatednode_1=$(sed -e "s/FALSE/ /g" /usr/node_1/private/accounts )
 updatedpubic_node=$(sed -e "s/FALSE/ /g" /usr/public_node/private/accounts )
 echo $updatednode_1 > /usr/node_1/private/accounts
