@@ -940,6 +940,8 @@ ntpdate -s ntp.ubuntu.com
 /etc/init.d/nginx start > /dev/null 2>&1 
 
 # Start suricata
+ethtool -K lo rx off tso off gso off sg off gro off lro off
+ifconfig lo mtu 1400
 suricata -D -c /etc/suricata/suricata.yaml -i lo &
 
 # Start logstash
@@ -4544,44 +4546,44 @@ proxy_set_header X-Real-IP \$remote_addr;
 echo "Configuring Kibana virtual host ..."
 
 # Getting Tor hidden service EasyRTC hostname
-#SERVER_KIBANA="$(cat /var/lib/tor/hidden_service/kibana/hostname 2>/dev/null)"
+SERVER_KIBANA="$(cat /var/lib/tor/hidden_service/kibana/hostname 2>/dev/null)"
 
 # Creating certificate bundle
-#rm -rf /etc/ssl/nginx/kiabana/kibana_bundle.crt
-#cat /etc/ssl/nginx/kibana/kibana_librerouter_net.crt /etc/ssl/nginx/kibana/kibana_librerouter_net.ca-bundle >> /etc/ssl/nginx/kibana/kibana_bundle.crt
+rm -rf /etc/ssl/nginx/kiabana/kibana_bundle.crt
+cat /etc/ssl/nginx/kibana/kibana_librerouter_net.crt /etc/ssl/nginx/kibana/kibana_librerouter_net.ca-bundle >> /etc/ssl/nginx/kibana/kibana_bundle.crt
 
 # Creating Kibana virtual host configuration
-#echo '
-#server {
-#listen 10.0.0.239;
-#server_name _;
-#return 301 https://kibana.librerouter.net;
-#}
-#
-#server {
-#listen 10.0.0.239:443 ssl;
-#server_name kibana.librerouter.net;
-#
-#  ssl_certificate /etc/ssl/nginx/kibana/kibana_bundle.crt;
-#  ssl_certificate_key /etc/ssl/nginx/kibana/kibana_librerouter_net.key;
-#  ssl_prefer_server_ciphers On;
-#  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-#  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
-#  ssl_session_cache shared:SSL:20m;
-#  ssl_session_timeout 10m;
-#  add_header Strict-Transport-Security "max-age=31536000";
-#
-#access_log /var/log/nginx/kibana.access.log;
-#error_log /var/log/nginx/kibana.error.log;
-#
-#location / {
-#	proxy_pass       http://127.0.0.1:5601;
-#	proxy_set_header Upgrade $http_upgrade;
-#	proxy_set_header Host $host;
-#	proxy_cache_bypass $http_upgrade;
-#}
-#}
-#' > /etc/nginx/sites-enabled/kibana
+echo '
+server {
+listen 10.0.0.239;
+server_name _;
+return 301 https://kibana.librerouter.net;
+}
+
+server {
+listen 10.0.0.239:443 ssl;
+server_name kibana.librerouter.net;
+
+  ssl_certificate /etc/ssl/nginx/waffle/waffle_bundle.crt;
+  ssl_certificate_key /etc/ssl/nginx/waffle/waffle_librerouter_net.key;
+  ssl_prefer_server_ciphers On;
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+  ssl_session_cache shared:SSL:20m;
+  ssl_session_timeout 10m;
+  add_header Strict-Transport-Security "max-age=31536000";
+
+  access_log /var/log/nginx/kibana.access.log;
+  error_log /var/log/nginx/kibana.error.log;
+
+  location / {
+	proxy_pass       http://127.0.0.1:5601;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Host $host;
+	proxy_cache_bypass $http_upgrade;
+  }
+}
+' > /etc/nginx/sites-enabled/kibana
 
 
 #--------snorby.librenet----------#
@@ -6125,6 +6127,8 @@ if [ ! $(cat /var/spool/crontabs/root | grep upnp) ]; then
     echo "0 * * * * /root/libre_scripts/upnp.sh" >> /var/spool/crontabs/root
 fi
 }
+
+
 # ---------------------------------------------------------
 # Function to configure tahoe
 # ---------------------------------------------------------
@@ -7100,9 +7104,9 @@ configure_prosody		# Configuring prosody xmpp server
 configure_tomcat		# Configuring tomcat server
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
-#configure_suricata		# Configure Suricata service
-#configure_logstash		# Configure logstash
-#configure_kibana		# Configure Kibana service
+configure_suricata		# Configure Suricata service
+configure_logstash		# Configure logstash
+configure_kibana		# Configure Kibana service
 configure_gitlab 		# Configure gitlab servies (only for amd64)
 #configure_snortbarn		# Configure Snort and Barnyard services
 #configure_snorby		# Configure Snorby
