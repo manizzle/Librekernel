@@ -211,6 +211,29 @@ Linux Libre kernel:
 In the previous section we talked about Linux Libre which is a Linux based operating system kernel and a GNU package.
 In this and the following few sections we are going to talk about its counterpart called LibreRouter which is no more than an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users.
 
+After a series of tests requested, I must say that we are not using any type of non-free package, passing vrms does not detect any.
+
+root@librerouter:~# vrms
+
+No non-free or contrib packages installed on librerouter!  rms would be proud.
+root@librerouter:~# 
+
+DPKG
+checking contrib/non-free
+
+root@librerouter:~# dpkg-query -W -f='${Section}\t${Package}\n' | grep ^non-free
+root@librerouter:~# dpkg-query -W -f='${Section}\t${Package}\n' | grep ^contrib
+root@librerouter:~# aptitude search '~i ?section(non-free)'
+root@librerouter:~# aptitude search '~i ?section(contrib)'
+
+BLOBS
+
+The blob-check script has found one blob in the current kernel of debian jessie, it is related to the free driver of nvidia, maybe it is a false positive but it will be removed when the free kernel (fsfla) is implemented in its entirety.
+
+root@librerouter:/usr/src# /bin/bash deblob-check linux-source-3.16.tar.xz 
+linux-source-3.16/drivers/gpu/drm/nouveau/core/engine/xtensa.c within
+linux-source-3.16.tar.xz
+root@librerouter:/usr/src# 
 
 
 In the simplest terms it's a GNU Free and Open Source Hardware (FOSH) running GNU software.
