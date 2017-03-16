@@ -6318,8 +6318,8 @@ fi
 echo 1 > /var/run/backup
 # Create a /tmp/sys.backup.tar.gz
 rm -f /tmp/sys.backup.tar.gz
-tar -cpPf /tmp/sys.backup.tar /etc
-tar -rpPf /tmp/sys.backup.tar /root
+tar  --exclude=*passwd* --exclude=*shadow* --exclude=hostapd* --exclude=networks -cpPf /tmp/sys.backup.tar /etc
+tar  --exclude=bin --exclude=node_1 --exclude=public_node -rpPf /tmp/sys.backup.tar /usr
 tar -rpPf /tmp/sys.backup.tar /var/www
 tar -rpPf /tmp/sys.backup.tar /var/lib/mysql
 gzip /tmp/sys.backup.tar
