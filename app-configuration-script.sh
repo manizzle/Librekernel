@@ -6248,7 +6248,7 @@ echo $updatednode_1 > /usr/node_1/private/accounts
 echo $updatedpubic_node > /usr/public_node/private/accounts
 
 # Update offered space
-new_tahoe_cfg=$(sed -e "s/reserved_space = 1G/reserved_space = 750G/g" /usr/node_1/tahoe.cfg)
+new_tahoe_cfg=$(sed -e "s/reserved_space = 1G/reserved_space = 8G/g" /usr/node_1/tahoe.cfg)
 # echo "$new_tahoe_cfg"
 echo "$new_tahoe_cfg" > /usr/node_1/tahoe.cfg
 
