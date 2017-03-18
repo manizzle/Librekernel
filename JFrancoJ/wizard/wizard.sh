@@ -216,14 +216,14 @@ for lines in $iptlist; do
     done
 
     # check if really the ports have been forwarding
-    for routforward in $iptlist; do
-            protocol=${routforward:0:3}
-            port=${routforward:3:8}
-            result=$(nmap $mypublicip -p $port)
-            if [[ $result =~ "filtered" ]]; then
-               echo "Opppsssss the port $port seems not OK forwared" >> log
-            fi
-    done
+    # for routforward in $iptlist; do
+    #        protocol=${routforward:0:3}
+    #        port=${routforward:3:8}
+    #        result=$(nmap $mypublicip -p $port)
+    #        if [[ $result =~ "filtered" ]]; then
+    #           echo "Opppsssss the port $port seems not OK forwared" >> log
+    #        fi
+    # done
 
 done
 }
@@ -248,8 +248,8 @@ prompt() {
     credentials=$(cat /tmp/inputbox.tmp)
     rm /tmp/inputbox.tmp
     thiscounter=0
-local IFS='
-'
+  local IFS=$'\n'
+
   for lines in $credentials; do
   #while IFS= read -r lines; do
     if [ $thiscounter = "0" ]; then
@@ -375,9 +375,9 @@ update_public_node_method1() {
   #frase=$(/home/tahoe-lafs/venv/bin/tahoe manifest -u http://127.0.0.1:3456 node_1: | head -n 1)
   frase=$(cat /usr/node_1/private/accounts | head -n 1)
   echo $frase | openssl rsautl -encrypt -pubin -inkey /tmp/rsa.pem.pub  -ssl > /tmp/$myalias
-  mv /tmp/$myalias /var/public_node/$myalias
+  /home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:9456 /tmp/$myalias public_node: /$myalias
   ofuscate
-  cp /tmp/ssh_keys  /var/public_node/.keys/$ofuscated
+  /home/tahoe-lafs/venv/bin/tahoe cp -u http://127.0.0.1:9456 /tmp/ssh_keys public_node:.keys/$ofuscated
 }
 
 
@@ -414,12 +414,15 @@ update_def_pass() {
 check_internet() {
   processed=0
   (items=2;while [ $processed -le $items ]; do pct=$processed ; echo "Checking Internet..."   ;echo "$pct"; processed=$((processed+1)); sleep 0.1; done; ) | dialog --title "Librerouter Setup" --gauge "Checking Internet" 10 60 0
-  check=$(curl kernel.org 2> /dev/null)
-  if [ ${#check} -gt 5 ]; then
 
-#  if [ ! $(ntpdate -q hora.rediris.es | grep "no server") ]; then
+# OJO Cambiar de nuevo cuando haya ping hacia fuera , con el nuevo app-configuration-script.sh
+# OJO Usar PING y no CURL porque curl se queda parado en vez de retornar error
+#  check=$(curl kernel.org 2> /dev/null)
+#  if [ ${#check} -gt 5 ]; then
+
+  if [ ! $(ntpdate -q hora.rediris.es | grep "no server") ]; then
     internet=1
-    (items=25;while [ $processed -le $items ]; do pct=$processed ; echo "Checking Internet..."   ;echo "$pct"; processed=$((processed+1)); sleep 0.1; done; ) | dialog --title "Librerouter Setup " --gauge "Checking internet..." 10 60 0
+    (items=25;while [ $processed -le $items ]; do pct=$processed ; echo "Checking Internet..."   ;echo "$pct"; processed=$((processed+1)); sleep 0.01; done; ) | dialog --title "Librerouter Setup " --gauge "Checking internet..." 10 60 0
 
   fi
   sleep 1
@@ -431,15 +434,30 @@ check_ifaces() {
   wireds=$(ls /sys/class/net) 
   for wired in $wireds ; do
    if [[ $wired =~ "eth" ]] || [[ $wired =~ "wlan" ]]; then
-      if [[ $wired =~ $excluded_if ]]; then
-         echo 
+      if [[ $wired =~ $excluded_if ]] && [ ${#excluded_if} -gt 3 ]; then
+         echo "" > /dev/null
       else
          ups=$(cat /sys/class/net/$wired/operstate)
-         options="$options $wired $ups"
+
+         # Put friendly names
+         if [ "$wired" == "eth0" ]; then wired="First cable port $wired"; fi
+         if [ "$wired" == "eth1" ]; then wired="Second cable port $wired"; fi
+         if [ "$wired" == "eth2" ]; then wired="Third cable port $wired"; fi
+         if [ "$wired" == "eth3" ]; then wired="Fourth cable port $wired"; fi
+         if [ "$wired" == "eth4" ]; then wired="Five cable port $wired"; fi
+         if [ "$wired" == "eth5" ]; then wired="Six cable port $wired"; fi
+         if [ "$wired" == "eth6" ]; then wired="Eight cable port $wired"; fi
+         if [ "$wired" == "wlan0" ]; then wired="First WIFI port $wired"; fi
+         if [ "$wired" == "wlan1" ]; then wired="Second WIFI port $wired"; fi
+         if [ "$wired" == "wlan2" ]; then wired="Third WIFI port $wired"; fi
+         if [ "$wired" == "wlan3" ]; then wired="Fourth WIFI port $wired"; fi
+         if [ "$wired" == "wlan4" ]; then wired="Five WIFI port $wired"; fi
+         options="$options \"$wired\" $ups"
       fi
    fi
 
   done
+  echo "$options" > /tmp/options
 }
 
 no_internet() {
@@ -451,52 +469,134 @@ no_internet() {
   # if eth: try dhclient
   # if dhclient fails : ask user to enter IP, mask and default gw IP for the selected interface ( any ) 
   # 
-
+  rm /tmp/inet_iface 2> /dev/null
   if [ ! $inet_iface ]; then
-    dialog --colors --title "Librerouter Setup" --menu "Please select the interface you are using to connect to internet router (wan): " 25 40 55 $options 2> /tmp/inet_iface
+    dialog --colors --title "Librerouter Setup" --menu "Please select the interface you are using to connect to internet router (wan): " 25 40 55 --file /tmp/options 2> /tmp/inet_iface
     retval=$?
     if [ $retval == "1" ]; then
-      exit
+      main_menu
     fi
     inet_iface=$(cat /tmp/inet_iface)
+    if [[ $inet_iface =~ "eth0" ]]; then inet_iface="eth0"; fi
+    if [[ $inet_iface =~ "eth1" ]]; then inet_iface="eth1"; fi
+    if [[ $inet_iface =~ "eth2" ]]; then inet_iface="eth2"; fi
+    if [[ $inet_iface =~ "eth3" ]]; then inet_iface="eth3"; fi
+    if [[ $inet_iface =~ "eth4" ]]; then inet_iface="eth4"; fi
+    if [[ $inet_iface =~ "eth5" ]]; then inet_iface="eth5"; fi
+    if [[ $inet_iface =~ "eth6" ]]; then inet_iface="eth6"; fi
+    if [[ $inet_iface =~ "eth7" ]]; then inet_iface="eth7"; fi
+    if [[ $inet_iface =~ "wlan0" ]]; then inet_iface="wlan0"; fi
+    if [[ $inet_iface =~ "wlan1" ]]; then inet_iface="wlan1"; fi
+    if [[ $inet_iface =~ "wlan2" ]]; then inet_iface="wlan2"; fi
+    if [[ $inet_iface =~ "wlan3" ]]; then inet_iface="wlan3"; fi
+    if [[ $inet_iface =~ "wlan4" ]]; then inet_iface="wlan4"; fi
   fi
+
+
+   # In some cases the selected interface may be in use, but the user want to change it
+   # Then prompt user to confirm to change this in use interface and stop services on it, and then re-scan
+
+   # Is already in use interface $inet_iface ?
+  inuse=""
+  if [[ $(ps auxwwww | grep hostapd) =~ $inet_iface ]]; then inuse="hostapd"; fi
+  packetcount1=$(ifconfig $inet_iface | grep "TX pack")
+  sleep 2;
+  packetcount2=$(ifconfig $inet_iface | grep "TX pack")
+  if [ "$packetcount1" == "$packetcount2" ]; then echo > /dev/null; else inuse="connected"; fi
+
+  if [ ${#inuse} -gt 1 ]; then
+     dialog --colors --defaultno --title "Librerouter Setup" --yesno  "The interface $inet_iface you have chosen is already in use by $inuse.\nAre you sure you want to re-configure it ?" 9 40
+     retval=$?
+     if [ $retval == "1" ]; then
+       main_menu
+     fi
+     if [ $retval == "0" ]; then
+         if [[ $inuse =~ "hostapd" ]]; then 
+             killall -9 hostapd 1> /dev/null 2> /dev/null
+             ifconfig $inet_iface down > /dev/null 2> /dev/null
+             dialog --colors --defaultno --title "Librerouter Setup" --infobox "Stoping older Access Point" 0 0
+             sleep 5
+         fi
+     fi
+  fi
+
+
+
   if [[ $inet_iface =~ "wlan" ]]; then
     # Here the user have selected WAN interface
     # We need to offer available ESSID and prompt for AP password
     # Let's go to fetch all AP's ESSID  in the area and quality of each one
-    ifconfig $inet_iface up
-    scanning=$(iwlist $inet_iface scanning)
-    essids=$(echo "$scanning" | grep ESSID | cut -d : -f 2 | cut -d '"' -f 2)
-    qualities=$(echo "$scanning" | grep Quality | cut -d = -f 2 | cut -d / -f 1)
+    ifconfig $inet_iface up > /dev/null
+    scanning=$(iwlist $inet_iface scanning 2> /dev/null)
+    #essids=$(
+    echo "$scanning" | grep ESSID | cut -d : -f 2 | cut -d '"' -f 2 > /tmp/essids
+    #qualities=$(
+    echo "$scanning" | grep Quality | cut -d = -f 2 | cut -d /  -f 1 > /tmp/qualities
+    essids=$(cat /tmp/essids)
+    qualities=$(cat /tmp/qualities)
+    
+    local IFS=$'\n'
     o=0
     for q in $qualities; do
-      quality[$o]=$q
+      quality[$o]="$q"
+      if [ ${quality[$o]} == "" ] || [[ "${quality[$o]}" =~ "i" ]] || [[ "${quality[$o]}" =~ " " ]] || [ ${#q} -gt 2 ]; then
+         quality[$o]="-"
+      fi
+      if [ ${#q} -gt 2 ]; then
+         quality[$o]="' '"
+      fi
       o=$((o+1))
     done
 
     o=0
     options=""
     for essid in $essids; do
-      options="$options $essid ${quality[$o]}"
+      #essid=$(echo $essid | sed -e "s/!/\\\!/g")
+      #essid=$(echo $essid | sed -e "s/ /\\\ /g")
+      options="$options \"$essid\" ${quality[$o]}"
       o=$((o + 1))
     done
   
- 
-    dialog --colors --title "Librerouter Setup" --extra-button --extra-label "Re-scan" --menu "Please select your Access Point : " 25 40 55 $options 2> /tmp/essid
+    
+   local IFS=$' \t\n'
+
+   # In the event no AP are detected in the area
+   while [ $o -lt 1 ]; do
+     dialog --colors --title "Librerouter Setup" --yes-label "Re-scan" --no-label "Cancel" --yesno "No any Access Point have been detected" 0 0
+     retval=$?
+     if [ $retval == "3" ]; then
+      check_ifaces
+      no_internet
+     fi
+     if [ $retval == "1" ]; then
+      main_menu
+     fi
+
+   done
+
+
+# joaquin
+   echo "dialog --colors --title \"Librerouter Setup - $inet_iface\" --extra-button --extra-label \"Re-scan\" --menu \"Please select your Access Point : \" 25 40 55 $options" > /tmp/select_ap
+    chmod u+x /tmp/select_ap > /dev/null
+    /tmp/select_ap 2> /tmp/essid
     retval=$?
     if [ $retval == "3" ]; then
       check_ifaces
       no_internet
     fi
     if [ $retval == "1" ]; then
-      exit
+      rm /tmp/inet_iface
+      main_menu
     fi
     essid=$(cat /tmp/essid)
 
     while [ ${#wifi_pass} -lt 8 ]; do
     
-      dialog --colors --title "Librerouter Setup" --extra-button --extra-label "Back" --form "Enter your WIFI Access Point password, minimun 8 characters" 0 0 1 "WIFI Password:" 1 2 "" 1 20 20 20 2> /tmp/wifipass
+      dialog --colors --title "Librerouter Setup" --extra-button --extra-label "Back" --form "Enter your $essid WIFI Access Point password, minimun 8 characters" 0 0 1 "WIFI Password:" 1 2 "" 1 20 20 20 2> /tmp/wifipass
       retval=$?
+      if [ $retval == "1" ]; then
+        main_menu
+      fi
       if [ $retval == "3" ]; then
         check_ifaces
         no_internet
@@ -527,6 +627,12 @@ try_dhcp() {
     dhclient $inet_iface  1> /dev/null 2> /dev/null &
     sleep 5
     killall dhclient 1> /dev/null 2> /dev/null
+    ifaceip=$(ifconfig $inet_iface | grep "inet addr" | cut -d : -f  2 | cut -d \  -f1)
+    if [[ "$ifaceip" =~ "." ]]; then
+        dialog --colors --title "Librerouter Setup" --msgbox "DHCP for interface $inet_iface got ip address" 0 0
+    else 
+        set_ipmaskgw
+    fi
 }
 
 set_ipmaskgw() {
@@ -538,7 +644,7 @@ set_ipmaskgw() {
       no_internet
     fi
     if [ $retval == "1" ]; then
-      exit
+      main_menu
     fi
     ipmaskgw=$(cat /tmp/network_ipmaskgw)
     thiscounter=0
@@ -680,12 +786,15 @@ EOT
 
 config_hostapd() {
     # Check AP capabilities
-    AP_cap=$(iw list | grep "* AP" | grep -v grep)
-    if [ "$AP_cap" = "" ]; then
-       dialog --colors --defaultno --title "Librerouter Setup" "This WLAN device does NOT support AP mode" 7 40
+    iw list | grep "* AP" | grep -v grep > /tmp/ap_cap
+    AP_cap=$(cat /tmp/ap_cap)
+    if [ ${#AP_cap} -lt 5 ]; then
+       lan_iface=""
+       dialog --colors --defaultno --title "Librerouter Setup" --msgbox "This WLAN device does NOT support AP mode" 7 40
        retval=$?
        if [ $retval == "0" ]; then
-          lan_config
+          main_menu
+          #lan_config
        fi
        if [ $retval == "1" ]; then
           main_menu
@@ -766,12 +875,16 @@ eap_server=0
 device_name=Librerouter AP
 friendly_name=Librerouter Access Point
 EOT
-    cat hostapd.conf.base >> hostapd.conf
+    # cat hostapd.conf.base >> hostapd.conf
     # Update /etc/init.d/hostpad file
     updatehostpad=$(sed -e "s/DAEMON_CONF=/DAEMON_CONF=\/etc\/hostapd.$lan_iface.conf/g" /etc/init.d/hostapd > /etc/init.d/hostapd.tmp)
     mv /etc/init.d/hostapd.tmp /etc/init.d/hostapd
     # start AP daemon on interface
     mv hostapd.conf /etc/hostapd.$lan_iface.conf
+    killall -9 hostapd 1> /dev/null 2> /dev/null
+    ifconfig $inet_iface down > /dev/null 2> /dev/null
+    # dialog --colors --defaultno --title "Librerouter Setup" --infobox "Stoping older Access Point" 0 0
+    sleep 5
     rfkill unblock all
     hostapd /etc/hostapd.$lan_iface.conf  1> /dev/null 2> /dev/null & 
     chmod u+x /etc/init.d/hostapd
@@ -782,13 +895,48 @@ EOT
 lan_config() {
 
   if [ ! $lan_iface ]; then
-    dialog --colors --title "Librerouter Setup" --menu "Please select the interface for your internal (lan): " 25 40 55 $options 2> /tmp/lan_iface
+    dialog --colors --title "Librerouter Setup" --menu "Please select the interface for your internal (lan): " 25 40 55 --file /tmp/options 2> /tmp/lan_iface
     retval=$?
     if [ $retval == "1" ]; then
-      exit
+      main_menu
     fi
     lan_iface=$(cat /tmp/lan_iface)
+    if [[ "$lan_iface" =~ "eth0" ]]; then lan_iface="eth0"; fi
+    if [[ "$lan_iface" =~ "eth1" ]]; then lan_iface="eth1"; fi
+    if [[ "$lan_iface" =~ "eth2" ]]; then lan_iface="eth2"; fi
+    if [[ "$lan_iface" =~ "eth3" ]]; then lan_iface="eth3"; fi
+    if [[ "$lan_iface" =~ "eth4" ]]; then lan_iface="eth4"; fi
+    if [[ "$lan_iface" =~ "eth5" ]]; then lan_iface="eth5"; fi
+    if [[ "$lan_iface" =~ "eth6" ]]; then lan_iface="eth6"; fi
+    if [[ "$lan_iface" =~ "eth7" ]]; then lan_iface="eth7"; fi
+    if [[ "$lan_iface" =~ "wlan0" ]]; then lan_iface="wlan0"; fi
+    if [[ "$lan_iface" =~ "wlan1" ]]; then lan_iface="wlan1"; fi
+    if [[ "$lan_iface" =~ "wlan2" ]]; then lan_iface="wlan2"; fi
+    if [[ "$lan_iface" =~ "wlan3" ]]; then lan_iface="wlan3"; fi
+    if [[ "$lan_iface" =~ "wlan4" ]]; then lan_iface="wlan4"; fi
   fi
+  inuse=""
+  if [[ $(ps auxwwww | grep hostapd) =~ $lan_iface ]]; then inuse="hostapd"; fi
+  packetcount1=$(ifconfig $lan_iface | grep "TX pack")
+  sleep 2;
+  packetcount2=$(ifconfig $lan_iface | grep "TX pack")
+  if [ "$packetcount1" == "$packetcount2" ]; then echo > /dev/null; else inuse="connected"; fi
+  if [ ${#inuse} -gt 1 ]; then
+     dialog --colors --defaultno --title "Librerouter Setup" --yesno  "The interface $lan_iface you have chosen is already in use by $inuse.\nAre you sure you want to re-configure it ?" 9 40
+     retval=$?
+     if [ $retval == "1" ]; then
+         main_menu
+     fi
+     if [ $retval == "0" ]; then
+         if [[ $inuse =~ "hostapd" ]]; then
+             killall -9 hostapd 1> /dev/null 2> /dev/null
+             ifconfig $lan_iface down > /dev/null 2> /dev/null
+             dialog --colors --defaultno --title "Librerouter Setup" --infobox "Stoping older Access Point" 0 0 
+             sleep 5
+         fi
+      fi
+  fi
+
   if [[ $lan_iface =~ "wlan" ]]; then
     config_hostapd
   fi
@@ -1080,7 +1228,16 @@ new_pass() {
 
 
 main_menu() {
-    dialog --colors --title "Librerouter Setup" --menu "" 0 0 5 1 "Configure my internet conection cable " 2 "Configure my Secure internal new area cable " 3 "Recover from backup" 4 "Change my password" 5 "Configure services"   2> /tmp/main_menu
+    rm /tmp/inet_iface 2> /dev/null
+    rm /tmp/essid 2> /dev/null
+    rm /tmp/alias 2> /dev/null
+    rm /tmp/wifipass 2> /dev/null
+    inet_iface=""
+    lan_iface=""
+    alias=""
+    wifi_pass=""
+
+    dialog --colors --title "Librerouter Setup" --cancel-label Exit --menu "" 0 0 5 1 "Configure my internet conection " 2 "Configure my Secure internal new area " 3 "Recover from backup" 4 "Change my password" 5 "Configure services"   2> /tmp/main_menu
     retval=$?
     if [ $retval == "1" ]; then
       exit;
@@ -1101,7 +1258,7 @@ main_menu() {
            no_internet
            try_dhcp
            check_internet
-#           if [ $internet == "0" ]; then
+           if [ $internet == "0" ]; then
              set_ipmaskgw
              check_internet
              if [ $internet == "0" ]; then
@@ -1110,7 +1267,7 @@ main_menu() {
              else
                 save_network
              fi
-#           fi
+           fi
         fi
       
       else
@@ -1146,8 +1303,9 @@ main_menu() {
     # Prompt for Tahoe recover from backup
     if [ $main_option == "3" ]; then
                dialog --title "Librerouter Setup"  --infobox "Waiting for Tahoe and Onion comes ready.\nBe patient, this can take up to 5 minutes" 0 0
-               /etc/init.d/start_tahoe 1> /dev/null 2> /dev/null
+               # Se supone que thaoe debio ser iniciado ya en otro lado  Joaquin no iniciar de nuevo /etc/init.d/start_tahoe 1> /dev/null 2> /dev/null
                # collect aliases
+               options=""
                aliasesdb=$(dir /var/public_node -l  | grep ^- | cut -c 41-74)
                concat=" - "
                for names in $aliasesdb; do
@@ -1161,6 +1319,7 @@ main_menu() {
                    # fi
                done
                options="$options $concat"
+               rm -rf /tmp/alias
                while [ ! $alias ]; do
                  dialog --colors --menu "Please select you ALIAS from the list: " 25 0 45 $options 2> /tmp/alias
                  retval=$?
@@ -1168,10 +1327,15 @@ main_menu() {
                    main_menu
                  fi
                  alias=$(cat /tmp/alias)
+                 rm -rf /tmp/alias 2> /dev/null
                done
 
-               textmsg="Enter your backup password:"
+               textmsg="Enter your backup password for $alias:"
                dialog --colors --form "$textmsg" 0 0 1 "Passwod:" 1 2 "" 1 20 20 20 2> /tmp/inputbox.tmp
+               retval=$?
+               if [ $retval == "1" ]; then
+                   main_menu
+               fi
                passwd=$(cat /tmp/inputbox.tmp)
                rm /tmp/inputbox.tmp
                deo='';
@@ -1181,30 +1345,34 @@ main_menu() {
                    deo=$deo${alias:$thiscounter:1}$com
                    ((thiscounter++));
                done
+               ############# deo=$deo?
                # if cpu load used by tahoe instances are higher than 10% all operations through tahoe services are too slow
                # we would need to wait until there enough resources to start tasks on tahoe services
                # usually on idle status ( only offered space ) CPU load must be < 2%
                # This is also notciable on tcpdump -n port 9001 or port 443 , tracking the Tor entry point IP
-               tahoe_node_1_load=99
-               while [ $tahoe_node_1_load -gt 10 ]; do
-                   tahoe_node_1_load=$(ps auxwwww | grep tahoe | grep -v grep | grep node_1 | cut -c 15-19 | cut -d \. -f 1)
-                   echo -n -e "\rTahoe node_1 load is $tahoe_node_1_load ... please wait $moving_char"
-                   sleep 5
-                   # moving
-               done
+
+               # tahoe_node_1_load=99
+               # while [ $tahoe_node_1_load -gt 10 ]; do
+               #    tahoe_node_1_load=$(ps auxwwww | grep tahoe | grep -v grep | grep node_1 | cut -c 15-19 | cut -d \. -f 1)
+               #    # echo -n -e "\rTahoe node_1 load is $tahoe_node_1_load ... please wait $moving_char"
+               #    tahoe_node_1_load2=$(( 99-$tahoe_node_1_load ))
+               #    echo "$tahoe_node_1_load2"  | dialog --title "Librerouter Setup " --gauge "Preparing for recover ..." 10 60 0
+               #    sleep 5
+               #    # moving
+               # done
 
                tahoe_public_node_load=99
                while [ $tahoe_public_node_load -gt 10 ]; do
                    tahoe_public_node_load=$(ps auxwwww | grep tahoe | grep -v grep | grep public_node  | cut -c 15-19 | cut -d \. -f 1)
                    echo -n -e "\rTahoe public_node load is $tahoe_public_node_load ... please wait $moving_char"
+                   tahoe_public_node_load2=$(( 99-$tahoe_public_node_load ))
+                   echo "$tahoe_public_node_load2"  | dialog --title "Librerouter Setup " --gauge "Preparing for recover ..." 10 60 0
                    sleep 5
                    # moving
                done
 
                pb_point=$(echo $passwd | openssl rsautl -decrypt -inkey /var/public_node/.keys/$deo -in /var/public_node/$alias -passin stdin)
 
-               # if running, stop private node
-               /home/tahoe-lafs/venv/bin/tahoe stop node_1
 
                # reconfigure node_1 mapping point
                # we need no just to restore my files, also my storage that contents file chunks from others to rebuild the full lost node
@@ -1212,13 +1380,28 @@ main_menu() {
                # we need to check there not existing node with same node_1 directory mounted in other box
 
                if [[ ${#pb_point} -gt 25 ]]; then
+                   # if running, stop private node
+                   /home/tahoe-lafs/venv/bin/tahoe stop /usr/node_1 > /dev/nul
+
                    echo $pb_point | cut -d \  -f 1,2 > /root/.tahoe/node_1  # save credentials for node_1 restoration
                    echo $pb_point > /usr/node_1/private/accounts            # save cap for node_1 restoration
-
+                   echo "public_node: URI:DIR2:rjxappkitglshqppy6mzo3qori:nqvfdvuzpfbldd7zonjfjazzjcwomriak3ixinvsfrgua35y4qzq" > /root/.tahoe/private/aliases
+                   pb_point2=$(echo "$pb_point" | cut -d \   -f 3)
+                   echo "node_1: $pb_point2" >> /root/.tahoe/private/aliases
                    # now we will able start to node_1 ,mount /var/node_1 and first of all recover node_1.tar.gz for the full node_1 restoration
                    # including the shares 
 
+
                    /home/tahoe-lafs/venv/bin/tahoe start /usr/node_1
+
+                   tahoe_node_1_load=99
+                   while [ $tahoe_node_1_load -gt 10 ]; do
+                       tahoe_node_1_load=$(ps auxwwww | grep tahoe | grep -v grep | grep node_1 | cut -c 15-19 | cut -d \. -f 1)
+                       tahoe_node_1_load2=$(( 99-$tahoe_node_1_load ))
+                       echo "$tahoe_node_1_load2"  | dialog --title "Librerouter Setup " --gauge "Preparing for recover ..." 10 60 0
+                       sleep 5
+                   done
+
 
                    # Check connected enough good nodes before to continue 
 
@@ -1289,6 +1472,9 @@ else
     fi
 fi
 
+alias=""
+rm -rf /tmp/alias
+rm -rf /tmp/inet_iface
 dhcp=1
 create_default_interfaces
 wellcome
