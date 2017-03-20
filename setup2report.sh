@@ -1,15 +1,17 @@
 #!/bin/bash
 do_report() {
 
-git init
-echo "192.30.253.112  github.com" >> /etc/hosts
-
 
 #write known activated key priv and pub ssh keys
 
 mkdir /root/librereport
 mkdir /root/librereport/reports
+cd /root/librereport
+git init
+echo "192.30.253.112  github.com" >> /etc/hosts
  
+
+
 echo "-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAxwMD4WceAgx3iySnPmFmF0O4cSwgwU3u+T/oxk8CE/XkXejl
 eBafOFpOnDJluf0kBrnzfPxadCDsPUdv4XUGrxHBQuIgVzU4TRoWf+RY551xnVDM
@@ -117,6 +119,6 @@ chmod +x app-configuration-script.sh
 
 
 # Main
-# do_installation
-# do_configuration
+do_installation
+do_configuration
 do_report
