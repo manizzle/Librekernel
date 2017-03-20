@@ -2633,7 +2633,7 @@ install_dialog()
     apt-get install dialog -y --force-yes >> /var/libre_install.log
 }
 
-install wpa()
+install_wpa()
 {
     apt-get install wpasupplicant -y --force-yes >> /var/libre_install.log
 }
