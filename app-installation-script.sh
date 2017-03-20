@@ -2633,6 +2633,12 @@ install_dialog()
     apt-get install dialog -y --force-yes >> /var/libre_install.log
 }
 
+install wpa()
+{
+    apt-get install wpasupplicant -y --force-yes >> /var/libre_install.log
+}
+
+
 
 save_variables()
 {
@@ -2756,6 +2762,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         save_variables	         # Save detected variables
         install_atheros_firmware # Install free firmware for atheros devices from Github
         install_dialog           # This is the dialog, used for wizard.sh user menus
+        install_wpa              # Install wpasupplicant required to connect to AP
 fi
 
 # ---------------------------------------------
