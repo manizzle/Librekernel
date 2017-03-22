@@ -168,7 +168,7 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https"
-			exit 3
+			# exit 3
 		fi
 		
 		# Prepare owncloud repo
@@ -184,8 +184,8 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
 		
 		# preparing i2p repo 
-        	echo 'deb http://deb.i2p2.no/ precise main' >/etc/apt/sources.list.d/i2p.list
-        	echo 'deb-src http://deb.i2p2.no/ precise main' >>/etc/apt/sources.list.d/i2p.list
+        	echo 'deb https://deb.i2p2.de/ precise main' >/etc/apt/sources.list.d/i2p.list
+        	echo 'deb-src https://deb.i2p2.de/ precise main' >>/etc/apt/sources.list.d/i2p.list
 
 		# preparing tor repo 
 		# preparing webmin repo 
@@ -204,7 +204,7 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https"
-			exit 3
+			# exit 3
 		fi
 		
 		# Prepare owncloud repo
@@ -220,8 +220,8 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
 		
 		# preparing i2p repo 
-        	#echo 'deb http://deb.i2p2.no/ trusty main' >/etc/apt/sources.list.d/i2p.list
-        	#echo 'deb-src http://deb.i2p2.no/ trusty main' >>/etc/apt/sources.list.d/i2p.list
+        	#echo 'deb https://deb.i2p2.de/ trusty main' >/etc/apt/sources.list.d/i2p.list
+        	#echo 'deb-src https://deb.i2p2.de/ trusty main' >>/etc/apt/sources.list.d/i2p.list
                 echo -ne '\n' | apt-add-repository ppa:i2p-maintainers/i2p
 
 		# preparing tor repo 
@@ -246,7 +246,7 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https"
-			exit 3
+			# exit 3
 		fi
 	
 		# Prepare owncloud repo
@@ -262,8 +262,8 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		# wget https://prosody.im/files/prosody-debian-packages.key -O- | apt-key add -
  
 		# Prepare tahoe repo
-		echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
-		apt-key advanced --keyserver pgp.net.nz --recv-keys 8CF6E896B3C01B09
+		# echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
+		# apt-key advanced --keyserver pgp.net.nz --recv-keys 8CF6E896B3C01B09
 		# W: GPG error: https://dl.dropboxusercontent.com wheezy Release: The following signatures were invalid: KEYEXPIRED 1460252357
 				
 		# Prepare yacy repo
@@ -271,7 +271,7 @@ Acquire::https::deb.nodesource.com::Verify-Peer \"false\";
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
 
 		# Prepare i2p repo
-		echo 'deb http://deb.i2p2.no/ wheezy main' > /etc/apt/sources.list.d/i2p.list
+		echo 'deb https://deb.i2p2.de/ wheezy main' > /etc/apt/sources.list.d/i2p.list
 		wget --no-check-certificate https://geti2p.net/_static/i2p-debian-repo.key.asc -O- | apt-key add -
 
 		# Prepare tor repo
@@ -315,7 +315,7 @@ EOF
 		apt-get install -y --force-yes apt-transport-https 2>&1 > /var/apt-get-install-aptth.log
 		if [ $? -ne 0 ]; then
 			echo "Error: Unable to install apt-transport-https" | tee -a /var/libre_install.log
-			exit 3
+			# exit 3
 		fi
 
 		# Prepare owncloud repo
@@ -331,14 +331,14 @@ EOF
 #		wget https://prosody.im/files/prosody-debian-packages.key -O- | apt-key add -
  
 		# Prepare tahoe repo
-		echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
+		# echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
 
 		# Prepare yacy repo
 		echo 'deb http://debian.yacy.net ./' > /etc/apt/sources.list.d/yacy.list
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
 
 		# Prepare i2p repo
-		echo 'deb http://deb.i2p2.no/ stable main' > /etc/apt/sources.list.d/i2p.list
+		echo 'deb https://deb.i2p2.de/ stable main' > /etc/apt/sources.list.d/i2p.list
 		wget --no-check-certificate https://geti2p.net/_static/i2p-debian-repo.key.asc -O- | apt-key add -
 
 		# Prepare tor repo
@@ -423,11 +423,11 @@ EOF
 		apt-key advanced --keyserver pgp.net.nz --recv-keys 03D886E7
 
 		# Prepare i2p repo
-		echo 'deb http://deb.i2p2.no/ stable main' > /etc/apt/sources.list.d/i2p.list
+		echo 'deb https://deb.i2p2.de/ stable main' > /etc/apt/sources.list.d/i2p.list
 		wget --no-check-certificate https://geti2p.net/_static/i2p-debian-repo.key.asc -O- | apt-key add -
 	
 		# Prepare tahoe repo
-		echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
+		# echo 'deb https://dl.dropboxusercontent.com/u/18621288/debian wheezy main' > /etc/apt/sources.list.d/tahoei2p.list
 		
 		# Prepare tor repo
 		echo 'deb http://deb.torproject.org/torproject.org wheezy main'  > /etc/apt/sources.list.d/tor.list
@@ -502,7 +502,7 @@ if [ $PLATFORM = "D7" ]; then
 	deb.torproject.org-keyring u-boot-tools console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
         libjpeg62-turbo libjpeg62-turbo-dev zlib1g-dev python-dev webmin \
-        postfix mailutils aptitude fail2ban libsodium-dev libsystemd-dev \
+        postfix mailutils aptitude fail2ban libsystemd-dev \
 	2>&1 > /var/apt-get-install.log
 
 # Installing Packages for Debian 8 GNU/Linux
@@ -549,7 +549,7 @@ elif [ $PLATFORM = "D8" ]; then
 	tor i2p roundcube tinyproxy prosody \
         memcached sogo \
         postfix-mysql dovecot-mysql dovecot-imapd postgrey \
-        amavis spamassassin php5-imap fail2ban libsodium-dev libsystemd-dev \
+        amavis spamassassin php5-imap fail2ban libsystemd-dev \
         2>&1 > /var/apt-get-install_2.log
 
         #bro passenger logstash kibana nginx nginx-extras libcurl4-openssl-dev \
@@ -603,7 +603,7 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
 fi
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install packages" | tee -a /var/libre_install.log
-		exit 3
+	#	exit 3
 	fi
 
 # Getting classified domains list from shallalist.de
@@ -641,6 +641,16 @@ fi
 
 # Getting DNSCrypt
 if [ ! -e dnscrypt-proxy ]; then
+
+        curl "https://github-cloud.s3.amazonaws.com/releases/7710647/84828ba8-07cf-11e7-815a-bd618ee0f1c2.gz?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ%2F20170321%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170321T140522Z&X-Amz-Expires=300&X-Amz-Signature=78c8f5607a6ad3b6d53e85a19d9519e61ab7c011757939e785a005355c1c949f&X-Amz-SignedHeaders=host&actor_id=24979456&response-content-disposition=attachment%3B%20filename%3Dlibsodium-1.0.12.tar.gz&response-content-type=application%2Foctet-stream" > libsodium-1.0.12.tar.gz
+        tar xzf libsodium-1.0.12.tar.gz
+        cd libsodium-1.0.12
+        configure && make
+        make install
+        ldconfig
+        if [ $? -ne 0 ]; then
+                echo "Error: Unable to install libsodium. Exiting" | tee -a /var/libre_install.log
+        fi
         echo "Getting & Installing DNSCrypt ..."
         git clone https://github.com/jedisct1/dnscrypt-proxy.git dnscrypt-proxy
         cd dnscrypt-proxy
@@ -1181,7 +1191,7 @@ install_easyrtc()
 	apt-get install -y --force-yes nodejs
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install Node" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	# Getting EasyRTC 
@@ -1191,7 +1201,7 @@ install_easyrtc()
        		https://github.com/priologic/easyrtc 
 	        if [ $? -ne 0 ]; then
                 echo "Error: Unable to download EasyRTC. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
  	        fi
 	fi
 	
@@ -1205,7 +1215,7 @@ install_easyrtc()
 	npm install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install EasyRTC. Exiting" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd $INSTALL_HOME
 }
