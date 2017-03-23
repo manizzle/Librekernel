@@ -497,7 +497,7 @@ if [ $PLATFORM = "D7" ]; then
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
 	i2p i2p-keyring yacy virtualenv pwgen \
-        killyourtv-keyring  i2p-tahoe-lafs squidguard \
+        killyourtv-keyring squidguard \
 	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev libicapapi-dev \
 	deb.torproject.org-keyring u-boot-tools console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
@@ -524,7 +524,7 @@ elif [ $PLATFORM = "D8" ]; then
         ca-certificates-java openssh-server ssh wireless-tools usbutils \
         unzip debian-keyring subversion build-essential libncurses5-dev \
         i2p-keyring virtualenv pwgen gcc g++ make automake \
-        killyourtv-keyring i2p-tahoe-lafs libcurl4-gnutls-dev \
+        killyourtv-keyring libcurl4-gnutls-dev \
         libicapapi-dev libssl-dev perl screen aptitude \
         deb.torproject.org-keyring u-boot-tools php-zeta-console-tools \
         gnupg openssl python-virtualenv python-pip python-lxml git \
@@ -570,7 +570,7 @@ elif [ $PLATFORM = "T7" ]; then
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
 	i2p i2p-keyring yacy virtualenv pwgen \
-	killyourtv-keyring i2p-tahoe-lafs squidguard \
+	killyourtv-keyring squidguard \
 	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev libicapapi-dev \
 	deb.torproject.org-keyring u-boot-tools console-setup \
         gnupg openssl python-virtualenv python-pip python-lxml git \
@@ -593,7 +593,7 @@ elif [ $PLATFORM = "U14" -o $PLATFORM = "U12" ]; then
 	curl macchanger ntpdate tor bc sudo lsb-release dnsutils \
 	ca-certificates-java openssh-server ssh wireless-tools usbutils \
 	unzip debian-keyring subversion build-essential libncurses5-dev \
-	i2p yacy tahoe-lafs \
+	i2p yacy \
 	c-icap clamav  clamav-daemon  gcc make libcurl4-gnutls-dev \
 	libicapapi-dev u-boot-tools console-tools* squidguard \
         gnupg openssl python-virtualenv python-pip python-lxml git \
