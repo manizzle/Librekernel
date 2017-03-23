@@ -7016,7 +7016,8 @@ do_reboot()
 {
 echo "Configuration finished !!!" | tee -a /var/libre_config.log
 echo "Librerouter needs to restart. Restarting ..." | tee -a /var/libre_config.log
-reboot
+shutdown -r +1 &
+#reboot
 
 #echo "Librerouter needs to restart. Do restart now? [Y/N]"
 #LOOP_N=0
