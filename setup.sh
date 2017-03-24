@@ -46,6 +46,7 @@ git config --global user.email "kinko@interec.og"
 git config --global user.name "Reporter"
 eval $(ssh-agent -s)
 ssh-add /root/librereport/ssh_key
+git remote add origin git@github.com:librereport/reports.git
 git remote set-url origin git@github.com:librereport/reports.git
 #####git pull git@github.com:librereport/reports.git
 
