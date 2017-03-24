@@ -1,3 +1,9 @@
+Generate automatic installation of operating system started from usb. Full disk encryption with Luks must be applied. After installation, the encryption key must be displayed.
+Steps:
+1-Generate Bootable USB: generate USB installation with .iso
+2-Apply configuration file preseed for iso installation (authomatic installation not supervised): make preseed file wich build installation authomatic. Autoinstall Preseed is a file configuration wich make the complete installation for os (select all options of live cd installation preconfigurated: language, timezone, partintions,etc). Example --> https://www.debian.org/releases/jessie/example-preseed.txt
+3-Generate script to change the temporary password: On the step 2, the configuration file apply a cypher Luks using temporary password, this script must change for new password ramdon and show on the screen. The script will be called before preseed file finish.
+
 DEBIAN UNATTENDED AUTOINSTALL
 ----------------------------------------------------------------------------------------------------------------------------------------
 
