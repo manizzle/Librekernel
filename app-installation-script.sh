@@ -623,13 +623,13 @@ if [ ! -e  /var/www/friendica ]; then
 	git clone https://github.com/friendica/friendica.git
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download friendica" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd friendica
 	git clone https://github.com/friendica/friendica-addons.git addon
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download friendica addons" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	chown -R www-data:www-data /var/www/friendica/view/smarty3
@@ -2726,7 +2726,7 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         get_interfaces  	 # Get DHCP on eth0 or eth1 and 
 				 # connect to Internet
 	configure_repositories	 # Prepare and update repositories
-	install_apmode		 # Prepare wlan AP script
+#	install_apmode		 # Prepare wlan AP script
 	install_packages       	 # Download and install packages	
 #	install_libressl	 # Install Libressl package
 	install_modsecurity      # Install modsecurity package
