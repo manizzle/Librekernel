@@ -138,7 +138,7 @@ EOF
             echo "Date and time have been set" | tee -a /var/libre_install.log
         elif [ $? -ne 0 ]; then
             echo "Error: unable to set time" | tee -a /var/libre_install.log
-            exit 3
+            # exit 3
         fi
 	/etc/init.d/ntp restart >> /var/libre_install.log 2>> /var/libre_install.log
 	date | tee -a /var/libre_install.log
@@ -539,7 +539,7 @@ elif [ $PLATFORM = "D8" ]; then
         pmacct tomcat7 dpkg-dev devscripts javahelper openjdk-7-jdk ant \
         librrds-perl libapache2-mod-php5- apache2-prefork-dev \
         libmysqlclient-dev wkhtmltopdf libpcre3 mysql-server \
-	mysql-client-5.5 iw rfkill npm \
+	mysql-client-5.5 iw rfkill \
         2>&1 > /var/apt-get-install_1.log
 
 	# services
@@ -641,11 +641,13 @@ fi
 
 # Getting DNSCrypt
 if [ ! -e dnscrypt-proxy ]; then
-
-        curl "https://github-cloud.s3.amazonaws.com/releases/7710647/84828ba8-07cf-11e7-815a-bd618ee0f1c2.gz?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ%2F20170321%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170321T140522Z&X-Amz-Expires=300&X-Amz-Signature=78c8f5607a6ad3b6d53e85a19d9519e61ab7c011757939e785a005355c1c949f&X-Amz-SignedHeaders=host&actor_id=24979456&response-content-disposition=attachment%3B%20filename%3Dlibsodium-1.0.12.tar.gz&response-content-type=application%2Foctet-stream" > libsodium-1.0.12.tar.gz
+        echo "Download dnscrypt from https://github-cloud.s3.amazonaws.com" | tee -a /var/libre_install.log
+        curl https://codeload.github.com/jedisct1/libsodium/tar.gz/1.0.12 > libsodium-1.0.12.tar.gz
+        # curl "https://github-cloud.s3.amazonaws.com/releases/7710647/84828ba8-07cf-11e7-815a-bd618ee0f1c2.gz?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAISTNZFOVBIJMK3TQ%2F20170321%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20170321T140522Z&X-Amz-Expires=300&X-Amz-Signature=78c8f5607a6ad3b6d53e85a19d9519e61ab7c011757939e785a005355c1c949f&X-Amz-SignedHeaders=host&actor_id=24979456&response-content-disposition=attachment%3B%20filename%3Dlibsodium-1.0.12.tar.gz&response-content-type=application%2Foctet-stream" > libsodium-1.0.12.tar.gz
         tar xzf libsodium-1.0.12.tar.gz
         cd libsodium-1.0.12
-        configure && make
+        ./autogen.sh
+        ./configure && make
         make install
         ldconfig
         if [ $? -ne 0 ]; then
@@ -902,7 +904,7 @@ install_libressl()
         wget http://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-2.4.2.tar.gz
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download libressl" | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         tar -xzf libressl-2.4.2.tar.gz
         fi
@@ -916,7 +918,7 @@ install_libressl()
 
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install libressl. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
         cd ../
 
@@ -938,7 +940,7 @@ install_modsecurity()
         git clone https://github.com/SpiderLabs/ModSecurity.git modsecurity
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download modsecurity. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -951,7 +953,7 @@ install_modsecurity()
 
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install modsecurity. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
         # Downloading the OWASP Core Rule Set
@@ -984,7 +986,7 @@ install_waffle() {
                 wget https://github.com/klaubert/waf-fle/archive/master.zip
                 if [ $? -ne 0 ]; then
                         echo "Unable to download waf-fle. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi 
         fi
       
@@ -1004,7 +1006,7 @@ install_waffle() {
                 wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
                 if [ $? -ne 0 ]; then
                         echo "Unable to download GeoIP.dat. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -1013,7 +1015,7 @@ install_waffle() {
                 wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
                 if [ $? -ne 0 ]; then
                         echo "Unable to download GeoLiteCity.dat. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -1022,7 +1024,7 @@ install_waffle() {
                 wget http://geolite.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz
                 if [ $? -ne 0 ]; then
                         echo "Unable to download GeoIPASNum.dat. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -1048,7 +1050,7 @@ install_certificates()
                 svn co https://github.com/Librerouter/Librekernel/trunk/certs
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download certificates. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -1075,7 +1077,7 @@ install_nginx()
         wget http://nginx.org/download/nginx-1.8.0.tar.gz
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download nginx. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         tar -xzf nginx-1.8.0.tar.gz
         fi
@@ -1111,7 +1113,7 @@ install_nginx()
 
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install nginx. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
         cd ../
 
@@ -1155,7 +1157,7 @@ install_mailpile()
 		https://github.com/mailpile/Mailpile.git /opt/Mailpile
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download Mailpile. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
 
 	fi
@@ -1169,7 +1171,7 @@ install_mailpile()
 	pip install -r /opt/Mailpile/requirements.txt
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install Mailpile. Exiting ..." | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 }
 
@@ -1186,13 +1188,13 @@ install_easyrtc()
 		rm -r /opt/easyrtc
 	fi
 	
-	# Installing Node.js
-	curl -sL https://deb.nodesource.com/setup | bash -
-	apt-get install -y --force-yes nodejs
-	if [ $? -ne 0 ]; then
-		echo "Error: unable to install Node" | tee -a /var/libre_install.log
-		# exit 3
-	fi
+	# Installing Node.js. Includes npm, then npm have been rmeoved from top apt-get
+        echo "Install Nodejs/npm from sources" | tee -a /var/libre_install.log
+        wget -O - https://nodejs.org/dist/v7.7.4/node-v7.7.4.tar.gz > node-v7.7.4.tar.gz
+        tar xzf node-v7.7.4.tar.gz
+        cd node-v7.7.4
+        ./configure
+        make && make install
 
 	# Getting EasyRTC 
 	if [ ! -e easyrtc ]; then
@@ -1242,7 +1244,7 @@ install_hublin()
                 git clone --recursive https://ci.open-paas.org/stash/scm/meet/meetings.gi
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download hublin. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
 
         fi
@@ -1265,7 +1267,7 @@ install_hublin()
         npm install
         if [ $? -ne 0 ]; then
                echo "Error: unable to install hublin. Exiting ..." | tee -a /var/libre_install.log
-               exit 3
+               # exit 3
         fi
 
         cd ../
@@ -1287,7 +1289,7 @@ install_owncloud()
 		wget https://download.owncloud.org/community/owncloud-9.1.1.tar.bz2
                 if [ $? -ne 0 ]; then
 	                echo "Error: Unable to download owncloud. Exiting ..." | tee -a /var/libre_install.log
-       		        exit 3
+       		        # exit 3
                 fi
 		
 	fi
@@ -1301,7 +1303,7 @@ install_owncloud()
 		wget https://github.com/owncloud/jsxc.chat/releases/download/v3.0.1/ojsxc-3.0.1.zip
 		if [ $? -ne 0 ]; then 
                         echo "Error: Unable to download ojsxc. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
 	fi
 
@@ -1324,7 +1326,7 @@ install_libecap()
         wget http://www.measurement-factory.com/tmp/ecap/libecap-1.0.0.tar.gz
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download libecap" | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
 		tar xzf libecap-1.0.0.tar.gz
         fi
@@ -1338,7 +1340,7 @@ install_libecap()
 
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install libecap" | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
         cd ../
 
@@ -1359,7 +1361,7 @@ install_fg-ecap()
         git clone https://github.com/androda/fg_ecap $INSTALL_HOME/fg_ecap
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download fg-ecap. Exitingi ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -1373,7 +1375,7 @@ install_fg-ecap()
         make && make install
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install fg-ecap" | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
         cd ../
 }
@@ -1410,7 +1412,7 @@ install_squid()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install squid" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -1457,7 +1459,7 @@ install_squidclamav()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install squidclamav" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -1478,7 +1480,7 @@ install_squidguard_bl()
 #	git clone https://github.com/jamesmacwhite/squidguard-adblock.git
 #	if [ $? -ne 0 ]; then
 #		echo "Error: unable to download squidguard-adblock"
-#		exit 3
+#		# exit 3
 #	fi
 #	cd squidguard-adblock
 #	mkdir -p /etc/squid/squidguard-adblock
@@ -1536,7 +1538,7 @@ install_squidguardmgr()
                 git clone https://github.com/darold/squidguardmgr
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to download quidguardmgr" | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -1568,7 +1570,7 @@ install_e2guardian()
 		git clone https://github.com/e2guardian/e2guardian
 		if [ $? -ne 0 ]; then
 			echo "Error: unable to download e2guardian" | tee -a /var/libre_install.log
-			exit 3
+			# exit 3
 		fi
 	fi
 
@@ -1587,7 +1589,7 @@ install_e2guardian()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install e2guardian" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -1608,7 +1610,7 @@ install_ecapguardian()
 	git clone https://github.com/androda/ecapguardian
 		if [ $? -ne 0 ]; then
 			echo "Error: unable to download ecapguardian" | tee -a /var/libre_install.log
-			exit 3
+			# exit 3
 		fi
 	fi
 
@@ -1627,7 +1629,7 @@ install_ecapguardian()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install ecapguardian" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -1649,7 +1651,7 @@ install_suricata()
         apt-get install -y -t jessie-backports ethtool suricata
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install suricata. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
         echo "Downloading rules ..." | tee -a /var/libre_install.log
@@ -1665,7 +1667,7 @@ skipfile snort.conf
         oinkmaster -C /etc/oinkmaster.conf -o /etc/suricata/rules
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install suricata rules. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 }
 
@@ -1679,7 +1681,7 @@ install_kibana()
 	apt-get install -y --force-yes kibana elasticsearch logstash >> /var/libre_install.log
 	if [ $? -ne 0 ]; then
                 echo "Error: unable to install kibaba. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
 	# Enabling kibana daemon
@@ -1704,19 +1706,19 @@ install_scirius()
 	git clone https://github.com/StamusNetworks/scirius /opt/scirius
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download scirius" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	echo "Installing scirius ..." | tee -a /var/libre_install.log
 	pip install -r /opt/scirius/requirements.txt && pip install pyinotify
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install scirius dependencies" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	python /opt/scirius/manage.py syncdb --noinput
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install scirius" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 }
 
@@ -1742,7 +1744,7 @@ install_snort()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install daq" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -1762,7 +1764,7 @@ install_snort()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install snort" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	# Copy config files
@@ -1780,7 +1782,7 @@ install_snort()
 	git clone https://github.com/shirkdog/pulledpork.git
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download pulledpork" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd pulledpork
 	cp pulledpork.pl /usr/bin/
@@ -1810,7 +1812,7 @@ install_snort()
 	pulledpork.pl -c /etc/snort/pulledpork.conf -l
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to update Snort rules" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	# Cleanup
@@ -1831,7 +1833,7 @@ install_barnyard()
 	git clone https://github.com/firnsy/barnyard2.git
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download Barnyard" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	cd barnyard2
@@ -1842,7 +1844,7 @@ install_barnyard()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install Barnyard" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	mv /usr/etc/barnyard2.conf /etc/snort/
 	mkdir -p /var/log/barnyard2
@@ -1864,7 +1866,7 @@ install_vortex_ids()
 	git clone https://github.com/lmco/vortex-ids
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download vortex-ids" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	cd vortex-ids
@@ -1872,7 +1874,7 @@ install_vortex_ids()
 	gcc -Wall -fPIC -shared libbsf/libbsf.c -o libbsf.so
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to build libbsf" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cp libbsf/bsf.h /usr/include/ && cp libbsf.so /usr/lib/
 
@@ -1880,7 +1882,7 @@ install_vortex_ids()
 	gcc vortex/vortex.c -lpcap -lnids -lpthread -lbsf -Wall -DWITH_BSF -o vortex.bin -O2
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to build vortex" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cp vortex.bin /usr/bin/vortex
 
@@ -1888,7 +1890,7 @@ install_vortex_ids()
 	gcc xpipes/xpipes.c -lpthread -Wall -o xpipes.bin -O2
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to build xpipes" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cp xpipes.bin /usr/bin/xpipes
 	cd ../
@@ -1909,7 +1911,7 @@ install_openwips_ng()
 	git clone https://github.com/aircrack-ng/OpenWIPS-ng.git
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download openwips-ng" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	echo "Building openwips-ng ..." | tee -a /var/libre_install.log
@@ -1921,7 +1923,7 @@ install_openwips_ng()
 	make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install openwips-ng" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -1946,7 +1948,7 @@ install_hakabana()
 	dpkg -i /tmp/$PKG && apt-get install -f
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install hakabana" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	# Cleanup
@@ -1973,7 +1975,7 @@ install_flowviewer()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install SiLK" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -1984,7 +1986,7 @@ install_flowviewer()
 	tar xvf /tmp/$PKG
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download FlowViewer" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	mv FlowViewer_4.6 /opt/FlowViewer
 
@@ -2005,7 +2007,7 @@ install_pmgraph()
 	git clone https://github.com/aptivate/pmgraph
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download pmgraph" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	echo "Building pmgraph ..." | tee -a /var/libre_install.log
@@ -2023,13 +2025,13 @@ install_pmgraph()
 	debuild -us -uc
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to pack pmgraph" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	DEBIAN_FRONTEND=noninteractive dpkg -i ../pmgraph_1.2.3_all.deb && 
 	DEBIAN_FRONTEND=noninteractive apt-get install -f
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install pmgraph" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -2060,7 +2062,7 @@ install_nfsen()
 	make && make install
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install nfdump" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -2089,7 +2091,7 @@ install_nfsen()
 	perl ./install.pl ./etc/nfsen.conf
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install nfsen" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd ../
 
@@ -2112,7 +2114,7 @@ install_evebox()
         	https://dl.bintray.com/jasonish/evebox-development/evebox-latest-linux-x64.zip
                 	if [ $? -ne 0 ]; then
                         	echo "Error: unable to download EveBox. Exiting ..." | tee -a /var/libre_install.log
-                        	exit 3
+                        	# exit 3
                 	fi
         	unzip evebox-latest-linux-x64.zip
         fi
@@ -2137,14 +2139,14 @@ install_selks()
 	/opt/kibana/bin/kibana plugin -i elastic/timelion
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install timelion plugin" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	echo "Downloading KTS ..." | tee -a /var/libre_install.log
 	git clone https://github.com/StamusNetworks/KTS.git
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download KTS" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 
 	echo "Patching Kibana ..." | tee -a /var/libre_install.log
@@ -2152,7 +2154,7 @@ install_selks()
 	patch -p1 -d /opt/kibana/ < KTS/patches/timelion-integer.patch
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to patch Kibana" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	mv KTS /opt/
 
@@ -2160,7 +2162,7 @@ install_selks()
 	git clone https://github.com/StamusNetworks/selks-scripts.git
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download SELKS Scripts" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd selks-scripts
 	# Fix conky
@@ -2197,14 +2199,14 @@ install_snorby()
 	git clone https://github.com/Snorby/snorby.git
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to download Snorby" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cd snorby
 	echo "Installing Gem dependencies ..." | tee -a /var/libre_install.log
 	bundle install --system
 	if [ $? -ne 0 ]; then
 		echo "Error: unable to install dependencies" | tee -a /var/libre_install.log
-		exit 3
+		# exit 3
 	fi
 	cp config/snorby_config.yml.example config/snorby_config.yml
 	cp config/database.yml.example config/database.yml
@@ -2227,7 +2229,7 @@ install_glype()
 	    wget http://netix.dl.sourceforge.net/project/free-proxy-server/glype-1.4.15%20%281%29.zip
 	    if [ $? -ne 0 ]; then
 	        echo "Error: unable to download e2guardian" | tee -a /var/libre_install.log
-	        exit 3
+	        # exit 3
 	    fi
 	    mv glype-1.4.15\ \(1\).zip glype-1.4.15.zip
 	fi
@@ -2299,7 +2301,7 @@ install_trac()
                 apt-get -y --force-yes install trac
                 if [ $? -ne 0 ]; then
                         echo "Error: unable to install trac. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         else
                 echo "Skipping trac installation. x86_64 Needed / Detected: $ARCH" | tee -a /var/libre_install.log
@@ -2345,14 +2347,14 @@ if [ "$ARCH" == "x86_64" ]; then
         gem install bundler
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install bundler. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 	
 	# Install thin
         gem install thin 
         if [ $? -ne 0 ]; then
                 echo "Error: unable to install thin. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 	
 	echo "gem 'thin'" > Gemfile.local
@@ -2392,7 +2394,7 @@ install_ndpi()
 		git clone https://github.com/vel21ripn/nDPI
                 if [ $? -ne 0 ]; then
                         echo "Unable to download ndpi. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
 	fi
 	
@@ -2406,7 +2408,7 @@ install_ndpi()
 	#make install
         if [ $? -ne 0 ]; then
                 echo "Unable to install ndpi. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
 	# Building nDPI-netfilter
@@ -2419,14 +2421,14 @@ install_ndpi()
         make install	
         if [ $? -ne 0 ]; then
                 echo "Unable to install ndpi-netfilter. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
 	# Load ndpi module
         modprobe xt_ndpi
         if [ $? -ne 0 ]; then
                 echo "Unable to load ndpi module. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
 	# Load Module at Startup
@@ -2458,7 +2460,7 @@ install_redsocks()
                 git clone https://github.com/darkk/redsocks
                 if [ $? -ne 0 ]; then
                         echo "Unable to download redsocks. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 
@@ -2467,7 +2469,7 @@ install_redsocks()
         make
         if [ $? -ne 0 ]; then
                 echo "Unable to install redsocks. Exiting ..." | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
 	cd $INSTALL_HOME
@@ -2483,7 +2485,7 @@ install_ntopng()
         sudo apt-get -y --force-yes install ntopng
         if [ $? -ne 0 ]; then
                 echo "Error: Unable to install ntopng. Exiting" | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi      
 }
 
@@ -2497,7 +2499,7 @@ install_postfix()
         DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes install postfix postfixadmin
         if [ $? -ne 0 ]; then
                 echo "Error: Unable to install postfix. Exiting" | tee -a /var/libre_install.log
-                exit 3
+                # exit 3
         fi
 
 	# Download postfixadmin database
@@ -2506,7 +2508,7 @@ install_postfix()
                 wget https://www.nesono.com/sites/default/files/postfixadmin.txt
                 if [ $? -ne 0 ]; then
                         echo "Unable to download postfixadmin database. Exiting ..." | tee -a /var/libre_install.log
-                        exit 3
+                        # exit 3
                 fi
         fi
 }
@@ -2529,7 +2531,7 @@ if [ ! -e /usr/bin/upnpc ]; then
     make && make install
     if [ $? -ne 0 ]; then
             echo "Unable to install upnp. Exiting ..." | tee -a /var/libre_install.log
-            exit 3
+            # exit 3
     fi
 
     # Cleanup
@@ -2773,6 +2775,8 @@ if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; t
         install_atheros_firmware # Install free firmware for atheros devices from Github
         install_dialog           # This is the dialog, used for wizard.sh user menus
         install_wpa              # Install wpasupplicant required to connect to AP
+
+        echo "Installaation completed." | tee -a /var/libre_install.log
 fi
 
 # ---------------------------------------------

@@ -2091,7 +2091,7 @@ echo 'ResolverName fvz-anyone
 Daemonize yes
 LocalAddress 10.0.0.1:43' >> /usr/local/etc/dnscrypt-proxy.conf
 echo 'Starting DNSCrypt server ...' | tee -a /var/libre_config.log
-/usr/local/sbin/dnscrypt-proxy /usr/local/etc/dnscrypt-proxy.conf &>> /var/libre_config.log
+/usr/bin/dnscrypt-proxy /usr/local/etc/dnscrypt-proxy.conf &>> /var/libre_config.log
 chattr -i /etc/resolv.conf
 echo 'nameserver 10.0.0.1' > /etc/resolv.conf
 chattr +i /etc/resolv.conf
