@@ -84,6 +84,8 @@ Resume of steps:
 
 (Choose the wget o curl command that you prefer)
 
+- wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/setup.sh | bash
+or
 - wget -O - http://bit.ly/2gbKstn | bash
 
 - apt-get install curl
