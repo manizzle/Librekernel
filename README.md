@@ -1,5 +1,82 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
+
+ 
+#Setting up a lab to start to contribute:
+
+ESXi,VirtualBox,other vitrual lab:
+
+Internet Router<-----eth0----Debian64----eth1---Virtual Lan vswitch<---eth---Windows10
+
+
+DHCPserver--eth0---sameDebian64-----eth1--(Debian will start a dhcpserver internally)--------Win10
+
+First of all you should install latest Debian version in a virtual machine:
+- 2GB RAM, 2 procesor, 2NICs (network interfaces)
+
+
+Second a non privacy friendly OS like Win 10:
+- VM requirements in microsoft
+- Office 2016
+- All possible browsers.dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun.
+
+Hardware resources:
+
+- NIC1 will be NAT/bridged to your Internet dhcp server router.
+- NIC2 will be a attached  via virtual switch or vlan to the other VM Windows10. 
+From debian to win 10 will be a private LAN in bridge mode. (would require promiscous because arp request from client to server)
+
+You can use any virtualization software you prefer. Its transparent for us.
+
+As shown in the following figure.
+![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
+
+Resume of steps:
+
+- In Virtualbox in debian like: https://jtreminio.com/2012/07/setting-up-a-debian-vm-step-by-step/
+- Or any physical machine like https://www.debian.org/doc/manuals/debian-handbook/sect.installation-steps.ru.html
+- In the Debian please do a Snapshot in the Virtual machine just after being install.
+
+
+Important note before testing : 
+
+- Do NOT try to install the scripts via ssh session.
+- The scripts FAIL if you do that, due to problems with ethernet connection.
+- install the scripts via direct console access.
+
+
+- go shell command console in debian and execute as root:
+
+(Choose the wget o curl command that you prefer)
+
+- wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/setup.sh | bash
+or
+- wget -O - http://bit.ly/2gbKstn | bash
+
+- apt-get install curl
+all yes yes continue
+- curl -L http://bit.ly/2gbKstn | bash
+
+
+
+log files are in /var
+
+apt-get-install-aptth.log
+apt-get-update.log
+apt-get-install_1.log
+apt-get-install_2.log
+apt-get-update-default.log
+libre_install.log
+libre_config.log
+
+Lab done!
+
+Try to navigate normally from the windows 10.
+Report us problems.
+Investigate and play while we continue developing it.
+New version of the instalaltion-configuration scripts,ISOs and OVA virtual machine export will be upcoming.
+
+
 # What the app-installation-script does?
 
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
@@ -45,75 +122,6 @@ If step 7 finished successfully it's time to run the next script “app-installa
  - Step 7.2. Downloading and Installing packages
 The same as in Physical/Virtual machine case.
 If step 7 finished successfully then test.sh execution for odroid board is finished successfully and it's time to run the next script “app-installation-script.sh”. 
- 
-#Setting up a lab to start to contribute:
-
-ESXi,VirtualBox,other vitrual lab:
-
-Internet Router<-----eth0----Debian64----eth1---Virtual Lan vswitch<---eth---Windows10
-
-
-DHCPserver--eth0---sameDebian64-----eth1--(Debian will start a dhcpserver internally)--------Win10
-
-First of all you should install latest Debian version in a virtual machine:
-- 2GB RAM, 2 procesor, 2NICs (network interfaces)
-
-
-Second a non privacy friendly OS like Win 10:
-- VM requirements in microsoft
-- Office 2016
-- All possible browsers.dropbox client, seamonkey,firefox,chrome,edge,iexplorer,opera,chromiun.
-
-Hardware resources:
-
-- NIC1 will be NAT/bridged to your Internet dhcp server router.
-- NIC2 will be a attached  via virtual switch or vlan to the other VM Windows10. 
-From debian to win 10 will be a private LAN in bridge mode. (would require promiscous because arp request from client to server)
-
-You can use any virtualization software you prefer. Its transparent for us.
-
-As shown in the following figure.
-![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
-
-Resume of steps:
-
-- In Virtualbox in debian like: https://jtreminio.com/2012/07/setting-up-a-debian-vm-step-by-step/
-- Or any physical machine like https://www.debian.org/doc/manuals/debian-handbook/sect.installation-steps.ru.html
-- In the Debian please do a Snapshot in the Virtual machine just after being install.
-- go shell command console in debian and execute as root:
-
-(Choose the wget o curl command that you prefer)
-
-- wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/setup.sh | bash
-or
-- wget -O - http://bit.ly/2gbKstn | bash
-
-- apt-get install curl
-all yes yes continue
-- curl -L http://bit.ly/2gbKstn | bash
-
-Important note before testing : 
-
-- Do NOT try to install the scripts via ssh session.
-- The scripts FAIL if you do that, due to problems with ethernet connection.
-- install the scripts via direct console access.
-
-log files are in /var
-
-apt-get-install-aptth.log
-apt-get-update.log
-apt-get-install_1.log
-apt-get-install_2.log
-apt-get-update-default.log
-libre_install.log
-libre_config.log
-
-Lab done!
-
-Try to navigate normally from the windows 10.
-Report us problems.
-Investigate and play while we continue developing it.
-New version of the instalaltion-configuration scripts,ISOs and OVA virtual machine export will be upcoming.
 
 #Networking in Librerouter:
 
