@@ -2650,7 +2650,11 @@ install_wpa()
     apt-get install wpasupplicant -y --force-yes >> /var/libre_install.log
 }
 
+set_cpu_throttle() {
 
+    apt-get install cpupower -y --force-yes >> /var/libre_install.log
+    cpupower frequency-set -g performance
+}
 
 save_variables()
 {
@@ -2722,12 +2726,14 @@ get_hardware  	# Getting hardware info
 # 7. Download and Install packages
 # ----------------------------------------------
 if [ "$PROCESSOR" = "Intel" -o "$PROCESSOR" = "AMD" -o "$PROCESSOR" = "ARM" ]; then 
+        setterm -blank 0         # Dissable console blanking ( power saving )
 	check_internet           # Check Internet access
 #	check_assemblance        # Check router assemblance
 	check_requirements       # Checking requirements for 
         get_interfaces  	 # Get DHCP on eth0 or eth1 and 
 				 # connect to Internet
 	configure_repositories	 # Prepare and update repositories
+        set_cpu_throttle         # EXPERIMENTAL . Try to avoid fake warnings when CPU throttle under powersave
 #	install_apmode		 # Prepare wlan AP script
 	install_packages       	 # Download and install packages	
 #	install_libressl	 # Install Libressl package
