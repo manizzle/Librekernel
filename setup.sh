@@ -85,8 +85,14 @@ chmod +x app-configuration-script.sh
 
 }
 
+do_wizard() {
+
+wget -O - https://github.com/Librerouter/Librekernel/edit/gh-pages/wizard.sh > /root/libre_scripts/wizard.sh
+chmod u+x /root/libre_scripts/wizard.sh
+}
 
 # Main
 do_installation
 do_configuration
+do_wizard
 do_report
