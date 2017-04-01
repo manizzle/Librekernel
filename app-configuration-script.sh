@@ -957,10 +957,10 @@ evebox -e http://localhost:9200 &
 tracd -s -b 127.0.0.1 --port 8000 /opt/trac/libretrac &
 
 # Start Redmine
-thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d start > /dev/null 2>&1
+thin -c /opt/redmine/redmine-3.3.1 --servers 1 -e production -a 127.0.0.1 -p 8889 -d start > /dev/null 2>&1 &
 
 # Start Redsocks
-/opt/redsocks/redsocks -c /opt/redsocks/redsocks.conf
+/opt/redsocks/redsocks -c /opt/redsocks/redsocks.conf &
 
 exit 0
 EOF
@@ -2103,7 +2103,7 @@ echo '
 chmod +x /usr/bin/dnscrypt-proxy.sh
 sed -i '/exit/d' /etc/rc.local
 sed -i 'dnscrypt-proxy/d' /etc/rc.local
-echo '/bin/bash /usr/bin/dnscrypt-proxy.sh
+echo '/bin/bash /usr/bin/dnscrypt-proxy.sh &
 exit 0' >> /etc/rc.local
 }
 
