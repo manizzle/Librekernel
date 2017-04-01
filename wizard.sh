@@ -812,6 +812,11 @@ EOT
       update-rc.d start_wifi_client defaults
   fi
   excluded_if=$inet_iface
+  cp /etc/network/interfaces /etc/network/interfaces.back
+  cat /tmp/LO_interfaces > /etc/network/interfaces
+  cat /tmp/EXT_interfaces >> /etc/network/interfaces
+  cat /tmp/INT_interfaces >> /etc/network/interfaces
+  
 }
 
 
@@ -1298,6 +1303,8 @@ main_menu() {
              else
                 save_network
              fi
+           else 
+                save_network
            fi
         fi
       
