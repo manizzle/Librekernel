@@ -114,9 +114,11 @@ c) App-installation-scrip.sh
 
 App-installation script install all necesary packages. Via different ways: apts,compiling,preparing.
 
+![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
+
 d) App-configuration-scrip.sh
 
-App-configuration-script is the real CocaCola maker and in the future will be a encrypted blob, the result will be 100% opensource but the way to prepare will be secret. A hacker can duplicate and copy the whole rootfs and distribute it freely. 
+App-configuration-script is the real CocaCola maker and in the future will be a encrypted blob, the result will remain be 100% opensource but the way to prepare will be secret. A hacker can duplicate and copy the whole rootfs and distribute it freely. 
 
 e) wizard.sh
 
@@ -126,8 +128,10 @@ f) services.sh
 
 It shows up the addresses of your services from clearnet and darknets plus some important data and users.
 
+g) Own development and integration of the opensource.
 
-![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
+This already happened and will be increase as investors coming. The only inverstor is a single guy who invested 250k with 300 buyers from Crowdfunding that already losed their faith and patient. (invested 70k netto)
+
 
 ## Networking in Librerouter:
 
