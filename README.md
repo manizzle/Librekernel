@@ -157,7 +157,9 @@ There are two bridges with two interfaces each in the machine like two bridges (
  - WAN is Cabled Ethernet, LAN is Cabled Ethernet
 
 ## Router bridge mode
-![bridgemode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/38.png)
+
+![38](https://cloud.githubusercontent.com/assets/13025157/24587799/469827a0-17bd-11e7-8182-5f08d7997282.png)
+
 
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
 
