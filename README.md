@@ -1,29 +1,28 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
-#Setting up the lab in physical:
+# Setting up the lab in physical:
 
 Suported devices that we need to add a usb to ethernet and 2 atheros wireless network interfaces:
 
 Mini servers:
-Gole1
-Qotom  (recomended)
+- Gole1
+- Qotom  (recomended)
 
 Any Laptop, PC or server
 
 Tablets:
-Chwi Hi10 or Chwi hi12
-Teclast 
-Onda V919 Air CH
-Teclast X89
+- Chwi Hi10 or Chwi hi12
+- Teclast 
+- Onda V919 Air CH
+- Teclast X89
 
 
-#Setting up the lab in Virtual:
+# Setting up the lab in Virtual:
 
 ESXi,VirtualBox,other vitrual lab:
 
-Internet Router<-----eth0----Debian64 latest version----eth1---Virtual Lan vswitch<---ethernet---Windows10
-
-Internet DHCP server--eth0---Debian64 latest version-----eth1--(debian dhcpserver)--------Win10 (dhcp client)
+- Internet Router<-----eth0----Debian64 latest version----eth1---Virtual Lan vswitch<---ethernet---Windows10
+- Internet DHCP server--eth0---Debian64 latest version-----eth1--(debian dhcpserver)--------Win10 (dhcp client)
 
 First of all you should install latest Debian 64bit version in a virtual machine (why Virtual? you can recover fresh install in seconds doing restoration of snapshot):
 
@@ -38,11 +37,13 @@ Hardware resources:
 
 - NIC1 will be NAT/bridged to your Internet dhcp server router.
 - NIC2 will be a attached  via virtual switch or vlan to the other VM Windows10. 
+
 From debian to win 10 will be a private LAN in bridge mode. (would require promiscous because arp request from client to server)
 
-You can use any virtualization software you prefer. Its transparent for us.
+You can use any virtualization software you prefer. 
 
 As shown in the following figure.
+
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
 
 Resume of steps:
@@ -54,23 +55,20 @@ Resume of steps:
 
 Important note before testing : 
 
-- Do NOT try to install the scripts via ssh session.
-- The scripts FAIL if you do that, due to problems with ethernet connection.
-- install the scripts via direct console access.
+- Do NOT try to install the scripts via a ssh session. The scripts FAIL if you do that, due to problems with ethernet connection.
+- Install the scripts via direct console access.
 
-
-- go shell command console in debian and execute as root:
+Go shell command console in debian and execute as root:
 
 (Choose the wget o curl command that you prefer)
+- wget -O - http://bit.ly/2gbKstn | bash
+or
 
 - wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/setup.sh | bash
 or
-- wget -O - http://bit.ly/2gbKstn | bash
 
 - apt-get install curl
-all yes yes continue
 - curl -L http://bit.ly/2gbKstn | bash
-
 
 
 log files are in /var
@@ -86,7 +84,7 @@ libre_config.log
 Lab done!
 
 Try to navigate normally from the windows 10.
-Report us problems.
+Report us problems, issues and recomentaditions plus request for features.
 Investigate and play while we continue developing it.
 New version of the instalaltion-configuration scripts,ISOs and OVA virtual machine export will be upcoming.
 
@@ -109,13 +107,12 @@ There are a list of minimum requirements that Physical/Virtual machine needs to 
     2 at least network interfaces (ethernet or wlan)
     4 GB of Physical memory
     16 GB of Free disk space
+
 If machine meets the requirements then script goes to next step, otherwise it will warn and exit.
 
-
- - Step 4.2. Check if the ARM board assembled.
+- Step 4.2. Check if the ARM board assembled.
 There are list of modules that need to be connected to ARM boards, so script will check if that modules are connected.
 You can fine information about necessary modules later. If any module is missed user will get warning and script will exit.
-
 
  - Step 5. Getting DHCP client on interfaces
 In this step script first DHCP request from ethX to get an ip address. If succeed, it will check for Internet connection and if Internet connection is established this step is done successfully. In any case of failure (no DHCP response or on Internet connection) script will try the same scenario for next interface. Order to try is - eth1, wlan1, eth0, wlan0 (list of available interfaces are available from step 4). Of no success in any interface, then script will warn user to plug the machine to Internet and will exit.
@@ -123,15 +120,12 @@ In this step script first DHCP request from ethX to get an ip address. If succee
  - Step 6. Preparing repositories and updating sources
 In this step script adds repository links for necessary packages into package manager sources and updates them. Script will output an error ant exit if it is not possible to add repositories or update sources.
 
-
  - Step 6.2. Preparing repositories and updating sources
 The same as in Physical/Virtual machine case.
-
 
  - Step 7. Downloading and Installing packages
 As we already have repository sources updated in step 6, so at this point script will download and install packages using package manager tools. If something goes wrong during download or installation, script will output an error ant exit.
 If step 7 finished successfully it's time to run the next script “app-installation-script.sh”.
-
 
  - Step 7.2. Downloading and Installing packages
 The same as in Physical/Virtual machine case.
@@ -151,15 +145,14 @@ There are two bridges with two interfaces each in the machine like two bridges (
  - WAN is Cabled Ethernet, LAN is WiFi
  - WAN is Cabled Ethernet, LAN is Cabled Ethernet
 
-#Librerouter has 4 ways to work in the network: 
+## Librerouter has 4 ways to work in the network: 
 
  - Server (no protection but services)
  - Network Router (services and network protection) (dont mix with NIC bridges that we have to separate 4 interfaces in 2 zones)
- 
  - Passive Security Sensor (not yet done)
  - Transparent Man in the Middle Interception (hacking pentesting security testers) (not yet done)
  
-##Server mode
+## Server mode
 
 The way networking works in Librerouter will be:
 
@@ -170,14 +163,14 @@ The way networking works in Librerouter will be:
 ![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
 
  
-##Router bridge mode
+## Router bridge mode
 ![bridgemode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/38.png)
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
 ![untitled](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/39.png)
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
 
-#How Librerouter will threat the network traffic as a Privacy Firewall in router mode (most common).
+# How Librerouter will threat the network traffic as a Privacy Firewall in router mode (most common).
 
 ![blocking_diagram_1](https://cloud.githubusercontent.com/assets/13025157/18578310/871cd3b2-7bef-11e6-96d2-6b45fd7662e3.png)
 
@@ -192,7 +185,7 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 ![protocols policy](https://cloud.githubusercontent.com/assets/13025157/20144114/d6fe682e-a69b-11e6-8036-a0f12e717650.png)
 
 
-#DNS:
+## DNS:
 
 - Unbound-dns is the DNS SERVER hsts domain list goes to dns hsts bypass engine. 
 - If it is not resolved then using cached then we use DNSCRYPT to ask D.I.A.N.A and OpenNIC.
@@ -208,7 +201,7 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
   
 ![redirection](https://cloud.githubusercontent.com/assets/13025157/20144719/c280abee-a69d-11e6-8af5-cbab5d18d171.png)
 
-#### Darknets Domains:
+### Darknets Domains:
  
   * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
   * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
@@ -229,7 +222,7 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 
 
 
-#Temporary architecture
+# Temporary architecture
 
 ![arch_new](https://cloud.githubusercontent.com/assets/13025157/23234526/a49e2a54-f952-11e6-8042-d5acebbdb757.png)
 
@@ -237,8 +230,13 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 
 
 
+OSI STACK FROM DOWN TO UP:
 
-##Privoxy and Privacy options for TOR traffic:
+![modsecuritylogo](https://cloud.githubusercontent.com/assets/13025157/24587167/d8d75048-17b1-11e7-951f-41082d321ff6.png)
+
+
+
+## Privoxy and Privacy options for TOR traffic:
 
 ![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
 
@@ -246,18 +244,18 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 
 
  
-#TOR configurations.
+## TOR configurations.
 Tor dns configuration is implemented like this...
 
 
 
-#I2P configuration.
+## I2P configuration.
 
-#NGINX configuration.
+## NGINX configuration.
 
-#Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
+## Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
 
-#Privoxy configuration.
+## Privoxy configuration.
 
 #Iptables configuration.
 
