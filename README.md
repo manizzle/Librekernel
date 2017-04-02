@@ -316,6 +316,8 @@ iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE
 
 
 # Modsecurity for Hidenservices and direct clearnet published NAT services
+![modsecuritylogo](https://cloud.githubusercontent.com/assets/13025157/24587056/5ab4704e-17af-11e7-99e0-29c50d4acfab.png)
+
 
 # Suricata Intrusion Prevention System Ruleset versus use cases configuration.
 
