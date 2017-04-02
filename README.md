@@ -73,15 +73,15 @@ or
 
 log files are in /var
 
-apt-get-install-aptth.log
-apt-get-update.log
-apt-get-install_1.log
-apt-get-install_2.log
-apt-get-update-default.log
-libre_install.log
-libre_config.log
+- apt-get-install-aptth.log
+- apt-get-update.log
+- apt-get-install_1.log
+- apt-get-install_2.log
+- apt-get-update-default.log
+- libre_install.log
+- libre_config.log
 
-Lab done!
+### Lab done!
 
 Try to navigate normally from the windows 10.
 Report us problems, issues and recomentaditions plus request for features.
@@ -91,10 +91,11 @@ New version of the instalaltion-configuration scripts,ISOs and OVA virtual machi
 
 ## What the setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh and wizard.sh do?
 
-The setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh  are esclusevilly for mounters or assemblers persons not for end user. 
-setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh requires of physical internet cable.
+The setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh will be esclusevilly for mounters or assemblers person who mount proffesionall or assemble profesional our products not for the end user. 
 
-The end user will be using and USB with autoinstallable ISO image.
+setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh requires of plug of physical internet ethernet cable connection.
+
+The end user will be using a USB with auto-installable un-attended ISO image.
 
 Wizard.sh is for the end user and will be maturing and its the first thing the ISO image will be launching.
 
@@ -147,17 +148,13 @@ There are two bridges with two interfaces each in the machine like two bridges (
  - WAN is Cabled Ethernet, LAN is WiFi
  - WAN is Cabled Ethernet, LAN is Cabled Ethernet
 
-## Librerouter has 4 ways to work in the network: 
-
- - Server (no protection but services)
- - Network Router (services and network protection) (dont mix with NIC bridges that we have to separate 4 interfaces in 2 zones)
- - Passive Security Sensor (not yet done)
- - Transparent Man in the Middle Interception (hacking pentesting security testers) (not yet done)
- 
-### Router bridge mode
+## Router bridge mode
 ![bridgemode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/38.png)
+
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
+
 ![untitled](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/39.png)
+
 ![bridmodeworkflow](https://cloud.githubusercontent.com/assets/17382786/17251578/acd2871c-55a9-11e6-9e89-22252735ae39.png)
 
 
@@ -183,7 +180,7 @@ Still pending to add suricata and modsecurity last changes.
 
 # Engines especifications and configuration dependencies:
 
-
+Add here owncloud with excel file.
 
 ## OSI STACK FROM DOWN TO UP:
 
