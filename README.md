@@ -182,43 +182,8 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
  - f) Will protect the access to your webs publically in TOR-I2P and clearnet.(normal internet).
  - g) Will selfhost search engine,email,storage,conference,collaborative,git,project managing,socialnetwork, TOR shop.
 
-![protocols policy](https://cloud.githubusercontent.com/assets/13025157/20144114/d6fe682e-a69b-11e6-8036-a0f12e717650.png)
 
 
-## DNS:
-
-- Unbound-dns is the DNS SERVER hsts domain list goes to dns hsts bypass engine. 
-- If it is not resolved then using cached then we use DNSCRYPT to ask D.I.A.N.A and OpenNIC.
-- If it can not resolved, then we need to ask through TOR aleatory.
-- Further integration will include Bitname,others like DjDNS (this last need maintenance is not workinghttps://github.com/DJDNS/djdns)).
-
-![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
- 
-  * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound. and hsts downgraded and dns hardredirected.
-  * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound. and hsts downgraded and dns hardredirected.
-  * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound. and hsts downgraded and dns hardredirected.
-  * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound. and hsts downgraded and dns hardredirected.
-  
-![redirection](https://cloud.githubusercontent.com/assets/13025157/20144719/c280abee-a69d-11e6-8af5-cbab5d18d171.png)
-
-### Darknets Domains:
- 
-  * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
-  * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
-  * .onion - unbound will forward this zone to Tor DNS running on 10.0.0.1:9053
-  
- -Freenet domains:> not yet implemented
-- http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
-- Bit domains> blockchain bitcoin> not yet implemented 
-- https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
-- Zeronet> not yet implemented
-- Openbazaar> not yet implemented
-![dnsipdated](https://cloud.githubusercontent.com/assets/17382786/17974408/4054bb80-6ae6-11e6-9747-a79d3d703e65.png)
- 
-
-## Can the user in the future workaround the redirection in router mode:
-
-Yes in the future via GUI should be possible to reconfigure this cage enabling services as plugins.
 
 
 
@@ -226,40 +191,21 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 
 ![arch_new](https://cloud.githubusercontent.com/assets/13025157/23234526/a49e2a54-f952-11e6-8042-d5acebbdb757.png)
 
-#Engines especifications and configuration dependencies:
+
+# Engines especifications and configuration dependencies:
 
 
 
-OSI STACK FROM DOWN TO UP:
+## OSI STACK FROM DOWN TO UP:
 
 ![modsecuritylogo](https://cloud.githubusercontent.com/assets/13025157/24587167/d8d75048-17b1-11e7-951f-41082d321ff6.png)
 
 
+# ARP protections
 
-## Privoxy and Privacy options for TOR traffic:
+# Layer 3 IP Firewall Iptables configuration.
 
-![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
-
-
-
-
- 
-## TOR configurations.
-Tor dns configuration is implemented like this...
-
-
-
-## I2P configuration.
-
-## NGINX configuration.
-
-## Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
-
-## Privoxy configuration.
-
-#Iptables configuration.
-
-
+![protocols policy](https://cloud.githubusercontent.com/assets/13025157/20144114/d6fe682e-a69b-11e6-8036-a0f12e717650.png)
 
 $INT_INTERFACE - is internal network interface
 
@@ -328,12 +274,44 @@ iptables -t nat -A PREROUTING -i $INT_INTERFACE -p tcp --dport 443 -j REDIRECT -
 iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE 
  - rule for NATing traffic from internal to extarnal interface
 
+## DNS:
 
-# Modsecurity for Hidenservices and direct clearnet published NAT services
-![modsecuritylogo](https://cloud.githubusercontent.com/assets/13025157/24587056/5ab4704e-17af-11e7-99e0-29c50d4acfab.png)
+- Unbound-dns is the DNS SERVER hsts domain list goes to dns hsts bypass engine. 
+- If it is not resolved then using cached then we use DNSCRYPT to ask D.I.A.N.A and OpenNIC.
+- If it can not resolved, then we need to ask through TOR aleatory.
+- Further integration will include Bitname,others like DjDNS (this last need maintenance is not workinghttps://github.com/DJDNS/djdns)).
+
+![dnsipdate](https://cloud.githubusercontent.com/assets/17382786/17974085/ec54e6b4-6ae4-11e6-9efb-bf2352520459.png)
+ 
+  * Search engines  - will be resolved to ip address 10.0.0.251 (Yacy) by unbound. and hsts downgraded and dns hardredirected.
+  * Social network  - will be resolved to ip address 10.0.0.252 (friendics) by unbound. and hsts downgraded and dns hardredirected.
+  * Online Storage  - Will be resolved to ip address 10.0.0.253 (Owncloud) by unbound. and hsts downgraded and dns hardredirected.
+  * Webmails        - Will be resolved to ip address 10.0.0.254 (MailPile) by unbound. and hsts downgraded and dns hardredirected.
+  
+![redirection](https://cloud.githubusercontent.com/assets/13025157/20144719/c280abee-a69d-11e6-8af5-cbab5d18d171.png)
+
+### Darknets Domains:
+ 
+  * .local - will be resolved to local ip address (10.0.0.0/24 network) by unbound.
+  * .i2p   - will be resolved to ip address 10.191.0.1 by unbound.
+  * .onion - unbound will forward this zone to Tor DNS running on 10.0.0.1:9053
+  
+ -Freenet domains:> not yet implemented
+- http://ftp.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/cryptography/apps/freenet/fcptools/linux/gateway.html
+- Bit domains> blockchain bitcoin> not yet implemented 
+- https://en.wikipedia.org/wiki/Namecoin  https://bit.namecoin.info/
+- Zeronet> not yet implemented
+- Openbazaar> not yet implemented
+![dnsipdated](https://cloud.githubusercontent.com/assets/17382786/17974408/4054bb80-6ae6-11e6-9747-a79d3d703e65.png)
+ 
+
+## Can the user in the future workaround the redirection in router mode:
+
+Yes in the future via GUI should be possible to reconfigure this cage enabling services as plugins.
 
 
-# Suricata Intrusion Prevention System Ruleset versus use cases configuration.
+
+## Suricata Intrusion Prevention System Ruleset versus use cases configuration.
 
 When user is using HTTPS connection to a darknet domain, this traffic it's considered dangerus and insecure. (the goverment try to explodes the browser for deanonymization) On darknet onion and i2p domains, squid will open the SSL tunnel and inspect for possible exploits, virus and attacks to the user.
 If this connection it's to a HTTPS regular/banking domain, this SSL tunnel will be not open Bumped/inspected. Will be routed directly to the clearnet internet (ex: https://yourbank.com)
@@ -465,6 +443,36 @@ Same configuration works fine with Suricata v3.0.0.
 
 
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
+
+
+
+## NGINX configuration.
+
+## Modsecurity for Hidenservices and direct clearnet published NAT services
+
+![modsecuritylogo](https://cloud.githubusercontent.com/assets/13025157/24587056/5ab4704e-17af-11e7-99e0-29c50d4acfab.png)
+
+
+
+## TOR configurations.
+Tor dns configuration is implemented like this...
+
+### Privoxy and Privacy options for TOR traffic:
+
+![privoxy-rulesets-web](https://cloud.githubusercontent.com/assets/17382786/17368067/e269d884-5992-11e6-985c-618b9f5e4c8c.gif)
+
+
+## I2P configuration.
+
+## Multiple Squids (darknet bumping and clearnet ssl NObump) configurations.
+
+ 
+
+
+
+
+
+
 
 
 ###HSTS 
