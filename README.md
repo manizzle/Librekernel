@@ -1,19 +1,33 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
+#Setting up the lab in physical:
 
- 
-#Setting up a lab to start to contribute:
+Suported devices that we need to add a usb to ethernet and 2 atheros wireless network interfaces:
+
+Mini servers:
+Gole1
+Qotom  (recomended)
+
+Any Laptop, PC or server
+
+Tablets:
+Chwi Hi10 or Chwi hi12
+Teclast 
+Onda V919 Air CH
+Teclast X89
+
+
+#Setting up the lab in Virtual:
 
 ESXi,VirtualBox,other vitrual lab:
 
-Internet Router<-----eth0----Debian64----eth1---Virtual Lan vswitch<---eth---Windows10
+Internet Router<-----eth0----Debian64 latest version----eth1---Virtual Lan vswitch<---ethernet---Windows10
 
+Internet DHCP server--eth0---Debian64 latest version-----eth1--(debian dhcpserver)--------Win10 (dhcp client)
 
-DHCPserver--eth0---sameDebian64-----eth1--(Debian will start a dhcpserver internally)--------Win10
+First of all you should install latest Debian 64bit version in a virtual machine (why Virtual? you can recover fresh install in seconds doing restoration of snapshot):
 
-First of all you should install latest Debian version in a virtual machine:
-- 2GB RAM, 2 procesor, 2NICs (network interfaces)
-
+- 2GB RAM, 2 core procesors, 2NICs (network interfaces)
 
 Second a non privacy friendly OS like Win 10:
 - VM requirements in microsoft
@@ -235,6 +249,8 @@ Yes in the future via GUI should be possible to reconfigure this cage enabling s
 #TOR configurations.
 Tor dns configuration is implemented like this...
 
+
+
 #I2P configuration.
 
 #NGINX configuration.
@@ -245,7 +261,7 @@ Tor dns configuration is implemented like this...
 
 #Iptables configuration.
 
-##Rules Description
+
 
 $INT_INTERFACE - is internal network interface
 
