@@ -101,7 +101,8 @@ Wizard.sh is for the end user and will be maturing and its the first thing the I
 
 ### 2 future version of the ISO:
 
-- Online: For more profesionals. All is downloaded
+- Online: For more profesionals. All is downloaded and compiled.
+
 - Offline Live debian: For non profesional and guided installation.
 
 
@@ -111,9 +112,16 @@ a) Call setup.sh.
 
 Setup download other scripts and prepare environment. Also reports errors in installacion via centralized repository.(in way to make descentralized).
 
+a.1) Prepare environment
+a.2) Replace kernel with libre kernel.
+a.3) change sources to not allow non free.
+
 c) App-installation-scrip.sh
 
 App-installation script install all necesary packages. Via different ways: apts,compiling,preparing.
+c.1) Tools for filtering
+c.2) Server services
+c.3) Drivers for open source Wlan devices.
 
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
 
