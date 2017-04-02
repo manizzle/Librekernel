@@ -183,10 +183,6 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
  - g) Will selfhost search engine,email,storage,conference,collaborative,git,project managing,socialnetwork, TOR shop.
 
 
-
-
-
-
 # Temporary architecture
 
 ![arch_new](https://cloud.githubusercontent.com/assets/13025157/23234526/a49e2a54-f952-11e6-8042-d5acebbdb757.png)
@@ -200,6 +196,7 @@ Where the trafic is filtered by dns , by ip via iptables, by protocol, applicati
 
 ![modsecuritylogo](https://cloud.githubusercontent.com/assets/13025157/24587167/d8d75048-17b1-11e7-951f-41082d321ff6.png)
 
+![modsecuritylogo](https://cloud.githubusercontent.com/assets/13025157/24587367/87779bb4-17b5-11e7-8a9c-baff45b23ba7.png)
 
 # ARP protections
 
