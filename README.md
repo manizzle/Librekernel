@@ -46,7 +46,7 @@ As shown in the following figure.
 
 ![deded](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/21.png)
 
-Resume of steps:
+Resume of steps, please be aware that debian should be simplest or non packages should be selected.
 
 - In Virtualbox in debian like: https://jtreminio.com/2012/07/setting-up-a-debian-vm-step-by-step/
 - Or any physical machine like https://www.debian.org/doc/manuals/debian-handbook/sect.installation-steps.ru.html
@@ -89,56 +89,54 @@ Investigate and play while we continue developing it.
 New version of the instalaltion-configuration scripts,ISOs and OVA virtual machine export will be upcoming.
 
 
-# What the app-installation-script does?
+## What the setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh and wizard.sh do?
+
+The setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh  are esclusevilly for mounters or assemblers persons not for end user. 
+setup.sh app-installation-script.sh , app-configuration-script.sh , service.sh requires of physical internet cable.
+
+The end user will be using and USB with autoinstallable ISO image.
+
+Wizard.sh is for the end user and will be maturing and its the first thing the ISO image will be launching.
+
+### 2 future version of the ISO:
+
+- Online: For more profesionals. All is downloaded
+- Offline Live debian: For non profesional and guided installation.
+
+
+## Installation workflow:
+
+a) Call setup.sh.
+
+Setup download other scripts and prepare environment. Also reports errors in installacion via centralized repository.(in way to make descentralized).
+
+c) App-installation-scrip.sh
+
+App-installation script install all necesary packages. Via different ways: apts,compiling,preparing.
+
+d) App-configuration-scrip.sh
+
+App-configuration-script is the real CocaCola maker and in the future will be a encrypted blob, the result will be 100% opensource but the way to prepare will be secret. A hacker can duplicate and copy the whole rootfs and distribute it freely. 
+
+e) wizard.sh
+
+Wizard is the initial graphical user interface intendt that we created and will be replaced by a real GUI running in X limited browser.
+
+f) services.sh
+
+It shows up the addresses of your services from clearnet and darknets plus some important data and users.
+
 
 ![initial-install-workflow](https://cloud.githubusercontent.com/assets/13025157/14444383/5b99d710-0045-11e6-9ae8-3efa1645f355.png)
 
- - Step 1. Checking user
-The script should be run by user root and by console, if it was run by another user then it will warn and exit.
-
- - Step 2. Checking Platform
-The all software intended to run on Debian 8 , so if script finds another platform it will output an error and exit.
-
- - Step 3. Checking Hardware
-As software can be installed either on ARM boards or Physical/Virtual x86 64b machine, in this step we need to determine hardware. After determining hardware type we can determine the next step.
-
- - Step 4. Checking requirements
-There are a list of minimum requirements that Physical/Virtual machine needs to meet.
-    2 at least network interfaces (ethernet or wlan)
-    4 GB of Physical memory
-    16 GB of Free disk space
-
-If machine meets the requirements then script goes to next step, otherwise it will warn and exit.
-
-- Step 4.2. Check if the ARM board assembled.
-There are list of modules that need to be connected to ARM boards, so script will check if that modules are connected.
-You can fine information about necessary modules later. If any module is missed user will get warning and script will exit.
-
- - Step 5. Getting DHCP client on interfaces
-In this step script first DHCP request from ethX to get an ip address. If succeed, it will check for Internet connection and if Internet connection is established this step is done successfully. In any case of failure (no DHCP response or on Internet connection) script will try the same scenario for next interface. Order to try is - eth1, wlan1, eth0, wlan0 (list of available interfaces are available from step 4). Of no success in any interface, then script will warn user to plug the machine to Internet and will exit.
-
- - Step 6. Preparing repositories and updating sources
-In this step script adds repository links for necessary packages into package manager sources and updates them. Script will output an error ant exit if it is not possible to add repositories or update sources.
-
- - Step 6.2. Preparing repositories and updating sources
-The same as in Physical/Virtual machine case.
-
- - Step 7. Downloading and Installing packages
-As we already have repository sources updated in step 6, so at this point script will download and install packages using package manager tools. If something goes wrong during download or installation, script will output an error ant exit.
-If step 7 finished successfully it's time to run the next script “app-installation-script.sh”.
-
- - Step 7.2. Downloading and Installing packages
-The same as in Physical/Virtual machine case.
-If step 7 finished successfully then test.sh execution for odroid board is finished successfully and it's time to run the next script “app-installation-script.sh”. 
-
-#Networking in Librerouter:
+## Networking in Librerouter:
 
 There are two bridges with two interfaces each in the machine like two bridges (only 2 separated zone NICs):
 	
 1. External area red bridge acting as WAN (2 nics): cable or wireless interface as DHCP client of your internet router.
 2. Internal area gren bridge acting as LAN (2 nics): cable or wireless interface as an AP for being DHCP server for your new secure LAN.
 
-- Four possible PHySICAL scenarios:
+## Four possible PHySICAL scenarios:
 
  - WAN is WiFi, LAN is WiFi
  - WAN is WiFi, LAN is Cabled Ethernet
@@ -152,18 +150,7 @@ There are two bridges with two interfaces each in the machine like two bridges (
  - Passive Security Sensor (not yet done)
  - Transparent Man in the Middle Interception (hacking pentesting security testers) (not yet done)
  
-## Server mode
-
-The way networking works in Librerouter will be:
-
-![servermode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/36.png)
- -  Fix serviceable IPs in 10.0.0.x can be wireless or Cabled Ethernet connected to the existing internet router LAN. 
- -  Server mode with both WAN and LAN interfaces in the same DMZ or VLAN or area and not threating the network traffic (not able to defend against web browsing leaks,tracking,ads and malware)
-![server](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/37.png)
-![servermodeworkflow](https://cloud.githubusercontent.com/assets/13025157/14444317/f69f0ec0-0044-11e6-9c94-ad7a9c496140.png)
-
- 
-## Router bridge mode
+### Router bridge mode
 ![bridgemode](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/38.png)
 Where the trafic is filtered by dns , by ip via iptables, by protocol, application layer signature and reputationally. 
 ![untitled](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/39.png)
