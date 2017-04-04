@@ -882,18 +882,19 @@ iptables -t nat -A POSTROUTING -o $EXT_INTERFACE -j MASQUERADE
 
 # Blocking ICMP from LAN_TO_WAN and from WAN_TO_LAN/ROUTER
 iptables -A FORWARD -p ICMP -j DROP
-iptables -A OUTPUT -p icmp -o $EXT_INTERFACE -j ACCEPT
-iptables -A INPUT -p icmp --icmp-type echo-reply -s 0/0 -i $EXT_INTERFACE -j ACCEPT
-iptables -A INPUT -p icmp --icmp-type destination-unreachable -s 0/0 -i $EXT_INTERFACE -j ACCEPT
-iptables -A INPUT -p icmp --icmp-type time-exceeded -s 0/0 -i $EXT_INTERFACE -j ACCEPT
-iptables -A INPUT -p icmp -i $EXT_INTERFACE -j DROP
+iptables -A INPUT -p icmp -s 10.0.0.0/8 ! -d 10.0.0.0/8 -j DROP
+#iptables -A OUTPUT -p icmp -o $EXT_INTERFACE -j ACCEPT
+#iptables -A INPUT -p icmp --icmp-type echo-reply -s 0/0 -i $EXT_INTERFACE -j ACCEPT
+#iptables -A INPUT -p icmp --icmp-type destination-unreachable -s 0/0 -i $EXT_INTERFACE -j ACCEPT
+#iptables -A INPUT -p icmp --icmp-type time-exceeded -s 0/0 -i $EXT_INTERFACE -j ACCEPT
+#iptables -A INPUT -p icmp -i $EXT_INTERFACE -j DROP
 
 
-iptables -A INPUT -p ICMP -i $INT_INTERFACE -j ACCEPT
-iptables -A OUTPUT -p ICMP -o $INT_INTERFACE -j ACCEPT
-iptables -A INPUT -p ICMP -j DROP
-iptables -A OUTPUT -p ICMP -j DROP
-iptables -A FORWARD -p ICMP -j DROP
+# iptables -A INPUT -p ICMP -i $INT_INTERFACE -j ACCEPT
+# iptables -A OUTPUT -p ICMP -o $INT_INTERFACE -j ACCEPT
+# iptables -A INPUT -p ICMP -j DROP
+# iptables -A OUTPUT -p ICMP -j DROP
+# iptables -A FORWARD -p ICMP -j DROP
 
 # Blocking IPsec (All Directions)
 iptables -A INPUT -m ndpi --ip_ipsec -j DROP
