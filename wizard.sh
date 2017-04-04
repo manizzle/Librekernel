@@ -660,6 +660,7 @@ try_dhcp() {
     killall dhclient 1> /dev/null 2> /dev/null
     ifaceip=$(ifconfig $inet_iface | grep "inet addr" | cut -d : -f  2 | cut -d \  -f1)
     if [[ "$ifaceip" =~ "." ]]; then
+        dhclient $inet_iface &
         dialog --colors --title "Librerouter Setup" --msgbox "DHCP for interface $inet_iface got ip address $ifaceip" 0 0
     else 
         set_ipmaskgw
