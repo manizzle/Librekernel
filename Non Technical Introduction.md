@@ -2,7 +2,49 @@
 
 ![servidor personal v03b](https://cloud.githubusercontent.com/assets/13025157/22333399/505bcd5c-e3d6-11e6-9f6c-9acf2d2f4bff.jpg)
 
-#***Services that run in Librerouter***
+##***Our company***
+
+Libre Router is a technology-based company whose activity is the development of green innovative solutions in two technical areas: data privacy and cyber security. 
+
+We are a young and dynamic team with a technical profile in Informatics and Telecommunications Engineering. Actually the company looks for the individual specialization of qualified and motivated professionals in different areas of internet to build an international and sustainable corporate balance.
+
+##***Our mission***
+
+We protect people from data transactions and cyber intrusion. Our philosophy is based on the pillars of green cyber security: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
+
+##***Our purpose: To protect internet data***
+
+Problem identified:
+
+![Issues_Safegaurds](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
+
+##***The solution: How does Libre Router protect the people?***
+
+LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
+
+1. With our OS, a secured open operating system with the hardened version based on
+  Debian Libre and LFS  https://cageos.org/index.php?page=technical#kernel
+2. Decentralizing the services you consume from the cloud at local alternatives (making it impossible to 
+  apply big data enemy corps.) 
+3. A decentralized anonymous Search Engine with admin rights.  
+4. A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
+5. Secure decentralized video conferences based in XMPPoverTOR or WebRTC. 
+6. A secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.
+7. Transparent Email encryption for your actual email. 
+8. Anonymous web traffic enforcer Ad-blocker, intrusion prevention system, anti-virus and anti-tracking technology 
+  for your web browsing, filtering viruses, exploits, malware, ads, bad reputation IPs, and tasteless content. 
+9. Protection from different services that track data transactions like Internet proxy, clamav, surikata proxy, snort unbound DNS lists, iptables, etc.
+10. Self hosted obfuscated authentication (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
+11. Network filtering the MetaData that expose you, like scripts, cookies, browser info, docs meta, etc.  
+
+#***Our customers***
+
+1. Early adopters
+2. Cityzens and companies in conflict-ridden countries 
+3. Value-conscious private customers 
+4. Anti-advertising internet users
+
+#***Our services***
 
 ![servicecomparison](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
 
@@ -25,15 +67,6 @@
 
 #***Overview of Linux Libre and Libre Kernel for personal cyber security and privacy***
 
-##***The need for this technology***
-
-- Traffic Sniffing: those that are monitoring your traffic (e.g. government spy/monitoring institutions)
-		
-		-passive actions: collecting general data from worldwide. 
-- Malicious Internet nodes: better known as blackbones. 
-- Your Internet provider (ISP): may attempt to misuse your data in ways such as DNS spoofing, traffic shaping, DPI.
-- Back-doors in software (i.e. Windows, favourite of the NSA) and hardware (Cisco, Huawei,Fortinet,TP-Link) to achieve one or more of the the following malicious objectives: Control, Espionage, Privacy spooks, politics, police interception, apply bigdata to your cloud for marketing, law enforcement, market research, or simply hacking outbreaches.
-
 ##Overview of Libre Kernel components:
 
 ##***Introduction to what is called a 'Pseudo Backdoor' (a secret entry door in the program's code)***
@@ -42,28 +75,6 @@ Software components with no available source code (how the program was made) are
 [Blob Example](#blob-example)
 
 
-##***How does Libre Router protect us?***
-
-Libre router, combined with Linux Libre and the hardened OS configuration shown above, protects us in many ways, as follows:
- 
-- With our OS, a secured open operating system with the hardened version based on
-  Debian Libre and LFS  https://cageos.org/index.php?page=technical#kernel
-- Decentralizing the services you consume from the cloud at local alternatives (making it impossible to 
-  apply big data enemy corps.) 
-- A decentralized anonymous Search Engine with admin rights.  
-- A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
-- Secure decentralized video conferences based in XMPPoverTOR or WebRTC. 
-- A secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.
-- Transparent Email encryption for your actual email. 
-- Anonymous web traffic enforcer Ad-blocker, intrusion prevention system, anti-virus and anti-tracking technology 
-  for your web browsing, filtering viruses, exploits, malware, ads, bad reputation IPs, and tasteless content. 
-- Protection from different services that track data transactions like Internet proxy, clamav, surikata proxy, snort unbound DNS lists, iptables, etc.
-- Self hosted obfuscated authentication (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
-- Network filtering the MetaData that expose you, like scripts, cookies, browser info, docs meta, etc.  
-
-The following security pyramid diagram explains the different components that make our network secure.
-
-![mempro](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/6.png)
 
 The following image shows how Libre Router protects you by sitting between the outer Internet and your private network
 
@@ -71,32 +82,21 @@ The following image shows how Libre Router protects you by sitting between the o
 
 #Technical Overview
 
-Libre Router uses technologies like Free Open Source hardware, Linux Libre, hardened Linux, encryption and many others to protect the end user or clients against intrusions, malicious attacks, and unwanted advertisements creating a LAN (Local Network area) inside another LAN (your internet router LAN)
+Libre Router uses technologies like 
+1. Free Open Source hardware
+2. Linux Libre
+3. Hardened Linux
+4. Encryption and many others to protect the end user or clients against intrusions, malicious attacks, and unwanted advertisements creating a LAN (Local Network area) inside another LAN (your internet router LAN)
 
-###***Using Libre Router to build a secure network***
+#***Services***
 
-####From inside secureLAN
-Imagine you're at home and you use the services locally (local server, local services)
-
-![from home](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/7.png)
-
-From being routed through any Darknet 
-Imagine you're at work, then you use the services in your home through Darknets (remote server, remote services in TOR, I2P, and other VPNs). In your company it's just https traffic so nobody can see inside. You can use your personal storage, social network and everything with security and obscurity. 
-
-![10](https://cloud.githubusercontent.com/assets/13025157/18872250/c8db5f30-84b9-11e6-8f2f-1e1d7be0b42b.png)
-
-The following diagram shows the current issues, safeguards against them, and the open source components that help us get rid of them. 
-
-![Issues_Safegaurds](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
-
-
-#***Decentralized collaboration and makerplaces***
+#***1. Decentralized collaboration and makerplaces***
 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
 https://openbazaar.org
 
-#***A decentralized anonymous  Search Engine with admin rights.***
+#***2. Decentralized anonymous Search Engine with admin rights***
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
@@ -104,43 +104,38 @@ https://openbazaar.org
 
 https://cageos.org/index.php?page=apps&section=SearchEngine
 
-A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
+#***3. Filter-connector for your Social Networks in one single place using decentralized social network Friendica***
 
 https://cageos.org/index.php?page=apps&section=SocialNetworks
 
 ![socialnetworks](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/33.png)
 
-#***Secure decentralized video conferences based in XMPPoverTOR or WebRTC.***
+#***4. Secure decentralized video conferences based in XMPPoverTOR or WebRTC***
 - 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
 ![rtcio](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/8-9_v2.png)
 
 
-#***A secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.***
+#***5. Secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.***
 
 https://cageos.org/index.php?page=apps&section=StorageOwnCloud
 
 https://cageos.org/index.php?page=apps&section=DecentralizedBackup
 
-#***Transparent Email encryption for your actual email.***
+#***6. Transparent Email encryption for your actual email.***
 - 
 https://cageos.org/index.php?page=apps&section=SecureEmail
 
 ![34-35](https://cloud.githubusercontent.com/assets/13025157/19035791/0cc2588c-896c-11e6-88a2-fbf83dc3abfe.png)
 
-#***Service: The Decentralized Social Network***
+#***7. Decentralized Social Network***
 
 Librerouter can act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you. For example, do you hate cat videos? (Really? Can I get you some help?)
 You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
 You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab. We aren’t asking you to give up on social media, instead we offer you a way to be in the captain’s chair.
 
-##Service: The Decentralized Video Conference
-
-With federated XMPP servers for authentication, yet perfect for discovering users outside the Librerouter network with security from the normal web.  
-Unauthenticated and decentralized web browser video conferencing through anonymous links to create fast video conference rooms without third parties or middlemen involved.
-
-##Service: Decentralized Indestructible Storage; the RockStar app
+#***8. Decentralized Indestructible Storage; the RockStar app***
 
 Imagine all the important information you have stored on the hard drive of your computer. You are just one hardware failure away from disaster. After all, when did you do your last backup? Unfortunately, centralized storage solutions such as Dropbox and Google Drive also present a variety of risks:
 
@@ -172,7 +167,7 @@ You can also sync your home Librerouter with all of your portable devices to hav
 
 
 
-##***About Linux Libre***
+##***Technical documentation: About Linux Libre***
 
 Linux Libre is a free/Libre version of the Linux kernel suitable for use with the GNU Operating System.
 It removes non-free components from Linux that are disguised as source code or distributed in separate files. It also disables run-time requests for non-free components, shipped separately or as part of Linux, and documentation pointing to them. The GNU Linux Libre project takes a minimal-changes approach to cleaning up Linux, making no effort to substitute components that need to be removed with functionally equivalent free/Libre ones.
