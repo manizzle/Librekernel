@@ -63,12 +63,8 @@ https://openbazaar.org
 
 ![search engine](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/31_v2.png)
 
-https://cageos.org/index.php?page=apps&section=SearchEngine
-
 
 ***3. Filter-connector for your Social Networks in one single place using decentralized social network Friendica***
-
-https://cageos.org/index.php?page=apps&section=SocialNetworks
 
 ![socialnetworks](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/33.png)
 
