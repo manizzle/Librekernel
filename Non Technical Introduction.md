@@ -82,10 +82,6 @@ https://cageos.org/index.php?page=apps&section=Collaborative
 
 ***5. Secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.***
 
-https://cageos.org/index.php?page=apps&section=StorageOwnCloud
-
-https://cageos.org/index.php?page=apps&section=DecentralizedBackup
-
 
 ***6. Transparent Email encryption for your actual email.***
 - 
