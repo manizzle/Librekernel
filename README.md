@@ -7,6 +7,7 @@ Suported devices that we need to add a usb to ethernet and 2 atheros wireless ne
 Mini servers:
 - Gole1
 - Qotom  (recomended)
+- Pipo x10 and modified.
 
 Any Laptop, PC or server
 
