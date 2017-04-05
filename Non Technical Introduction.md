@@ -2,13 +2,13 @@
 
 ##***Our company***
 
-Libre Router is a technology-based company whose activity is the development of green innovative solutions in two technical areas: **data privacy** and **cyber security**. 
+Libre Router is a technology-based company whose activity is the development of **green innovative solutions** in two technical areas: **data privacy** and **cyber security**. 
 
 We are a young and dynamic team with a technical profile in Informatics and Telecommunications Engineering. Actually the company looks for the individual specialization of qualified and motivated professionals in different areas of internet to build an international and sustainable corporate balance.
 
 ##***Our mission***
 
-We protect people from data transactions and cyber intrusion. Our philosophy is based on the pillars of green cyber security: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
+We **protect people** from data transactions and cyber intrusion. Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
 
 ##***Our purpose: To protect internet data***
 
