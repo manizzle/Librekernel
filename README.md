@@ -4,6 +4,10 @@
 
 Suported devices that we need to add a usb to ethernet and 2 atheros wireless network interfaces:
 
+100% open source open Hardware:
+
+Solidrun Clearfog.
+
 Mini servers:
 - Gole1
 - Qotom  (recomended)
