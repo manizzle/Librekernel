@@ -84,8 +84,6 @@ https://cageos.org/index.php?page=apps&section=Collaborative
 
 
 ***6. Transparent Email encryption for your actual email.***
-- 
-https://cageos.org/index.php?page=apps&section=SecureEmail
 
 ![34-35](https://cloud.githubusercontent.com/assets/13025157/19035791/0cc2588c-896c-11e6-88a2-fbf83dc3abfe.png)
 
