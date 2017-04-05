@@ -1,12 +1,12 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
-##***Our company***
+***Our company***
 
 Libre Router is a technology-based company whose activity is the development of **green innovative solutions** in two technical areas: **data privacy** and **cyber security**. 
 
 We are a young and dynamic team with a technical profile in Informatics and Telecommunications Engineering. Actually the company looks for the individual specialization of qualified and motivated professionals in different areas of internet to build an international and sustainable corporate balance.
 
-##***Our mission***
+***Our mission***
 
 We **protect people** from data transactions and cyber intrusion. Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
 
