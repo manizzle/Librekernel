@@ -25,7 +25,7 @@ Problem identified:
 LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 
 1. With our OS, a secured open operating system with the hardened version based on
-  Debian Libre and LFS  https://cageos.org/index.php?page=technical#kernel
+  Debian Libre and LFS
 2. Decentralizing the services you consume from the cloud at local alternatives (making it impossible to 
   apply big data enemy corps.) 
 3. A decentralized anonymous Search Engine with admin rights.  
@@ -53,8 +53,6 @@ LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 
 
 ***1. Decentralized collaboration and makerplaces***
-
-https://cageos.org/index.php?page=apps&section=Collaborative
 
 https://openbazaar.org
 
