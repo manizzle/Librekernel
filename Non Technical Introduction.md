@@ -70,8 +70,6 @@ https://openbazaar.org
 
 
 ***4. Secure decentralized video conferences based in XMPPoverTOR or WebRTC***
-- 
-https://cageos.org/index.php?page=apps&section=Collaborative
 
 ![rtcio](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/8-9_v2.png)
 
