@@ -1,22 +1,26 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
+
 ***Our company***
 
 Libre Router is a technology-based company whose activity is the development of **green innovative solutions** in two technical areas: **data privacy** and **cyber security**. 
 
 We are a young and dynamic team with a technical profile in Informatics and Telecommunications Engineering. Actually the company looks for the individual specialization of qualified and motivated professionals in different areas of internet to build an international and sustainable corporate balance.
 
+
 ***Our mission***
 
 We **protect people** from data transactions and cyber intrusion. Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
 
-##***Our purpose: To protect internet data***
+
+***Our purpose: To protect internet data***
 
 Problem identified:
 
 ![Issues_Safegaurds](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
 
-##***The solution: How does Libre Router protect the people?***
+
+***The solution: How does Libre Router protect the people?***
 
 LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 
@@ -35,7 +39,8 @@ LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 10. Self hosted obfuscated authentication (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
 11. Network filtering the MetaData that expose you, like scripts, cookies, browser info, docs meta, etc.  
 
-#***Our customers***
+
+***Our customers***
 
 1. Early adopters
 2. Cityzens and companies in conflict-ridden countries 
@@ -43,15 +48,18 @@ LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 4. Pro-free-download internet users
 4. Anti-advertising internet users
 
-#***Our services***
 
-#***1. Decentralized collaboration and makerplaces***
+***Our services***
+
+
+***1. Decentralized collaboration and makerplaces***
 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
 https://openbazaar.org
 
-#***2. Decentralized anonymous Search Engine with admin rights***
+
+***2. Decentralized anonymous Search Engine with admin rights***
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
@@ -59,38 +67,43 @@ https://openbazaar.org
 
 https://cageos.org/index.php?page=apps&section=SearchEngine
 
-#***3. Filter-connector for your Social Networks in one single place using decentralized social network Friendica***
+
+***3. Filter-connector for your Social Networks in one single place using decentralized social network Friendica***
 
 https://cageos.org/index.php?page=apps&section=SocialNetworks
 
 ![socialnetworks](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/33.png)
 
-#***4. Secure decentralized video conferences based in XMPPoverTOR or WebRTC***
+
+***4. Secure decentralized video conferences based in XMPPoverTOR or WebRTC***
 - 
 https://cageos.org/index.php?page=apps&section=Collaborative
 
 ![rtcio](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/8-9_v2.png)
 
 
-#***5. Secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.***
+***5. Secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.***
 
 https://cageos.org/index.php?page=apps&section=StorageOwnCloud
 
 https://cageos.org/index.php?page=apps&section=DecentralizedBackup
 
-#***6. Transparent Email encryption for your actual email.***
+
+***6. Transparent Email encryption for your actual email.***
 - 
 https://cageos.org/index.php?page=apps&section=SecureEmail
 
 ![34-35](https://cloud.githubusercontent.com/assets/13025157/19035791/0cc2588c-896c-11e6-88a2-fbf83dc3abfe.png)
 
-#***7. Decentralized Social Network***
+
+***7. Decentralized Social Network***
 
 Librerouter can act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you. For example, do you hate cat videos? (Really? Can I get you some help?)
 You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
 You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab. We aren’t asking you to give up on social media, instead we offer you a way to be in the captain’s chair.
 
-#***8. Decentralized Indestructible Storage; the RockStar app***
+
+***8. Decentralized Indestructible Storage; the RockStar app***
 
 Imagine all the important information you have stored on the hard drive of your computer. You are just one hardware failure away from disaster. After all, when did you do your last backup? Unfortunately, centralized storage solutions such as Dropbox and Google Drive also present a variety of risks:
 
@@ -100,7 +113,8 @@ Imagine all the important information you have stored on the hard drive of your 
 
 ![servidor personal v03b](https://cloud.githubusercontent.com/assets/13025157/22333399/505bcd5c-e3d6-11e6-9f6c-9acf2d2f4bff.jpg)
 
-#***Our product***
+
+***Our product***
 
 Libre Router uses technologies like 
 1. Free Open Source hardware
@@ -108,7 +122,8 @@ Libre Router uses technologies like
 3. Hardened Linux
 4. Encryption and many others to protect the end user or clients against intrusions, malicious attacks, and unwanted advertisements creating a LAN (Local Network area) inside another LAN (your internet router LAN)
 
-#***1. Low cost USB - ISO: 20 euros***
+
+***1. Low cost USB - ISO: 20 euros***
 
 #***2. USB corporation bypasser with digital keyboard: 80 euros***
 
