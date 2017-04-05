@@ -1,7 +1,5 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
-![servidor personal v03b](https://cloud.githubusercontent.com/assets/13025157/22333399/505bcd5c-e3d6-11e6-9f6c-9acf2d2f4bff.jpg)
-
 ##***Our company***
 
 Libre Router is a technology-based company whose activity is the development of green innovative solutions in two technical areas: data privacy and cyber security. 
@@ -42,53 +40,10 @@ LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 1. Early adopters
 2. Cityzens and companies in conflict-ridden countries 
 3. Value-conscious private customers 
+4. Pro-free-download internet users
 4. Anti-advertising internet users
 
 #***Our services***
-
-![servicecomparison](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
-
-|App|Decentralized|AnonymInsid|Ncryptclientside|Ncryptservrside|PubPrivF2F|ExposepubIP|
-|:---|:---|:---|:---|:---|:---|:---|
-|OwnCloud|Yes|No|No|Yes|PrivtFederation|Yes|
-|Mailpile|Yes|No|4096DSAelg|No|Private|Yes|
-|Rouncube|Yes|No|4096DSAelg|No|Private|Yes|
-|Diaspora|Yes|No|No|EncFS|Public|Yes|
-|Friendica|yes|not|not|EncFS|Public|yes|
-|YaCy|Yes|No|EncFS|Public|Yes|No|
-|TahoeI2p|Yes|Yes|Yes|owncloud|Public|No|
-|ProsodyTOR|Yes|No|Yes|No|Public|No|
-|RTCio|Yes|No|Partially|No|Public|Yes|
-|TOR|No|Yes|No|May Be|Public|No|
-|I2P|Yes|Yes|No|Yes|Private|Yes|
-|Dovecot|Yes|No|?|Public|Yes|No|
-|Postfix|Yes|No|?|Public|Yes|No|
-|:---|:---|:---|:---|:---|:---|:---|
-
-#***Overview of Linux Libre and Libre Kernel for personal cyber security and privacy***
-
-##Overview of Libre Kernel components:
-
-##***Introduction to what is called a 'Pseudo Backdoor' (a secret entry door in the program's code)***
-
-Software components with no available source code (how the program was made) are called binary blobs (Binary Large Objects) or a collection of binary data stored as a single obscure object. As such, they are mostly used for proprietary firmware images in the Linux kernel like hard drives, Ethernet, USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give the users the freedom to review the source code, or any other programmer the ability to check the program itself, audit, scrutinize, modify or, consequently, redistribute any further evoluted version.
-[Blob Example](#blob-example)
-
-
-
-The following image shows how Libre Router protects you by sitting between the outer Internet and your private network
-
-![metapollas](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/13.png)
-
-#Technical Overview
-
-Libre Router uses technologies like 
-1. Free Open Source hardware
-2. Linux Libre
-3. Hardened Linux
-4. Encryption and many others to protect the end user or clients against intrusions, malicious attacks, and unwanted advertisements creating a LAN (Local Network area) inside another LAN (your internet router LAN)
-
-#***Services***
 
 #***1. Decentralized collaboration and makerplaces***
 
@@ -143,6 +98,40 @@ Imagine all the important information you have stored on the hard drive of your 
 • Disaster: Your external hard disks fail or stolen. (no disaster recovery)   
 • Privacy: You're at risk of having your data hacked and stolen if it’s not encrypted.
 
+![servidor personal v03b](https://cloud.githubusercontent.com/assets/13025157/22333399/505bcd5c-e3d6-11e6-9f6c-9acf2d2f4bff.jpg)
+
+#***Our product***
+
+Libre Router uses technologies like 
+1. Free Open Source hardware
+2. Linux Libre
+3. Hardened Linux
+4. Encryption and many others to protect the end user or clients against intrusions, malicious attacks, and unwanted advertisements creating a LAN (Local Network area) inside another LAN (your internet router LAN)
+
+#***1. Low cost USB - ISO: 20 euros***
+
+#***2. USB corporation bypasser with digital keyboard: 80 euros***
+
+#***3. Openwrt low cost open source router for VPN to Librecloud: 35 euros***
+
+#***4. Low cost Qotom: 220 euros***
+
+#***5. Medium Qotom: 260 euros***
+
+#***6. Premium Qotom: 260 euros***
+
+#***7. Customized Pipo x10: 340 euros***
+
+#***8. Chwi hi12 tablet high end: 500 euros***
+
+#***9. Virtual machine***
+
+#***10. Opensource 100% hardware Solidrun Clearfog: 340 euros***
+
+#***11. 100% opensource server: 3000 euros***
+
+#Technical Overview
+
 ![gridstorage](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/16.png)
 
 The decentralized (i2p) version of Tahoe LAFS-Grid (with protections against Sybil attacks and upload Dodos) is a new way to make your data indestructible. A grid splits your files up into little pieces, encrypts them, and spreads them out geographically, making the data immune to any disaster or service outage.
@@ -165,7 +154,41 @@ You can also sync your home Librerouter with all of your portable devices to hav
 - https://cageos.org/index.php?page=pilarservices
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
+![servicecomparison](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
 
+|App|Decentralized|AnonymInsid|Ncryptclientside|Ncryptservrside|PubPrivF2F|ExposepubIP|
+|:---|:---|:---|:---|:---|:---|:---|
+|OwnCloud|Yes|No|No|Yes|PrivtFederation|Yes|
+|Mailpile|Yes|No|4096DSAelg|No|Private|Yes|
+|Rouncube|Yes|No|4096DSAelg|No|Private|Yes|
+|Diaspora|Yes|No|No|EncFS|Public|Yes|
+|Friendica|yes|not|not|EncFS|Public|yes|
+|YaCy|Yes|No|EncFS|Public|Yes|No|
+|TahoeI2p|Yes|Yes|Yes|owncloud|Public|No|
+|ProsodyTOR|Yes|No|Yes|No|Public|No|
+|RTCio|Yes|No|Partially|No|Public|Yes|
+|TOR|No|Yes|No|May Be|Public|No|
+|I2P|Yes|Yes|No|Yes|Private|Yes|
+|Dovecot|Yes|No|?|Public|Yes|No|
+|Postfix|Yes|No|?|Public|Yes|No|
+|:---|:---|:---|:---|:---|:---|:---|
+
+#***Overview of Linux Libre and Libre Kernel for personal cyber security and privacy***
+
+##Overview of Libre Kernel components:
+
+##***Introduction to what is called a 'Pseudo Backdoor' (a secret entry door in the program's code)***
+
+Software components with no available source code (how the program was made) are called binary blobs (Binary Large Objects) or a collection of binary data stored as a single obscure object. As such, they are mostly used for proprietary firmware images in the Linux kernel like hard drives, Ethernet, USB controllers, graphic cards etc. Though generally redistributable, binary blobs do not give the users the freedom to review the source code, or any other programmer the ability to check the program itself, audit, scrutinize, modify or, consequently, redistribute any further evoluted version.
+[Blob Example](#blob-example)
+
+
+
+The following image shows how Libre Router protects you by sitting between the outer Internet and your private network
+
+![metapollas](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/13.png)
+
+#Technical Overview
 
 ##***Technical documentation: About Linux Libre***
 
