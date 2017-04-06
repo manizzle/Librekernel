@@ -67,6 +67,8 @@ Go shell command console in debian and execute as root:
 
 (Choose the wget o curl command that you prefer)
 - wget -O - http://bit.ly/2gbKstn | bash
+
+
 or
 
 - wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/setup.sh | bash
