@@ -25,7 +25,7 @@ But again, if you came to this site, you probably need no balance between conven
 
 ***Do you? If the internet functions the way you say, how can you claim such thing?***
 
-Well, yes. It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
+It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
 
 ***Our commitment to sustainability***
 
