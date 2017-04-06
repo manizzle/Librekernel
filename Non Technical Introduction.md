@@ -5,7 +5,7 @@
 
 ***Who we are***
 
-Libre Router is a technology-based company dedicated to the development of innovative solutions directed towards **environmental and social sustainability**, **data privacy** and **cyber security**. Our **mission** is to enable people to protect themselves from unwanted data transactions and cyber intrusion. Behind the business model, our **purpose** is no less than **all-out internet data protection**. To achieve this goal, our product implements a wide arrayal of software and hardware technologies, perfectly tuned and turned into a plug-and-play device. 
+Libre Router is a technology-based company dedicated to the development of innovative solutions directed towards **data privacy** and **sustainable cyber security**. Our **mission** is to enable people to protect themselves from unwanted data transactions and cyber intrusion. Behind the business model, our **purpose** is no less than **all-out internet data protection**. To achieve this goal, our product implements a wide arrayal of software and hardware technologies, perfectly tuned and turned into a plug-and-play device. 
 
 ***Why should I care?***
 
