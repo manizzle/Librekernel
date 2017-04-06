@@ -71,7 +71,10 @@ Go shell command console in debian and execute as root:
 
 or
 
-- wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/setup.sh | bash
+- wget --no-check-certificate https://raw.githubusercontent.com/Librerouter/Librekernel/gh-pages/setup.sh  
+- chmod 777 setup.sh
+- ./setup.sh
+
 or
 
 - apt-get install curl
