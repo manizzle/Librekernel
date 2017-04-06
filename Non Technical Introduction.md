@@ -31,9 +31,9 @@ Our philosophy is based on the pillars of **sustainable cybersecurity**: **data 
 
 ***Ok, I want to know more about Libre Router!***
 
-Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralization, closed source, lack of encription and anonimization, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis  similar products on the market. Finally, there you can also find out more about the importance of green solutions and how they relate to decentralization.
+Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralization, closed source, lack of encription and anonimization, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis similar products on the market. Finally, there you can also find out more about the importance of green solutions and how they relate to decentralization.
 
-# Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
+# Products and services - Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
 
 
 
@@ -45,9 +45,9 @@ Problem identified:
 ![Issues_Safegaurds](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
 
 
-***The solution: How does Libre Router protect the people?***
+***The solution: How does Libre Router protect all-out Internet data?***
 
-LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
+Technical attributes of Libre Router:
 
 1. Secure **open operating system** with the hardened version based on Debian Libre and LFS. 
 2. Decentralization of the services you consume from the cloud at local alternatives (making it impossible to apply big data enemy corps.)
@@ -73,7 +73,7 @@ LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 ***Our services***
 
 
-***1. Decentralized collaboration and makerplaces***
+***1. Decentralized collaboration***
 
 https://openbazaar.org
 
@@ -119,6 +119,27 @@ Imagine all the important information you have stored on the hard drive of your 
 • Privacy: You're at risk of having your data hacked and stolen if it’s not encrypted.
 
 ![servidor personal v03b](https://cloud.githubusercontent.com/assets/13025157/22333399/505bcd5c-e3d6-11e6-9f6c-9acf2d2f4bff.jpg)
+
+***9. Anonymous administration***
+
+***10. Intrusion prevention system***
+
+***11. Wireless intrusion prevention system***
+
+***12. Decentralized marketplace***
+
+***13. Selfhosted e-mail server***
+
+***14. Web application firewall***
+
+***15. Anti ads***
+
+***16. Web content filter***
+
+***17. Network antivirus***
+
+***18. E-mail antispam***
+
 
 
 ***Our product***
