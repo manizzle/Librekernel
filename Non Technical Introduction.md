@@ -5,11 +5,11 @@
 
 ***Who we are***
 
-Libre Router is a technology-based company dedicated to the development of innovative solutions directed towards **environmental and social sustainability**, **data privacy** and **cyber security**. Our **mission** is to enable people to protect themselves from unwanted data transactions and cyber intrusion. Our **purpose** is no less than **all-out internet data protection**. To achieve this goal, our product implements a wide arrayal of software and hardware technologies, perfectly tuned and turned into a plug-and-play device. 
+Libre Router is a technology-based company dedicated to the development of innovative solutions directed towards **environmental and social sustainability**, **data privacy** and **cyber security**. Our **mission** is to enable people to protect themselves from unwanted data transactions and cyber intrusion. Behind the business model, our **purpose** is no less than **all-out internet data protection**. To achieve this goal, our product implements a wide arrayal of software and hardware technologies, perfectly tuned and turned into a plug-and-play device. 
 
 ***Why should I care?***
 
-If you are reading this, probably you came to this site already knowing why. We all care about data privacy and security to some degree, of course. We also know how far reaching the political and ethical implications of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
+If you are reading this, probably you came to this site already knowing why. We all care about data privacy and security to some degree, of course. We also know how far reaching the ethical implications of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
 
 ***Is it that bad?***
 
@@ -27,9 +27,9 @@ But again, if you came to this site, you probably need no balance between conven
 
 Well, yes. It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
 
-***Our commitmment***
+***Our commitment to sustainability***
 
-Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
+Our philosophy is based on the pillars of **sustainable cybersecurity**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
 
 ***Ok, I want to know more about Libre Router!***
 
