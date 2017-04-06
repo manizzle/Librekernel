@@ -9,7 +9,7 @@ Libre Router is a technology-based company dedicated to the development of innov
 
 ***Why should we care about data privacy and security?***
 
-We care about data privacy and security to some degree, of course. We also know how far reaching the **ethical implications** of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
+We all care about data privacy and security to some degree, of course. We also know how far reaching the **ethical implications** of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
 
 ***How to work secure, productive, valuable and responsable with sensible data***
 
@@ -21,7 +21,7 @@ Additionally, as soon as we open a door to the internet, every attack to comprom
 
 Sure, there are a lot of standarized security meassures implemented in every computer today, but many of the threats to our privacy and data security do not depend exclusively on the features of one node in the network -your computer- but are intrinsic to the way most people uses the internet: centralized services of communication and storage, closed source software operating this services, unencripted data transfer, and lack of anonymization. Most of this practices are caused by a blend of technical and economical convenience (configuration of encription is complicated, "free" services are cheaper, etc.)
 
-***Do you? If the internet functions the way we say, where the problem is?***
+***If the internet functions the way we say, where is the problem?***
 
 It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
 
