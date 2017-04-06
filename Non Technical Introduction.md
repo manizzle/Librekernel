@@ -31,7 +31,7 @@ Our philosophy is based on the pillars of **sustainable cybersecurity**: **data 
 
 ***But, what kind of people cares about sustainable cybersecurity?***
 
-Our target group is based on early adopters (people interested in new gadgets), cityzens and companies in conflict-ridden countries, value-conscious consumers (people who care about sustainable consumption), pro-free-download internet users and anti-advertising users who look for comfort and safety internet navigation.
+Our target group is based on early adopters (people interested in new gadgets), cityzens and companies in conflict-ridden countries, value-conscious consumers (people who care about sustainable consumption), pro-free-download internet users and anti-advertising users who look for safety, productivity and comfort.
 
 ***Ok, I want to know more about Libre Router!***
 
