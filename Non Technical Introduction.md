@@ -10,11 +10,13 @@ Libre Router is a technology-based company dedicated to the development of innov
 ***Why shoul I care?***
 
 If you are reading this, probably you came to this site already knowing why. We all care about data privacy and security to some degree, of course. We also know how far reaching the political and ethical implications of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business, how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To tell a long story short: you use internet, right? Then you should care.
+
 Most people cope with this tension through a sort of strange taoist ying-yang metaphisics: "it is all a matter of balance between security and convinience", "give away a little bit of trivial data, be careful with more sensible ones", "I have nothig to hide", and so on. This leads of course rather to inconsistency than equilibrium, to the proliferation of sources of error, and to the probability of any kind of leaks. 
 
 ***Is it that bad?***
 
 Yes. After the Snowden-affaire, at the latest, we know it is. As soon as they are released into the internet, your data are prone to be captured alike by cyber-criminals, data-greedy corporations, and goverments that care more about the transparecy of citzens than about the transparecy of their administration. This is the more so, given the fact that most of our communication occurs through the services of those data-greedy corporations, that goverments can obligue the former to deliver data to them through law enforcement, and that both posess the financial leverage to hire the most skilled cyber-criminals to pursue their interests.
+
 Additionally, as soon as you open a door to the internet, every attack to compormise your device is possible, and more probable to happen if you are "on the road" with one of the two most widely spread comercial operating systems. Such a situation ends up exposing even those sensible data you where in the first place never disposed to transfere over the internet. There are situations where a lot of convinience with a little bit of security is not enough, you need plenty of both. To stay productive and valuable, to be responsable with your patients, your informants, or even to safe lives.
 
 ***But, I have a firewall, antivir-software and a AdBlocker installed!***
@@ -27,6 +29,7 @@ But again, if you came to this site, you probably need no balance of convenience
 Well, yes. It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device-, that is the added value we deliver. Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
 
 ***Ok, I want to know more about Libre Router!***
+
 Grate. In our technical explanatation you can delve into the details. You can find a thorough explanation about centralization, closed source, lack of encription and anonimization, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis  similar products on the market. Finally, there you can also find out more about the importance of green solutions and how they relate to decentralization.
 
 # Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
