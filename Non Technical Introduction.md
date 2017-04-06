@@ -11,7 +11,7 @@ Libre Router is a technology-based company dedicated to the development of innov
 
 We care about data privacy and security to some degree, of course. We also know how far reaching the **ethical implications** of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
 
-***Is it that bad?***
+***How to work productive, valuable and responsable with sensible data***
 
 Yes. After the Snowden-affaire, at the latest, we know it is. As soon as they are released into the internet, your data are prone to be captured alike by cyber-criminals, data-greedy corporations, and governments that care more about the transparency of citizens than about the transparency of their administration. This is the more so given the fact that most of our communication occurs through the services of those data-greedy corporations, that governments can obligue the former to deliver data to them through law enforcement, and that both possess the financial leverage to hire the most skilled cyber-criminals to pursue their interests.
 
