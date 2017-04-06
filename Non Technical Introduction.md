@@ -7,9 +7,9 @@
 
 Libre Router is a technology-based company dedicated to the development of innovative solutions directed towards **data privacy** and **sustainable cyber security**. Our **mission** is to enable people to protect themselves from unwanted data transactions and cyber intrusion. Behind the business model, our **purpose** is no less than **all-out internet data protection**. To achieve this goal, our product implements a wide arrayal of software and hardware technologies, perfectly tuned and turned into a plug-and-play device. 
 
-***Why should I care?***
+***Why should we care about data privacy and security?***
 
-If you are reading this, probably you came to this site already knowing why. We all care about data privacy and security to some degree, of course. We also know how far reaching the ethical implications of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
+We care about data privacy and security to some degree, of course. We also know how far reaching the **ethical implications** of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
 
 ***Is it that bad?***
 
