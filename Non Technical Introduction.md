@@ -29,7 +29,7 @@ But again, if you came to this site, you probably need no balance between conven
 
 Well, yes. It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
 
-***Our commitmment
+***Our commitmment***
 
 Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
 
