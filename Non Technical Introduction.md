@@ -29,6 +29,10 @@ It is not the way the internet functions, but the way we use it. All the technol
 
 Our philosophy is based on the pillars of **sustainable cybersecurity**: **data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users.
 
+***How we define our target group***
+
+Our target market is based on early adopters (people interested in new gadgets), cityzens and companies in conflict-ridden countries, value-conscious consumers (people who care about sustainable consumption), pro-free-download internet users and anti-advertising users who look for comfort and safety internet navigation.
+
 ***Ok, I want to know more about Libre Router!***
 
 Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralization, closed source, lack of encription and anonimization, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis similar products on the market. Finally, there you can also find out more about the importance of green solutions and how they relate to decentralization.
@@ -60,14 +64,6 @@ Technical attributes of Libre Router:
 9. **Protection** from different services that track data transactions like Internet proxy, clamav, surikata proxy, snort unbound DNS lists, iptables, etc.
 10. **Self hosted obfuscated authentication** (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
 11. **Network filtering of metadata** that expose you, like scripts, cookies, browser info, docs meta, etc.
-
-***How do we identify our customers?***
-
-1. Early adopters: people interested in new gadgets
-2. Cityzens and companies in conflict-ridden countries 
-3. Value-conscious consumers: people who care about sustainable consumption
-4. Pro-free-download internet users
-4. Anti-advertising internet users who look for comfort and safety
 
 
 # Our services 
