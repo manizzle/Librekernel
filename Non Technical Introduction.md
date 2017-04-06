@@ -29,7 +29,7 @@ Well, yes. It is not the way the internet functions, but the way we use it. All 
 
 ***Our commitment to sustainability***
 
-Our philosophy is based on the pillars of **sustainable cybersecurity**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
+Our philosophy is based on the pillars of **sustainable cybersecurity**: **data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users.
 
 ***Ok, I want to know more about Libre Router!***
 
@@ -51,29 +51,25 @@ Problem identified:
 
 LIBRE ROUTER + LINUX LIBRE + HARDENED OS CONFIGURATION
 
-1. With our OS, a secured open operating system with the hardened version based on
-  Debian Libre and LFS
-2. Decentralizing the services you consume from the cloud at local alternatives (making it impossible to 
-  apply big data enemy corps.) 
-3. A decentralized anonymous Search Engine with admin rights.  
-4. A filter-connector for your Social Networks in one single place using decentralized social network Friendica.
-5. Secure decentralized video conferences based in XMPPoverTOR or WebRTC. 
-6. A secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.
-7. Transparent Email encryption for your actual email. 
-8. Anonymous web traffic enforcer Ad-blocker, intrusion prevention system, anti-virus and anti-tracking technology 
-  for your web browsing, filtering viruses, exploits, malware, ads, bad reputation IPs, and tasteless content. 
-9. Protection from different services that track data transactions like Internet proxy, clamav, surikata proxy, snort unbound DNS lists, iptables, etc.
-10. Self hosted obfuscated authentication (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
-11. Network filtering the MetaData that expose you, like scripts, cookies, browser info, docs meta, etc.  
+1. Secure **open operating system** with the hardened version based on Debian Libre and LFS. 
+2. Decentralization of the services you consume from the cloud at local alternatives (making it impossible to apply big data enemy corps.)
+3. **Decentralization and anonymization of Search Engine** with admin rights.
+4. **Filter-connection for the Social Networks** in one single place using decentralized social network Friendica.
+5. **Decentralization of video conferences** based in XMPPoverTOR or WebRTC.
+6. **Secure storage system** with collaborative tools based in TahoeLafs over i2P and blocksnet.
+7. **Transparent e-mail encryption**.
+8. **Anonymous web traffic enforcer Ad-blocker, intrusion prevention system, anti-virus and anti-tracking technology for your web browsing, filtering viruses, exploits, malware, ads, bad reputation IPs, and tasteless content**.
+9. **Protection** from different services that track data transactions like Internet proxy, clamav, surikata proxy, snort unbound DNS lists, iptables, etc.
+10. **Self hosted obfuscated authentication** (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
+11. **Network filtering of metadata** that expose you, like scripts, cookies, browser info, docs meta, etc.
 
+***How do we identify our customers?***
 
-***Our customers***
-
-1. Early adopters
+1. Early adopters: people interested in new gadgets
 2. Cityzens and companies in conflict-ridden countries 
-3. Value-conscious private customers 
+3. Value-conscious consumers: people who care about sustainable consumption
 4. Pro-free-download internet users
-4. Anti-advertising internet users
+4. Anti-advertising internet users who look for comfort and safety
 
 
 ***Our services***
