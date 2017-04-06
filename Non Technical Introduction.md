@@ -1,19 +1,40 @@
 ![librerouter - logo](https://cloud.githubusercontent.com/assets/13025157/14472862/85e49ae0-00f5-11e6-9591-163f1acd5098.png)
 
-
-***Our company***
-
-Libre Router is a technology-based company whose activity is the development of **green innovative solutions** in two technical areas: **data privacy** and **cyber security**. 
-
-We are a young and dynamic team with a technical profile in Informatics and Telecommunications Engineering. Actually the company looks for the individual specialization of qualified and motivated professionals in different areas of internet to build an international and sustainable corporate balance.
+<!---The prposal is to let the text of non-technical introduction as long as to line 32 (with the first graphic. Then open a second site for a more technical explanation with the contents promised here. Links to the site "technical explanation" would be added in § 30 and 32. Further, the text under "Is it so bad?" may be enriched with some links to the videos posted at the "community cube" site.--->
 
 
-***Our mission***
+***Who we are***
 
-We **protect people** from data transactions and cyber intrusion. Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
+Libre Router is a technology-based company dedicated to the development of innovative solutions directed towards **eviromental and social sustainability**, **data privacy** and **cyber security**. Our **mission** is to enable people to protect themselves from unwanted data transactions and cyber intrusion. Our **purpose** is no less than **all-out internet data protection**. To achieve this goal, our product implements a wide arrayal of software and hardware technologies, perfectly tuned and turned into a plug-and-play device. 
+
+***Why shoul I care?***
+
+If you are reading this, probably you came to this site already knowing why. We all care about data privacy and security to some degree, of course. We also know how far reaching the political and ethical implications of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business, how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To tell a long story short: you use internet, right? Then you should care.
+Most people cope with this tension through a sort of strange taoist ying-yang metaphisics: "it is all a matter of balance between security and convinience", "give away a little bit of trivial data, be careful with more sensible ones", "I have nothig to hide", and so on. This leads of course rather to inconsistency than equilibrium, to the proliferation of sources of error, and to the probability of any kind of leaks. 
+
+***Is it that bad?***
+
+Yes. After the Snowden-affaire, at the latest, we know it is. As soon as they are released into the internet, your data are prone to be captured alike by cyber-criminals, data-greedy corporations, and goverments that care more about the transparecy of citzens than about the transparecy of their administration. This is the more so, given the fact that most of our communication occurs through the services of those data-greedy corporations, that goverments can obligue the former to deliver data to them through law enforcement, and that both posess the financial leverage to hire the most skilled cyber-criminals to pursue their interests.
+Additionally, as soon as you open a door to the internet, every attack to compormise your device is possible, and more probable to happen if you are "on the road" with one of the two most widely spread comercial operating systems. Such a situation ends up exposing even those sensible data you where in the first place never disposed to transfere over the internet. There are situations where a lot of convinience with a little bit of security is not enough, you need plenty of both. To stay productive and valuable, to be responsable with your patients, your informants, or even to safe lives.
+
+***But, I have a firewall, antivir-software and a AdBlocker installed!***
+
+Sure, there are a lot of standarized security meassures implemented in every computer today, but many of the threats to our privacy and data security do not depend exclusively on the features of one node in the network -your computer- but are intrinsic to the way most people uses the internet: centralized services of communication and storage, closed source software operating this services, unencripted data transfer, and lack of anomymization. Most of this practices are caused by a blend of technical and economical convenience (complicated configuration of encription, "free" services are cheaper, etc.)
+But again, if you came to this site, you probably need no balance of convenience and security, but both of them - and plenty. We, at Libre Router can help you out with that, and, to say it beforehand, we are devilishly good at it!
+
+***Do you? If the internet functions the way you say, how can you claim such thing?***
+
+Well, yes. It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device-, that is the added value we deliver. Our philosophy is based on the pillars of **green cyber security**: data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration.
+
+***Ok, I want to know more about Libre Router!***
+Grate. In our technical explanatation you can delve into the details. You can find a thorough explanation about centralization, closed source, lack of encription and anonimization, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis  similar products on the market. Finally, there you can also find out more about the importance of green solutions and how they relate to decentralization.
+
+# Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
 
 
-***Our purpose: To protect internet data***
+
+<!---IMO this paragraph is not relevant for the intended readear, the end user--->
+<!---We are a young and dynamic team with a technical profile in Informatics and Telecommunications Engineering. Actually the company looks for the individual specialization of qualified and motivated professionals in different areas of internet to build an international and sustainable corporate balance.--->
 
 Problem identified:
 
