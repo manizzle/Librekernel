@@ -29,7 +29,7 @@ It is not the way the internet functions, but the way we use it. All the technol
 
 Our philosophy is based on the pillars of **sustainable cybersecurity**: **data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users.
 
-***Do you care about sustainable cybersecurit***
+***Who cares about sustainable cybersecurity?***
 
 Our target group is based on early adopters (people interested in new gadgets), cityzens and companies in conflict-ridden countries, value-conscious consumers (people who care about sustainable consumption), pro-free-download internet users and anti-advertising users who look for comfort and safety internet navigation.
 
