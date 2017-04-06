@@ -33,7 +33,7 @@ Our philosophy is based on the pillars of **sustainable cybersecurity**: **data 
 
 Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralization, closed source, lack of encription and anonimization, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis similar products on the market. Finally, there you can also find out more about the importance of green solutions and how they relate to decentralization.
 
-# Products and services - Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
+# Attributes of Libre Router - Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
 
 
 
@@ -70,7 +70,7 @@ Technical attributes of Libre Router:
 4. Anti-advertising internet users who look for comfort and safety
 
 
-# Our services
+# Our services 
 
 
 ***1. Decentralized collaboration***
@@ -142,7 +142,7 @@ Imagine all the important information you have stored on the hard drive of your 
 
 
 
-***Our product***
+# Our product catalogue - Libre Router
 
 Libre Router uses technologies like 
 1. Free Open Source hardware
