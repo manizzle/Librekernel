@@ -69,12 +69,11 @@ Technical attributes of Libre Router:
 # Our services 
 
 
-***1. Decentralized collaboration***
+***1. Decentralized collaboration storage system - Based in OwnCloud***
 
-https://openbazaar.org
+Libre Router offers decentralized collaboration to share your files with friends and partners being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online collaborative editing, fileshare or backup your mobile photos in your community grid. 
 
-
-***2. Decentralized anonymous Search Engine with admin rights***
+***2. Decentralized anonymous Search Engine with admin rights - Based in YaCy***
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
