@@ -13,17 +13,15 @@ We care about data privacy and security to some degree, of course. We also know 
 
 ***How to work productive, valuable and responsable with sensible data***
 
-Yes. After the Snowden-affaire, at the latest, we know it is. As soon as they are released into the internet, your data are prone to be captured alike by cyber-criminals, data-greedy corporations, and governments that care more about the transparency of citizens than about the transparency of their administration. This is the more so given the fact that most of our communication occurs through the services of those data-greedy corporations, that governments can obligue the former to deliver data to them through law enforcement, and that both possess the financial leverage to hire the most skilled cyber-criminals to pursue their interests.
+Our data are prone to be captured alike by cyber-criminals, data-greedy corporations, and governments that care more about the transparency of citizens than about the transparency of their administration. This is the more so given the fact that most of our communication occurs through the services of those data-greedy corporations, that governments can obligue the former to deliver data to them through law enforcement, and that both possess the financial leverage to hire the most skilled cyber-criminals to pursue their interests.
 
-Additionally, as soon as you open a door to the internet, every attack to compromise your device is possible, and more probable to happen if you are "on the road" with one of the two most widely spread comercial operating systems. Such a situation ends up exposing even those sensible data you where in the first place never disposed to transfere over the internet. There are situations where a lot of convinience with a little bit of security is not enough, you need plenty of both. To stay productive and valuable, to be responsable with your patients, your informants, or even to safe lifes.
+Additionally, as soon as we open a door to the internet, every attack to compromise your device is possible, and more probable to happen if we are "on the road" with one of the two most widely spread comercial operating systems. Such a situation ends up exposing even those sensible data we were in the first place never disposed to transfere over the internet. There are situations where a lot of convinience with a little bit of security is not enough, we need plenty of both. To stay productive and valuable, to be responsable with our customers, our informants, or even to safe lifes.
 
-***But, I have a firewall, antivir-software and a AdBlocker installed!***
+***But, we have a firewall, antivirus-software and a AdBlocker installed!***
 
 Sure, there are a lot of standarized security meassures implemented in every computer today, but many of the threats to our privacy and data security do not depend exclusively on the features of one node in the network -your computer- but are intrinsic to the way most people uses the internet: centralized services of communication and storage, closed source software operating this services, unencripted data transfer, and lack of anonymization. Most of this practices are caused by a blend of technical and economical convenience (configuration of encription is complicated, "free" services are cheaper, etc.)
 
-But again, if you came to this site, you probably need no balance between convenience and security, but **both** -and **plenty**- of them. We, at Libre Router, can help you out with that!
-
-***Do you? If the internet functions the way you say, how can you claim such thing?***
+***Do you? If the internet functions the way we say, where the problem is?***
 
 It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
 
