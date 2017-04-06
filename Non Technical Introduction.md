@@ -70,7 +70,7 @@ Technical attributes of Libre Router:
 4. Anti-advertising internet users who look for comfort and safety
 
 
-***Our services***
+# Our services
 
 
 ***1. Decentralized collaboration***
