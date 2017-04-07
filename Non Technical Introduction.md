@@ -35,7 +35,7 @@ Our target group is based on early adopters (people interested in new gadgets), 
 
 ***Ok, I want to know more about Libre Router!***
 
-Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralisation, closed source, lack of encription and anonymisation, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis similar products on the market. Finally, there you can also find out more about the importance of sustainable solutions and how they relate to decentralisation.
+Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralisation, closed source, lack of encription and anonymisation, but also about the convenience of other solutions like decentralised local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis similar products on the market. Finally, there you can also find out more about the importance of sustainable solutions and how they relate to decentralisation.
 
 # Attributes of Libre Router - Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
 
@@ -98,14 +98,14 @@ Libre Router offers decentralised collaboration to share your files with friends
 ![34-35](https://cloud.githubusercontent.com/assets/13025157/19035791/0cc2588c-896c-11e6-88a2-fbf83dc3abfe.png)
 
 
-***7. Decentralised Social Network - Based in Friendica***
+***7. Decentralised social network - Based in Friendica***
 
 Librerouter can act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you. For example, do you hate cat videos? (Really? Can I get you some help?)
 You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
 You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab. We aren’t asking you to give up on social media, instead we offer you a way to be in the captain’s chair.
 
 
-***8. Decentralised Indestructible Storage; the RockStar app***
+***8. Decentralised indestructible storage; the RockStar app***
 
 Imagine all the important information you have stored on the hard drive of your computer. You are just one hardware failure away from disaster. After all, when did you do your last backup? Unfortunately, centralized storage solutions such as Dropbox and Google Drive also present a variety of risks:
 
