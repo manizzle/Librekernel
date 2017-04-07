@@ -69,8 +69,6 @@ The services of Libre Router have been defined by the set of the following techn
 10. **Self hosted obfuscated authentication** (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
 11. **Network filtering of metadata** that expose you, like scripts, cookies, browser info, docs meta, etc.
 
-![milestones](https://cloud.githubusercontent.com/assets/17382786/14495088/46ff610e-018e-11e6-960a-b9725c7f6127.png)
-
 
 # Our services 
 
@@ -187,28 +185,6 @@ Libre Router uses technologies like
 |:---|:---|
 
 
-
-***1. Low cost USB - ISO: 20 euros***
-
-#***2. USB corporation bypasser with digital keyboard: 80 euros***
-
-#***3. Openwrt low cost open source router for VPN to Librecloud: 35 euros***
-
-#***4. Low cost Qotom: 220 euros***
-
-#***5. Medium Qotom: 260 euros***
-
-#***6. Premium Qotom: 260 euros***
-
-#***7. Customized Pipo x10: 340 euros***
-
-#***8. Chwi hi12 tablet high end: 500 euros***
-
-#***9. Virtual machine***
-
-#***10. Opensource 100% hardware Solidrun Clearfog: 340 euros***
-
-#***11. 100% opensource server: 3000 euros***
 
 # Technical Overview, licenses and certifications
 
