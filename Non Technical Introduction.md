@@ -11,19 +11,19 @@ Libre Router is a technology-based company dedicated to the development of innov
 
 We all care about data privacy and security to some degree, of course. We also know how far reaching the **ethical implications** of this issues are, specially for people working with sensible data, being an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational global era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
 
-***How to work secure, productive, valuable and responsable with sensible data***
+***If the internet functions the way we say, where does the problem reside?***
+
+It is not the way the internet functions, but the way we use it. All the technologies need to use it productively and simultanously enhance security and privacy are available, even free. 
 
 Our data are prone to be captured alike by cyber-criminals, data-greedy corporations, and governments that care more about the transparency of citizens than about the transparency of their administration. This is the more so given the fact that most of our communication occurs through the services of those data-greedy corporations, that governments can obligue the former to deliver data to them through law enforcement, and that both possess the financial leverage to hire the most skilled cyber-criminals to pursue their interests.
 
 Additionally, as soon as we open a door to the internet, every attack to compromise your device is possible, and more probable to happen if we are "on the road" with one of the two most widely spread comercial operating systems. Such a situation ends up exposing even those sensible data we were in the first place never disposed to transfere over the internet. There are situations where a lot of convenience with a little bit of security is not enough, we need plenty of both. To stay productive and valuable, to be responsable with our customers, our informants, or even to safe lifes.
 
+It is not the way the internet functions, but the way we use it. All the technologies need to use it productively and simultanously enhance security and privacy are available, even free. 
+
 ***But, we have a firewall, antivirus-software and a AdBlocker installed!***
 
-Sure, there are a lot of standarized security meassures implemented in every computer today, but many of the threats to our privacy and data security do not depend exclusively on the features of one node in the network -your computer- but are intrinsic to the way most people uses the internet: centralized services of communication and storage, closed source software operating this services, unencripted data transfer, and lack of anonymization. Most of this practices are caused by a blend of technical and economical convenience (configuration of encription is complicated, "free" services are cheaper, etc.)
-
-***If the internet functions the way we say, where does the problem reside?***
-
-It is not the way the internet functions, but the way we use it. All the technologies need to use it productively and simultanously enhance security and privacy are available, even free. 
+Sure, there are a lot of standarized security meassures implemented in every computer today, but many of the threats to our privacy and data security do not depend exclusively on the features of one node in the network -your computer- but are intrinsic to the way most people uses the internet: centralized services of communication and storage, closed source software operating this services, unencripted data transfer, and lack of anonymisation.
 
 ***How to work secure, productive, valuable and responsable with sensible data***
 
