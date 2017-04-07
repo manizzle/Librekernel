@@ -51,7 +51,7 @@ Grate. In our technical explanation you can delve into the details. You can find
 
 ***The solutions: How does Libre Router protect all-out Internet data?***
 
-The services of Libre Router have been defined by a set of the following technical attributes:
+The services of Libre Router have been defined by the set of the following technical attributes:
 
 1. Secure **open operating system** with the hardened version based on Debian Libre and LFS. 
 2. Decentralization of the services you consume from the cloud at local alternatives (making it impossible to apply big data enemy corps.)
@@ -71,7 +71,7 @@ The services of Libre Router have been defined by a set of the following technic
 
 ***1. Decentralised collaboration storage system - Based in OwnCloud***
 
-Libre Router offers decentralised collaboration to share your files with friends and partners being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online collaborative editing, fileshare or backup your mobile photos in your community grid. 
+Libre Router offers decentralised collaboration to share your files with friends and partners being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online **collaborative editing**, **fileshare** or **backup of your mobile photos** in your community grid. 
 
 ***2. Decentralised anonymous search engine with admin rights - Based in YaCy***
 
