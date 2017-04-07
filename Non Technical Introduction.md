@@ -9,7 +9,7 @@ Libre Router is a technology-based company dedicated to the development of innov
 
 ***Why should we care about data privacy and security?***
 
-We all care about data privacy and security to some degree, of course. We also know how far reaching the **ethical implications** of this issues are, specially for people working with sensible data, be it an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
+We all care about data privacy and security to some degree, of course. We also know how far reaching the **ethical implications** of this issues are, specially for people working with sensible data, being an activist or a physician. There are also economical implications: it is  evident to any person running a business how strong data security, strategic knowledge, and value assesment relate to each other. On the other side, in our informational global era it is almost a truism to state how indispensable team-work, communication and in general data flow across regional and transnational boundaries has become. To keep a long story short: **you use internet, right? Then you should care**.
 
 ***How to work secure, productive, valuable and responsable with sensible data***
 
@@ -21,21 +21,21 @@ Additionally, as soon as we open a door to the internet, every attack to comprom
 
 Sure, there are a lot of standarized security meassures implemented in every computer today, but many of the threats to our privacy and data security do not depend exclusively on the features of one node in the network -your computer- but are intrinsic to the way most people uses the internet: centralized services of communication and storage, closed source software operating this services, unencripted data transfer, and lack of anonymization. Most of this practices are caused by a blend of technical and economical convenience (configuration of encription is complicated, "free" services are cheaper, etc.)
 
-***If the internet functions the way we say, where is the problem?***
+***If the internet functions the way we say, where does the problem reside?***
 
 It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
 
 ***Our commitment to sustainability***
 
-Our philosophy at Libre Router is based on the pillars of **sustainable cybersecurity**: **data anonymization, data decentralization, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users.
+Our philosophy at Libre Router is based on the pillars of **sustainable cybersecurity**: **data anonymisation, data decentralisation, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users. It is for the people who want a better choice 
 
 ***But, what kind of people cares about sustainable cybersecurity?***
 
-Our target group is based on early adopters (people interested in new gadgets), cityzens and companies in conflict-ridden countries, value-conscious consumers (people who care about sustainable consumption), pro-free-download internet users and anti-advertising users who look for **security, productivity and comfort**.
+Our target group is based on early adopters (people interested in new gadgets), cityzens and companies in conflict-ridden countries, value-conscious consumers (people who care about sustainable consumption) and pro-free-download as well as anti-advertising internet users who look for **security, productivity and comfort**.
 
 ***Ok, I want to know more about Libre Router!***
 
-Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralization, closed source, lack of encription and anonimization, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis similar products on the market. Finally, there you can also find out more about the importance of green solutions and how they relate to decentralization.
+Grate. In our technical explanation you can delve into the details. You can find a thorough explanation about centralisation, closed source, lack of encription and anonymisation, but also about the inconvenience of other solutions like local storage. Further you will find a more explicit description how the technologies implemented in Libre Router work and enable you to deal with this problems. You will also find information regarding the advantages of Libre Router vis a vis similar products on the market. Finally, there you can also find out more about the importance of sustainable solutions and how they relate to decentralisation.
 
 # Attributes of Libre Router - Take a look at the technical explanation site and don't doubt to contact us for any question you may have!
 
@@ -49,15 +49,15 @@ Problem identified:
 ![Issues_Safegaurds](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
 
 
-***The solution: How does Libre Router protect all-out Internet data?***
+***The solutions: How does Libre Router protect all-out Internet data?***
 
 Technical attributes of Libre Router:
 
 1. Secure **open operating system** with the hardened version based on Debian Libre and LFS. 
 2. Decentralization of the services you consume from the cloud at local alternatives (making it impossible to apply big data enemy corps.)
-3. **Decentralization and anonymization of Search Engine** with admin rights.
+3. **Decentralisation and anonymisation of Search Engine** with admin rights.
 4. **Filter-connection for the Social Networks** in one single place using decentralized social network Friendica.
-5. **Decentralization of video conferences** based in XMPPoverTOR or WebRTC.
+5. **Decentralisation of video conferences** based in XMPPoverTOR or WebRTC.
 6. **Secure storage system** with collaborative tools based in TahoeLafs over i2P and blocksnet.
 7. **Transparent e-mail encryption**.
 8. **Anonymous web traffic enforcer Ad-blocker, intrusion prevention system, anti-virus and anti-tracking technology for your web browsing, filtering viruses, exploits, malware, ads, bad reputation IPs, and tasteless content**.
@@ -69,28 +69,28 @@ Technical attributes of Libre Router:
 # Our services 
 
 
-***1. Decentralized collaboration storage system - Based in OwnCloud***
+***1. Decentralised collaboration storage system - Based in OwnCloud***
 
-Libre Router offers decentralized collaboration to share your files with friends and partners being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online collaborative editing, fileshare or backup your mobile photos in your community grid. 
+Libre Router offers decentralised collaboration to share your files with friends and partners being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online collaborative editing, fileshare or backup your mobile photos in your community grid. 
 
-***2. Decentralized anonymous Search Engine with admin rights - Based in YaCy***
+***2. Decentralised anonymous search engine with admin rights - Based in YaCy***
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
 ![search engine](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/31_v2.png)
 
 
-***3. Filter-connector for your Social Networks in one single place using decentralized social network Friendica***
+***3. Filter-connector for your social networks in one single place - Based in the decentralised social network Friendica***
 
 ![socialnetworks](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/33.png)
 
 
-***4. Secure decentralized video conferences based in XMPPoverTOR or WebRTC***
+***4. Secure video conferences - Based in XMPPoverTOR or WebRTC***
 
 ![rtcio](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/8-9_v2.png)
 
 
-***5. Secure Storage System with collaborative tools based in TahoeLafs over i2P and blocksnet.***
+***5. Secure storage system with collaborative tools - Based in TahoeLafs over i2P and blocksnet***
 
 
 ***6. Transparent Email encryption for your actual email.***
@@ -98,14 +98,14 @@ Libre Router offers decentralized collaboration to share your files with friends
 ![34-35](https://cloud.githubusercontent.com/assets/13025157/19035791/0cc2588c-896c-11e6-88a2-fbf83dc3abfe.png)
 
 
-***7. Decentralized Social Network***
+***7. Decentralised Social Network - Based in Friendica***
 
 Librerouter can act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you. For example, do you hate cat videos? (Really? Can I get you some help?)
 You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
 You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab. We aren’t asking you to give up on social media, instead we offer you a way to be in the captain’s chair.
 
 
-***8. Decentralized Indestructible Storage; the RockStar app***
+***8. Decentralised Indestructible Storage; the RockStar app***
 
 Imagine all the important information you have stored on the hard drive of your computer. You are just one hardware failure away from disaster. After all, when did you do your last backup? Unfortunately, centralized storage solutions such as Dropbox and Google Drive also present a variety of risks:
 
@@ -121,7 +121,7 @@ Imagine all the important information you have stored on the hard drive of your 
 
 ***11. Wireless intrusion prevention system***
 
-***12. Decentralized marketplace***
+***12. Decentralised marketplace***
 
 ***13. Selfhosted e-mail server***
 
