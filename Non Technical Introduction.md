@@ -173,7 +173,7 @@ Libre Router uses technologies like
 
 
 |Product|Price|
-|:---|:---|:---|:---|:---|:---|:---|
+|:---|:---|
 |Low cost USB - ISO|20|
 |USB corporation bypasser with digital keyboard|80|
 |Low cost Qotom|220|
@@ -181,10 +181,10 @@ Libre Router uses technologies like
 |Premium Qotom|260|
 |Customized Pipo x10|340|
 |Chwi hi12 tablet high end|500|
-|Virtual machine|Yes|No|Yes|No|Public|No|
+|Virtual machine|x|
 |Opensource 100% hardware Solidrun Clearfog|340|
 |100% opensource server|3000|
-|:---|:---|:---|:---|:---|:---|:---|
+|:---|:---|
 
 
 
