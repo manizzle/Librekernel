@@ -171,7 +171,8 @@ Libre Router uses technologies like
 3. Hardened Linux
 4. Encryption and many others to protect the end user or clients against intrusions, malicious attacks, and unwanted advertisements creating a LAN (Local Network area) inside another LAN (your internet router LAN)
 
-|Poduct|Price|
+
+|Product|Price|
 |:---|:---|:---|:---|:---|:---|:---|
 |Low cost USB - ISO|20|
 |USB corporation bypasser with digital keyboard|80|
@@ -184,6 +185,8 @@ Libre Router uses technologies like
 |Opensource 100% hardware Solidrun Clearfog|340|
 |100% opensource server|3000|
 |:---|:---|:---|:---|:---|:---|:---|
+
+
 
 ***1. Low cost USB - ISO: 20 euros***
 
