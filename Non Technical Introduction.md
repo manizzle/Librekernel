@@ -23,7 +23,7 @@ Sure, there are a lot of standarized security meassures implemented in every com
 
 ***If the internet functions the way we say, where does the problem reside?***
 
-It is not the way the internet functions, but the way we use it. All the technologies need to use it productively and simultanously enhance security and privacy are available, even free. So, to achieve data security **the users need a grid to have a resilence. The information is encrypted before leaving your computer** Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. https://ksr-video.imgix.net/projects/1830782/video-546980-h264_high.mp4
+It is not the way the internet functions, but the way we use it. All the technologies need to use it productively and simultanously enhance security and privacy are available, even free. So, to be protected **the users need the necessary infrastructure: a grid with resilence. The information is encrypted before leaving your computer** Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. https://ksr-video.imgix.net/projects/1830782/video-546980-h264_high.mp4
 
 ***Our commitment to sustainability***
 
