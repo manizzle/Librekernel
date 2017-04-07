@@ -95,7 +95,7 @@ With Libre Router you are the administrator of your search engine giving you ful
 
 ***4. Secure video conferences - Based in XMPPoverTOR or WebRTC***
 
-You can get in touch with your friends or family on a private way. The communication is secure
+You can easy get in touch with your friends or family on a private way: the communication is secure from third party intrusion. Your computer conects directl 
 
 ![rtcio](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/8-9_v2.png)
 
