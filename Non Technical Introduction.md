@@ -25,7 +25,7 @@ Sure, there are a lot of standarized security meassures implemented in every com
 
 ***How to work secure, productive, valuable and responsable with sensible data***
 
-Privacy configuration is important by the internet surfing. To be protected you need the necessary infrastructure: a grid with resilence. Through the community grid the information is encrypted before leaving your computer, then is encrypted again and distributed in paths; impossible to read by anyone else except to the person with the prospects. The implementation of your community grid avoids viruses and protects your malicious internet traffic transparently with no additional button or additional software. 
+Privacy configuration is important by the internet surfing. To be protected you need the necessary infrastructure: a grid with resilence. Through the community grid the information is encrypted before leaving your computer, then is encrypted again and distributed in paths; impossible to read by anyone else except to the person with the prospects. The implementation of your community grid avoids viruses, exploits and protects your malicious internet traffic transparently with no additional button or additional software. 
 
 Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. https://ksr-video.imgix.net/projects/1830782/video-546980-h264_high.mp4
 
@@ -75,7 +75,7 @@ The services of Libre Router have been defined by the set of the following techn
 
 ***1. Decentralised collaboration storage system - Based in OwnCloud***
 
-Libre Router offers decentralised collaboration to share your files with friends and partners being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online **collaborative editing**, **fileshare** or **backup of your mobile photos** in your community grid. 
+Libre Router offers decentralised collaboration to share your files with friends, business partners or another people being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online **collaborative editing**, **fileshare** or **backup of your mobile photos** in your community grid. Your files are secure 
 
 ***2. Decentralised anonymous search engine with admin rights - Based in YaCy***
 
