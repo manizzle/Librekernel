@@ -81,7 +81,7 @@ Libre Router offers decentralised collaboration to share your files with friends
 
 ***2. Decentralised anonymous search engine with admin rights - Based in YaCy***
 
-You are the administrator of your search engine, so you have full power.
+You are the administrator of your search engine giving you have full power. You can blacklist undesirable content or 
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
