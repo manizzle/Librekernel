@@ -44,14 +44,14 @@ Grate. In our technical explanation you can delve into the details. You can find
 <!---IMO this paragraph is not relevant for the intended readear, the end user--->
 <!---We are a young and dynamic team with a technical profile in Informatics and Telecommunications Engineering. Actually the company looks for the individual specialization of qualified and motivated professionals in different areas of internet to build an international and sustainable corporate balance.--->
 
-Problem identified:
+***Problem identified***:
 
 ![Issues_Safegaurds](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/14.png)
 
 
 ***The solutions: How does Libre Router protect all-out Internet data?***
 
-Technical attributes of Libre Router:
+The services of Libre Router have been defined by a set of the following technical attributes:
 
 1. Secure **open operating system** with the hardened version based on Debian Libre and LFS. 
 2. Decentralization of the services you consume from the cloud at local alternatives (making it impossible to apply big data enemy corps.)
