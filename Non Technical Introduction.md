@@ -95,7 +95,7 @@ With Libre Router you are the administrator of your search engine giving you ful
 
 ***4. Secure video conferences - Based in XMPPoverTOR or WebRTC***
 
-You can easy get in touch with your friends or family on a private way: the communication is secure from third party intrusion. Your computer conects directl 
+You can easy get in touch with your friends or family on a private way: the communication is secure and protected from third party intrusion. Your computer conects directly to another without a middleman.
 
 ![rtcio](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/8-9_v2.png)
 
@@ -103,7 +103,9 @@ You can easy get in touch with your friends or family on a private way: the comm
 ***5. Secure storage system with collaborative tools - Based in TahoeLafs over i2P and blocksnet***
 
 
-***6. Transparent Email encryption for your actual email.***
+***6. Transparent Email encryption for your actual email - Based in MailPile***
+
+Every single e-mail is encrypted by Libre Router. You can continue using your actual e-mail provider securely and Libre Router is compatible with any device too.
 
 ![34-35](https://cloud.githubusercontent.com/assets/13025157/19035791/0cc2588c-896c-11e6-88a2-fbf83dc3abfe.png)
 
