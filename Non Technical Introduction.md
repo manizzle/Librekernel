@@ -77,9 +77,11 @@ The services of Libre Router have been defined by the set of the following techn
 
 ***1. Decentralised collaboration storage system - Based in OwnCloud***
 
-Libre Router offers decentralised collaboration to share your files with friends, business partners or another people being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online **collaborative editing**, **fileshare** or **backup of your mobile photos** in your community grid. Your files are secure 
+Libre Router offers decentralised collaboration to share your files with friends, business partners or another people being automatically protected and anonymous. With only one click, the downloading starts from your home community anonymously. It allows online **collaborative editing**, **fileshare** or **backup of your mobile photos** in your community grid. 
 
 ***2. Decentralised anonymous search engine with admin rights - Based in YaCy***
+
+You are the administrator of your search engine, so you have full power.
 
 ![data center or decent-ralization](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/11-12_v2.png)
 
