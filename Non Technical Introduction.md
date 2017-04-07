@@ -25,9 +25,9 @@ Sure, there are a lot of standarized security meassures implemented in every com
 
 ***How to work secure, productive, valuable and responsable with sensible data***
 
-To be protected you need the necessary infrastructure: a grid with resilence. Through the **community grid** the information is encrypted before leaving your computer, then is encrypted again and distributed in paths; impossible to read by anyone else except to the person with the prospects. There is no way to track your private information with this community grid tools.
+To be protected you need the necessary infrastructure: a grid with resilence. Through the community grid the information is encrypted before leaving your computer, then is encrypted again and distributed in paths; impossible to read by anyone else except to the person with the prospects. There is no way to track your private information with this community grid tools.
 
-Privacy configuration is important by internet surfing. 
+Privacy configuration is important by the internet surfing. It avoids viruses or malicious 
 
 Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. https://ksr-video.imgix.net/projects/1830782/video-546980-h264_high.mp4
 
