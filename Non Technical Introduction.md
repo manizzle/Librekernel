@@ -31,7 +31,7 @@ Know-how, reliability, technical and economical convenience -all of it integrate
 
 ***Our commitment to sustainability***
 
-Our philosophy at Libre Router is based on the pillars of **sustainable cybersecurity**: **data anonymisation, data decentralisation, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users.
+Our philosophy at Libre Router is based on the pillars of **sustainable cybersecurity**: **data anonymisation, data decentralisation, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an open source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where open source developers will have as much control as possible to bypass the censorship and ensure security for the users.
 
 ***But, what kind of people cares about sustainable cybersecurity?***
 
