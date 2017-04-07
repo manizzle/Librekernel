@@ -31,7 +31,7 @@ Know-how, reliability, technical and economical convenience -all of it integrate
 
 ***Our commitment to sustainability***
 
-Our philosophy at Libre Router is based on the pillars of **sustainable cybersecurity**: **data anonymisation, data decentralisation, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users. It is for the people who want a better choice 
+Our philosophy at Libre Router is based on the pillars of **sustainable cybersecurity**: **data anonymisation, data decentralisation, e-mail encryption, ad blocking and filtering, indestructible storage, green energy efficiency and social collaboration**. LibreRouter has been developed to be an Open Source hardware with no malignant backdoors in the used programs, with source code for kernel logic as well as firmware where Open Source developers will have as much control as possible to bypass the censorship and ensure security for the users.
 
 ***But, what kind of people cares about sustainable cybersecurity?***
 
@@ -104,7 +104,7 @@ Libre Router offers decentralised collaboration to share your files with friends
 
 ***7. Decentralised social network - Based in Friendica***
 
-There are many different social networks. Use Libre Router to **publish simultaneously** to all your social networks. You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab wasting your time. Libre Router is the smart way to use social networks. Libre Router can also act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you. You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
+There are many different social networks. Use Libre Router to **publish simultaneously** to all your social networks. You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab wasting your time. Libre Router is the smart way to use social networks that can also act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you. You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
 
 
 ***8. Decentralised indestructible storage; the RockStar app***
