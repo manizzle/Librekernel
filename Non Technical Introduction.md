@@ -145,6 +145,22 @@ Imagine all the important information you have stored on the hard drive of your 
 
 ***18. E-mail antispam***
 
+|App|Decentralized|AnonymInsid|Ncryptclientside|Ncryptservrside|PubPrivF2F|ExposepubIP|
+|:---|:---|:---|:---|:---|:---|:---|
+|OwnCloud|Yes|No|No|Yes|PrivtFederation|Yes|
+|Mailpile|Yes|No|4096DSAelg|No|Private|Yes|
+|Rouncube|Yes|No|4096DSAelg|No|Private|Yes|
+|Diaspora|Yes|No|No|EncFS|Public|Yes|
+|Friendica|yes|not|not|EncFS|Public|yes|
+|YaCy|Yes|No|EncFS|Public|Yes|No|
+|TahoeI2p|Yes|Yes|Yes|owncloud|Public|No|
+|ProsodyTOR|Yes|No|Yes|No|Public|No|
+|RTCio|Yes|No|Partially|No|Public|Yes|
+|TOR|No|Yes|No|May Be|Public|No|
+|I2P|Yes|Yes|No|Yes|Private|Yes|
+|Dovecot|Yes|No|?|Public|Yes|No|
+|Postfix|Yes|No|?|Public|Yes|No|
+|:---|:---|:---|:---|:---|:---|:---|
 
 
 # Our product catalogue - Libre Router
@@ -155,6 +171,19 @@ Libre Router uses technologies like
 3. Hardened Linux
 4. Encryption and many others to protect the end user or clients against intrusions, malicious attacks, and unwanted advertisements creating a LAN (Local Network area) inside another LAN (your internet router LAN)
 
+|Poduct|Price|
+|:---|:---|:---|:---|:---|:---|:---|
+|Low cost USB - ISO|20|
+|USB corporation bypasser with digital keyboard|80|
+|Low cost Qotom|220|
+|Medium Qotom|260|
+|Premium Qotom|260|
+|Customized Pipo x10|340|
+|Chwi hi12 tablet high end|500|
+|Virtual machine|Yes|No|Yes|No|Public|No|
+|Opensource 100% hardware Solidrun Clearfog|340|
+|100% opensource server|3000|
+|:---|:---|:---|:---|:---|:---|:---|
 
 ***1. Low cost USB - ISO: 20 euros***
 
@@ -203,23 +232,6 @@ You can also sync your home Librerouter with all of your portable devices to hav
 ![espacioblanco](https://cloud.githubusercontent.com/assets/17382786/14488687/b41768ba-0169-11e6-96cd-80377e21231d.png)
 
 ![servicecomparison](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/15.png)
-
-|App|Decentralized|AnonymInsid|Ncryptclientside|Ncryptservrside|PubPrivF2F|ExposepubIP|
-|:---|:---|:---|:---|:---|:---|:---|
-|OwnCloud|Yes|No|No|Yes|PrivtFederation|Yes|
-|Mailpile|Yes|No|4096DSAelg|No|Private|Yes|
-|Rouncube|Yes|No|4096DSAelg|No|Private|Yes|
-|Diaspora|Yes|No|No|EncFS|Public|Yes|
-|Friendica|yes|not|not|EncFS|Public|yes|
-|YaCy|Yes|No|EncFS|Public|Yes|No|
-|TahoeI2p|Yes|Yes|Yes|owncloud|Public|No|
-|ProsodyTOR|Yes|No|Yes|No|Public|No|
-|RTCio|Yes|No|Partially|No|Public|Yes|
-|TOR|No|Yes|No|May Be|Public|No|
-|I2P|Yes|Yes|No|Yes|Private|Yes|
-|Dovecot|Yes|No|?|Public|Yes|No|
-|Postfix|Yes|No|?|Public|Yes|No|
-|:---|:---|:---|:---|:---|:---|:---|
 
 #***Overview of Linux Libre and Libre Kernel for personal cyber security and privacy***
 
