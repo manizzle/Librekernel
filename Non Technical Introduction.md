@@ -104,6 +104,7 @@ Libre Router offers decentralised collaboration to share your files with friends
 
 ***7. Decentralised social network - Based in Friendica***
 
+There are many different social networks. Use Libre Router to publish at the same time in all your social networks
 Librerouter can act as a unified entry and outgoing point for all of your posts across social networks, as well as a filter for what is important to you. For example, do you hate cat videos? (Really? Can I get you some help?)
 You can use Librerouter to filter them out when it automatically imports posts from Facebook, Twitter, and Pinterest!
 You control your incoming and outgoing posts, and push your posts from a single place to everywhere with no need to open each social network in a separate tab. We aren’t asking you to give up on social media, instead we offer you a way to be in the captain’s chair.
