@@ -23,7 +23,7 @@ Sure, there are a lot of standarized security meassures implemented in every com
 
 ***If the internet functions the way we say, where does the problem reside?***
 
-It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
+It is not the way the internet functions, but the way we use it. All the technologies needed to use it productively and simultanously enhance security and privacy are available, even free. User need a grid to resilience Know-how, reliability, technical and economical convenience -all of it integrated in a plug and play device- that is the added value we deliver. 
 
 ***Our commitment to sustainability***
 
