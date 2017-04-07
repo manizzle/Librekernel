@@ -121,8 +121,6 @@ Imagine all the important information you have stored on the hard drive of your 
 • Disaster: Your external hard disks fail or stolen. (no disaster recovery)   
 • Privacy: You're at risk of having your data hacked and stolen if it’s not encrypted.
 
-![servidor personal v03b](https://cloud.githubusercontent.com/assets/13025157/22333399/505bcd5c-e3d6-11e6-9f6c-9acf2d2f4bff.jpg)
-
 ***9. Anonymous administration***
 
 ***10. Intrusion prevention system***
