@@ -69,6 +69,8 @@ The services of Libre Router have been defined by the set of the following techn
 10. **Self hosted obfuscated authentication** (dissolves the legal relation between user-human and legal-name), forcing encryption in transport and in rest data.
 11. **Network filtering of metadata** that expose you, like scripts, cookies, browser info, docs meta, etc.
 
+![milestones](https://cloud.githubusercontent.com/assets/17382786/14495088/46ff610e-018e-11e6-960a-b9725c7f6127.png)
+
 
 # Our services 
 
@@ -170,7 +172,7 @@ Libre Router uses technologies like
 
 #***11. 100% opensource server: 3000 euros***
 
-#Technical Overview
+# Technical Overview, licenses and certifications
 
 ![gridstorage](https://github.com/Librerouter/Librekernel/blob/gh-pages/images/16.png)
 
@@ -453,7 +455,3 @@ It then has screenfulls of non-free code like this:
 
 we call these Hexadecimle numbers as blogs and it's hard to impossible 
 to know its purpose and effect on our system.  
-
-
-
-![milestones](https://cloud.githubusercontent.com/assets/17382786/14495088/46ff610e-018e-11e6-960a-b9725c7f6127.png)
