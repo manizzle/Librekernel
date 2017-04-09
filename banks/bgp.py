@@ -37,7 +37,20 @@ def cidr():
     links = [l.text for l in doc.xpath("//a")]
     names = doc.xpath("/html/body/pre/text()") + doc.xpath("/html/body/pre/peering/text()")
     # Remove initial newline, and join "SWITCH Peering requests: , CH\n'" because of colon
-    names = names[1:560] + [names[560] + names[561]] + names[562:]
+    n = []
+    link = None
+    for i in names[1:]:
+        if not i.endswith("\n"):
+            if link:
+                link += i
+            else:
+                link = i
+        else:
+            if link:
+                i = link + i
+                link = None
+            n.append(i)
+    names = n
     assert(len(names) == len(links))
     # Should be more raw AS values than the main page has listed
     assert(len(names) > est_total_as)
@@ -174,7 +187,7 @@ def main():
             #and data["ranges"] != ["NA"]):
             continue
         bdi[asn]["ranges"] = list(get_ranges_ipinfo(asn))
-        print >>sys.stderr, asn, bdi[asn]
+        #print >>sys.stderr, asn, bdi[asn]
         ctr += 1
         if ctr >= LIMIT:
             break
