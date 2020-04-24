@@ -1140,6 +1140,9 @@ http_access allow localhost
 http_access allow librenetwork
 http_access deny all
 
+# squidGuard configuration
+url_rewrite_program /usr/bin/squidGuard -c /etc/squidguard/squidGuard.conf
+
 # http configuration
 http_port 10.0.0.1:3130 intercept
 coredump_dir /var/spool/squid
@@ -1440,6 +1443,37 @@ safebrowsing 0
 
 echo "Restarting clamav daemon ..."
 service clamav-daemon restart
+}
+
+
+# ---------------------------------------------------------
+# Function to configure squidguard
+# ---------------------------------------------------------
+configure_squidguard()
+{
+cat << EOF > /etc/squidguard/squidGuard.conf
+#
+# CONFIG FILE FOR SQUIDGUARD
+#
+
+dbhome /usr/local/squidGuard/db/blacklists
+logdir /usr/local/squidGuard/logs
+
+dest porn {
+        domainlist porn/domains
+        urllist porn/urls
+        }
+
+acl {
+        default {
+                pass !porn all
+                redirect http://localhost/block.html
+        }
+ }
+EOF
+
+squidGuard -C all
+chmod -R a+rw /usr/local/squidGuard/db/*
 }
 
 
@@ -2452,6 +2486,7 @@ configure_privoxy		# Configuring Privoxy proxy server
 configure_squid			# Configuring squid proxy server
 configure_c_icap		# Configuring c-icap daemon
 configure_squidclamav		# Configuring squidclamav service
+configure_squidguard		# Configuring squidguard
 configure_postfix		# Configuring postfix mail service
 check_interfaces		# Checking network interfaces
 check_services			# Checking services 
