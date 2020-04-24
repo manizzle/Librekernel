@@ -954,9 +954,23 @@ install_squidguard()
 	cp patterns.sed /etc/squid/squidguard-adblock/
 	cp urls.txt /etc/squid/squidguard-adblock/
 	chmod +x /etc/squid/squidguard-adblock/get-easylist.sh
-	cd ../
+	cd ..
+
+	# Getting MESD blacklists
+	if [ ! -e blacklists.tgz ]; then
+	wget http://squidguard.mesd.k12.or.us/blacklists.tgz
+	fi
+	# Making squidGuard blacklists directory
+	mkdir -p /usr/local/squidGuard/db 
+	# Extracting blacklists
+        cp blacklists.tgz /usr/local/squidGuard/db
+        gzip -d /usr/local/squidGuard/db/blacklists.tgz \  
+                -c /usr/local/squidGuard/db/
+        tar xfv /usr/local/squidGuard/db/blacklists.tar \
+                -C /usr/local/squidGuard/db/
 
 	# Cleanup
+        rm -rf /usr/local/squidGuard//db/blacklists.tar
 	rm -rf db-4.6.21.NC
 	rm -rf squidGuard-1.4
 	rm -rf squidguard-adblock
